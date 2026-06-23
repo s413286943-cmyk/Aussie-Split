@@ -13,6 +13,7 @@ import {
   parseBankMessage,
   seedExpenses,
 } from "@/lib/ledger";
+import { coupleName, formatPayerLabel, formatSettlementDirection } from "@/lib/couples";
 import {
   deleteRemoteExpense,
   fetchRemoteExpenses,
@@ -43,12 +44,12 @@ export default function TripLedgerApp({ view }) {
         if (remote?.length) {
           setExpenses(remote);
           localStorage.setItem(storageKey, JSON.stringify(remote));
-          setSyncState("Supabase 已同步");
+          setSyncState("已保存");
         } else if (supabaseConfigured) {
-          setSyncState("Supabase 已连接");
+          setSyncState("可一起编辑");
         }
       })
-      .catch(() => setSyncState("本机保存"));
+      .catch(() => setSyncState("现在先显示本机内容"));
   }, []);
 
   async function persist(nextExpenses, remoteAction) {
@@ -56,9 +57,9 @@ export default function TripLedgerApp({ view }) {
     localStorage.setItem(storageKey, JSON.stringify(nextExpenses));
     try {
       await remoteAction?.();
-      if (supabaseConfigured) setSyncState("Supabase 已同步");
+      if (supabaseConfigured) setSyncState("已保存");
     } catch {
-      setSyncState("本机保存，云端未同步");
+      setSyncState("现在先保存在本机");
     }
   }
 
@@ -95,8 +96,8 @@ export default function TripLedgerApp({ view }) {
           </p>
         </div>
         <div className="hero-actions">
-          <Link className="button primary" href="/add">记一笔</Link>
-          <Link className="button" href="/settlement">看结算</Link>
+          <Link className="button primary" href="/ledger/add">记一笔</Link>
+          <Link className="button" href="/ledger/settlement">看结算</Link>
           <span className="button">{syncState}</span>
         </div>
       </header>
@@ -109,10 +110,10 @@ export default function TripLedgerApp({ view }) {
       {view === "settlement" && <Settlement ledger={ledger} />}
 
       <nav className="nav" aria-label="主导航">
-        <Link className={view === "dashboard" ? "active" : ""} href="/">总览</Link>
-        <Link className={view === "expenses" ? "active" : ""} href="/expenses">明细</Link>
-        <Link className={view === "add" ? "active" : ""} href="/add">新增</Link>
-        <Link className={view === "settlement" ? "active" : ""} href="/settlement">结算</Link>
+        <Link className={view === "dashboard" ? "active" : ""} href="/ledger">总览</Link>
+        <Link className={view === "expenses" ? "active" : ""} href="/ledger/expenses">明细</Link>
+        <Link className={view === "add" ? "active" : ""} href="/ledger/add">新增</Link>
+        <Link className={view === "settlement" ? "active" : ""} href="/ledger/settlement">结算</Link>
       </nav>
     </div>
   );
@@ -193,7 +194,7 @@ function SummaryCards({ ledger }) {
           <span className="muted">{currency} 当前应收</span>
           <strong>{formatMoney(currency, Math.abs(bucket.netOtherOwesUs))}</strong>
           <p className="muted">
-            {bucket.netOtherOwesUs >= 0 ? "另一对夫妻应付我方" : "我方应付另一对夫妻"}
+            {formatSettlementDirection(bucket.netOtherOwesUs)}
           </p>
         </article>
       ))}
@@ -222,7 +223,11 @@ function Expenses({ expenses, onUpdate, onDelete }) {
       <div className="filters">
         <Select value={category} onChange={setCategory} options={["全部", ...categories]} />
         <Select value={currency} onChange={setCurrency} options={["全部", "CNY", "AUD"]} />
-        <Select value={payer} onChange={setPayer} options={["全部", "us", "them"]} />
+        <select value={payer} onChange={(event) => setPayer(event.target.value)}>
+          <option value="全部">全部付款方</option>
+          <option value="us">{coupleName("us")}</option>
+          <option value="them">{coupleName("them")}</option>
+        </select>
       </div>
       <ExpenseList expenses={filtered} onUpdate={onUpdate} onDelete={onDelete} />
     </section>
@@ -240,7 +245,7 @@ function ExpenseList({ expenses, onUpdate, onDelete }) {
             <div className="tags">
               <span className="tag">{expense.category}</span>
               <span className={expense.status === "draft" ? "tag draft" : "tag"}>{expense.status === "draft" ? "待确认" : "已确认"}</span>
-              <span className={expense.payer === "them" ? "tag other" : "tag"}>{expense.payer === "them" ? "对方付款" : "我方付款"}</span>
+              <span className={expense.payer === "them" ? "tag other" : "tag"}>{formatPayerLabel(expense.payer)}</span>
               {expense.attachmentName && <span className="tag">有小票</span>}
             </div>
           </div>
@@ -334,8 +339,8 @@ function AddExpense({ onAdd }) {
             <label>
               付款方
               <select value={form.payer} onChange={(event) => setForm({ ...form, payer: event.target.value })}>
-                <option value="us">我方付款</option>
-                <option value="them">另一对夫妻付款</option>
+                <option value="us">{formatPayerLabel("us")}</option>
+                <option value="them">{formatPayerLabel("them")}</option>
               </select>
             </label>
             <label>
@@ -372,7 +377,7 @@ function Settlement({ ledger }) {
             <span className="muted">{currency} 结算</span>
             <strong>{formatMoney(currency, Math.abs(bucket.netOtherOwesUs))}</strong>
             <p className="muted">
-              {bucket.netOtherOwesUs >= 0 ? "另一对夫妻应付我方" : "我方应付另一对夫妻"}
+              {formatSettlementDirection(bucket.netOtherOwesUs)}
             </p>
           </article>
         ))}
