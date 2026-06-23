@@ -1,5 +1,5 @@
-import TravelWorkspace from "@/components/TravelWorkspace";
+import TripLedgerApp from "@/components/TripLedgerApp";
 
 export default function Home() {
-  return <TravelWorkspace view="today" />;
+  return <TripLedgerApp view="dashboard" />;
 }

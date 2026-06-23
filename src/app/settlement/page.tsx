@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import TripLedgerApp from "@/components/TripLedgerApp";
 
 export default function SettlementPage() {
-  redirect("/ledger/settlement");
+  return <TripLedgerApp view="settlement" />;
 }

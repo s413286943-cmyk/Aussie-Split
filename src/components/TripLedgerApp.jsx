@@ -90,19 +90,17 @@ export default function TripLedgerApp({ view }) {
     <div className="app-shell">
       <header className="hero">
         <div>
-          <h1>Aussie Chill 账本</h1>
+          <h1>Aussie Chill Split Bill</h1>
           <p>
             2026.07.28-08.13，两对夫妻澳洲旅行账本。机票已单独 split，本账本只记录旅行中共同费用，按币种分别结算。
           </p>
         </div>
         <div className="hero-actions">
-          <Link className="button primary" href="/ledger/add">记一笔</Link>
-          <Link className="button" href="/ledger/settlement">看结算</Link>
+          <Link className="button primary" href="/add">记一笔</Link>
+          <Link className="button" href="/settlement">看结算</Link>
           <span className="button">{syncState}</span>
         </div>
       </header>
-
-      <LedgerTabs view={view} />
 
       {view === "dashboard" && <Dashboard expenses={expenses} ledger={ledger} />}
       {view === "expenses" && (
@@ -112,23 +110,12 @@ export default function TripLedgerApp({ view }) {
       {view === "settlement" && <Settlement ledger={ledger} />}
 
       <nav className="nav" aria-label="主导航">
-        <Link href="/">今日</Link>
-        <Link href="/itinerary">行程</Link>
-        <Link href="/lists">清单</Link>
-        <Link className="active" href="/ledger">账本</Link>
+        <Link className={view === "dashboard" ? "active" : ""} href="/">总览</Link>
+        <Link className={view === "expenses" ? "active" : ""} href="/expenses">明细</Link>
+        <Link className={view === "add" ? "active" : ""} href="/add">新增</Link>
+        <Link className={view === "settlement" ? "active" : ""} href="/settlement">结算</Link>
       </nav>
     </div>
-  );
-}
-
-function LedgerTabs({ view }) {
-  return (
-    <nav className="section subnav" aria-label="账本导航">
-      <Link className={view === "dashboard" ? "active" : ""} href="/ledger">总览</Link>
-      <Link className={view === "expenses" ? "active" : ""} href="/ledger/expenses">明细</Link>
-      <Link className={view === "add" ? "active" : ""} href="/ledger/add">新增</Link>
-      <Link className={view === "settlement" ? "active" : ""} href="/ledger/settlement">结算</Link>
-    </nav>
   );
 }
 
@@ -182,7 +169,7 @@ function Dashboard({ expenses, ledger }) {
       <section className="section">
         <div className="section-head">
           <h2>最近记录</h2>
-          <Link href="/ledger/expenses" className="button small">全部</Link>
+          <Link href="/expenses" className="button small">全部</Link>
         </div>
         <ExpenseList expenses={recent} />
       </section>
