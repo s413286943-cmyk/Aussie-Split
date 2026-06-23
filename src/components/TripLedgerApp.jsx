@@ -6,9 +6,11 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import {
+  applyExpenseEdit,
   backlogItems,
   calculateLedger,
   categories,
+  expenseToEditableForm,
   formatMoney,
   parseBankMessage,
   seedExpenses,
@@ -102,7 +104,7 @@ export default function TripLedgerApp({ view }) {
         </div>
       </header>
 
-      {view === "dashboard" && <Dashboard expenses={expenses} ledger={ledger} />}
+      {view === "dashboard" && <Dashboard expenses={expenses} ledger={ledger} onUpdate={updateExpense} />}
       {view === "expenses" && (
         <Expenses expenses={expenses} onUpdate={updateExpense} onDelete={removeExpense} />
       )}
@@ -151,7 +153,7 @@ function Unlock({ onUnlock }) {
   );
 }
 
-function Dashboard({ expenses, ledger }) {
+function Dashboard({ expenses, ledger, onUpdate }) {
   const recent = expenses.slice(0, 5);
 
   return (
@@ -171,7 +173,7 @@ function Dashboard({ expenses, ledger }) {
           <h2>最近记录</h2>
           <Link href="/expenses" className="button small">全部</Link>
         </div>
-        <ExpenseList expenses={recent} />
+        <ExpenseList expenses={recent} onUpdate={onUpdate} />
       </section>
     </>
   );
@@ -235,31 +237,111 @@ function Expenses({ expenses, onUpdate, onDelete }) {
 }
 
 function ExpenseList({ expenses, onUpdate, onDelete }) {
+  const [editingId, setEditingId] = useState("");
+  const [editForm, setEditForm] = useState(null);
+
+  function startEdit(expense) {
+    setEditingId(expense.id);
+    setEditForm(expenseToEditableForm(expense));
+  }
+
+  function cancelEdit() {
+    setEditingId("");
+    setEditForm(null);
+  }
+
+  async function saveEdit(expense) {
+    if (!editForm?.item.trim() || !editForm.amount) return;
+    await onUpdate(applyExpenseEdit(expense, editForm));
+    cancelEdit();
+  }
+
   return (
     <div className="expense-list">
-      {expenses.map((expense) => (
-        <article className="expense-row" key={expense.id}>
-          <div>
-            <h3>{expense.item}</h3>
-            <p className="muted">{expense.date || "日期待补"} · {expense.note || "无备注"}</p>
-            <div className="tags">
-              <span className="tag">{expense.category}</span>
-              <span className={expense.status === "draft" ? "tag draft" : "tag"}>{expense.status === "draft" ? "待确认" : "已确认"}</span>
-              <span className={expense.payer === "them" ? "tag other" : "tag"}>{formatPayerLabel(expense.payer)}</span>
-              {expense.attachmentName && <span className="tag">有小票</span>}
+      {expenses.map((expense) => {
+        const isEditing = editingId === expense.id && editForm;
+
+        if (isEditing) {
+          return (
+            <article className="expense-row editing" key={expense.id}>
+              <div className="form-grid">
+                <label className="full">
+                  项目
+                  <input value={editForm.item} onChange={(event) => setEditForm({ ...editForm, item: event.target.value })} />
+                </label>
+                <label>
+                  类别
+                  <select value={editForm.category} onChange={(event) => setEditForm({ ...editForm, category: event.target.value })}>
+                    {categories.map((item) => <option key={item}>{item}</option>)}
+                  </select>
+                </label>
+                <label>
+                  日期
+                  <input type="date" value={editForm.date} onChange={(event) => setEditForm({ ...editForm, date: event.target.value })} />
+                </label>
+                <label>
+                  币种
+                  <select value={editForm.currency} onChange={(event) => setEditForm({ ...editForm, currency: event.target.value })}>
+                    <option value="CNY">CNY</option>
+                    <option value="AUD">AUD</option>
+                  </select>
+                </label>
+                <label>
+                  金额
+                  <input type="number" step="0.01" value={editForm.amount} onChange={(event) => setEditForm({ ...editForm, amount: event.target.value })} />
+                </label>
+                <label>
+                  付款方
+                  <select value={editForm.payer} onChange={(event) => setEditForm({ ...editForm, payer: event.target.value })}>
+                    <option value="us">{formatPayerLabel("us")}</option>
+                    <option value="them">{formatPayerLabel("them")}</option>
+                  </select>
+                </label>
+                <label>
+                  状态
+                  <select value={editForm.status} onChange={(event) => setEditForm({ ...editForm, status: event.target.value })}>
+                    <option value="confirmed">已确认</option>
+                    <option value="draft">待确认</option>
+                  </select>
+                </label>
+                <label className="full">
+                  备注
+                  <textarea value={editForm.note} onChange={(event) => setEditForm({ ...editForm, note: event.target.value })} />
+                </label>
+              </div>
+              <div className="row">
+                <button className="button small primary" type="button" onClick={() => saveEdit(expense)}>保存</button>
+                <button className="button small" type="button" onClick={cancelEdit}>取消</button>
+              </div>
+            </article>
+          );
+        }
+
+        return (
+          <article className="expense-row" key={expense.id}>
+            <div>
+              <h3>{expense.item}</h3>
+              <p className="muted">{expense.date || "日期待补"} · {expense.note || "无备注"}</p>
+              <div className="tags">
+                <span className="tag">{expense.category}</span>
+                <span className={expense.status === "draft" ? "tag draft" : "tag"}>{expense.status === "draft" ? "待确认" : "已确认"}</span>
+                <span className={expense.payer === "them" ? "tag other" : "tag"}>{formatPayerLabel(expense.payer)}</span>
+                {expense.attachmentName && <span className="tag">有小票</span>}
+              </div>
             </div>
-          </div>
-          <div className="stack">
-            <strong className="amount">{formatMoney(expense.currency, expense.amount)}</strong>
-            {onUpdate && expense.status === "draft" && (
-              <button className="button small primary" onClick={() => onUpdate({ ...expense, status: "confirmed" })}>确认</button>
-            )}
-            {onDelete && (
-              <button className="button small danger" onClick={() => onDelete(expense.id)}>删除</button>
-            )}
-          </div>
-        </article>
-      ))}
+            <div className="stack">
+              <strong className="amount">{formatMoney(expense.currency, expense.amount)}</strong>
+              {onUpdate && <button className="button small" onClick={() => startEdit(expense)}>编辑</button>}
+              {onUpdate && expense.status === "draft" && (
+                <button className="button small primary" onClick={() => onUpdate({ ...expense, status: "confirmed" })}>确认</button>
+              )}
+              {onDelete && (
+                <button className="button small danger" onClick={() => onDelete(expense.id)}>删除</button>
+              )}
+            </div>
+          </article>
+        );
+      })}
     </div>
   );
 }

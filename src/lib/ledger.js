@@ -119,6 +119,33 @@ export function parseBankMessage(message) {
   };
 }
 
+export function expenseToEditableForm(expense) {
+  return {
+    category: expense.category || "其他",
+    item: expense.item || "",
+    date: expense.date || "",
+    currency: expense.currency || "CNY",
+    amount: String(expense.amount || ""),
+    payer: expense.payer || "us",
+    status: expense.status || "confirmed",
+    note: expense.note || "",
+  };
+}
+
+export function applyExpenseEdit(expense, form) {
+  return {
+    ...expense,
+    category: form.category,
+    item: form.item,
+    date: form.date,
+    currency: form.currency,
+    amount: Number(form.amount || 0),
+    payer: form.payer,
+    status: form.status,
+    note: form.note,
+  };
+}
+
 export function formatMoney(currency, amount) {
   const value = Number(amount || 0).toLocaleString("zh-CN", {
     minimumFractionDigits: 2,

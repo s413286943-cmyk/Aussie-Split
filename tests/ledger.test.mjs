@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  applyExpenseEdit,
   calculateLedger,
+  expenseToEditableForm,
   parseBankMessage,
   seedExpenses,
 } from "../src/lib/ledger.js";
@@ -86,5 +88,24 @@ describe("travel split ledger", () => {
     assert.equal(formatSettlementDirection(120), "胡董还需给孙张");
     assert.equal(formatSettlementDirection(-80), "孙张还需给胡董");
     assert.equal(formatSettlementDirection(0), "两边已结清");
+  });
+
+  it("applies edits while preserving record identity", () => {
+    const original = seedExpenses[0];
+    const form = {
+      ...expenseToEditableForm(original),
+      item: "Oaks Melbourne updated",
+      amount: "3000.50",
+      payer: "them",
+      note: "改过备注",
+    };
+
+    assert.deepEqual(applyExpenseEdit(original, form), {
+      ...original,
+      item: "Oaks Melbourne updated",
+      amount: 3000.5,
+      payer: "them",
+      note: "改过备注",
+    });
   });
 });
