@@ -31,20 +31,27 @@ export default function TravelWorkspace({ view }) {
 
   useEffect(() => {
     const saved = localStorage.getItem(travelStorageKey);
+    let hasSavedContent = false;
     if (saved) {
       const parsed = JSON.parse(saved);
       setDays(parsed.days || initialTravelDays);
       setItems(parsed.items || initialTripItems);
       setStatus("显示上次保存的内容");
+      hasSavedContent = true;
     }
 
     fetchRemoteTravelData()
       .then((remote) => {
+        if (!remote) {
+          setStatus(hasSavedContent ? "显示上次保存的内容" : "本机已准备");
+          return;
+        }
+
         const merged = mergeTravelData(seed, remote);
         setDays(merged.days);
         setItems(merged.items);
         localStorage.setItem(travelStorageKey, JSON.stringify(merged));
-        setStatus(remote ? "已保存" : "本机已准备");
+        setStatus("已保存");
       })
       .catch(() => setStatus("现在先显示上次保存的内容"));
   }, []);

@@ -90,7 +90,7 @@ export default function TripLedgerApp({ view }) {
     <div className="app-shell">
       <header className="hero">
         <div>
-          <h1>Aussie Chill Split Bill</h1>
+          <h1>Aussie Chill 账本</h1>
           <p>
             2026.07.28-08.13，两对夫妻澳洲旅行账本。机票已单独 split，本账本只记录旅行中共同费用，按币种分别结算。
           </p>
