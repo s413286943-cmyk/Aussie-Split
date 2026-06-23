@@ -72,6 +72,16 @@ D7｜8月4日 周二｜新版大堡礁外礁一日游
     assert.equal(preview.added.some((entry) => entry.label.includes("Prawn Star Cairns")), false);
   });
 
+  it("matches imported bookings against real seed item ids", () => {
+    const preview = buildImportPreview(
+      { days: initialTravelDays, items: initialTripItems },
+      parseTravelMarkdown(markdown)
+    );
+
+    assert.ok(preview.updated.some((entry) => entry.id === "booking-reef-magic"));
+    assert.equal(preview.added.some((entry) => entry.label.includes("大堡礁外礁一日游")), false);
+  });
+
   it("merges imported guide changes while preserving manual status and link", () => {
     const current = {
       days: [{ id: "d7", title: "旧大堡礁", city: "凯恩斯", blocks: [], backupNote: "手写备选" }],
@@ -144,5 +154,49 @@ D7｜8月4日 周二｜新版大堡礁外礁一日游
     const merged = mergeImportedTravelData(current, imported);
 
     assert.equal(merged.items[0].link, "https://manual.example.com");
+  });
+
+  it("previews unchanged when import only differs in preserved manual item fields", () => {
+    const current = {
+      days: [],
+      items: [
+        {
+          id: "booking-reef-magic",
+          kind: "booking",
+          title: "大堡礁外礁一日游",
+          relatedDayId: "d7",
+          city: "凯恩斯",
+          status: "已订好",
+          amount: 0,
+          currency: "",
+          note: "确认午餐",
+          link: "https://manual.example.com",
+          sortOrder: 1,
+        },
+      ],
+    };
+    const imported = {
+      days: [],
+      items: [
+        {
+          id: "booking-reef-magic",
+          kind: "booking",
+          title: "大堡礁外礁一日游",
+          relatedDayId: "d7",
+          city: "凯恩斯",
+          status: "还没订",
+          amount: 0,
+          currency: "",
+          note: "确认午餐",
+          link: "https://imported.example.com",
+          sortOrder: 1,
+        },
+      ],
+    };
+
+    const preview = buildImportPreview(current, imported);
+
+    assert.ok(preview.unchanged.some((entry) => entry.id === "booking-reef-magic"));
+    assert.equal(preview.updated.some((entry) => entry.id === "booking-reef-magic"), false);
   });
 });

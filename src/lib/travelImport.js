@@ -22,6 +22,10 @@ const foodIdAliases = new Map([
   ["prawn-star-cairns", "food-prawn-star"],
 ]);
 
+const bookingIdAliases = new Map([
+  ["大堡礁外礁一日游", "booking-reef-magic"],
+]);
+
 export function parseTravelMarkdown(markdown) {
   const lines = markdown
     .replace(/\r\n/g, "\n")
@@ -138,7 +142,7 @@ function parseBookingItems(lines) {
     }
 
     items.push(
-      item(slug(`booking-${match[1]}`), "booking", match[1], relatedDayId, "", "还没订", noteLines.join(" "), items.length + 1)
+      item(bookingItemId(match[1]), "booking", match[1], relatedDayId, "", "还没订", noteLines.join(" "), items.length + 1)
     );
   }
 
@@ -174,8 +178,8 @@ function parseFoodItems(lines) {
 export function buildImportPreview(current, imported) {
   const preview = { added: [], updated: [], unchanged: [], unrecognized: [] };
 
-  compareEntries(preview, current.days || [], imported.days || [], (entry) => `${entry.id.toUpperCase()} ${entry.title}`);
-  compareEntries(preview, current.items || [], imported.items || [], (entry) => entry.title);
+  compareEntries(preview, current.days || [], imported.days || [], mergeDay, (entry) => `${entry.id.toUpperCase()} ${entry.title}`);
+  compareEntries(preview, current.items || [], imported.items || [], mergeItem, (entry) => entry.title);
 
   return preview;
 }
@@ -235,18 +239,23 @@ function mergeParsedDay(current = {}, imported) {
   };
 }
 
-function compareEntries(preview, currentEntries, importedEntries, labelFor) {
+function compareEntries(preview, currentEntries, importedEntries, mergeEntry, labelFor) {
   const currentById = new Map(currentEntries.map((entry) => [entry.id, entry]));
 
   for (const imported of importedEntries) {
     const current = currentById.get(imported.id);
-    const bucket = !current ? "added" : JSON.stringify(current) === JSON.stringify(imported) ? "unchanged" : "updated";
+    const merged = current ? mergeEntry(current, imported) : imported;
+    const bucket = !current ? "added" : JSON.stringify(current) === JSON.stringify(merged) ? "unchanged" : "updated";
     preview[bucket].push({ id: imported.id, label: labelFor(imported) });
   }
 }
 
 function item(id, kind, title, relatedDayId, city, status, note, sortOrder) {
   return { id, kind, title, relatedDayId, city, status, amount: 0, currency: "", note, link: "", sortOrder };
+}
+
+function bookingItemId(title) {
+  return bookingIdAliases.get(title) || slug(`booking-${title}`);
 }
 
 function foodItemId(title) {
