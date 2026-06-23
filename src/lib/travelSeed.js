@@ -259,13 +259,37 @@ export const initialTripItems = [
 
 function withDayDefaults(day) {
   const notes = dayDefaults(day.city);
+  const blocks = day.blocks.length ? day.blocks : fallbackBlocksFor(day);
 
   return {
     ...day,
     climateNote: notes.climateNote,
     clothingNote: notes.clothingNote,
     focus: day.focus || day.title,
+    blocks,
   };
+}
+
+function fallbackBlocksFor(day) {
+  if (day.id === "d0") {
+    return [
+      block("d0-departure", "全天", "上海 → 墨尔本", "出发", "旅行开始", "证件、充电线、薄外套随身"),
+    ];
+  }
+
+  if (day.id === "d13") {
+    return [
+      block("d13-choice", "全天", "蓝山 / 南海岸", "蓝山 / 南海岸（二选一）", "弹性日", "按临近天气决定，不急着锁死不可退项目"),
+    ];
+  }
+
+  if (day.id === "d16") {
+    return [
+      block("d16-return", "上午", "悉尼机场", "机场 + TRS退税", "返程", "退税物品和票据方便取用"),
+    ];
+  }
+
+  return [];
 }
 
 function dayDefaults(city) {
@@ -302,4 +326,8 @@ function cityForDayId(dayId) {
 
 function item(id, kind, title, relatedDayId, city, status, amount, currency, note, link, sortOrder) {
   return { id, kind, title, relatedDayId, city, status, amount, currency, note, link, sortOrder };
+}
+
+function block(id, period, place, activity, highlight, tip, photoSpot = "") {
+  return { id, period, place, activity, highlight, tip, photoSpot };
 }

@@ -3,7 +3,7 @@ const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export const travelSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_KEY);
 
-export const travelStorageKey = "aussie-chill-travel-v1";
+export const travelStorageKey = "aussie-chill-travel-v2";
 
 export function dayToRow(day) {
   return {

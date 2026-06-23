@@ -29,6 +29,16 @@ describe("travel workspace seed data", () => {
     assert.ok(d8.blocks.some((block) => block.photoSpot === "📍雨林海岸"));
   });
 
+  it("keeps text-only markdown days visible as day blocks", () => {
+    const d0 = initialTravelDays.find((day) => day.id === "d0");
+    const d13 = initialTravelDays.find((day) => day.id === "d13");
+    const d16 = initialTravelDays.find((day) => day.id === "d16");
+
+    assert.ok(d0.blocks.some((block) => block.activity.includes("出发")));
+    assert.ok(d13.blocks.some((block) => block.activity.includes("蓝山 / 南海岸")));
+    assert.ok(d16.blocks.some((block) => block.activity.includes("TRS退税")));
+  });
+
   it("seeds lodging, booking, budget, food, and activity list sections", () => {
     assert.deepEqual(listSections.map((section) => section.kind), [
       "lodging",

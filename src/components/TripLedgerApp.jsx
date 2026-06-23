@@ -102,6 +102,8 @@ export default function TripLedgerApp({ view }) {
         </div>
       </header>
 
+      <LedgerTabs view={view} />
+
       {view === "dashboard" && <Dashboard expenses={expenses} ledger={ledger} />}
       {view === "expenses" && (
         <Expenses expenses={expenses} onUpdate={updateExpense} onDelete={removeExpense} />
@@ -110,12 +112,23 @@ export default function TripLedgerApp({ view }) {
       {view === "settlement" && <Settlement ledger={ledger} />}
 
       <nav className="nav" aria-label="主导航">
-        <Link className={view === "dashboard" ? "active" : ""} href="/ledger">总览</Link>
-        <Link className={view === "expenses" ? "active" : ""} href="/ledger/expenses">明细</Link>
-        <Link className={view === "add" ? "active" : ""} href="/ledger/add">新增</Link>
-        <Link className={view === "settlement" ? "active" : ""} href="/ledger/settlement">结算</Link>
+        <Link href="/">今日</Link>
+        <Link href="/itinerary">行程</Link>
+        <Link href="/lists">清单</Link>
+        <Link className="active" href="/ledger">账本</Link>
       </nav>
     </div>
+  );
+}
+
+function LedgerTabs({ view }) {
+  return (
+    <nav className="section subnav" aria-label="账本导航">
+      <Link className={view === "dashboard" ? "active" : ""} href="/ledger">总览</Link>
+      <Link className={view === "expenses" ? "active" : ""} href="/ledger/expenses">明细</Link>
+      <Link className={view === "add" ? "active" : ""} href="/ledger/add">新增</Link>
+      <Link className={view === "settlement" ? "active" : ""} href="/ledger/settlement">结算</Link>
+    </nav>
   );
 }
 
@@ -169,7 +182,7 @@ function Dashboard({ expenses, ledger }) {
       <section className="section">
         <div className="section-head">
           <h2>最近记录</h2>
-          <Link href="/expenses" className="button small">全部</Link>
+          <Link href="/ledger/expenses" className="button small">全部</Link>
         </div>
         <ExpenseList expenses={recent} />
       </section>

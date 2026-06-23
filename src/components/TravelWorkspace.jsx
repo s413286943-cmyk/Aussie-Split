@@ -85,6 +85,18 @@ export default function TravelWorkspace({ view }) {
     await persist(nextDays, items, () => saveRemoteDay(day));
   }
 
+  async function moveBlock(fromDayId, block, toDayId) {
+    if (fromDayId === toDayId) return;
+
+    const nextDays = days.map((day) => {
+      if (day.id === fromDayId) return { ...day, blocks: day.blocks.filter((entry) => entry.id !== block.id) };
+      if (day.id === toDayId) return { ...day, blocks: [...day.blocks, block] };
+      return day;
+    });
+    const changedDays = nextDays.filter((day) => day.id === fromDayId || day.id === toDayId);
+    await persist(nextDays, items, () => Promise.all(changedDays.map((day) => saveRemoteDay(day))));
+  }
+
   async function updateItem(item) {
     const nextItems = items.map((entry) => (entry.id === item.id ? item : entry));
     await persist(days, nextItems, () => saveRemoteItem(item));
@@ -145,14 +157,14 @@ export default function TravelWorkspace({ view }) {
           setImportPreview(null);
         }} />
       )}
-      {view === "today" && <TodayView day={today} items={items} weather={weatherByDay[today?.id]} onChangeDay={updateDay} />}
-      {view === "itinerary" && <ItineraryView days={days} items={items} onChangeDay={updateDay} />}
-      {view === "lists" && <ListsView items={items} onChangeItem={updateItem} onAddItem={addItem} onDeleteItem={removeItem} />}
+      {view === "today" && <TodayView days={days} day={today} items={items} weather={weatherByDay[today?.id]} onChangeDay={updateDay} onMoveBlock={moveBlock} />}
+      {view === "itinerary" && <ItineraryView days={days} items={items} onChangeDay={updateDay} onMoveBlock={moveBlock} />}
+      {view === "lists" && <ListsView days={days} items={items} onChangeItem={updateItem} onAddItem={addItem} onDeleteItem={removeItem} />}
     </AppShell>
   );
 }
 
-function TodayView({ day, items, weather, onChangeDay }) {
+function TodayView({ days, day, items, weather, onChangeDay, onMoveBlock }) {
   if (!day) return null;
 
   const relatedItems = items.filter((item) => item.relatedDayId === day.id).slice(0, 6);
@@ -176,42 +188,52 @@ function TodayView({ day, items, weather, onChangeDay }) {
         </div>
         <p>{clothing}</p>
       </section>
-      <DayEditor day={day} onChange={onChangeDay} compact />
+      <DayEditor days={days} day={day} onChange={onChangeDay} onMoveBlock={onMoveBlock} compact />
       <RelatedItems items={relatedItems} />
     </>
   );
 }
 
-function ItineraryView({ days, items, onChangeDay }) {
+function ItineraryView({ days, items, onChangeDay, onMoveBlock }) {
+  const [selectedDayId, setSelectedDayId] = useState(pickToday(days)?.id || days[0]?.id || "");
+  const selectedDay = days.find((day) => day.id === selectedDayId) || days[0];
+  const relatedItems = selectedDay ? items.filter((item) => item.relatedDayId === selectedDay.id) : [];
+
   return (
-    <section className="section timeline">
-      {days.map((day) => (
-        <DayEditor
-          day={day}
-          key={day.id}
-          relatedItems={items.filter((item) => item.relatedDayId === day.id)}
-          onChange={onChangeDay}
-        />
-      ))}
-    </section>
+    <>
+      <DayIndex days={days} selectedDayId={selectedDay?.id} onSelect={setSelectedDayId} />
+      {selectedDay && (
+        <section className="section timeline">
+          <DayEditor
+            days={days}
+            day={selectedDay}
+            key={selectedDay.id}
+            relatedItems={relatedItems}
+            onChange={onChangeDay}
+            onMoveBlock={onMoveBlock}
+          />
+        </section>
+      )}
+    </>
   );
 }
 
-function ListsView({ items, onChangeItem, onAddItem, onDeleteItem }) {
+function ListsView({ days, items, onChangeItem, onAddItem, onDeleteItem }) {
   return (
     <>
+      <SectionIndex sections={listSections} />
       {listSections.map((section) => {
         const sectionItems = items.filter((item) => item.kind === section.kind);
 
         return (
-          <section className="section" key={section.kind}>
+          <section className="section" id={`section-${section.kind}`} key={section.kind}>
             <div className="section-head">
               <h2>{section.title}</h2>
               <button className="button small" type="button" onClick={() => onAddItem(section.kind)}>加一条</button>
             </div>
             <div className="planner-grid">
               {sectionItems.map((item) => (
-                <TripItemEditor item={item} key={item.id} onChange={onChangeItem} onDelete={() => onDeleteItem(item.id)} />
+                <TripItemEditor days={days} item={item} key={item.id} onChange={onChangeItem} onDelete={() => onDeleteItem(item.id)} />
               ))}
             </div>
           </section>
@@ -221,7 +243,54 @@ function ListsView({ items, onChangeItem, onAddItem, onDeleteItem }) {
   );
 }
 
-function DayEditor({ day, relatedItems = [], onChange, compact = false }) {
+function DayIndex({ days, selectedDayId, onSelect }) {
+  return (
+    <section className="section index-panel" aria-label="行程索引">
+      <div className="section-head">
+        <div>
+          <h2>选一天看</h2>
+          <span className="muted">先选 D 日，再改当天安排</span>
+        </div>
+        <label className="compact-select">
+          当前
+          <select value={selectedDayId || ""} onChange={(event) => onSelect(event.target.value)}>
+            {days.map((day) => (
+              <option key={day.id} value={day.id}>{day.id.toUpperCase()} · {day.title}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <div className="index-links">
+        {days.map((day) => (
+          <button className={day.id === selectedDayId ? "active" : ""} type="button" onClick={() => onSelect(day.id)} key={day.id}>
+            <strong>{day.id.toUpperCase()}</strong>
+            <span>{day.title}</span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SectionIndex({ sections }) {
+  return (
+    <section className="section index-panel" aria-label="清单索引">
+      <div className="section-head">
+        <h2>清单索引</h2>
+        <span className="muted">按类型看</span>
+      </div>
+      <div className="index-links">
+        {sections.map((section) => (
+          <a href={`#section-${section.kind}`} key={section.kind}>
+            {section.title}
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function DayEditor({ days, day, relatedItems = [], onChange, onMoveBlock, compact = false }) {
   function changeBlock(nextBlock) {
     onChange({ ...day, blocks: day.blocks.map((block) => (block.id === nextBlock.id ? nextBlock : block)) });
   }
@@ -250,7 +319,7 @@ function DayEditor({ day, relatedItems = [], onChange, compact = false }) {
   }
 
   return (
-    <article className="planner-card">
+    <article className="planner-card" id={day.id}>
       <div className="section-head">
         <div>
           <p className="eyebrow">{day.id.toUpperCase()} · {day.date} · {day.weekday}</p>
@@ -268,7 +337,15 @@ function DayEditor({ day, relatedItems = [], onChange, compact = false }) {
       </div>
       <div className={compact ? "day-blocks compact" : "day-blocks"}>
         {day.blocks.map((block) => (
-          <EditableBlock block={block} key={block.id} onChange={changeBlock} onDelete={() => deleteBlock(block.id)} />
+          <EditableBlock
+            days={days}
+            block={block}
+            currentDayId={day.id}
+            key={block.id}
+            onChange={changeBlock}
+            onMove={(toDayId) => onMoveBlock(day.id, block, toDayId)}
+            onDelete={() => deleteBlock(block.id)}
+          />
         ))}
       </div>
       {relatedItems.length > 0 && <RelatedItems items={relatedItems.slice(0, 4)} compact />}
@@ -276,10 +353,18 @@ function DayEditor({ day, relatedItems = [], onChange, compact = false }) {
   );
 }
 
-function EditableBlock({ block, onChange, onDelete }) {
+function EditableBlock({ days, block, currentDayId, onChange, onMove, onDelete }) {
   return (
     <article className="planner-card nested">
       <div className="form-grid">
+        <label>
+          放在哪天
+          <select value={currentDayId} onChange={(event) => onMove(event.target.value)}>
+            {days.map((day) => (
+              <option value={day.id} key={day.id}>{day.id.toUpperCase()} · {day.title}</option>
+            ))}
+          </select>
+        </label>
         <Field label="时间" value={block.period} onChange={(period) => onChange({ ...block, period })} />
         <Field label="地点" value={block.place} onChange={(place) => onChange({ ...block, place })} />
         <TextAreaField label="做什么" value={block.activity} onChange={(activity) => onChange({ ...block, activity })} />
@@ -292,12 +377,28 @@ function EditableBlock({ block, onChange, onDelete }) {
   );
 }
 
-function TripItemEditor({ item, onChange, onDelete }) {
+function TripItemEditor({ days, item, onChange, onDelete }) {
   return (
     <article className="planner-card">
       <div className="form-grid">
         <Field label="名字" value={item.title} onChange={(title) => onChange({ ...item, title })} />
-        <Field label="放在哪天" value={item.relatedDayId} onChange={(relatedDayId) => onChange({ ...item, relatedDayId })} />
+        <label>
+          分到哪里
+          <select value={item.kind} onChange={(event) => onChange({ ...item, kind: event.target.value })}>
+            {listSections.map((section) => (
+              <option value={section.kind} key={section.kind}>{section.title}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          放在哪天
+          <select value={item.relatedDayId || ""} onChange={(event) => onChange({ ...item, relatedDayId: event.target.value })}>
+            <option value="">不固定</option>
+            {days.map((day) => (
+              <option value={day.id} key={day.id}>{day.id.toUpperCase()} · {day.title}</option>
+            ))}
+          </select>
+        </label>
         <Field label="城市" value={item.city} onChange={(city) => onChange({ ...item, city })} />
         <label>
           现在怎样
