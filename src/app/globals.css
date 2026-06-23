@@ -207,15 +207,25 @@ button {
 .card,
 .expense-row,
 .form-card,
-.unlock-card {
+.unlock-card,
+.today-panel,
+.planner-card {
   border: 1px solid rgba(21, 32, 31, 0.09);
   border-radius: 18px;
   background: rgba(255, 250, 240, 0.9);
   box-shadow: 0 8px 28px rgba(45, 55, 50, 0.08);
 }
 
-.card {
+.card,
+.today-panel,
+.planner-card {
   padding: 16px;
+}
+
+.today-panel h2 {
+  margin: 6px 0 8px;
+  font-size: clamp(1.6rem, 5vw, 2.8rem);
+  line-height: 1.08;
 }
 
 .card h2,
@@ -242,7 +252,9 @@ button {
 
 .timeline,
 .day-blocks,
-.item-grid {
+.item-grid,
+.planner-grid,
+.import-preview {
   display: grid;
   gap: 10px;
 }
@@ -251,9 +263,26 @@ button {
   margin-top: 12px;
 }
 
-.day-card {
-  display: grid;
-  gap: 8px;
+.planner-card.nested {
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: none;
+}
+
+.planner-card .form-grid {
+  margin-bottom: 10px;
+}
+
+.related-items.compact {
+  margin-top: 12px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .expense-row {
