@@ -144,7 +144,7 @@ export const initialTripItems = [
   item("budget-regular-food", "budget", "普通餐饮", "", "全程", "到时再看", 30000, "CNY", "不含 Cafe Sydney；覆盖咖啡、brunch、pub、海鲜、夜市和补给。", "", 160),
   item("budget-cafe-sydney", "budget", "Cafe Sydney 告别晚餐", "d15", "悉尼", "还没订", 4000, "CNY", "按 A$800-850 左右估算，4 人合计，人均约 ¥1,000。", "", 170),
   item("budget-misc", "budget", "杂项", "", "全程", "到时再看", 4500, "CNY", "签证、保险、SIM 卡、洗衣、小费、杂费和应急小额支出。", "", 180),
-  item("budget-total", "budget", "当前较精确执行预算", "", "全程", "到时再看", 128035, "CNY", "4 人合计约 ¥128,035，人均约 ¥32,009。", "", 190),
+  item("budget-total", "budget", "总计", "", "全程", "到时再看", 128035, "CNY", "当前较精确执行预算；4 人合计约 ¥128,035，人均约 ¥32,009。", "", 190),
 
   item("activity-great-ocean-free", "activity", "大洋路免费观景点", "d4", "大洋路", "到时再看", 0, "AUD", "十二使徒岩、Loch Ard Gorge、Gibson Steps 多数免费；主要成本在租车和交通。", "", 210),
   item("activity-reef-magic", "activity", "Reef Magic 大堡礁外礁一日游", "d7", "凯恩斯", "还没订", 5400, "CNY", "参考 A$325/人或约 ¥1,350/人；含外礁平台、午餐、浮潜装备和基础观景项目。", "", 220),

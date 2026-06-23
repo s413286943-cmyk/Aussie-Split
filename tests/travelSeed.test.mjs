@@ -41,6 +41,14 @@ describe("travel workspace seed data", () => {
     }
   });
 
+  it("includes the supplied budget total row label", () => {
+    const budgetTitles = initialTripItems
+      .filter((item) => item.kind === "budget")
+      .map((item) => item.title);
+
+    assert.ok(budgetTitles.includes("总计"));
+  });
+
   it("uses only traveler-facing item statuses", () => {
     assert.deepEqual(tripItemStatuses, ["已订好", "还没订", "到时再看"]);
     assert.ok(initialTripItems.every((item) => tripItemStatuses.includes(item.status)));
