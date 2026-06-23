@@ -98,6 +98,31 @@ Each item can include:
 
 Travelers can add, edit, and delete items. Delete actions ask for confirmation.
 
+## Markdown Import
+
+Large guide revisions can be made by uploading a new Markdown file instead of changing every item by hand. Small day-to-day changes still happen directly in the website.
+
+User-facing behavior:
+
+- In "清单" or "行程", travelers can choose "导入新版攻略".
+- The uploaded file should follow roughly the same structure as the supplied Australia guide: D0-D16 daily sections, lodging, budget, booking list, and food map.
+- After upload, the site shows a preview of what will change before anything is saved.
+- The preview should use plain wording such as:
+  - 新增
+  - 会更新
+  - 保留不变
+  - 可能没识别
+- Travelers must confirm before the imported changes replace current trip content.
+- The import is for larger guide rewrites. Quick fixes such as changing one restaurant status or adding a short note should remain manual edits.
+
+Merge rules:
+
+- Match days by D-number first, then update that day's title, city, focus, lodging, notes, and time blocks from the Markdown.
+- Match list items by section and title when possible.
+- Preserve existing statuses such as 已订好, 还没订, 到时再看 when the Markdown does not clearly change them.
+- Preserve manual links and notes when the new Markdown has no replacement for those fields.
+- Items that cannot be confidently matched should appear under "可能没识别" for review instead of being silently discarded.
+
 ## Ledger View
 
 The existing split-bill feature remains, but copy changes to use couple names.

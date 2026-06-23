@@ -22,6 +22,8 @@ This is one cohesive feature because the travel guide, shared editing, weather, 
 - Create `tests/travelSeed.test.mjs`: verifies the supplied itinerary has been seeded as editable structured content.
 - Create `src/lib/travelStore.js`: load/save helpers for travel days and list items, with local fallback and Supabase REST.
 - Create `tests/travelStore.test.mjs`: verifies row mapping and local fallback helpers without making network calls.
+- Create `src/lib/travelImport.js`: parse a revised Markdown guide, build a traveler-facing change preview, and merge large guide updates while preserving manual statuses, links, and notes where the Markdown has no replacement.
+- Create `tests/travelImport.test.mjs`: verifies Markdown import parsing, diff preview, and conservative merge behavior.
 - Create `src/lib/weather.js`: forecast URL building, forecast availability logic, and traveler-facing clothing advice.
 - Create `tests/weather.test.mjs`: deterministic tests for forecast range and clothing advice.
 - Create `src/components/UnlockGate.jsx`: access-code gate shared by all pages.
@@ -703,7 +705,381 @@ git commit -m "Add travel workspace storage mapping"
 
 ---
 
-### Task 4: Weather Forecast Helpers
+### Task 4: Markdown Import Parser And Merge Preview
+
+**Files:**
+- Create: `src/lib/travelImport.js`
+- Create: `tests/travelImport.test.mjs`
+
+- [ ] **Step 1: Add Markdown import tests**
+
+Create `tests/travelImport.test.mjs`:
+
+```js
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+
+import {
+  buildImportPreview,
+  mergeImportedTravelData,
+  parseTravelMarkdown,
+} from "../src/lib/travelImport.js";
+
+describe("travel markdown import", () => {
+  const markdown = `
+# 新版攻略
+
+Day\t日期\t城市 / 区域\t核心安排\t住宿
+D7\t8/4 周二\t凯恩斯\t新版大堡礁安排\tSouthern Cross Atrium Apartments
+D8\t8/5 周三\t丹翠雨林\t新版丹翠雨林安排\tSouthern Cross Atrium Apartments
+
+D7｜8月4日 周二｜新版大堡礁外礁一日游
+今日定位
+天气好就出海，重点是外礁平台。
+时间段\t地点\t活动\t亮点\t贴士
+早上\t凯恩斯码头\t提前到码头换票\t不用赶\t带晕船药
+全天\tOuter Reef Pontoon\t浮潜和半潜艇\t看珊瑚和热带鱼\t防晒衣优先
+
+六、需要提前预订的项目
+1. 大堡礁外礁一日游
+* 使用日期：D7｜8/4
+* 当前预算参考：约 ¥1,400/人，4人约 ¥5,600。
+* 提前确认：
+    * 是否含午餐；
+    * 是否含半潜艇。
+
+七、美食地图
+优先级\t具体店 / 地点\t吃什么\t为什么值得标记\t放在哪天最顺
+⭐⭐⭐\tPrawn Star Cairns\tSeafood platter\t新版海鲜提醒\tD7 晚餐
+`;
+
+  it("parses days and list items from a revised markdown guide", () => {
+    const parsed = parseTravelMarkdown(markdown);
+
+    assert.equal(parsed.days.length, 2);
+    assert.equal(parsed.days[0].id, "d7");
+    assert.equal(parsed.days[0].title, "新版大堡礁外礁一日游");
+    assert.equal(parsed.days[0].blocks.length, 2);
+    assert.equal(parsed.items.some((item) => item.title.includes("大堡礁外礁一日游")), true);
+    assert.equal(parsed.items.some((item) => item.title.includes("Prawn Star Cairns")), true);
+  });
+
+  it("builds a traveler-facing preview before applying changes", () => {
+    const current = {
+      days: [{ id: "d7", title: "旧大堡礁", blocks: [] }],
+      items: [{ id: "food-prawn-star-cairns", kind: "food", title: "Prawn Star Cairns", status: "已订好", note: "旧备注" }],
+    };
+    const preview = buildImportPreview(current, parseTravelMarkdown(markdown));
+
+    assert.ok(preview.updated.some((entry) => entry.label.includes("D7")));
+    assert.ok(preview.updated.some((entry) => entry.label.includes("Prawn Star Cairns")));
+    assert.deepEqual(Object.keys(preview), ["added", "updated", "unchanged", "unrecognized"]);
+  });
+
+  it("merges imported guide changes while preserving manual status and link", () => {
+    const current = {
+      days: [{ id: "d7", title: "旧大堡礁", city: "凯恩斯", blocks: [], backupNote: "手写备选" }],
+      items: [
+        {
+          id: "food-prawn-star-cairns",
+          kind: "food",
+          title: "Prawn Star Cairns",
+          relatedDayId: "d7",
+          city: "凯恩斯",
+          status: "已订好",
+          amount: 0,
+          currency: "",
+          note: "旧备注",
+          link: "https://example.com",
+          sortOrder: 1,
+        },
+      ],
+    };
+
+    const merged = mergeImportedTravelData(current, parseTravelMarkdown(markdown));
+    const d7 = merged.days.find((day) => day.id === "d7");
+    const prawnStar = merged.items.find((item) => item.title === "Prawn Star Cairns");
+
+    assert.equal(d7.title, "新版大堡礁外礁一日游");
+    assert.equal(d7.backupNote, "手写备选");
+    assert.equal(prawnStar.status, "已订好");
+    assert.equal(prawnStar.link, "https://example.com");
+    assert.match(prawnStar.note, /新版海鲜提醒/);
+  });
+});
+```
+
+- [ ] **Step 2: Run test to verify it fails**
+
+Run:
+
+```bash
+npm test
+```
+
+Expected: FAIL because `src/lib/travelImport.js` does not exist.
+
+- [ ] **Step 3: Implement Markdown parsing helpers**
+
+Create `src/lib/travelImport.js`:
+
+```js
+const weekdayByDate = new Map([
+  ["2026-07-28", "周二"],
+  ["2026-07-29", "周三"],
+  ["2026-07-30", "周四"],
+  ["2026-07-31", "周五"],
+  ["2026-08-01", "周六"],
+  ["2026-08-02", "周日"],
+  ["2026-08-03", "周一"],
+  ["2026-08-04", "周二"],
+  ["2026-08-05", "周三"],
+  ["2026-08-06", "周四"],
+  ["2026-08-07", "周五"],
+  ["2026-08-08", "周六"],
+  ["2026-08-09", "周日"],
+  ["2026-08-10", "周一"],
+  ["2026-08-11", "周二"],
+  ["2026-08-12", "周三"],
+  ["2026-08-13", "周四"],
+]);
+
+export function parseTravelMarkdown(markdown) {
+  const lines = markdown.replace(/\r\n/g, "\n").split("\n").map((line) => line.trim()).filter(Boolean);
+  return {
+    days: parseDays(lines),
+    items: [...parseBookingItems(lines), ...parseFoodItems(lines)],
+  };
+}
+
+function parseDays(lines) {
+  const overview = parseOverviewDays(lines);
+  const details = parseDailyDetails(lines);
+  const byId = new Map(overview.map((day) => [day.id, day]));
+
+  for (const detail of details) {
+    byId.set(detail.id, { ...(byId.get(detail.id) || {}), ...detail });
+  }
+
+  return [...byId.values()].sort((a, b) => a.dayIndex - b.dayIndex);
+}
+
+function parseOverviewDays(lines) {
+  return lines
+    .filter((line) => /^D\d+\t/.test(line))
+    .map((line) => {
+      const [dayLabel, dateText, city, focus, lodging] = line.split("\t");
+      const dayIndex = Number(dayLabel.slice(1));
+      const date = dateFromDayIndex(dayIndex);
+      return {
+        id: `d${dayIndex}`,
+        dayIndex,
+        date,
+        weekday: weekdayByDate.get(date) || "",
+        city: city || "",
+        title: focus || city || `D${dayIndex}`,
+        focus: focus || "",
+        lodging: lodging || "",
+        climateNote: "",
+        clothingNote: "",
+        backupNote: "",
+        blocks: [],
+      };
+    });
+}
+```
+
+- [ ] **Step 4: Add detail, booking, food, preview, and merge helpers**
+
+Append to `src/lib/travelImport.js`:
+
+```js
+function parseDailyDetails(lines) {
+  const days = [];
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const match = lines[index].match(/^D(\d+)｜.+?｜(.+)$/);
+    if (!match) continue;
+
+    const dayIndex = Number(match[1]);
+    const id = `d${dayIndex}`;
+    const blocks = [];
+    let focus = "";
+
+    for (let cursor = index + 1; cursor < lines.length && !/^D\d+｜/.test(lines[cursor]); cursor += 1) {
+      if (lines[cursor] === "今日定位") {
+        focus = lines[cursor + 1] || "";
+      }
+      if (lines[cursor].startsWith("时间段\t")) {
+        for (let row = cursor + 1; row < lines.length && !isSectionBoundary(lines[row]); row += 1) {
+          const columns = lines[row].split("\t");
+          if (columns.length < 3) break;
+          const [period, place, activity, highlight = "", tip = ""] = columns;
+          blocks.push({ id: `${id}-import-${blocks.length + 1}`, period, place, activity, highlight, tip });
+        }
+      }
+    }
+
+    days.push({
+      id,
+      dayIndex,
+      date: dateFromDayIndex(dayIndex),
+      weekday: weekdayByDate.get(dateFromDayIndex(dayIndex)) || "",
+      city: "",
+      title: match[2],
+      focus,
+      blocks,
+    });
+  }
+
+  return days;
+}
+
+function parseBookingItems(lines) {
+  const items = [];
+  let inBookings = false;
+
+  for (let index = 0; index < lines.length; index += 1) {
+    if (lines[index].includes("需要提前预订的项目")) inBookings = true;
+    if (inBookings && lines[index].includes("七、美食地图")) break;
+    const match = inBookings ? lines[index].match(/^\d+\.\s+(.+)$/) : null;
+    if (!match) continue;
+
+    const noteLines = [];
+    let relatedDayId = "";
+    for (let cursor = index + 1; cursor < lines.length && !/^\d+\.\s+/.test(lines[cursor]); cursor += 1) {
+      if (lines[cursor].includes("使用日期：")) {
+        const dayMatch = lines[cursor].match(/D(\d+)/);
+        if (dayMatch) relatedDayId = `d${Number(dayMatch[1])}`;
+      }
+      if (lines[cursor].startsWith("⸻") || lines[cursor].includes("七、美食地图")) break;
+      noteLines.push(lines[cursor].replace(/^\*\s*/, "").trim());
+    }
+
+    items.push(item(slug(`booking-${match[1]}`), "booking", match[1], relatedDayId, "", "还没订", noteLines.join(" "), items.length + 1));
+  }
+
+  return items;
+}
+
+function parseFoodItems(lines) {
+  const start = lines.findIndex((line) => line.includes("具体店 / 地点"));
+  if (start < 0) return [];
+
+  return lines.slice(start + 1)
+    .filter((line) => line.includes("\t"))
+    .map((line, index) => {
+      const [, title, food, why, bestDay] = line.split("\t");
+      return item(slug(`food-${title}`), "food", title, dayIdFromText(bestDay), "", "到时再看", `${food}。${why}。${bestDay}`, index + 1);
+    });
+}
+
+export function buildImportPreview(current, imported) {
+  const preview = { added: [], updated: [], unchanged: [], unrecognized: [] };
+  compareEntries(preview, "D", current.days, imported.days, (entry) => `${entry.id.toUpperCase()} ${entry.title}`);
+  compareEntries(preview, "", current.items, imported.items, (entry) => entry.title);
+  return preview;
+}
+
+export function mergeImportedTravelData(current, imported) {
+  return {
+    days: mergeById(current.days, imported.days, mergeDay),
+    items: mergeById(current.items, imported.items, mergeItem),
+  };
+}
+
+function mergeById(currentEntries, importedEntries, mergeEntry) {
+  const byId = new Map(currentEntries.map((entry) => [entry.id, entry]));
+  for (const imported of importedEntries) {
+    byId.set(imported.id, byId.has(imported.id) ? mergeEntry(byId.get(imported.id), imported) : imported);
+  }
+  return [...byId.values()];
+}
+
+function mergeDay(current, imported) {
+  return {
+    ...current,
+    ...imported,
+    backupNote: imported.backupNote || current.backupNote || "",
+    blocks: imported.blocks?.length ? imported.blocks : current.blocks,
+  };
+}
+
+function mergeItem(current, imported) {
+  return {
+    ...current,
+    ...imported,
+    status: current.status || imported.status,
+    link: imported.link || current.link || "",
+    note: imported.note || current.note || "",
+  };
+}
+```
+
+- [ ] **Step 5: Add utility helpers**
+
+Append to `src/lib/travelImport.js`:
+
+```js
+function compareEntries(preview, prefix, currentEntries, importedEntries, labelFor) {
+  const currentById = new Map(currentEntries.map((entry) => [entry.id, entry]));
+  for (const imported of importedEntries) {
+    const current = currentById.get(imported.id);
+    const bucket = !current ? "added" : JSON.stringify(current) === JSON.stringify(imported) ? "unchanged" : "updated";
+    preview[bucket].push({ id: imported.id, label: labelFor(imported) });
+  }
+}
+
+function item(id, kind, title, relatedDayId, city, status, note, sortOrder) {
+  return { id, kind, title, relatedDayId, city, status, amount: 0, currency: "", note, link: "", sortOrder };
+}
+
+function isSectionBoundary(line) {
+  return /^D\d+｜/.test(line) || line.includes("预算总表") || line.includes("需要提前预订") || line.includes("美食地图") || line.startsWith("⸻");
+}
+
+function dateFromDayIndex(dayIndex) {
+  const start = new Date("2026-07-28T00:00:00Z");
+  start.setUTCDate(start.getUTCDate() + dayIndex);
+  return start.toISOString().slice(0, 10);
+}
+
+function dayIdFromText(text = "") {
+  const match = text.match(/D(\d+)/);
+  return match ? `d${Number(match[1])}` : "";
+}
+
+function slug(value) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/gi, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+```
+
+- [ ] **Step 6: Run tests**
+
+Run:
+
+```bash
+npm test
+```
+
+Expected: PASS.
+
+- [ ] **Step 7: Commit**
+
+Run:
+
+```bash
+git add src/lib/travelImport.js tests/travelImport.test.mjs
+git commit -m "Add markdown travel import helpers"
+```
+
+---
+
+### Task 5: Weather Forecast Helpers
 
 **Files:**
 - Create: `src/lib/weather.js`
@@ -868,7 +1244,7 @@ git commit -m "Add travel weather helpers"
 
 ---
 
-### Task 5: App Shell, Access Gate, And Routes
+### Task 6: App Shell, Access Gate, And Routes
 
 **Files:**
 - Create: `src/components/UnlockGate.jsx`
@@ -1151,7 +1527,7 @@ git commit -m "Add travel workspace shell"
 
 ---
 
-### Task 6: Editable Travel Workspace UI
+### Task 7: Editable Travel Workspace UI
 
 **Files:**
 - Modify: `src/components/TravelWorkspace.jsx`
@@ -1486,7 +1862,7 @@ git commit -m "Build editable travel workspace views"
 
 ---
 
-### Task 7: Ledger Workspace Copy Update
+### Task 8: Ledger Workspace Copy Update
 
 **Files:**
 - Modify: `src/components/LedgerWorkspace.jsx`
@@ -1572,7 +1948,7 @@ git commit -m "Use couple names in ledger"
 
 ---
 
-### Task 8: README And Supabase Setup Copy
+### Task 9: README And Supabase Setup Copy
 
 **Files:**
 - Modify: `README.md`
@@ -1660,7 +2036,7 @@ git commit -m "Document travel workspace setup"
 
 ---
 
-### Task 9: Browser Verification
+### Task 10: Browser Verification
 
 **Files:**
 - No source edits unless verification finds a bug.
@@ -1730,7 +2106,7 @@ If no fixes were needed, do not create an empty commit.
 
 ---
 
-### Task 10: Final Full Verification
+### Task 11: Final Full Verification
 
 **Files:**
 - No source edits unless verification finds a bug.
