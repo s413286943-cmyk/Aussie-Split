@@ -57,5 +57,36 @@ values
   ('tour-whale', '活动', 'Captain Cook Whale Watching', '2026-08-11', 'AUD', 340.20, 'us', 'confirmed', '已付款，含 fuel surcharge / card surcharge')
 on conflict (id) do nothing;
 
+create table if not exists public.travel_days (
+  id text primary key,
+  day_index integer not null unique,
+  date date not null,
+  weekday text not null,
+  city text not null,
+  title text not null,
+  focus text not null default '',
+  lodging text not null default '',
+  climate_note text not null default '',
+  clothing_note text not null default '',
+  backup_note text not null default '',
+  blocks jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.trip_items (
+  id text primary key,
+  kind text not null check (kind in ('lodging', 'booking', 'budget', 'food', 'activity')),
+  title text not null,
+  related_day_id text not null default '',
+  city text not null default '',
+  status text not null check (status in ('已订好', '还没订', '到时再看')),
+  amount numeric(12, 2) not null default 0,
+  currency text not null default '',
+  note text not null default '',
+  link text not null default '',
+  sort_order integer not null default 0,
+  updated_at timestamptz not null default now()
+);
+
 -- Create a private Storage bucket named "receipts" in the Supabase dashboard.
 -- For this quick shared-link v1, use the Vercel URL and shared access code as the practical access boundary.
