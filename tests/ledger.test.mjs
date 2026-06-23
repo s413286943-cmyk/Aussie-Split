@@ -6,6 +6,11 @@ import {
   parseBankMessage,
   seedExpenses,
 } from "../src/lib/ledger.js";
+import {
+  coupleName,
+  formatPayerLabel,
+  formatSettlementDirection,
+} from "../src/lib/couples.js";
 
 describe("travel split ledger", () => {
   it("seeds the 10 non-flight prepaid expenses", () => {
@@ -68,5 +73,18 @@ describe("travel split ledger", () => {
 
     assert.equal(draft.category, "dining");
     assert.equal(draft.item.startsWith("/"), false);
+  });
+
+  it("uses traveler-facing couple names", () => {
+    assert.equal(coupleName("us"), "孙张");
+    assert.equal(coupleName("them"), "胡董");
+    assert.equal(formatPayerLabel("us"), "孙张付款");
+    assert.equal(formatPayerLabel("them"), "胡董付款");
+  });
+
+  it("formats settlement direction with couple names", () => {
+    assert.equal(formatSettlementDirection(120), "胡董还需给孙张");
+    assert.equal(formatSettlementDirection(-80), "孙张还需给胡董");
+    assert.equal(formatSettlementDirection(0), "两边已结清");
   });
 });

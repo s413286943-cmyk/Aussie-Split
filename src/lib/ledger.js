@@ -1,7 +1,9 @@
-export const members = [
-  { id: "us", name: "我方夫妻" },
-  { id: "them", name: "另一对夫妻" },
-];
+import { couples } from "./couples.js";
+
+export const members = couples.map((couple) => ({
+  id: couple.id,
+  name: couple.shortName,
+}));
 
 export const categories = [
   "酒店",
