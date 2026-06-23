@@ -39,8 +39,8 @@ on conflict (id) do nothing;
 
 insert into public.members (id, trip_id, name)
 values
-  ('us', 'aussie-chill-2026', '我方夫妻'),
-  ('them', 'aussie-chill-2026', '另一对夫妻')
+  ('us', 'aussie-chill-2026', '孙张'),
+  ('them', 'aussie-chill-2026', '胡董')
 on conflict (id) do nothing;
 
 insert into public.expenses (id, category, item, date, currency, amount, payer, status, note)
