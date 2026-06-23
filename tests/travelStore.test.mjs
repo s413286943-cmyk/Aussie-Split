@@ -62,4 +62,61 @@ describe("travel store mapping", () => {
       items: seed.items,
     });
   });
+
+  it("replaces one remote day while preserving other seed days", () => {
+    const seed = {
+      days: [
+        { id: "d1", dayIndex: 1, title: "seed day 1" },
+        { id: "d2", dayIndex: 2, title: "seed day 2" },
+      ],
+      items: [],
+    };
+
+    assert.deepEqual(mergeTravelData(seed, { days: [{ id: "d2", dayIndex: 2, title: "remote day 2" }] }), {
+      days: [
+        { id: "d1", dayIndex: 1, title: "seed day 1" },
+        { id: "d2", dayIndex: 2, title: "remote day 2" },
+      ],
+      items: [],
+    });
+  });
+
+  it("replaces one remote item while preserving other seed items", () => {
+    const seed = {
+      days: [],
+      items: [
+        { id: "lodging", sortOrder: 10, title: "seed lodging" },
+        { id: "food", sortOrder: 20, title: "seed food" },
+      ],
+    };
+
+    assert.deepEqual(mergeTravelData(seed, { items: [{ id: "food", sortOrder: 20, title: "remote food" }] }), {
+      days: [],
+      items: [
+        { id: "lodging", sortOrder: 10, title: "seed lodging" },
+        { id: "food", sortOrder: 20, title: "remote food" },
+      ],
+    });
+  });
+
+  it("appends remote-only rows", () => {
+    const seed = {
+      days: [{ id: "d1", dayIndex: 1, title: "seed day 1" }],
+      items: [{ id: "lodging", sortOrder: 10, title: "seed lodging" }],
+    };
+
+    assert.deepEqual(mergeTravelData(seed, {
+      days: [{ id: "d99", dayIndex: 99, title: "remote day" }],
+      items: [{ id: "remote-food", sortOrder: 99, title: "remote food" }],
+    }), {
+      days: [
+        { id: "d1", dayIndex: 1, title: "seed day 1" },
+        { id: "d99", dayIndex: 99, title: "remote day" },
+      ],
+      items: [
+        { id: "lodging", sortOrder: 10, title: "seed lodging" },
+        { id: "remote-food", sortOrder: 99, title: "remote food" },
+      ],
+    });
+  });
 });

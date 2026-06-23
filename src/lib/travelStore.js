@@ -73,9 +73,32 @@ export function itemFromRow(row) {
 
 export function mergeTravelData(seed, remote) {
   return {
-    days: remote?.days?.length ? remote.days : seed.days,
-    items: remote?.items?.length ? remote.items : seed.items,
+    days: mergeRows(seed.days, remote?.days, "dayIndex"),
+    items: mergeRows(seed.items, remote?.items, "sortOrder"),
   };
+}
+
+function mergeRows(seedRows, remoteRows, sortKey) {
+  if (!remoteRows?.length) return seedRows;
+
+  const mergedById = new Map(seedRows.map((row) => [row.id, row]));
+  for (const row of remoteRows) {
+    mergedById.set(row.id, row);
+  }
+
+  return Array.from(mergedById.values()).sort((a, b) => compareOptionalNumber(a, b, sortKey));
+}
+
+function compareOptionalNumber(a, b, key) {
+  const aValue = Number(a[key]);
+  const bValue = Number(b[key]);
+  const aHasValue = Number.isFinite(aValue);
+  const bHasValue = Number.isFinite(bValue);
+
+  if (aHasValue && bHasValue) return aValue - bValue;
+  if (aHasValue) return -1;
+  if (bHasValue) return 1;
+  return 0;
 }
 
 export async function fetchRemoteTravelData() {
