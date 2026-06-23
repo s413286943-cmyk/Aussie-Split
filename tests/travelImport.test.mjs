@@ -82,6 +82,21 @@ D7｜8月4日 周二｜新版大堡礁外礁一日游
     assert.equal(preview.added.some((entry) => entry.label.includes("大堡礁外礁一日游")), false);
   });
 
+  it("keeps seeded booking metadata while applying imported guide text", () => {
+    const current = { days: initialTravelDays, items: initialTripItems };
+    const original = initialTripItems.find((item) => item.id === "booking-reef-magic");
+
+    const merged = mergeImportedTravelData(current, parseTravelMarkdown(markdown));
+    const reefMagic = merged.items.find((item) => item.id === "booking-reef-magic");
+
+    assert.equal(reefMagic.city, "凯恩斯");
+    assert.equal(reefMagic.amount, 5400);
+    assert.equal(reefMagic.currency, "CNY");
+    assert.equal(reefMagic.sortOrder, original.sortOrder);
+    assert.equal(reefMagic.title, "大堡礁外礁一日游");
+    assert.match(reefMagic.note, /当前预算参考/);
+  });
+
   it("merges imported guide changes while preserving manual status and link", () => {
     const current = {
       days: [{ id: "d7", title: "旧大堡礁", city: "凯恩斯", blocks: [], backupNote: "手写备选" }],
@@ -198,5 +213,18 @@ D7｜8月4日 周二｜新版大堡礁外礁一日游
 
     assert.ok(preview.unchanged.some((entry) => entry.id === "booking-reef-magic"));
     assert.equal(preview.updated.some((entry) => entry.id === "booking-reef-magic"), false);
+  });
+
+  it("flags unmatched similar imported items as unrecognized instead of added", () => {
+    const variantMarkdown = markdown.replace("1. 大堡礁外礁一日游", "1. Reef Magic 大堡礁外礁一日游");
+    const imported = parseTravelMarkdown(variantMarkdown);
+    const current = { days: initialTravelDays, items: initialTripItems };
+
+    const preview = buildImportPreview(current, imported);
+    const merged = mergeImportedTravelData(current, imported);
+
+    assert.ok(preview.unrecognized.some((entry) => entry.label.includes("Reef Magic 大堡礁外礁一日游")));
+    assert.equal(preview.added.some((entry) => entry.label.includes("Reef Magic 大堡礁外礁一日游")), false);
+    assert.equal(merged.items.some((item) => item.kind === "booking" && item.title === "Reef Magic 大堡礁外礁一日游"), false);
   });
 });

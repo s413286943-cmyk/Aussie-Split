@@ -179,15 +179,21 @@ export function buildImportPreview(current, imported) {
   const preview = { added: [], updated: [], unchanged: [], unrecognized: [] };
 
   compareEntries(preview, current.days || [], imported.days || [], mergeDay, (entry) => `${entry.id.toUpperCase()} ${entry.title}`);
-  compareEntries(preview, current.items || [], imported.items || [], mergeItem, (entry) => entry.title);
+  compareEntries(preview, current.items || [], imported.items || [], mergeItem, (entry) => entry.title, isUnrecognizedImportedItem);
 
   return preview;
 }
 
 export function mergeImportedTravelData(current, imported) {
+  const currentItems = current.items || [];
+
   return {
     days: mergeById(current.days || [], imported.days || [], mergeDay),
-    items: mergeById(current.items || [], imported.items || [], mergeItem),
+    items: mergeById(
+      currentItems,
+      (imported.items || []).filter((entry) => !isUnrecognizedImportedItem(entry, currentItems)),
+      mergeItem
+    ),
   };
 }
 
@@ -219,9 +225,13 @@ function mergeItem(current, imported) {
   return {
     ...current,
     ...imported,
+    city: current.city || imported.city || "",
     status: current.status || imported.status,
+    amount: current.amount ?? imported.amount ?? 0,
+    currency: current.currency || imported.currency || "",
     link: current.link || imported.link || "",
     note: imported.note || current.note || "",
+    sortOrder: current.sortOrder ?? imported.sortOrder ?? 0,
   };
 }
 
@@ -239,15 +249,44 @@ function mergeParsedDay(current = {}, imported) {
   };
 }
 
-function compareEntries(preview, currentEntries, importedEntries, mergeEntry, labelFor) {
+function compareEntries(preview, currentEntries, importedEntries, mergeEntry, labelFor, unrecognizedFor = null) {
   const currentById = new Map(currentEntries.map((entry) => [entry.id, entry]));
 
   for (const imported of importedEntries) {
     const current = currentById.get(imported.id);
     const merged = current ? mergeEntry(current, imported) : imported;
-    const bucket = !current ? "added" : JSON.stringify(current) === JSON.stringify(merged) ? "unchanged" : "updated";
+    const bucket = bucketForImport(current, imported, merged, currentEntries, unrecognizedFor);
     preview[bucket].push({ id: imported.id, label: labelFor(imported) });
   }
+}
+
+function bucketForImport(current, imported, merged, currentEntries, unrecognizedFor) {
+  if (current) return JSON.stringify(current) === JSON.stringify(merged) ? "unchanged" : "updated";
+  return unrecognizedFor?.(imported, currentEntries) ? "unrecognized" : "added";
+}
+
+function isUnrecognizedImportedItem(imported, currentItems) {
+  if (!["booking", "food"].includes(imported.kind)) return false;
+  if (currentItems.some((item) => item.id === imported.id)) return false;
+
+  return currentItems
+    .filter((item) => item.kind === imported.kind)
+    .some((item) => hasSimilarTitle(imported.title, item.title));
+}
+
+function hasSimilarTitle(left, right) {
+  const normalizedLeft = normalizeTitle(left);
+  const normalizedRight = normalizeTitle(right);
+
+  if (normalizedLeft.length < 4 || normalizedRight.length < 4) return false;
+  return normalizedLeft.includes(normalizedRight) || normalizedRight.includes(normalizedLeft);
+}
+
+function normalizeTitle(value) {
+  return String(value)
+    .toLowerCase()
+    .replace(/^\d+\.\s*/, "")
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/gi, "");
 }
 
 function item(id, kind, title, relatedDayId, city, status, note, sortOrder) {
