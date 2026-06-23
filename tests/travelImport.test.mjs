@@ -6,6 +6,10 @@ import {
   mergeImportedTravelData,
   parseTravelMarkdown,
 } from "../src/lib/travelImport.js";
+import {
+  initialTravelDays,
+  initialTripItems,
+} from "../src/lib/travelSeed.js";
 
 describe("travel markdown import", () => {
   const markdown = `
@@ -49,7 +53,7 @@ D7｜8月4日 周二｜新版大堡礁外礁一日游
   it("builds a traveler-facing preview before applying changes", () => {
     const current = {
       days: [{ id: "d7", title: "旧大堡礁", blocks: [] }],
-      items: [{ id: "food-prawn-star-cairns", kind: "food", title: "Prawn Star Cairns", status: "已订好", note: "旧备注" }],
+      items: [{ id: "food-prawn-star", kind: "food", title: "Prawn Star Cairns", status: "已订好", note: "旧备注" }],
     };
     const preview = buildImportPreview(current, parseTravelMarkdown(markdown));
 
@@ -58,12 +62,22 @@ D7｜8月4日 周二｜新版大堡礁外礁一日游
     assert.deepEqual(Object.keys(preview), ["added", "updated", "unchanged", "unrecognized"]);
   });
 
+  it("matches imported food against real seed item ids", () => {
+    const preview = buildImportPreview(
+      { days: initialTravelDays, items: initialTripItems },
+      parseTravelMarkdown(markdown)
+    );
+
+    assert.ok(preview.updated.some((entry) => entry.id === "food-prawn-star"));
+    assert.equal(preview.added.some((entry) => entry.label.includes("Prawn Star Cairns")), false);
+  });
+
   it("merges imported guide changes while preserving manual status and link", () => {
     const current = {
       days: [{ id: "d7", title: "旧大堡礁", city: "凯恩斯", blocks: [], backupNote: "手写备选" }],
       items: [
         {
-          id: "food-prawn-star-cairns",
+          id: "food-prawn-star",
           kind: "food",
           title: "Prawn Star Cairns",
           relatedDayId: "d7",
@@ -87,5 +101,48 @@ D7｜8月4日 周二｜新版大堡礁外礁一日游
     assert.equal(prawnStar.status, "已订好");
     assert.equal(prawnStar.link, "https://example.com");
     assert.match(prawnStar.note, /新版海鲜提醒/);
+  });
+
+  it("keeps a manual current link when imported items include a link", () => {
+    const current = {
+      days: [],
+      items: [
+        {
+          id: "food-prawn-star",
+          kind: "food",
+          title: "Prawn Star Cairns",
+          relatedDayId: "d7",
+          city: "凯恩斯",
+          status: "到时再看",
+          amount: 0,
+          currency: "",
+          note: "旧备注",
+          link: "https://manual.example.com",
+          sortOrder: 1,
+        },
+      ],
+    };
+    const imported = {
+      days: [],
+      items: [
+        {
+          id: "food-prawn-star",
+          kind: "food",
+          title: "Prawn Star Cairns",
+          relatedDayId: "d7",
+          city: "凯恩斯",
+          status: "到时再看",
+          amount: 0,
+          currency: "",
+          note: "新备注",
+          link: "https://imported.example.com",
+          sortOrder: 1,
+        },
+      ],
+    };
+
+    const merged = mergeImportedTravelData(current, imported);
+
+    assert.equal(merged.items[0].link, "https://manual.example.com");
   });
 });

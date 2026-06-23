@@ -18,6 +18,10 @@ const weekdayByDate = new Map([
   ["2026-08-13", "周四"],
 ]);
 
+const foodIdAliases = new Map([
+  ["prawn-star-cairns", "food-prawn-star"],
+]);
+
 export function parseTravelMarkdown(markdown) {
   const lines = markdown
     .replace(/\r\n/g, "\n")
@@ -152,7 +156,7 @@ function parseFoodItems(lines) {
     const [, title, food, why, bestDay] = lines[index].split("\t");
     items.push(
       item(
-        slug(`food-${title}`),
+        foodItemId(title),
         "food",
         title,
         dayIdFromText(bestDay),
@@ -212,7 +216,7 @@ function mergeItem(current, imported) {
     ...current,
     ...imported,
     status: current.status || imported.status,
-    link: imported.link || current.link || "",
+    link: current.link || imported.link || "",
     note: imported.note || current.note || "",
   };
 }
@@ -243,6 +247,11 @@ function compareEntries(preview, currentEntries, importedEntries, labelFor) {
 
 function item(id, kind, title, relatedDayId, city, status, note, sortOrder) {
   return { id, kind, title, relatedDayId, city, status, amount: 0, currency: "", note, link: "", sortOrder };
+}
+
+function foodItemId(title) {
+  const titleSlug = slug(title);
+  return foodIdAliases.get(titleSlug) || `food-${titleSlug}`;
 }
 
 function isSectionBoundary(line) {
