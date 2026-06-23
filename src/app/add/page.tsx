@@ -1,5 +1,5 @@
-import TripLedgerApp from "@/components/TripLedgerApp";
+import { redirect } from "next/navigation";
 
 export default function AddPage() {
-  return <TripLedgerApp view="add" />;
+  redirect("/ledger/add");
 }

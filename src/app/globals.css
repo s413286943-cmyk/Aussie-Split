@@ -89,6 +89,15 @@ button {
   line-height: 1.65;
 }
 
+.eyebrow {
+  margin-bottom: 6px;
+  color: var(--accent-strong);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
 .hero-actions,
 .row,
 .filters,
@@ -189,7 +198,8 @@ button {
 }
 
 .summary-grid,
-.settlement-grid {
+.settlement-grid,
+.item-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -208,6 +218,15 @@ button {
   padding: 16px;
 }
 
+.card h2,
+.card h3 {
+  margin: 8px 0;
+}
+
+.card p {
+  line-height: 1.55;
+}
+
 .card strong,
 .amount {
   display: block;
@@ -219,6 +238,22 @@ button {
 .expense-list {
   display: grid;
   gap: 10px;
+}
+
+.timeline,
+.day-blocks,
+.item-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.day-blocks.compact {
+  margin-top: 12px;
+}
+
+.day-card {
+  display: grid;
+  gap: 8px;
 }
 
 .expense-row {
@@ -348,6 +383,7 @@ textarea {
 
   .summary-grid,
   .settlement-grid,
+  .item-grid,
   .form-grid {
     grid-template-columns: 1fr;
   }

@@ -1,5 +1,5 @@
-import TripLedgerApp from "@/components/TripLedgerApp";
+import { redirect } from "next/navigation";
 
 export default function ExpensesPage() {
-  return <TripLedgerApp view="expenses" />;
+  redirect("/ledger/expenses");
 }
