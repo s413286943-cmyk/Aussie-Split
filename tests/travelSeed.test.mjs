@@ -21,11 +21,12 @@ describe("travel workspace seed data", () => {
 
   it("keeps daily content structured instead of one long text blob", () => {
     const d8 = initialTravelDays.find((day) => day.id === "d8");
-    assert.equal(d8.city, "丹翠雨林");
-    assert.match(d8.title, /Cape Tribulation/);
+    assert.equal(d8.city, "丹翠");
+    assert.equal(d8.title, "丹翠");
     assert.ok(Array.isArray(d8.blocks));
-    assert.ok(d8.blocks.length >= 5);
+    assert.ok(d8.blocks.length >= 2);
     assert.ok(d8.blocks.every((block) => block.id && block.period && block.activity));
+    assert.ok(d8.blocks.some((block) => block.photoSpot === "📍雨林海岸"));
   });
 
   it("seeds lodging, booking, budget, food, and activity list sections", () => {
@@ -41,12 +42,12 @@ describe("travel workspace seed data", () => {
     }
   });
 
-  it("includes the supplied budget total row label", () => {
+  it("marks budget as ready to fill from the newer guide", () => {
     const budgetTitles = initialTripItems
       .filter((item) => item.kind === "budget")
       .map((item) => item.title);
 
-    assert.ok(budgetTitles.includes("总计"));
+    assert.ok(budgetTitles.includes("预算待补"));
   });
 
   it("uses only traveler-facing item statuses", () => {
@@ -57,8 +58,9 @@ describe("travel workspace seed data", () => {
   it("includes key supplied guide details", () => {
     assert.ok(initialTripItems.some((item) => item.title.includes("Cafe Sydney")));
     assert.ok(initialTripItems.some((item) => item.title.includes("Reef Magic")));
-    assert.ok(initialTripItems.some((item) => item.title.includes("Oaks Sydney Goldsbrough")));
+    assert.ok(initialTripItems.some((item) => item.title === "Oaks"));
+    assert.ok(initialTripItems.some((item) => item.title === "Sydney"));
     assert.ok(initialTripItems.some((item) => item.title.includes("Prawn Star")));
-    assert.ok(initialTripItems.some((item) => item.title.includes("大洋路租车")));
+    assert.ok(initialTripItems.some((item) => item.title.includes("大洋路自驾")));
   });
 });

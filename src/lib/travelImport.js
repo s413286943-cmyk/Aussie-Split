@@ -35,7 +35,7 @@ export function parseTravelMarkdown(markdown) {
 
   return {
     days: parseDays(lines),
-    items: [...parseBookingItems(lines), ...parseFoodItems(lines)],
+    items: [...parseBookingItems(lines), ...parseFoodItems(lines), ...parseFoodSummaryItems(lines)],
   };
 }
 
@@ -52,7 +52,7 @@ function parseDays(lines) {
 }
 
 function parseOverviewDays(lines) {
-  return lines
+  const tabDays = lines
     .filter((line) => /^D\d+\t/.test(line))
     .map((line) => {
       const [dayLabel, , city, focus, lodging] = line.split("\t");
@@ -74,21 +74,62 @@ function parseOverviewDays(lines) {
         blocks: [],
       };
     });
+
+  const tableDays = [];
+  let inOverviewTable = false;
+
+  for (const line of lines) {
+    if (line.startsWith("| Day |") && line.includes("城市")) {
+      inOverviewTable = true;
+      continue;
+    }
+
+    if (inOverviewTable && !line.startsWith("|")) {
+      inOverviewTable = false;
+    }
+
+    const columns = inOverviewTable ? parsePipeRow(line) : [];
+    if (!/^D\d+$/.test(columns[0] || "") || columns.length < 5) continue;
+
+      const [dayLabel, , city, focus, lodging] = columns;
+      const dayIndex = Number(dayLabel.slice(1));
+      const date = dateFromDayIndex(dayIndex);
+
+      tableDays.push({
+        id: `d${dayIndex}`,
+        dayIndex,
+        date,
+        weekday: weekdayByDate.get(date) || "",
+        city: city || "",
+        title: focus || city || `D${dayIndex}`,
+        focus: focus || "",
+        lodging: lodging || "",
+        climateNote: "",
+        clothingNote: "",
+        backupNote: "",
+        blocks: [],
+      });
+  }
+
+  return [...tabDays, ...tableDays];
 }
 
 function parseDailyDetails(lines) {
   const days = [];
 
   for (let index = 0; index < lines.length; index += 1) {
-    const match = lines[index].match(/^D(\d+)｜.+?｜(.+)$/);
+    const match = dayHeadingMatch(lines[index]);
     if (!match) continue;
 
     const dayIndex = Number(match[1]);
     const id = `d${dayIndex}`;
     const blocks = [];
     let focus = "";
+    const backupLines = [];
 
-    for (let cursor = index + 1; cursor < lines.length && !/^D\d+｜/.test(lines[cursor]); cursor += 1) {
+    for (let cursor = index + 1; cursor < lines.length && !dayHeadingMatch(lines[cursor]); cursor += 1) {
+      if (isMajorSectionBoundary(lines[cursor])) break;
+
       if (lines[cursor] === "今日定位") {
         focus = lines[cursor + 1] || "";
       }
@@ -102,6 +143,27 @@ function parseDailyDetails(lines) {
           blocks.push({ id: `${id}-import-${blocks.length + 1}`, period, place, activity, highlight, tip });
         }
       }
+
+      if (lines[cursor].startsWith("| 时间 |")) {
+        for (let row = cursor + 1; row < lines.length && !isSectionBoundary(lines[row]); row += 1) {
+          const columns = parsePipeRow(lines[row]);
+          if (columns.length < 3) continue;
+
+          const [period, place, activity, highlight = "", tip = "", photoSpot = ""] = columns;
+          blocks.push({ id: `${id}-import-${blocks.length + 1}`, period, place, activity, highlight, tip, photoSpot });
+        }
+      }
+
+      if (
+        !lines[cursor].startsWith("|") &&
+        !lines[cursor].includes("\t") &&
+        lines[cursor] !== "---" &&
+        !isSectionBoundary(lines[cursor]) &&
+        lines[cursor] !== "今日定位" &&
+        lines[cursor] !== focus
+      ) {
+        backupLines.push(lines[cursor]);
+      }
     }
 
     days.push({
@@ -111,6 +173,7 @@ function parseDailyDetails(lines) {
       weekday: weekdayByDate.get(dateFromDayIndex(dayIndex)) || "",
       title: match[2],
       focus,
+      backupNote: backupLines.join(" "),
       blocks,
     });
   }
@@ -170,6 +233,40 @@ function parseFoodItems(lines) {
         items.length + 1
       )
     );
+  }
+
+  return items;
+}
+
+function parseFoodSummaryItems(lines) {
+  const start = lines.findIndex((line) => line.startsWith("| Day |") && line.includes("早餐") && line.includes("晚餐"));
+  if (start < 0) return [];
+
+  const items = [];
+  const mealLabels = ["早餐", "午餐", "晚餐"];
+
+  for (let index = start + 1; index < lines.length && !isSectionBoundary(lines[index]); index += 1) {
+    const columns = parsePipeRow(lines[index]);
+    if (!/^D\d+$/.test(columns[0] || "")) continue;
+
+    const [dayLabel, breakfast, lunch, dinner, focus = ""] = columns;
+    [breakfast, lunch, dinner].forEach((meal, mealIndex) => {
+      const title = cleanMealTitle(meal);
+      if (!title) return;
+
+      items.push(
+        item(
+          foodItemId(title),
+          "food",
+          title,
+          dayIdFromText(dayLabel),
+          "",
+          "到时再看",
+          `${dayLabel} ${mealLabels[mealIndex]}；${focus ? `重点：${cleanMealTitle(focus)}` : "按当天节奏安排"}`,
+          items.length + 1
+        )
+      );
+    });
   }
 
   return items;
@@ -282,6 +379,50 @@ function hasSimilarTitle(left, right) {
   return normalizedLeft.includes(normalizedRight) || normalizedRight.includes(normalizedLeft);
 }
 
+function dayHeadingMatch(line) {
+  const heading = line.replace(/^#+\s*/, "");
+  const fullMatch = heading.match(/^D(\d+)｜.+?｜(.+)$/);
+  if (fullMatch) return fullMatch;
+  return heading.match(/^D(\d+)｜(.+)$/);
+}
+
+function parsePipeRow(line) {
+  if (!line.startsWith("|")) return [];
+
+  const columns = line
+    .split("|")
+    .slice(1, -1)
+    .map((column) => column.trim());
+
+  if (!columns.length || columns.every((column) => /^-+$/.test(column))) return [];
+  return columns;
+}
+
+function cleanMealTitle(value = "") {
+  const cleaned = value.replace(/[🔥⭐📍]/g, "").trim();
+  const generic = new Set([
+    "",
+    "-",
+    "cafe",
+    "café",
+    "hotel",
+    "light",
+    "boat",
+    "reef",
+    "casual",
+    "flight",
+    "local",
+    "cbd",
+    "airport",
+    "coffee",
+    "picnic",
+    "tour",
+    "seafood",
+    "cairns",
+  ]);
+  return generic.has(cleaned.toLowerCase()) ? "" : cleaned;
+}
+
 function normalizeTitle(value) {
   return String(value)
     .toLowerCase()
@@ -304,13 +445,20 @@ function foodItemId(title) {
 
 function isSectionBoundary(line) {
   return (
-    /^D\d+｜/.test(line) ||
-    /^\S+、/.test(line) ||
+    Boolean(dayHeadingMatch(line)) ||
+    isMajorSectionBoundary(line) ||
+    line.startsWith("| Day |") ||
+    line.startsWith("| 时间 |") ||
     line.includes("预算总表") ||
     line.includes("需要提前预订") ||
     line.includes("美食地图") ||
+    line.includes("美食总表") ||
     line.startsWith("⸻")
   );
+}
+
+function isMajorSectionBoundary(line) {
+  return /^\S+、/.test(line) || /^#+\s/.test(line) && !dayHeadingMatch(line);
 }
 
 function dateFromDayIndex(dayIndex) {

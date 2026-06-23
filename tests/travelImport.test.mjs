@@ -39,6 +39,33 @@ D7｜8月4日 周二｜新版大堡礁外礁一日游
 ⭐⭐⭐\tPrawn Star Cairns\tSeafood platter\t新版海鲜提醒\tD7 晚餐
 `;
 
+  const tableMarkdown = `
+# Aussie Chill
+
+| Day | 日期 | 城市 / 区域 | 核心安排 | 住宿 |
+|-----|------|-------------|----------|------|
+| D7 | 8/4 | 凯恩斯 | 大堡礁 | 同上 |
+| D13 | 8/10 | 蓝山/南海岸 | 弹性日 | 同上 |
+
+## D7｜大堡礁（🔥）
+
+| 时间 | 地点 | 活动 | 亮点 | 贴士 | 📸拍照点位 |
+|------|------|------|------|------|------------|
+| 全天 | Reef Magic | 浮潜 | 珊瑚 | 防晒 | 📍海上平台 |
+| 晚上 | Prawn Star | 海鲜 | 必吃 | 轻松 | 📍海港船 |
+
+## D13｜弹性日
+
+蓝山 / 南海岸（二选一）
+
+# 🍽️ 七、美食总表（执行版）
+
+| Day | 早餐 | 午餐 | 晚餐 | 重点 |
+|-----|------|------|------|------|
+| D7 | boat | reef | Prawn Star🔥 | 核心 |
+| D15 | café | Manly | Cafe Sydney🔥 | 终极 |
+`;
+
   it("parses days and list items from a revised markdown guide", () => {
     const parsed = parseTravelMarkdown(markdown);
 
@@ -48,6 +75,19 @@ D7｜8月4日 周二｜新版大堡礁外礁一日游
     assert.equal(parsed.days[0].blocks.length, 2);
     assert.equal(parsed.items.some((item) => item.title.includes("大堡礁外礁一日游")), true);
     assert.equal(parsed.items.some((item) => item.title.includes("Prawn Star Cairns")), true);
+  });
+
+  it("parses the traveler markdown table format", () => {
+    const parsed = parseTravelMarkdown(tableMarkdown);
+    const d7 = parsed.days.find((day) => day.id === "d7");
+    const d13 = parsed.days.find((day) => day.id === "d13");
+
+    assert.equal(d7.title, "大堡礁（🔥）");
+    assert.equal(d7.blocks.length, 2);
+    assert.equal(d7.blocks[0].photoSpot, "📍海上平台");
+    assert.match(d13.backupNote, /蓝山 \/ 南海岸/);
+    assert.ok(parsed.items.some((item) => item.title === "Prawn Star"));
+    assert.ok(parsed.items.some((item) => item.title === "Cafe Sydney"));
   });
 
   it("builds a traveler-facing preview before applying changes", () => {
@@ -90,8 +130,8 @@ D7｜8月4日 周二｜新版大堡礁外礁一日游
     const reefMagic = merged.items.find((item) => item.id === "booking-reef-magic");
 
     assert.equal(reefMagic.city, "凯恩斯");
-    assert.equal(reefMagic.amount, 5400);
-    assert.equal(reefMagic.currency, "CNY");
+    assert.equal(reefMagic.amount, original.amount);
+    assert.equal(reefMagic.currency, original.currency);
     assert.equal(reefMagic.sortOrder, original.sortOrder);
     assert.equal(reefMagic.title, "大堡礁外礁一日游");
     assert.match(reefMagic.note, /当前预算参考/);
