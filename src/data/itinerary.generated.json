@@ -59,8 +59,8 @@
       "lodging": "飞机上",
       "climateNote": "夜航为主，机场和机舱温差明显。",
       "clothingNote": "随身带薄外套、颈枕、充电线和第一天入境资料。",
-      "coverImageUrl": "/itinerary/cover-australia-editorial.png",
-      "coverImageAlt": "澳洲十六日旅行封面",
+      "coverImageUrl": "/itinerary/d0-shanghai-departure.png",
+      "coverImageAlt": "上海机场夜间出发",
       "blocks": [
         {
           "dayId": "d0",
@@ -233,8 +233,8 @@
       "lodging": "Oaks Melbourne on Market Hotel",
       "climateNote": "墨尔本冬季约 6-14°C，早晚冷，多风，偶有阵雨。",
       "clothingNote": "防风外套比单纯厚毛衣更实用，雨天鞋子尽量防水。",
-      "coverImageUrl": "/itinerary/melbourne-city-morning.png",
-      "coverImageAlt": "墨尔本城市与咖啡文化",
+      "coverImageUrl": "/itinerary/d2-melbourne-laneways-market.png",
+      "coverImageAlt": "墨尔本巷弄与市集",
       "blocks": [
         {
           "dayId": "d2",
@@ -623,8 +623,8 @@
       "lodging": "Southern Ocean Villas",
       "climateNote": "海岸风大，步道和台阶雨后湿滑。",
       "clothingNote": "防风外套、防水鞋；拍照时不要太靠近海浪。",
-      "coverImageUrl": "/itinerary/great-ocean-road-coast.png",
-      "coverImageAlt": "大洋路悬崖与海蚀柱",
+      "coverImageUrl": "/itinerary/d4-twelve-apostles-gorge.png",
+      "coverImageAlt": "十二使徒岩与峡谷海岸",
       "blocks": [
         {
           "dayId": "d4",
@@ -790,8 +790,8 @@
       "lodging": "Holiday Inn Melbourne Airport",
       "climateNote": "早晨海边冷，回程时间长。",
       "clothingNote": "早上防风保暖，下午回机场前预留加油和还车时间。",
-      "coverImageUrl": "/itinerary/great-ocean-road-coast.png",
-      "coverImageAlt": "大洋路清晨海岸",
+      "coverImageUrl": "/itinerary/d5-port-campbell-morning.png",
+      "coverImageAlt": "Port Campbell 清晨海岸",
       "blocks": [
         {
           "dayId": "d5",
@@ -1084,8 +1084,8 @@
       "lodging": "Southern Cross Atrium Apartments",
       "climateNote": "海上日晒强，船舱空调可能很冷。",
       "clothingNote": "防晒衣比防晒霜更重要，带薄外套并提前吃晕船药。",
-      "coverImageUrl": "/itinerary/cairns-reef-lagoon.png",
-      "coverImageAlt": "大堡礁热带海水与珊瑚",
+      "coverImageUrl": "/itinerary/d7-great-barrier-reef-pontoon.png",
+      "coverImageAlt": "大堡礁外礁平台",
       "blocks": [
         {
           "dayId": "d7",
@@ -1367,8 +1367,8 @@
       "lodging": "Southern Cross Atrium Apartments",
       "climateNote": "高原比凯恩斯海边更清凉。",
       "clothingNote": "短袖加薄外套，瀑布和雨林步道注意防滑。",
-      "coverImageUrl": "/itinerary/daintree-rainforest.png",
-      "coverImageAlt": "热带雨林与高原瀑布氛围",
+      "coverImageUrl": "/itinerary/d9-atherton-tablelands-waterfall.png",
+      "coverImageAlt": "阿瑟顿高原瀑布",
       "blocks": [
         {
           "dayId": "d9",
@@ -1552,8 +1552,8 @@
       "lodging": "Southern Cross Atrium Apartments",
       "climateNote": "凯恩斯约 17-26°C，户外热，室内空调冷。",
       "clothingNote": "轻便夏装，随身带薄外套；今天不要再临时加长线。",
-      "coverImageUrl": "/itinerary/cairns-reef-lagoon.png",
-      "coverImageAlt": "凯恩斯海滨与泻湖",
+      "coverImageUrl": "/itinerary/d10-cairns-rustys-market.png",
+      "coverImageAlt": "凯恩斯市场与海滨",
       "blocks": [
         {
           "dayId": "d10",
@@ -1697,8 +1697,8 @@
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "悉尼约 9-18°C，早晚凉，海边防风。",
       "clothingNote": "薄羽绒、风衣或卫衣；从凯恩斯上飞机随身带外套。",
-      "coverImageUrl": "/itinerary/sydney-harbor-evening.png",
-      "coverImageAlt": "悉尼海港夜景",
+      "coverImageUrl": "/itinerary/d11-sydney-arrival-rocks.png",
+      "coverImageAlt": "悉尼 The Rocks 夜景",
       "blocks": [
         {
           "dayId": "d11",
@@ -1844,8 +1844,8 @@
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "悉尼冬季晴天概率较好，早晚凉。",
       "clothingNote": "薄羽绒或风衣，海港边风大时注意保暖。",
-      "coverImageUrl": "/itinerary/sydney-harbor-evening.png",
-      "coverImageAlt": "悉尼歌剧院与海港桥",
+      "coverImageUrl": "/itinerary/d12-sydney-opera-garden.png",
+      "coverImageAlt": "悉尼歌剧院与植物园",
       "blocks": [
         {
           "dayId": "d12",
@@ -1980,8 +1980,8 @@
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "南海岸看晴天，蓝山雾雨会影响景观且更冷。",
       "clothingNote": "看天气定路线；海边防风，蓝山加厚外套。",
-      "coverImageUrl": "/itinerary/sydney-harbor-evening.png",
-      "coverImageAlt": "悉尼周边自然一日游",
+      "coverImageUrl": "/itinerary/d13-blue-mountains-seacliff-choice.png",
+      "coverImageAlt": "蓝山与南海岸弹性路线",
       "blocks": [
         {
           "dayId": "d13",
@@ -2187,8 +2187,8 @@
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "出海风大，海况影响体感。",
       "clothingNote": "提前吃晕船药，穿防风外套；Bondi 步道不必全程走完。",
-      "coverImageUrl": "/itinerary/sydney-harbor-evening.png",
-      "coverImageAlt": "悉尼海港与海岸",
+      "coverImageUrl": "/itinerary/d14-whale-bondi-coast.png",
+      "coverImageAlt": "悉尼观鲸与 Bondi 海岸",
       "blocks": [
         {
           "dayId": "d14",
@@ -2448,7 +2448,7 @@
       "lodging": "-",
       "climateNote": "机场和机舱温差明显。",
       "clothingNote": "提前整理退税物品和购物小票，随身带薄外套。",
-      "coverImageUrl": "/itinerary/cover-australia-editorial.png",
+      "coverImageUrl": "/itinerary/d16-return-flight.png",
       "coverImageAlt": "澳洲旅行返程",
       "blocks": [
         {
