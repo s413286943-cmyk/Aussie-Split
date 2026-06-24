@@ -364,3 +364,472 @@ textarea {
     font-size: 0.82rem;
   }
 }
+
+.itinerary-shell {
+  --ink: #172326;
+  --paper: #fffdf7;
+  --mist: #e7f1ef;
+  --reef: #0f766e;
+  --ocean: #145c75;
+  --coral: #cc6b4a;
+  --gold: #d99b32;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 18px 16px 104px;
+  color: var(--ink);
+}
+
+.itinerary-hero {
+  position: relative;
+  min-height: min(680px, calc(100vh - 32px));
+  display: grid;
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #112225;
+  box-shadow: 0 24px 80px rgba(17, 34, 37, 0.22);
+}
+
+.itinerary-hero-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itinerary-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(8, 21, 24, 0.78), rgba(8, 21, 24, 0.24) 58%, rgba(8, 21, 24, 0.1)),
+    linear-gradient(0deg, rgba(8, 21, 24, 0.62), transparent 46%);
+}
+
+.itinerary-hero-copy,
+.hero-weather {
+  position: relative;
+  z-index: 1;
+}
+
+.itinerary-hero-copy {
+  align-self: end;
+  max-width: 820px;
+  padding: 42px;
+  color: white;
+}
+
+.itinerary-hero-copy p {
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 800;
+}
+
+.itinerary-hero-copy h1 {
+  max-width: 760px;
+  font-size: clamp(2.6rem, 5.8vw, 5.2rem);
+  line-height: 1.02;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.hero-meta span {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  backdrop-filter: blur(14px);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.hero-weather {
+  width: min(360px, calc(100% - 32px));
+  align-self: start;
+  justify-self: end;
+  margin: 22px;
+  padding: 16px;
+  background: rgba(255, 253, 247, 0.92);
+  color: var(--ink);
+  backdrop-filter: blur(18px);
+}
+
+.hero-weather span,
+.stage-head span,
+.day-title-row p,
+.weather-strip strong {
+  font-size: 0.78rem;
+  color: var(--reef);
+  font-weight: 900;
+}
+
+.hero-weather strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.15rem;
+}
+
+.hero-weather p {
+  margin-top: 10px;
+  font-weight: 850;
+}
+
+.hero-weather small {
+  display: block;
+  margin-top: 8px;
+  color: #586866;
+  line-height: 1.45;
+}
+
+.day-jump {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 14px 0 22px;
+  padding: 10px 0;
+  background: linear-gradient(180deg, rgba(246, 244, 238, 0.96), rgba(246, 244, 238, 0.8));
+  backdrop-filter: blur(14px);
+}
+
+.day-jump a {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid rgba(20, 92, 117, 0.16);
+  background: rgba(255, 253, 247, 0.86);
+  color: var(--ocean);
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.stage-stack {
+  display: grid;
+  gap: 26px;
+}
+
+.stage-section {
+  display: grid;
+  gap: 14px;
+}
+
+.stage-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 38%);
+  gap: 18px;
+  align-items: end;
+  min-height: 240px;
+  padding: 22px;
+  border-top: 1px solid rgba(20, 92, 117, 0.16);
+  background: linear-gradient(135deg, var(--paper), var(--mist));
+}
+
+.stage-head h2 {
+  margin-top: 8px;
+  font-size: clamp(2rem, 5vw, 4.2rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.stage-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  box-shadow: 0 18px 52px rgba(20, 92, 117, 0.18);
+}
+
+.stage-image img {
+  object-fit: cover;
+}
+
+.day-grid,
+.final-day {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.final-day {
+  margin-top: 26px;
+}
+
+.day-card {
+  overflow: hidden;
+  border: 1px solid rgba(23, 35, 38, 0.1);
+  background: rgba(255, 253, 247, 0.94);
+  box-shadow: 0 14px 44px rgba(23, 35, 38, 0.09);
+}
+
+.day-card.compact {
+  background: rgba(231, 241, 239, 0.82);
+}
+
+.day-cover {
+  position: relative;
+  min-height: 220px;
+  display: grid;
+  align-items: end;
+  overflow: hidden;
+}
+
+.day-cover-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms ease;
+}
+
+.day-card:hover .day-cover-image {
+  transform: scale(1.025);
+}
+
+.day-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(7, 18, 20, 0.76), rgba(7, 18, 20, 0.08) 62%);
+}
+
+.day-cover div {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  color: white;
+}
+
+.day-cover span {
+  font-size: 2.35rem;
+  line-height: 0.9;
+  font-weight: 950;
+}
+
+.day-cover strong {
+  max-width: 150px;
+  text-align: right;
+  font-size: 0.88rem;
+  line-height: 1.25;
+}
+
+.day-body {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+
+.day-title-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.day-title-row h3 {
+  margin-top: 4px;
+  font-size: 1.28rem;
+  line-height: 1.18;
+}
+
+.day-title-row > span {
+  max-width: 180px;
+  padding: 7px 9px;
+  background: rgba(204, 107, 74, 0.1);
+  color: #8a3e29;
+  text-align: right;
+  font-size: 0.78rem;
+  line-height: 1.28;
+  font-weight: 850;
+}
+
+.focus {
+  color: #4b5c5d;
+  line-height: 1.58;
+}
+
+.weather-strip {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border-left: 4px solid var(--gold);
+  background: #fff7e7;
+}
+
+.weather-strip.live {
+  border-left-color: var(--reef);
+  background: #e4f4ef;
+}
+
+.weather-strip p {
+  font-weight: 850;
+}
+
+.weather-strip small {
+  color: #586866;
+  line-height: 1.45;
+}
+
+.day-card details {
+  border-top: 1px solid rgba(23, 35, 38, 0.1);
+  padding-top: 4px;
+}
+
+.day-card summary {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  color: var(--ocean);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.timeline {
+  display: grid;
+  gap: 14px;
+  padding-top: 8px;
+}
+
+.time-block {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.time-block > span {
+  color: var(--coral);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  font-weight: 950;
+}
+
+.time-block h4 {
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.time-block p {
+  margin-top: 4px;
+  color: #27383a;
+  line-height: 1.5;
+}
+
+.time-block small,
+.time-block em {
+  display: block;
+  margin-top: 5px;
+  color: #667372;
+  line-height: 1.45;
+}
+
+.time-block em {
+  font-style: normal;
+  color: #8a3e29;
+}
+
+.resource-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.resource-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid rgba(20, 92, 117, 0.18);
+  background: rgba(20, 92, 117, 0.08);
+  color: var(--ocean);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+@media (max-width: 860px) {
+  .itinerary-shell {
+    padding: 10px 10px 96px;
+  }
+
+  .itinerary-hero {
+    min-height: 620px;
+  }
+
+  .itinerary-hero-copy {
+    padding: 24px 18px;
+  }
+
+  .hero-weather {
+    justify-self: start;
+  }
+
+  .stage-head,
+  .day-grid,
+  .final-day {
+    grid-template-columns: 1fr;
+  }
+
+  .stage-head {
+    min-height: 0;
+    padding: 18px;
+  }
+}
+
+@media (max-width: 520px) {
+  .itinerary-hero {
+    min-height: 560px;
+  }
+
+  .itinerary-hero-copy h1 {
+    font-size: 3rem;
+  }
+
+  .hero-weather {
+    width: calc(100% - 24px);
+    margin: 12px;
+  }
+
+  .day-cover {
+    min-height: 190px;
+  }
+
+  .day-title-row {
+    grid-template-columns: 1fr;
+  }
+
+  .day-title-row > span {
+    max-width: none;
+    text-align: left;
+  }
+
+  .time-block {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .resource-links a {
+    width: 100%;
+  }
+}

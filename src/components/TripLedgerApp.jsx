@@ -24,20 +24,17 @@ import {
   upsertRemoteExpense,
 } from "@/lib/supabaseRest";
 import { shouldUploadLocalCache } from "@/lib/sync";
+import UnlockGate from "@/components/UnlockGate";
 
 const storageKey = "aussie-chill-expenses-v1";
-const accessKey = "aussie-chill-access-v1";
-const defaultTripCode = process.env.NEXT_PUBLIC_TRIP_CODE || "aussie";
 
 export default function TripLedgerApp({ view }) {
   const [ready, setReady] = useState(false);
-  const [unlocked, setUnlocked] = useState(false);
   const [expenses, setExpenses] = useState(seedExpenses);
   const [syncState, setSyncState] = useState("本机保存");
   const ledger = useMemo(() => calculateLedger(expenses), [expenses]);
 
   useEffect(() => {
-    setUnlocked(localStorage.getItem(accessKey) === "yes");
     const saved = localStorage.getItem(storageKey);
     const savedExpenses = saved ? JSON.parse(saved) : null;
     if (savedExpenses) setExpenses(savedExpenses);
@@ -91,72 +88,40 @@ export default function TripLedgerApp({ view }) {
     return <main className="unlock-wrap" />;
   }
 
-  if (!unlocked) {
-    return <Unlock onUnlock={() => setUnlocked(true)} />;
-  }
-
   return (
-    <div className="app-shell">
-      <header className="hero">
-        <div>
-          <h1>Aussie Chill Split Bill</h1>
-          <p>
-            2026.07.28-08.13，两对夫妻澳洲旅行账本。机票已单独 split，本账本只记录旅行中共同费用，按币种分别结算。
-          </p>
-        </div>
-        <div className="hero-actions">
-          <Link className="button primary" href="/add">记一笔</Link>
-          <Link className="button" href="/settlement">看结算</Link>
-          <span className="button">{syncState}</span>
-        </div>
-      </header>
+    <UnlockGate intro="输入旅行访问码后进入共享账本和行程。">
+      <div className="app-shell">
+        <header className="hero">
+          <div>
+            <h1>Aussie Chill Split Bill</h1>
+            <p>
+              2026.07.28-08.13，两对夫妻澳洲旅行账本。机票已单独 split，本账本只记录旅行中共同费用，按币种分别结算。
+            </p>
+          </div>
+          <div className="hero-actions">
+            <Link className="button primary" href="/add">记一笔</Link>
+            <Link className="button" href="/settlement">看结算</Link>
+            <Link className="button" href="/itinerary">看行程</Link>
+            <span className="button">{syncState}</span>
+          </div>
+        </header>
 
-      {view === "dashboard" && <Dashboard expenses={expenses} ledger={ledger} onUpdate={updateExpense} />}
-      {view === "expenses" && (
-        <Expenses expenses={expenses} onUpdate={updateExpense} onDelete={removeExpense} />
-      )}
-      {view === "add" && <AddExpense expenses={expenses} onAdd={addExpense} />}
-      {view === "settlement" && <Settlement ledger={ledger} />}
+        {view === "dashboard" && <Dashboard expenses={expenses} ledger={ledger} onUpdate={updateExpense} />}
+        {view === "expenses" && (
+          <Expenses expenses={expenses} onUpdate={updateExpense} onDelete={removeExpense} />
+        )}
+        {view === "add" && <AddExpense expenses={expenses} onAdd={addExpense} />}
+        {view === "settlement" && <Settlement ledger={ledger} />}
 
-      <nav className="nav" aria-label="主导航">
-        <Link className={view === "dashboard" ? "active" : ""} href="/">总览</Link>
-        <Link className={view === "expenses" ? "active" : ""} href="/expenses">明细</Link>
-        <Link className={view === "add" ? "active" : ""} href="/add">新增</Link>
-        <Link className={view === "settlement" ? "active" : ""} href="/settlement">结算</Link>
-      </nav>
-    </div>
-  );
-}
-
-function Unlock({ onUnlock }) {
-  const [code, setCode] = useState("");
-  const [error, setError] = useState("");
-
-  function submit(event) {
-    event.preventDefault();
-    if (code.trim() === defaultTripCode) {
-      localStorage.setItem(accessKey, "yes");
-      onUnlock();
-      return;
-    }
-    setError("访问码不对");
-  }
-
-  return (
-    <main className="unlock-wrap">
-      <section className="unlock-card stack">
-        <h1>Aussie Chill</h1>
-        <p className="muted">输入旅行访问码后进入共享账本。</p>
-        <form className="stack" onSubmit={submit}>
-          <label>
-            访问码
-            <input value={code} onChange={(event) => setCode(event.target.value)} placeholder="aussie" />
-          </label>
-          {error && <p className="muted">{error}</p>}
-          <button className="button primary" type="submit">进入账本</button>
-        </form>
-      </section>
-    </main>
+        <nav className="nav" aria-label="主导航">
+          <Link className={view === "dashboard" ? "active" : ""} href="/">总览</Link>
+          <Link className={view === "expenses" ? "active" : ""} href="/expenses">明细</Link>
+          <Link className={view === "add" ? "active" : ""} href="/add">新增</Link>
+          <Link className={view === "settlement" ? "active" : ""} href="/settlement">结算</Link>
+          <Link href="/itinerary">行程</Link>
+        </nav>
+      </div>
+    </UnlockGate>
   );
 }
 
