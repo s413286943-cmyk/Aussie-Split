@@ -23,6 +23,7 @@ import {
   uploadRemoteReceipt,
   upsertRemoteExpense,
 } from "@/lib/supabaseRest";
+import { shouldUploadLocalCache } from "@/lib/sync";
 
 const storageKey = "aussie-chill-expenses-v1";
 const accessKey = "aussie-chill-access-v1";
@@ -38,11 +39,17 @@ export default function TripLedgerApp({ view }) {
   useEffect(() => {
     setUnlocked(localStorage.getItem(accessKey) === "yes");
     const saved = localStorage.getItem(storageKey);
-    if (saved) setExpenses(JSON.parse(saved));
+    const savedExpenses = saved ? JSON.parse(saved) : null;
+    if (savedExpenses) setExpenses(savedExpenses);
     setReady(true);
 
     fetchRemoteExpenses()
-      .then((remote) => {
+      .then(async (remote) => {
+        if (shouldUploadLocalCache(savedExpenses, remote)) {
+          await Promise.all(savedExpenses.map((expense) => upsertRemoteExpense(expense)));
+          setSyncState("已保存");
+          return;
+        }
         if (remote?.length) {
           setExpenses(remote);
           localStorage.setItem(storageKey, JSON.stringify(remote));
