@@ -19,3 +19,39 @@ describe("expense sync bootstrap", () => {
     assert.equal(shouldUploadLocalCache(local, seedExpenses), false);
   });
 });
+
+describe("Supabase REST headers", () => {
+  it("does not send publishable keys as bearer tokens", async () => {
+    const originalFetch = globalThis.fetch;
+    const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const calls = [];
+
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_test";
+    globalThis.fetch = async (_url, options) => {
+      calls.push(options);
+      return { ok: true, json: async () => [] };
+    };
+
+    try {
+      const { fetchRemoteExpenses } = await import(`../src/lib/supabaseRest.js?headers=${Date.now()}`);
+      await fetchRemoteExpenses();
+    } finally {
+      globalThis.fetch = originalFetch;
+      if (originalUrl === undefined) {
+        delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+      } else {
+        process.env.NEXT_PUBLIC_SUPABASE_URL = originalUrl;
+      }
+      if (originalKey === undefined) {
+        delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      } else {
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = originalKey;
+      }
+    }
+
+    assert.equal(calls[0].headers.apikey, "sb_publishable_test");
+    assert.equal("Authorization" in calls[0].headers, false);
+  });
+});

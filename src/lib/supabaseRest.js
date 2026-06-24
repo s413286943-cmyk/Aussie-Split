@@ -60,10 +60,11 @@ export async function uploadRemoteReceipt(file) {
 }
 
 function authHeaders() {
-  return {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${SUPABASE_KEY}`,
-  };
+  const headers = { apikey: SUPABASE_KEY };
+  if (!SUPABASE_KEY.startsWith("sb_publishable_")) {
+    headers.Authorization = `Bearer ${SUPABASE_KEY}`;
+  }
+  return headers;
 }
 
 function toRow(expense) {
