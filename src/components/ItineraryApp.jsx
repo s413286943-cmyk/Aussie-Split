@@ -191,9 +191,10 @@ function DayCard({ day, weather, compact = false }) {
 }
 
 function WeatherStrip({ weather }) {
+  const label = weather.status === "live" ? "实时天气" : weather.status === "forecast" ? "天气预报" : "天气参考";
   return (
-    <div className={weather.status === "live" ? "weather-strip live" : "weather-strip"}>
-      <strong>{weather.status === "live" ? "实时天气" : "天气参考"}</strong>
+    <div className={weather.status === "fallback" ? "weather-strip" : `weather-strip ${weather.status}`}>
+      <strong>{label}</strong>
       <p>{weather.summary}</p>
       <small>{weather.detail}</small>
     </div>

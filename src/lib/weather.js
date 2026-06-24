@@ -14,10 +14,16 @@ export function buildWeatherUrl(day) {
 }
 
 export function isForecastAvailable(date, now = new Date()) {
+  return getWeatherStatus(date, now) !== "fallback";
+}
+
+export function getWeatherStatus(date, now = new Date()) {
   const target = parseDate(date);
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const diffDays = Math.floor((target.getTime() - today.getTime()) / 86400000);
-  return diffDays >= 0 && diffDays < forecastDays;
+  if (diffDays === 0) return "live";
+  if (diffDays > 0 && diffDays < forecastDays) return "forecast";
+  return "fallback";
 }
 
 export function fallbackWeather(day) {
@@ -29,19 +35,20 @@ export function fallbackWeather(day) {
 }
 
 export async function fetchDayWeather(day, now = new Date(), fetcher = fetch) {
-  if (!isForecastAvailable(day.date, now) || !hasCoordinates(day)) return fallbackWeather(day);
+  if (getWeatherStatus(day.date, now) === "fallback" || !hasCoordinates(day)) return fallbackWeather(day);
 
   try {
     const response = await fetcher(buildWeatherUrl(day));
     if (!response.ok) return fallbackWeather(day);
     const data = await response.json();
-    return summarizeWeather(day, data);
+    return summarizeWeather(day, data, now);
   } catch {
     return fallbackWeather(day);
   }
 }
 
-export function summarizeWeather(day, data) {
+export function summarizeWeather(day, data, now = new Date()) {
+  const status = getWeatherStatus(day.date, now);
   const current = data.current || {};
   const daily = data.daily || {};
   const index = Math.max(0, (daily.time || []).indexOf(day.date));
@@ -49,16 +56,16 @@ export function summarizeWeather(day, data) {
   const min = readArray(daily.temperature_2m_min, index);
   const rain = readArray(daily.precipitation_probability_max, index);
   const uv = readArray(daily.uv_index_max, index);
-  const wind = current.wind_speed_10m;
-  const currentTemp = current.temperature_2m;
-  const apparent = current.apparent_temperature;
-  const condition = weatherCodeLabel(current.weather_code ?? readArray(daily.weather_code, index));
+  const wind = status === "live" ? current.wind_speed_10m : undefined;
+  const currentTemp = status === "live" ? current.temperature_2m : undefined;
+  const apparent = status === "live" ? current.apparent_temperature : undefined;
+  const condition = weatherCodeLabel(status === "live" ? current.weather_code ?? readArray(daily.weather_code, index) : readArray(daily.weather_code, index));
   const range = Number.isFinite(min) && Number.isFinite(max) ? `${Math.round(min)}-${Math.round(max)}°C` : "";
   const nowText = Number.isFinite(currentTemp) ? `现在 ${Math.round(currentTemp)}°C` : "";
   const feelsText = Number.isFinite(apparent) ? `体感 ${Math.round(apparent)}°C` : "";
 
   return {
-    status: "live",
+    status,
     summary: [condition, range, nowText].filter(Boolean).join(" · "),
     detail: buildWeatherAdvice({ rain, uv, wind, feelsText, fallback: day.clothingNote }),
   };

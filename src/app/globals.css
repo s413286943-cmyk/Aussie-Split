@@ -683,6 +683,11 @@ textarea {
   background: #e4f4ef;
 }
 
+.weather-strip.forecast {
+  border-left-color: var(--teal);
+  background: #e7f1f2;
+}
+
 .weather-strip p {
   font-weight: 850;
 }

@@ -5,6 +5,7 @@ import {
   buildWeatherAdvice,
   buildWeatherUrl,
   fetchDayWeather,
+  getWeatherStatus,
   isForecastAvailable,
   summarizeWeather,
 } from "../src/lib/weather.js";
@@ -34,6 +35,12 @@ describe("itinerary weather", () => {
     assert.equal(isForecastAvailable("2026-08-04", new Date("2026-08-05T12:00:00")), false);
   });
 
+  it("labels today as live, near future as forecast, and distant dates as fallback", () => {
+    assert.equal(getWeatherStatus("2026-08-04", new Date("2026-08-04T12:00:00")), "live");
+    assert.equal(getWeatherStatus("2026-08-04", new Date("2026-07-25T12:00:00")), "forecast");
+    assert.equal(getWeatherStatus("2026-08-04", new Date("2026-06-24T12:00:00")), "fallback");
+  });
+
   it("falls back to climate notes when the trip date is too far away", async () => {
     const result = await fetchDayWeather(day, new Date("2026-06-24T12:00:00"), async () => {
       throw new Error("should not fetch");
@@ -60,13 +67,37 @@ describe("itinerary weather", () => {
         uv_index_max: [7],
         weather_code: [2],
       },
-    });
+    }, new Date("2026-08-04T12:00:00"));
 
     assert.equal(result.status, "live");
     assert.equal(result.summary, "多云 · 18-27°C · 现在 25°C");
     assert.match(result.detail, /有雨/);
     assert.match(result.detail, /防风外套/);
     assert.match(result.detail, /防晒衣/);
+  });
+
+  it("summarizes future forecast without current temperature", () => {
+    const result = summarizeWeather(day, {
+      current: {
+        temperature_2m: 25,
+        apparent_temperature: 27,
+        weather_code: 2,
+        wind_speed_10m: 28,
+      },
+      daily: {
+        time: ["2026-08-04"],
+        temperature_2m_max: [27],
+        temperature_2m_min: [18],
+        precipitation_probability_max: [55],
+        uv_index_max: [7],
+        weather_code: [1],
+      },
+    }, new Date("2026-07-25T12:00:00"));
+
+    assert.equal(result.status, "forecast");
+    assert.equal(result.summary, "多云 · 18-27°C");
+    assert.doesNotMatch(result.summary, /现在/);
+    assert.doesNotMatch(result.detail, /体感/);
   });
 
   it("keeps fallback clothing advice when no weather warning applies", () => {
