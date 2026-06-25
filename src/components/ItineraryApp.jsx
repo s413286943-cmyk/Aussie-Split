@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 import itinerary from "@/data/itinerary.generated.json";
+import { collectTodayResources, findTodayDay } from "@/lib/today";
 import { fetchDayWeather, fallbackWeather } from "@/lib/weather";
 import UnlockGate from "@/components/UnlockGate";
 
@@ -30,6 +31,7 @@ function ItineraryContent() {
     itinerary.days.map((day) => [day.id, fallbackWeather(day)])
   ));
   const nextDay = useMemo(() => findNextDay(itinerary.days), []);
+  const todayDay = useMemo(() => findTodayDay(itinerary.days), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -47,6 +49,7 @@ function ItineraryContent() {
   return (
     <main className="itinerary-shell">
       <Hero nextDay={nextDay} weather={weatherByDay[nextDay.id]} />
+      <TodayConsole day={todayDay} weather={weatherByDay[todayDay.id]} />
       <DayJump days={itinerary.days} />
       <section className="stage-stack" aria-label="行程时间线">
         {itinerary.stages.map((stage) => (
@@ -69,6 +72,58 @@ function ItineraryContent() {
         <Link href="/add">记一笔</Link>
       </nav>
     </main>
+  );
+}
+
+function TodayConsole({ day, weather }) {
+  const quickResources = collectTodayResources(day);
+
+  return (
+    <section className="today-console" aria-label="今日旅行控制台">
+      <div className="today-summary">
+        <span>今日旅行控制台</span>
+        <h2>{day.label} · {day.date.slice(5).replace("-", ".")} {day.weekday} · {day.city}</h2>
+        <p>{day.title}</p>
+        <small>{day.focus}</small>
+      </div>
+      <div className="today-status-grid">
+        <article>
+          <span>今晚住宿</span>
+          <strong>{day.lodging}</strong>
+        </article>
+        <article>
+          <span>{weather?.status === "live" ? "实时天气" : weather?.status === "forecast" ? "天气预报" : "天气参考"}</span>
+          <strong>{weather?.summary || day.climateNote}</strong>
+        </article>
+        <article>
+          <span>穿衣提醒</span>
+          <strong>{weather?.detail || day.clothingNote}</strong>
+        </article>
+      </div>
+      <div className="today-detail-grid">
+        <div className="today-plan">
+          <h3>今天节奏</h3>
+          {day.blocks.map((block) => (
+            <div className="today-plan-row" key={`${day.id}-${block.sortOrder}`}>
+              <span>{block.period}</span>
+              <div>
+                <strong>{block.place}</strong>
+                <p>{block.activity}</p>
+                {block.tip && <small>{block.tip}</small>}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="today-links">
+          <h3>快捷入口</h3>
+          {quickResources.map((resource) => (
+            <a key={resource.id} href={resource.url} target="_blank" rel="noreferrer">
+              {resourceLabels[resource.type] || "链接"} · {resource.title}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 

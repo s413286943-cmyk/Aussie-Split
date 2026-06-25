@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import itinerary from "../src/data/itinerary.generated.json" with { type: "json" };
+import { collectTodayResources, findTodayDay } from "../src/lib/today.js";
 import { readWorkbook } from "../scripts/import-itinerary.mjs";
 
 describe("itinerary data", () => {
@@ -37,5 +38,22 @@ describe("itinerary data", () => {
       "悉尼 + 南海岸",
     ]);
     assert.ok(itinerary.days.every((day) => day.coverImageUrl.startsWith("/itinerary/")));
+  });
+
+  it("selects the right control-panel day for pre-trip, in-trip, and post-trip dates", () => {
+    assert.equal(findTodayDay(itinerary.days, new Date("2026-06-25T10:00:00+08:00")).id, "d0");
+    assert.equal(findTodayDay(itinerary.days, new Date("2026-07-31T10:00:00+10:00")).id, "d3");
+    assert.equal(findTodayDay(itinerary.days, new Date("2026-08-20T10:00:00+10:00")).id, "d16");
+  });
+
+  it("collects useful quick links for the selected travel day", () => {
+    const day = itinerary.days.find((item) => item.id === "d1");
+    const resources = collectTodayResources(day);
+
+    assert.ok(resources.some((resource) => resource.type === "map"));
+    assert.ok(resources.some((resource) => resource.type === "booking"));
+    assert.ok(resources.some((resource) => resource.type === "restaurant"));
+    assert.ok(resources.every((resource) => ["map", "booking", "restaurant", "official"].includes(resource.type)));
+    assert.equal(new Set(resources.map((resource) => resource.id)).size, resources.length);
   });
 });
