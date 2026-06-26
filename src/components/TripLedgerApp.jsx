@@ -7,7 +7,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   applyExpenseEdit,
-  backlogItems,
   calculateLedger,
   categories,
   expenseToEditableForm,
@@ -106,9 +105,10 @@ export default function TripLedgerApp({ view }) {
   }
 
   async function updateExpense(expense) {
+    const previousExpense = expenses.find((item) => item.id === expense.id);
     const nextExpenses = expenses.map((item) => (item.id === expense.id ? expense : item));
     await persist(nextExpenses, () => upsertRemoteExpense(expense));
-    await recordActivity(createActivityEntry("edit", expense));
+    await recordActivity(createActivityEntry("edit", expense, new Date(), previousExpense));
   }
 
   async function confirmExpense(expense) {
@@ -180,15 +180,6 @@ function Dashboard({ expenses, ledger, activity, onUpdate, onConfirm }) {
   return (
     <>
       <SummaryCards ledger={ledger} />
-      <section className="section">
-        <div className="section-head">
-          <h2>待补项目</h2>
-          <span className="muted">旅行中发生后新增</span>
-        </div>
-        <div className="backlog">
-          {backlogItems.map((item) => <span key={item}>{item}</span>)}
-        </div>
-      </section>
       <RecentActivity activity={activity} />
       <section className="section">
         <div className="section-head">
