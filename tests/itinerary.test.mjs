@@ -40,6 +40,29 @@ describe("itinerary data", () => {
     assert.ok(itinerary.days.every((day) => day.coverImageUrl.startsWith("/itinerary/")));
   });
 
+  it("keeps Totti's on D14 and Cafe Sydney on D15 in the meal plan", () => {
+    const d14Text = itinerary.days.find((day) => day.id === "d14").blocks
+      .map((block) => `${block.place} ${block.activity} ${block.tip}`)
+      .join(" ");
+    const d15Text = itinerary.days.find((day) => day.id === "d15").blocks
+      .map((block) => `${block.place} ${block.activity} ${block.tip}`)
+      .join(" ");
+
+    assert.match(d14Text, /Totti/);
+    assert.match(d14Text, /Bondi/);
+    assert.match(d15Text, /Cafe Sydney/);
+  });
+
+  it("includes a daily meal-map block from D1 through D16", () => {
+    for (const dayId of Array.from({ length: 16 }, (_, index) => `d${index + 1}`)) {
+      const day = itinerary.days.find((item) => item.id === dayId);
+      assert.ok(
+        day.blocks.some((block) => block.period === "饮食" && block.place === "饮食安排"),
+        `${dayId} is missing daily meal-map block`,
+      );
+    }
+  });
+
   it("selects the right control-panel day for pre-trip, in-trip, and post-trip dates", () => {
     assert.equal(findTodayDay(itinerary.days, new Date("2026-06-25T10:00:00+08:00")).id, "d0");
     assert.equal(findTodayDay(itinerary.days, new Date("2026-07-31T10:00:00+10:00")).id, "d3");
