@@ -15,6 +15,18 @@ export async function fetchRemoteExpenses() {
   return rows.map(fromRow);
 }
 
+export async function fetchRemoteActivity() {
+  if (!supabaseConfigured) return null;
+
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/expense_activity?select=*&order=created_at.desc&limit=8`, {
+    headers: authHeaders(),
+  });
+
+  if (!response.ok) throw new Error("Unable to load Supabase expense activity");
+  const rows = await response.json();
+  return rows.map(activityFromRow);
+}
+
 export async function upsertRemoteExpense(expense) {
   if (!supabaseConfigured) return;
 
@@ -29,6 +41,22 @@ export async function upsertRemoteExpense(expense) {
   });
 
   if (!response.ok) throw new Error("Unable to save Supabase expense");
+}
+
+export async function insertRemoteActivity(entry) {
+  if (!supabaseConfigured) return;
+
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/expense_activity`, {
+    method: "POST",
+    headers: {
+      ...authHeaders(),
+      "Content-Type": "application/json",
+      Prefer: "return=minimal",
+    },
+    body: JSON.stringify(activityToRow(entry)),
+  });
+
+  if (!response.ok) throw new Error("Unable to save Supabase expense activity");
 }
 
 export async function deleteRemoteExpense(id) {
@@ -94,5 +122,31 @@ function fromRow(row) {
     status: row.status,
     note: row.note || "",
     attachmentName: row.attachment_name || "",
+  };
+}
+
+function activityToRow(entry) {
+  return {
+    id: entry.id,
+    expense_id: entry.expenseId,
+    action: entry.action,
+    item: entry.item,
+    amount: entry.amount,
+    currency: entry.currency,
+    summary: entry.summary,
+    created_at: entry.createdAt,
+  };
+}
+
+function activityFromRow(row) {
+  return {
+    id: row.id,
+    expenseId: row.expense_id,
+    action: row.action,
+    item: row.item,
+    amount: Number(row.amount),
+    currency: row.currency,
+    summary: row.summary,
+    createdAt: row.created_at,
   };
 }

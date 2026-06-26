@@ -15,10 +15,13 @@ import {
   parseBankMessage,
   seedExpenses,
 } from "@/lib/ledger";
+import { createActivityEntry, recentActivity } from "@/lib/activity";
 import { coupleName, formatPayerLabel, formatSettlementDirection } from "@/lib/couples";
 import {
   deleteRemoteExpense,
+  fetchRemoteActivity,
   fetchRemoteExpenses,
+  insertRemoteActivity,
   supabaseConfigured,
   uploadRemoteReceipt,
   upsertRemoteExpense,
@@ -27,17 +30,22 @@ import { shouldUploadLocalCache } from "@/lib/sync";
 import UnlockGate from "@/components/UnlockGate";
 
 const storageKey = "aussie-chill-expenses-v1";
+const activityStorageKey = "aussie-chill-activity-v1";
 
 export default function TripLedgerApp({ view }) {
   const [ready, setReady] = useState(false);
   const [expenses, setExpenses] = useState(seedExpenses);
+  const [activity, setActivity] = useState([]);
   const [syncState, setSyncState] = useState("本机保存");
   const ledger = useMemo(() => calculateLedger(expenses), [expenses]);
 
   useEffect(() => {
     const saved = localStorage.getItem(storageKey);
     const savedExpenses = saved ? JSON.parse(saved) : null;
+    const savedActivity = localStorage.getItem(activityStorageKey);
+    const localActivity = savedActivity ? recentActivity(JSON.parse(savedActivity)) : [];
     if (savedExpenses) setExpenses(savedExpenses);
+    if (localActivity.length) setActivity(localActivity);
     setReady(true);
 
     fetchRemoteExpenses()
@@ -56,6 +64,15 @@ export default function TripLedgerApp({ view }) {
         }
       })
       .catch(() => setSyncState("现在先显示本机内容"));
+
+    fetchRemoteActivity()
+      .then((remote) => {
+        if (!remote?.length) return;
+        const nextActivity = recentActivity(remote);
+        setActivity(nextActivity);
+        localStorage.setItem(activityStorageKey, JSON.stringify(nextActivity));
+      })
+      .catch(() => {});
   }, []);
 
   async function persist(nextExpenses, remoteAction) {
@@ -69,19 +86,43 @@ export default function TripLedgerApp({ view }) {
     }
   }
 
+  async function recordActivity(entry) {
+    setActivity((current) => {
+      const nextActivity = recentActivity([entry, ...current]);
+      localStorage.setItem(activityStorageKey, JSON.stringify(nextActivity));
+      return nextActivity;
+    });
+    try {
+      await insertRemoteActivity(entry);
+    } catch {
+      // Activity is helpful context, but it should never block core expense edits.
+    }
+  }
+
   async function addExpense(expense) {
     const nextExpenses = [expense, ...expenses];
     await persist(nextExpenses, () => upsertRemoteExpense(expense));
+    await recordActivity(createActivityEntry("add", expense));
   }
 
   async function updateExpense(expense) {
     const nextExpenses = expenses.map((item) => (item.id === expense.id ? expense : item));
     await persist(nextExpenses, () => upsertRemoteExpense(expense));
+    await recordActivity(createActivityEntry("edit", expense));
+  }
+
+  async function confirmExpense(expense) {
+    const confirmed = { ...expense, status: "confirmed" };
+    const nextExpenses = expenses.map((item) => (item.id === expense.id ? confirmed : item));
+    await persist(nextExpenses, () => upsertRemoteExpense(confirmed));
+    await recordActivity(createActivityEntry("confirm", confirmed));
   }
 
   async function removeExpense(id) {
+    const removed = expenses.find((item) => item.id === id);
     const nextExpenses = expenses.filter((item) => item.id !== id);
     await persist(nextExpenses, () => deleteRemoteExpense(id));
+    if (removed) await recordActivity(createActivityEntry("delete", removed));
   }
 
   if (!ready) {
@@ -106,9 +147,17 @@ export default function TripLedgerApp({ view }) {
           </div>
         </header>
 
-        {view === "dashboard" && <Dashboard expenses={expenses} ledger={ledger} onUpdate={updateExpense} />}
+        {view === "dashboard" && (
+          <Dashboard
+            expenses={expenses}
+            ledger={ledger}
+            activity={activity}
+            onUpdate={updateExpense}
+            onConfirm={confirmExpense}
+          />
+        )}
         {view === "expenses" && (
-          <Expenses expenses={expenses} onUpdate={updateExpense} onDelete={removeExpense} />
+          <Expenses expenses={expenses} onUpdate={updateExpense} onConfirm={confirmExpense} onDelete={removeExpense} />
         )}
         {view === "add" && <AddExpense expenses={expenses} onAdd={addExpense} />}
         {view === "settlement" && <Settlement ledger={ledger} />}
@@ -125,7 +174,7 @@ export default function TripLedgerApp({ view }) {
   );
 }
 
-function Dashboard({ expenses, ledger, onUpdate }) {
+function Dashboard({ expenses, ledger, activity, onUpdate, onConfirm }) {
   const recent = expenses.slice(0, 5);
 
   return (
@@ -140,14 +189,37 @@ function Dashboard({ expenses, ledger, onUpdate }) {
           {backlogItems.map((item) => <span key={item}>{item}</span>)}
         </div>
       </section>
+      <RecentActivity activity={activity} />
       <section className="section">
         <div className="section-head">
           <h2>最近记录</h2>
           <Link href="/expenses" className="button small">全部</Link>
         </div>
-        <ExpenseList expenses={recent} onUpdate={onUpdate} />
+        <ExpenseList expenses={recent} onUpdate={onUpdate} onConfirm={onConfirm} />
       </section>
     </>
+  );
+}
+
+function RecentActivity({ activity }) {
+  return (
+    <section className="section">
+      <div className="section-head">
+        <h2>最近操作</h2>
+        <span className="muted">{activity.length ? `${activity.length} 条` : "暂无操作"}</span>
+      </div>
+      <div className="activity-list">
+        {activity.map((entry) => (
+          <article className="activity-row" key={entry.id}>
+            <div>
+              <h3>{entry.summary}</h3>
+              <p className="muted">{formatActivityTime(entry.createdAt)}</p>
+            </div>
+            <span className="tag">{activityActionLabel(entry.action)}</span>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -176,7 +248,7 @@ function SummaryCards({ ledger }) {
   );
 }
 
-function Expenses({ expenses, onUpdate, onDelete }) {
+function Expenses({ expenses, onUpdate, onConfirm, onDelete }) {
   const [category, setCategory] = useState("全部");
   const [currency, setCurrency] = useState("全部");
   const [payer, setPayer] = useState("全部");
@@ -203,12 +275,12 @@ function Expenses({ expenses, onUpdate, onDelete }) {
           <option value="them">{coupleName("them")}</option>
         </select>
       </div>
-      <ExpenseList expenses={filtered} onUpdate={onUpdate} onDelete={onDelete} />
+      <ExpenseList expenses={filtered} onUpdate={onUpdate} onConfirm={onConfirm} onDelete={onDelete} />
     </section>
   );
 }
 
-function ExpenseList({ expenses, onUpdate, onDelete }) {
+function ExpenseList({ expenses, onUpdate, onConfirm, onDelete }) {
   const [editingId, setEditingId] = useState("");
   const [editForm, setEditForm] = useState(null);
 
@@ -304,8 +376,8 @@ function ExpenseList({ expenses, onUpdate, onDelete }) {
             <div className="stack">
               <strong className="amount">{formatMoney(expense.currency, expense.amount)}</strong>
               {onUpdate && <button className="button small" onClick={() => startEdit(expense)}>编辑</button>}
-              {onUpdate && expense.status === "draft" && (
-                <button className="button small primary" onClick={() => onUpdate({ ...expense, status: "confirmed" })}>确认</button>
+              {onConfirm && expense.status === "draft" && (
+                <button className="button small primary" onClick={() => onConfirm(expense)}>确认</button>
               )}
               {onDelete && (
                 <button className="button small danger" onClick={() => onDelete(expense.id)}>删除</button>
@@ -316,6 +388,23 @@ function ExpenseList({ expenses, onUpdate, onDelete }) {
       })}
     </div>
   );
+}
+
+function activityActionLabel(action) {
+  if (action === "add") return "新增";
+  if (action === "edit") return "编辑";
+  if (action === "confirm") return "确认";
+  if (action === "delete") return "删除";
+  return "更新";
+}
+
+function formatActivityTime(value) {
+  return new Date(value).toLocaleString("zh-CN", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function AddExpense({ onAdd }) {

@@ -33,6 +33,17 @@ create table if not exists public.attachments (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.expense_activity (
+  id text primary key,
+  expense_id text not null,
+  action text not null check (action in ('add', 'edit', 'confirm', 'delete')),
+  item text not null,
+  amount numeric(12, 2) not null,
+  currency text not null check (currency in ('CNY', 'AUD')),
+  summary text not null,
+  created_at timestamptz not null default now()
+);
+
 insert into public.trips (id, name, starts_on, ends_on, split_rule)
 values ('aussie-chill-2026', 'Aussie Chill · 南十字星下的十六日', '2026-07-28', '2026-08-13', 'couple_50_50')
 on conflict (id) do nothing;
