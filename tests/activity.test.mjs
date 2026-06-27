@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import {
   activityDisplaySummary,
   createActivityEntry,
+  dashboardActivityPreview,
   recentActivity,
 } from "../src/lib/activity.js";
 
@@ -79,6 +80,19 @@ describe("expense activity", () => {
     );
   });
 
+  it("normalizes old split-settled activity wording at display time", () => {
+    assert.equal(
+      activityDisplaySummary({
+        action: "edit",
+        item: "晚餐",
+        amount: 100,
+        currency: "CNY",
+        summary: "编辑了 晚餐：分摊状态 未分摊 → 已分摊",
+      }),
+      "编辑了 晚餐：分摊状态 待分摊 → 已分摊",
+    );
+  });
+
   it("keeps the recent activity list newest-first and capped at eight", () => {
     const entries = Array.from({ length: 10 }, (_, index) =>
       createActivityEntry("edit", { ...expense, id: `expense-${index}`, item: `项目${index}` }, new Date(`2026-08-${String(index + 1).padStart(2, "0")}T10:00:00.000Z`)),
@@ -89,5 +103,16 @@ describe("expense activity", () => {
     assert.equal(recent.length, 8);
     assert.equal(recent[0].item, "项目9");
     assert.equal(recent.at(-1).item, "项目2");
+  });
+
+  it("keeps the dashboard activity preview newest-first and capped at three", () => {
+    const entries = Array.from({ length: 5 }, (_, index) =>
+      createActivityEntry("edit", { ...expense, id: `expense-${index}`, item: `项目${index}` }, new Date(`2026-08-${String(index + 1).padStart(2, "0")}T10:00:00.000Z`)),
+    );
+
+    const preview = dashboardActivityPreview(entries);
+
+    assert.equal(preview.length, 3);
+    assert.deepEqual(preview.map((entry) => entry.item), ["项目4", "项目3", "项目2"]);
   });
 });

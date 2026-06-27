@@ -16,7 +16,7 @@ import {
   setExpenseSplitSettled,
   splitSettledLabel,
 } from "@/lib/ledger";
-import { activityDisplaySummary, createActivityEntry, recentActivity } from "@/lib/activity";
+import { activityDisplaySummary, createActivityEntry, dashboardActivityPreview, recentActivity } from "@/lib/activity";
 import { coupleName, formatPayerLabel, formatSettlementDirection } from "@/lib/couples";
 import { pulseElement, revealPage } from "@/lib/motion";
 import {
@@ -190,11 +190,13 @@ export default function TripLedgerApp({ view }) {
         )}
         {view === "add" && <AddExpense expenses={expenses} onAdd={addExpense} />}
         {view === "settlement" && <Settlement ledger={ledger} />}
+        {view === "activity" && <ActivityPage activity={activity} />}
 
         <nav className="nav" aria-label="主导航" data-motion="nav">
           <Link className={view === "dashboard" ? "active" : ""} href="/">总览</Link>
           <Link className={view === "expenses" ? "active" : ""} href="/expenses">明细</Link>
           <Link className={view === "add" ? "active" : ""} href="/add">新增</Link>
+          <Link className={view === "activity" ? "active" : ""} href="/activity">操作</Link>
           <Link className={view === "settlement" ? "active" : ""} href="/settlement">结算</Link>
           <Link href="/itinerary">行程</Link>
         </nav>
@@ -209,7 +211,7 @@ function Dashboard({ expenses, ledger, activity, onUpdate, onConfirm }) {
   return (
     <>
       <SummaryCards ledger={ledger} />
-      <RecentActivity activity={activity} />
+      <RecentActivity activity={dashboardActivityPreview(activity)} action={<Link href="/activity" className="button small">全部</Link>} />
       <section className="section">
         <div className="section-head" data-motion="section">
           <h2>最近记录</h2>
@@ -221,12 +223,16 @@ function Dashboard({ expenses, ledger, activity, onUpdate, onConfirm }) {
   );
 }
 
-function RecentActivity({ activity }) {
+function ActivityPage({ activity }) {
+  return <RecentActivity activity={activity} />;
+}
+
+function RecentActivity({ activity, action }) {
   return (
     <section className="section" data-motion="activity-panel">
       <div className="section-head" data-motion="section">
         <h2>最近操作</h2>
-        <span className="muted">{activity.length ? `${activity.length} 条` : "暂无操作"}</span>
+        {action || <span className="muted">{activity.length ? `${activity.length} 条` : "暂无操作"}</span>}
       </div>
       <div className="activity-list">
         {activity.map((entry) => (

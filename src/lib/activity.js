@@ -32,9 +32,10 @@ export function activityDisplaySummary(entry) {
   const amount = Number(entry.amount || 0);
   const currency = entry.currency || "CNY";
   const summary = entry.summary || "";
+  const displaySummary = normalizeActivitySummary(summary);
   const genericEditSummary = `${actionLabels.edit} ${item}`;
 
-  if (entry.action !== "edit" || (summary && summary !== genericEditSummary)) return summary;
+  if (entry.action !== "edit" || (summary && summary !== genericEditSummary)) return displaySummary;
   return editFallbackSummary({ verb: actionLabels.edit, item, amount, currency });
 }
 
@@ -42,6 +43,10 @@ export function recentActivity(entries, limit = 8) {
   return [...(entries || [])]
     .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime())
     .slice(0, limit);
+}
+
+export function dashboardActivityPreview(entries) {
+  return recentActivity(entries, 3);
 }
 
 function activitySummary({ action, verb, expense, previousExpense, item, amount, currency }) {
@@ -97,4 +102,8 @@ function statusLabel(status) {
 
 function splitSettledLabel(splitSettled) {
   return splitSettled ? "已分摊" : "待分摊";
+}
+
+function normalizeActivitySummary(summary) {
+  return summary.replaceAll("未分摊", "待分摊");
 }
