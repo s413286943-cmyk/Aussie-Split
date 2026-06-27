@@ -27,6 +27,17 @@ export function createActivityEntry(action, expense, now = new Date(), previousE
   };
 }
 
+export function activityDisplaySummary(entry) {
+  const item = entry.item || "未命名费用";
+  const amount = Number(entry.amount || 0);
+  const currency = entry.currency || "CNY";
+  const summary = entry.summary || "";
+  const genericEditSummary = `${actionLabels.edit} ${item}`;
+
+  if (entry.action !== "edit" || (summary && summary !== genericEditSummary)) return summary;
+  return editFallbackSummary({ verb: actionLabels.edit, item, amount, currency });
+}
+
 export function recentActivity(entries, limit = 8) {
   return [...(entries || [])]
     .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime())
@@ -35,10 +46,15 @@ export function recentActivity(entries, limit = 8) {
 
 function activitySummary({ action, verb, expense, previousExpense, item, amount, currency }) {
   if (action === "add") return `${verb} ${formatMoney(currency, amount)} ${item}`;
-  if (action !== "edit" || !previousExpense) return `${verb} ${item}`;
+  if (action !== "edit") return `${verb} ${item}`;
+  if (!previousExpense) return editFallbackSummary({ verb, item, amount, currency });
 
   const changes = describeExpenseChanges(previousExpense, expense);
-  return changes.length ? `${verb} ${item}：${changes.join("，")}` : `${verb} ${item}`;
+  return changes.length ? `${verb} ${item}：${changes.join("，")}` : editFallbackSummary({ verb, item, amount, currency });
+}
+
+function editFallbackSummary({ verb, item, amount, currency }) {
+  return `${verb} ${item}：金额 ${formatMoney(currency, amount)}`;
 }
 
 function describeExpenseChanges(previousExpense, expense) {

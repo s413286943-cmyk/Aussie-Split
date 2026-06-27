@@ -14,7 +14,7 @@ import {
   parseBankMessage,
   seedExpenses,
 } from "@/lib/ledger";
-import { createActivityEntry, recentActivity } from "@/lib/activity";
+import { activityDisplaySummary, createActivityEntry, recentActivity } from "@/lib/activity";
 import { coupleName, formatPayerLabel, formatSettlementDirection } from "@/lib/couples";
 import { pulseElement, revealPage } from "@/lib/motion";
 import {
@@ -230,7 +230,7 @@ function RecentActivity({ activity }) {
         {activity.map((entry) => (
           <article className="activity-row" key={entry.id} data-motion="row">
             <div>
-              <h3>{entry.summary}</h3>
+              <h3>{activityDisplaySummary(entry)}</h3>
               <p className="muted">{formatActivityTime(entry.createdAt)}</p>
             </div>
             <span className="tag">{activityActionLabel(entry.action)}</span>
