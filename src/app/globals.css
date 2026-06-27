@@ -57,6 +57,14 @@ button {
   cursor: pointer;
 }
 
+[data-motion] {
+  will-change: transform, opacity;
+}
+
+[data-food-block="true"] {
+  border-radius: 12px;
+}
+
 .app-shell {
   width: min(1120px, 100%);
   margin: 0 auto;
@@ -914,6 +922,17 @@ textarea {
   color: var(--ocean);
   font-size: 0.78rem;
   font-weight: 900;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-motion],
+  .day-cover-image {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
 }
 
 @media (max-width: 860px) {

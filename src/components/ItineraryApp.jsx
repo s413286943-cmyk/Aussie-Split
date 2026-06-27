@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import itinerary from "@/data/itinerary.generated.json";
+import { pulseElement, revealOnScroll, revealPage } from "@/lib/motion";
 import { collectTodayResources, findTodayDay } from "@/lib/today";
 import { fetchDayWeather, fallbackWeather } from "@/lib/weather";
 import UnlockGate from "@/components/UnlockGate";
@@ -27,6 +28,7 @@ export default function ItineraryApp() {
 }
 
 function ItineraryContent() {
+  const shellRef = useRef(null);
   const [weatherByDay, setWeatherByDay] = useState(() => Object.fromEntries(
     itinerary.days.map((day) => [day.id, fallbackWeather(day)])
   ));
@@ -46,8 +48,23 @@ function ItineraryContent() {
     };
   }, []);
 
+  useEffect(() => {
+    const pageCleanup = revealPage(shellRef, [
+      { selector: "[data-motion='itinerary-hero']", y: 16 },
+      { selector: "[data-motion='today-console']", y: 14 },
+      { selector: "[data-motion='day-jump']", y: 10 },
+      { selector: "[data-motion='nav']", y: 10 },
+    ]);
+    const scrollCleanup = revealOnScroll(shellRef, "[data-motion='stage-head'], [data-motion='day-card']");
+
+    return () => {
+      pageCleanup?.();
+      scrollCleanup?.();
+    };
+  }, []);
+
   return (
-    <main className="itinerary-shell">
+    <main className="itinerary-shell" ref={shellRef}>
       <Hero nextDay={nextDay} weather={weatherByDay[nextDay.id]} />
       <TodayConsole day={todayDay} weather={weatherByDay[todayDay.id]} />
       <DayJump days={itinerary.days} />
@@ -66,7 +83,7 @@ function ItineraryContent() {
         <DayCard day={itinerary.days.find((day) => day.id === "d0")} weather={weatherByDay.d0} compact />
         <DayCard day={itinerary.days.find((day) => day.id === "d16")} weather={weatherByDay.d16} compact />
       </section>
-      <nav className="nav" aria-label="主导航">
+      <nav className="nav" aria-label="主导航" data-motion="nav">
         <Link className="active" href="/itinerary">行程</Link>
         <Link href="/">账本</Link>
         <Link href="/add">记一笔</Link>
@@ -79,7 +96,7 @@ function TodayConsole({ day, weather }) {
   const quickResources = collectTodayResources(day);
 
   return (
-    <section className="today-console" aria-label="今日旅行控制台">
+    <section className="today-console" aria-label="今日旅行控制台" data-motion="today-console">
       <div className="today-summary">
         <span>今日旅行控制台</span>
         <h2>{day.label} · {day.date.slice(5).replace("-", ".")} {day.weekday} · {day.city}</h2>
@@ -129,7 +146,7 @@ function TodayConsole({ day, weather }) {
 
 function Hero({ nextDay, weather }) {
   return (
-    <header className="itinerary-hero">
+    <header className="itinerary-hero" data-motion="itinerary-hero">
       <Image
         className="itinerary-hero-image"
         src={itinerary.trip.coverImageUrl}
@@ -160,7 +177,7 @@ function Hero({ nextDay, weather }) {
 
 function DayJump({ days }) {
   return (
-    <section className="day-jump" aria-label="快速跳转">
+    <section className="day-jump" aria-label="快速跳转" data-motion="day-jump">
       {days.map((day) => (
         <a key={day.id} href={`#${day.id}`}>{day.label}</a>
       ))}
@@ -171,7 +188,7 @@ function DayJump({ days }) {
 function StageSection({ stage, days, weatherByDay, eagerImage }) {
   return (
     <section className="stage-section">
-      <div className="stage-head">
+      <div className="stage-head" data-motion="stage-head">
         <div>
           <span>{days[0].date.slice(5).replace("-", ".")} - {days.at(-1).date.slice(5).replace("-", ".")}</span>
           <h2>{stage.title}</h2>
@@ -196,10 +213,38 @@ function StageSection({ stage, days, weatherByDay, eagerImage }) {
 }
 
 function DayCard({ day, weather, compact = false }) {
+  const foodPulseRef = useRef({ tween: null, timeout: null });
+
+  useEffect(() => {
+    const pulse = foodPulseRef.current;
+    return () => {
+      pulse.tween?.kill();
+      if (pulse.timeout) window.clearTimeout(pulse.timeout);
+    };
+  }, []);
+
   if (!day) return null;
 
+  function handleDetailsToggle(event) {
+    if (!event.currentTarget.open) return;
+
+    const foodBlock = event.currentTarget.querySelector("[data-food-block='true']");
+    foodPulseRef.current.tween?.kill();
+    if (foodPulseRef.current.timeout) window.clearTimeout(foodPulseRef.current.timeout);
+
+    const tween = pulseElement(foodBlock);
+    foodPulseRef.current.tween = tween || null;
+    foodPulseRef.current.timeout = tween
+      ? window.setTimeout(() => {
+        tween.kill();
+        foodPulseRef.current.tween = null;
+        foodPulseRef.current.timeout = null;
+      }, 900)
+      : null;
+  }
+
   return (
-    <article className={compact ? "day-card compact" : "day-card"} id={day.id}>
+    <article className={compact ? "day-card compact" : "day-card"} id={day.id} data-motion="day-card">
       <div className="day-cover">
         <Image
           className="day-cover-image"
@@ -223,11 +268,15 @@ function DayCard({ day, weather, compact = false }) {
         </div>
         <p className="focus">{day.focus}</p>
         <WeatherStrip weather={weather || fallbackWeather(day)} />
-        <details>
+        <details onToggle={handleDetailsToggle}>
           <summary>查看当天安排</summary>
           <div className="timeline">
             {day.blocks.map((block) => (
-              <div className="time-block" key={`${day.id}-${block.sortOrder}`}>
+              <div
+                className="time-block"
+                key={`${day.id}-${block.sortOrder}`}
+                data-food-block={block.period === "饮食" ? "true" : undefined}
+              >
                 <span>{block.period}</span>
                 <div>
                   <h4>{block.place}</h4>
