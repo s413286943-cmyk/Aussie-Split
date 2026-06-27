@@ -55,6 +55,79 @@ describe("Supabase REST headers", () => {
     assert.equal("Authorization" in calls[0].headers, false);
   });
 
+  it("loads the split-settled flag from remote expenses", async () => {
+    const originalFetch = globalThis.fetch;
+    const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_test";
+    globalThis.fetch = async () => ({
+      ok: true,
+      json: async () => [
+        {
+          id: "expense-1",
+          category: "dining",
+          item: "晚餐",
+          date: "2026-08-01",
+          currency: "CNY",
+          amount: 100,
+          payer: "us",
+          status: "confirmed",
+          note: "",
+          attachment_name: "",
+          split_settled: true,
+        },
+      ],
+    });
+
+    try {
+      const { fetchRemoteExpenses } = await import(`../src/lib/supabaseRest.js?splitSettledFetch=${Date.now()}`);
+      const expenses = await fetchRemoteExpenses();
+
+      assert.equal(expenses[0].splitSettled, true);
+    } finally {
+      globalThis.fetch = originalFetch;
+      restoreEnv(originalUrl, originalKey);
+    }
+  });
+
+  it("saves the split-settled flag to remote expenses", async () => {
+    const originalFetch = globalThis.fetch;
+    const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const calls = [];
+
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_test";
+    globalThis.fetch = async (url, options) => {
+      calls.push({ url, options });
+      return { ok: true };
+    };
+
+    try {
+      const { upsertRemoteExpense } = await import(`../src/lib/supabaseRest.js?splitSettledSave=${Date.now()}`);
+      await upsertRemoteExpense({
+        id: "expense-1",
+        category: "dining",
+        item: "晚餐",
+        date: "2026-08-01",
+        currency: "CNY",
+        amount: 100,
+        payer: "us",
+        status: "confirmed",
+        note: "",
+        attachmentName: "",
+        splitSettled: true,
+      });
+
+      assert.equal(JSON.parse(calls[0].options.body).split_settled, true);
+    } finally {
+      globalThis.fetch = originalFetch;
+      restoreEnv(originalUrl, originalKey);
+    }
+  });
+
   it("loads remote expense activity newest-first", async () => {
     const originalFetch = globalThis.fetch;
     const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

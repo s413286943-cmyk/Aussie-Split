@@ -52,6 +52,7 @@ function expense(id, category, item, date, currency, amount, note) {
     status: "confirmed",
     note,
     attachmentName: "",
+    splitSettled: false,
   };
 }
 
@@ -116,6 +117,7 @@ export function parseBankMessage(message) {
     status: "draft",
     note: "由短信粘贴生成，确认后入账",
     attachmentName: "",
+    splitSettled: false,
   };
 }
 
@@ -143,6 +145,13 @@ export function applyExpenseEdit(expense, form) {
     payer: form.payer,
     status: form.status,
     note: form.note,
+  };
+}
+
+export function setExpenseSplitSettled(expense, splitSettled) {
+  return {
+    ...expense,
+    splitSettled,
   };
 }
 

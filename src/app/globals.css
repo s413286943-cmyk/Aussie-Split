@@ -291,6 +291,11 @@ button {
   color: var(--danger);
 }
 
+.tag.settled {
+  background: rgba(20, 125, 114, 0.18);
+  color: var(--accent-strong);
+}
+
 .form-card,
 .unlock-card {
   padding: 16px;

@@ -7,6 +7,7 @@ import {
   expenseToEditableForm,
   parseBankMessage,
   seedExpenses,
+  setExpenseSplitSettled,
 } from "../src/lib/ledger.js";
 import {
   coupleName,
@@ -59,6 +60,27 @@ describe("travel split ledger", () => {
 
     assert.equal(ledger.currencies.CNY.netOtherOwesUs, 50);
     assert.equal(ledger.currencies.AUD.netOtherOwesUs, -40);
+  });
+
+  it("marks an expense as split-settled without changing the ledger math", () => {
+    const expense = {
+      id: "dinner",
+      category: "dining",
+      item: "Dinner",
+      date: "2026-08-01",
+      currency: "CNY",
+      amount: 100,
+      payer: "us",
+      status: "confirmed",
+      note: "",
+      splitSettled: false,
+    };
+    const before = calculateLedger([expense]);
+    const settledExpense = setExpenseSplitSettled(expense, true);
+    const after = calculateLedger([settledExpense]);
+
+    assert.equal(settledExpense.splitSettled, true);
+    assert.deepEqual(after, before);
   });
 
   it("turns a bank message into a draft expense", () => {

@@ -13,6 +13,7 @@ import {
   formatMoney,
   parseBankMessage,
   seedExpenses,
+  setExpenseSplitSettled,
 } from "@/lib/ledger";
 import { activityDisplaySummary, createActivityEntry, recentActivity } from "@/lib/activity";
 import { coupleName, formatPayerLabel, formatSettlementDirection } from "@/lib/couples";
@@ -318,6 +319,10 @@ function ExpenseList({ expenses, onUpdate, onConfirm, onDelete }) {
     cancelEdit();
   }
 
+  async function toggleSplitSettled(expense) {
+    await onUpdate(setExpenseSplitSettled(expense, !expense.splitSettled));
+  }
+
   return (
     <div className="expense-list">
       {expenses.map((expense) => {
@@ -388,11 +393,22 @@ function ExpenseList({ expenses, onUpdate, onConfirm, onDelete }) {
                 <span className="tag">{expense.category}</span>
                 <span className={expense.status === "draft" ? "tag draft" : "tag"}>{expense.status === "draft" ? "待确认" : "已确认"}</span>
                 <span className={expense.payer === "them" ? "tag other" : "tag"}>{formatPayerLabel(expense.payer)}</span>
+                {expense.splitSettled && <span className="tag settled">已分摊</span>}
                 {expense.attachmentName && <span className="tag">有小票</span>}
               </div>
             </div>
             <div className="stack">
               <strong className="amount">{formatMoney(expense.currency, expense.amount)}</strong>
+              {onUpdate && (
+                <button
+                  className={expense.splitSettled ? "button small" : "button small primary"}
+                  type="button"
+                  aria-pressed={Boolean(expense.splitSettled)}
+                  onClick={() => toggleSplitSettled(expense)}
+                >
+                  {expense.splitSettled ? "取消分摊" : "已分摊"}
+                </button>
+              )}
               {onUpdate && <button className="button small" onClick={() => startEdit(expense)}>编辑</button>}
               {onConfirm && expense.status === "draft" && (
                 <button className="button small primary" onClick={() => onConfirm(expense)}>确认</button>

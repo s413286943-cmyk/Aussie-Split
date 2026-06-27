@@ -50,6 +50,18 @@ describe("expense activity", () => {
     );
   });
 
+  it("describes split-settled changes for edited expenses", () => {
+    assert.equal(
+      createActivityEntry(
+        "edit",
+        { ...expense, splitSettled: true },
+        new Date("2026-07-30T10:00:00.000Z"),
+        { ...expense, splitSettled: false },
+      ).summary,
+      "编辑了 晚餐：分摊状态 未分摊 → 已分摊",
+    );
+  });
+
   it("keeps edit activity informative when detailed changes are unavailable", () => {
     assert.equal(
       createActivityEntry("edit", expense, new Date("2026-07-30T10:00:00.000Z")).summary,

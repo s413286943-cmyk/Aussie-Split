@@ -74,6 +74,9 @@ function describeExpenseChanges(previousExpense, expense) {
   if ((previousExpense.status || "") !== (expense.status || "")) {
     changes.push(`状态 ${statusLabel(previousExpense.status)} → ${statusLabel(expense.status)}`);
   }
+  if (Boolean(previousExpense.splitSettled) !== Boolean(expense.splitSettled)) {
+    changes.push(`分摊状态 ${splitSettledLabel(previousExpense.splitSettled)} → ${splitSettledLabel(expense.splitSettled)}`);
+  }
   if ((previousExpense.item || "") !== (expense.item || "")) {
     changes.push(`项目 ${previousExpense.item || "未命名费用"} → ${expense.item || "未命名费用"}`);
   }
@@ -90,4 +93,8 @@ function statusLabel(status) {
   if (status === "draft") return "待确认";
   if (status === "confirmed") return "已确认";
   return status || "未填";
+}
+
+function splitSettledLabel(splitSettled) {
+  return splitSettled ? "已分摊" : "未分摊";
 }

@@ -107,6 +107,7 @@ function toRow(expense) {
     status: expense.status,
     note: expense.note || "",
     attachment_name: expense.attachmentName || "",
+    split_settled: Boolean(expense.splitSettled),
   };
 }
 
@@ -122,6 +123,7 @@ function fromRow(row) {
     status: row.status,
     note: row.note || "",
     attachmentName: row.attachment_name || "",
+    splitSettled: Boolean(row.split_settled),
   };
 }
 
