@@ -58,7 +58,7 @@ describe("expense activity", () => {
         new Date("2026-07-30T10:00:00.000Z"),
         { ...expense, splitSettled: false },
       ).summary,
-      "编辑了 晚餐：分摊状态 未分摊 → 已分摊",
+      "编辑了 晚餐：分摊状态 待分摊 → 已分摊",
     );
   });
 

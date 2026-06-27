@@ -96,5 +96,5 @@ function statusLabel(status) {
 }
 
 function splitSettledLabel(splitSettled) {
-  return splitSettled ? "已分摊" : "未分摊";
+  return splitSettled ? "已分摊" : "待分摊";
 }

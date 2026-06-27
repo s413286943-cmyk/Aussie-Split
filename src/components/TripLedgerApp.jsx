@@ -14,6 +14,7 @@ import {
   parseBankMessage,
   seedExpenses,
   setExpenseSplitSettled,
+  splitSettledLabel,
 } from "@/lib/ledger";
 import { activityDisplaySummary, createActivityEntry, recentActivity } from "@/lib/activity";
 import { coupleName, formatPayerLabel, formatSettlementDirection } from "@/lib/couples";
@@ -401,12 +402,12 @@ function ExpenseList({ expenses, onUpdate, onConfirm, onDelete }) {
               <strong className="amount">{formatMoney(expense.currency, expense.amount)}</strong>
               {onUpdate && (
                 <button
-                  className={expense.splitSettled ? "button small" : "button small primary"}
+                  className={expense.splitSettled ? "button small primary" : "button small"}
                   type="button"
                   aria-pressed={Boolean(expense.splitSettled)}
                   onClick={() => toggleSplitSettled(expense)}
                 >
-                  {expense.splitSettled ? "取消分摊" : "已分摊"}
+                  {splitSettledLabel(expense.splitSettled)}
                 </button>
               )}
               {onUpdate && <button className="button small" onClick={() => startEdit(expense)}>编辑</button>}

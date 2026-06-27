@@ -155,6 +155,10 @@ export function setExpenseSplitSettled(expense, splitSettled) {
   };
 }
 
+export function splitSettledLabel(splitSettled) {
+  return splitSettled ? "已分摊" : "待分摊";
+}
+
 export function formatMoney(currency, amount) {
   const value = Number(amount || 0).toLocaleString("zh-CN", {
     minimumFractionDigits: 2,

@@ -8,6 +8,7 @@ import {
   parseBankMessage,
   seedExpenses,
   setExpenseSplitSettled,
+  splitSettledLabel,
 } from "../src/lib/ledger.js";
 import {
   coupleName,
@@ -81,6 +82,11 @@ describe("travel split ledger", () => {
 
     assert.equal(settledExpense.splitSettled, true);
     assert.deepEqual(after, before);
+  });
+
+  it("labels split-settled state as pending before it is settled", () => {
+    assert.equal(splitSettledLabel(false), "待分摊");
+    assert.equal(splitSettledLabel(true), "已分摊");
   });
 
   it("turns a bank message into a draft expense", () => {
