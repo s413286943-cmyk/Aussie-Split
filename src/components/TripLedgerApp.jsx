@@ -3,7 +3,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   applyExpenseEdit,
@@ -16,6 +16,7 @@ import {
 } from "@/lib/ledger";
 import { createActivityEntry, recentActivity } from "@/lib/activity";
 import { coupleName, formatPayerLabel, formatSettlementDirection } from "@/lib/couples";
+import { pulseElement, revealPage } from "@/lib/motion";
 import {
   deleteRemoteExpense,
   fetchRemoteActivity,
@@ -32,9 +33,11 @@ const storageKey = "aussie-chill-expenses-v1";
 const activityStorageKey = "aussie-chill-activity-v1";
 
 export default function TripLedgerApp({ view }) {
+  const shellRef = useRef(null);
   const [ready, setReady] = useState(false);
   const [expenses, setExpenses] = useState(seedExpenses);
   const [activity, setActivity] = useState([]);
+  const [activityPulseKey, setActivityPulseKey] = useState(0);
   const [syncState, setSyncState] = useState("本机保存");
   const ledger = useMemo(() => calculateLedger(expenses), [expenses]);
 
@@ -74,6 +77,29 @@ export default function TripLedgerApp({ view }) {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (!ready) return undefined;
+    return revealPage(shellRef, [
+      { selector: "[data-motion='hero']", y: 16 },
+      { selector: "[data-motion='nav']", y: 10 },
+    ]);
+  }, [ready]);
+
+  useEffect(() => {
+    if (!ready) return undefined;
+    return revealPage(shellRef, [
+      { selector: "[data-motion='summary-card']", y: 14, stagger: 0.05 },
+      { selector: "[data-motion='section']", y: 16, stagger: 0.08 },
+      { selector: "[data-motion='row']", y: 12, stagger: 0.04 },
+    ]);
+  }, [ready, view]);
+
+  useEffect(() => {
+    if (!activityPulseKey) return;
+    const tween = pulseElement(shellRef.current?.querySelector("[data-motion='activity-panel']"));
+    return () => tween?.kill();
+  }, [activityPulseKey]);
+
   async function persist(nextExpenses, remoteAction) {
     setExpenses(nextExpenses);
     localStorage.setItem(storageKey, JSON.stringify(nextExpenses));
@@ -96,6 +122,7 @@ export default function TripLedgerApp({ view }) {
     } catch {
       // Activity is helpful context, but it should never block core expense edits.
     }
+    setActivityPulseKey((key) => key + 1);
   }
 
   async function addExpense(expense) {
@@ -131,8 +158,8 @@ export default function TripLedgerApp({ view }) {
 
   return (
     <UnlockGate intro="输入旅行访问码后进入共享账本和行程。">
-      <div className="app-shell">
-        <header className="hero">
+      <div className="app-shell" ref={shellRef} data-motion="shell">
+        <header className="hero" data-motion="hero">
           <div>
             <h1>Aussie Chill Split Bill</h1>
             <p>
@@ -162,7 +189,7 @@ export default function TripLedgerApp({ view }) {
         {view === "add" && <AddExpense expenses={expenses} onAdd={addExpense} />}
         {view === "settlement" && <Settlement ledger={ledger} />}
 
-        <nav className="nav" aria-label="主导航">
+        <nav className="nav" aria-label="主导航" data-motion="nav">
           <Link className={view === "dashboard" ? "active" : ""} href="/">总览</Link>
           <Link className={view === "expenses" ? "active" : ""} href="/expenses">明细</Link>
           <Link className={view === "add" ? "active" : ""} href="/add">新增</Link>
@@ -182,7 +209,7 @@ function Dashboard({ expenses, ledger, activity, onUpdate, onConfirm }) {
       <SummaryCards ledger={ledger} />
       <RecentActivity activity={activity} />
       <section className="section">
-        <div className="section-head">
+        <div className="section-head" data-motion="section">
           <h2>最近记录</h2>
           <Link href="/expenses" className="button small">全部</Link>
         </div>
@@ -194,14 +221,14 @@ function Dashboard({ expenses, ledger, activity, onUpdate, onConfirm }) {
 
 function RecentActivity({ activity }) {
   return (
-    <section className="section">
-      <div className="section-head">
+    <section className="section" data-motion="activity-panel">
+      <div className="section-head" data-motion="section">
         <h2>最近操作</h2>
         <span className="muted">{activity.length ? `${activity.length} 条` : "暂无操作"}</span>
       </div>
       <div className="activity-list">
         {activity.map((entry) => (
-          <article className="activity-row" key={entry.id}>
+          <article className="activity-row" key={entry.id} data-motion="row">
             <div>
               <h3>{entry.summary}</h3>
               <p className="muted">{formatActivityTime(entry.createdAt)}</p>
@@ -220,14 +247,14 @@ function SummaryCards({ ledger }) {
   return (
     <section className="section summary-grid">
       {entries.map(([currency, bucket]) => (
-        <article className="card" key={currency}>
+        <article className="card" key={currency} data-motion="summary-card">
           <span className="muted">{currency} 已确认总额</span>
           <strong>{formatMoney(currency, bucket.total)}</strong>
           <p className="muted">每对夫妻承担 {formatMoney(currency, bucket.eachCoupleShare)}</p>
         </article>
       ))}
       {entries.map(([currency, bucket]) => (
-        <article className="card" key={`${currency}-net`}>
+        <article className="card" key={`${currency}-net`} data-motion="summary-card">
           <span className="muted">{currency} 当前应收</span>
           <strong>{formatMoney(currency, Math.abs(bucket.netOtherOwesUs))}</strong>
           <p className="muted">
@@ -253,7 +280,7 @@ function Expenses({ expenses, onUpdate, onConfirm, onDelete }) {
 
   return (
     <section className="section">
-      <div className="section-head">
+      <div className="section-head" data-motion="section">
         <h2>费用明细</h2>
         <span className="muted">{filtered.length} 条</span>
       </div>
@@ -298,7 +325,7 @@ function ExpenseList({ expenses, onUpdate, onConfirm, onDelete }) {
 
         if (isEditing) {
           return (
-            <article className="expense-row editing" key={expense.id}>
+            <article className="expense-row editing" key={expense.id} data-motion="row">
               <div className="form-grid">
                 <label className="full">
                   项目
@@ -353,7 +380,7 @@ function ExpenseList({ expenses, onUpdate, onConfirm, onDelete }) {
         }
 
         return (
-          <article className="expense-row" key={expense.id}>
+          <article className="expense-row" key={expense.id} data-motion="row">
             <div>
               <h3>{expense.item}</h3>
               <p className="muted">{expense.date || "日期待补"} · {expense.note || "无备注"}</p>
@@ -432,7 +459,7 @@ function AddExpense({ onAdd }) {
   }
 
   return (
-    <section className="section form-card">
+    <section className="section form-card" data-motion="section">
       <div className="section-head">
         <h2>记一笔</h2>
         <span className="muted">默认 50/50 split</span>
@@ -507,7 +534,7 @@ function Settlement({ ledger }) {
     <>
       <section className="section settlement-grid">
         {entries.map(([currency, bucket]) => (
-          <article className="card" key={currency}>
+          <article className="card" key={currency} data-motion="summary-card">
             <span className="muted">{currency} 结算</span>
             <strong>{formatMoney(currency, Math.abs(bucket.netOtherOwesUs))}</strong>
             <p className="muted">
@@ -517,14 +544,14 @@ function Settlement({ ledger }) {
         ))}
       </section>
       <section className="section">
-        <div className="section-head">
+        <div className="section-head" data-motion="section">
           <h2>分类小计</h2>
           <span className="muted">只统计已确认费用</span>
         </div>
         <div className="expense-list">
           {entries.flatMap(([currency]) =>
             Object.entries(ledger.categoriesByCurrency[currency] || {}).map(([category, amount]) => (
-              <article className="expense-row" key={`${currency}-${category}`}>
+              <article className="expense-row" key={`${currency}-${category}`} data-motion="row">
                 <div>
                   <h3>{category}</h3>
                   <p className="muted">{currency}</p>
