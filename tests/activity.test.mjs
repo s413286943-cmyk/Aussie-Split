@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  activityDisplaySummary,
   createActivityEntry,
   recentActivity,
 } from "../src/lib/activity.js";
@@ -19,7 +20,7 @@ describe("expense activity", () => {
       createActivityEntry("add", expense, new Date("2026-07-30T10:00:00.000Z")).summary,
       "新增了 ¥100.00 晚餐",
     );
-    assert.equal(createActivityEntry("edit", expense).summary, "编辑了 晚餐");
+    assert.equal(createActivityEntry("edit", expense).summary, "编辑了 晚餐：金额 ¥100.00");
     assert.equal(createActivityEntry("confirm", expense).summary, "确认了 晚餐");
     assert.equal(createActivityEntry("delete", expense).summary, "删除了 晚餐");
   });
@@ -46,6 +47,23 @@ describe("expense activity", () => {
     assert.equal(
       createActivityEntry("edit", updated, new Date("2026-07-30T10:00:00.000Z"), original).summary,
       "编辑了 晚餐：金额 ¥100.00 → ¥128.50，日期 2026-08-01 → 2026-08-02，类别 dining → 交通，付款方 孙张付款 → 胡董付款，状态 待确认 → 已确认，备注已更新",
+    );
+  });
+
+  it("keeps edit activity informative when detailed changes are unavailable", () => {
+    assert.equal(
+      createActivityEntry("edit", expense, new Date("2026-07-30T10:00:00.000Z")).summary,
+      "编辑了 晚餐：金额 ¥100.00",
+    );
+    assert.equal(
+      activityDisplaySummary({
+        action: "edit",
+        item: "晚餐",
+        amount: 100,
+        currency: "CNY",
+        summary: "编辑了 晚餐",
+      }),
+      "编辑了 晚餐：金额 ¥100.00",
     );
   });
 
