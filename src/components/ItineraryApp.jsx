@@ -158,10 +158,13 @@ function Hero({ nextDay, weather }) {
       />
       <div className="itinerary-hero-copy">
         <p>{itinerary.trip.route}</p>
-        <h1>{itinerary.trip.title} · {itinerary.trip.subtitle}</h1>
+        <h1>
+          <span>{itinerary.trip.title} ·</span>
+          <span>{itinerary.trip.subtitle}</span>
+        </h1>
         <div className="hero-meta">
           <span>{itinerary.trip.dates}</span>
-          <span>2对夫妻</span>
+          <span>好友出行</span>
           <span>城市风光 · 海岸自驾 · 大堡礁</span>
         </div>
       </div>

@@ -40,6 +40,16 @@ describe("itinerary data", () => {
     assert.ok(itinerary.days.every((day) => day.coverImageUrl.startsWith("/itinerary/")));
   });
 
+  it("keeps D3 visually before the Twelve Apostles route", () => {
+    const d3 = itinerary.days.find((day) => day.id === "d3");
+    const d4 = itinerary.days.find((day) => day.id === "d4");
+
+    assert.equal(d3.coverImageUrl, "/itinerary/d3-great-ocean-road-lorne.png");
+    assert.notEqual(d3.coverImageUrl, d4.coverImageUrl);
+    assert.doesNotMatch(d3.coverImageUrl, /twelve|apostles|gorge/i);
+    assert.match(d3.coverImageAlt, /Lorne|Apollo Bay|灯塔|大洋路早段/);
+  });
+
   it("keeps Totti's on D14 and Cafe Sydney on D15 in the meal plan", () => {
     const d14Text = itinerary.days.find((day) => day.id === "d14").blocks
       .map((block) => `${block.place} ${block.activity} ${block.tip}`)
