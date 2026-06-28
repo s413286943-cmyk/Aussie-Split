@@ -27,6 +27,15 @@ export const backlogItems = [
   "市内交通 / Uber / Ferry / Train",
 ];
 
+export const expenseTemplates = [
+  { id: "dining", label: "餐饮", category: "dining", item: "餐饮" },
+  { id: "taxi", label: "打车 / Uber", category: "交通", item: "打车 / Uber" },
+  { id: "parking", label: "停车 / toll", category: "交通", item: "停车 / toll" },
+  { id: "fuel", label: "油费", category: "交通", item: "油费" },
+  { id: "tour", label: "门票 / tour", category: "活动", item: "门票 / tour" },
+  { id: "shopping", label: "购物 / 超市", category: "购物", item: "购物 / 超市" },
+];
+
 export const seedExpenses = [
   expense("hotel-oaks-melbourne", "酒店", "Oaks Melbourne on Market Hotel", "2026-07-29", "CNY", 2534.86, "墨尔本 CBD，2晚"),
   expense("hotel-seaview", "酒店", "Seaview Motel & Apartments", "2026-07-31", "CNY", 906.28, "Apollo Bay，1晚"),
@@ -155,6 +164,21 @@ export function setExpenseSplitSettled(expense, splitSettled) {
   };
 }
 
+export function applyExpenseTemplate(form, templateId, now = new Date()) {
+  const template = expenseTemplates.find((item) => item.id === templateId);
+  if (!template) return form;
+
+  return {
+    ...form,
+    category: template.category,
+    item: template.item,
+    date: localDateInputValue(now),
+    payer: "us",
+    status: "confirmed",
+    splitSettled: false,
+  };
+}
+
 export function splitSettledLabel(splitSettled) {
   return splitSettled ? "已分摊" : "待分摊";
 }
@@ -177,4 +201,12 @@ function guessCategory(item) {
   if (/tour|reef|watching|opera|活动|一日游/i.test(item)) return "活动";
   if (/dinner|lunch|cafe|restaurant|bbq|market|dining|餐|食材|咖啡/i.test(item)) return "dining";
   return "其他";
+}
+
+function localDateInputValue(value) {
+  const date = value instanceof Date ? value : new Date(value);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }

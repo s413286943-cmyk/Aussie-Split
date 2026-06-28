@@ -7,9 +7,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   applyExpenseEdit,
+  applyExpenseTemplate,
   calculateLedger,
   categories,
   expenseToEditableForm,
+  expenseTemplates,
   formatMoney,
   parseBankMessage,
   seedExpenses,
@@ -493,6 +495,18 @@ function AddExpense({ onAdd }) {
           <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="例如：08/11 Captain Cook Whale Watching card purchase A$340.20" />
         </label>
         <button className="button" type="button" onClick={useMessage}>从短信生成待确认草稿</button>
+        <div className="quick-templates" aria-label="常用模板">
+          {expenseTemplates.map((template) => (
+            <button
+              className="button small"
+              key={template.id}
+              type="button"
+              onClick={() => setForm(applyExpenseTemplate(form, template.id))}
+            >
+              {template.label}
+            </button>
+          ))}
+        </div>
         <div>
           <div className="form-grid">
             <label className="full">

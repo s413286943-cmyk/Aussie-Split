@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  applyExpenseTemplate,
   applyExpenseEdit,
   calculateLedger,
   expenseToEditableForm,
+  expenseTemplates,
   parseBankMessage,
   seedExpenses,
   setExpenseSplitSettled,
@@ -87,6 +89,47 @@ describe("travel split ledger", () => {
   it("labels split-settled state as pending before it is settled", () => {
     assert.equal(splitSettledLabel(false), "待分摊");
     assert.equal(splitSettledLabel(true), "已分摊");
+  });
+
+  it("offers high-frequency templates for fast expense entry", () => {
+    assert.deepEqual(expenseTemplates.map((template) => template.label), [
+      "餐饮",
+      "打车 / Uber",
+      "停车 / toll",
+      "油费",
+      "门票 / tour",
+      "购物 / 超市",
+    ]);
+  });
+
+  it("applies an expense template without clearing amount or note", () => {
+    const next = applyExpenseTemplate(
+      {
+        id: "",
+        category: "其他",
+        item: "",
+        date: "",
+        currency: "AUD",
+        amount: "88.50",
+        payer: "them",
+        status: "draft",
+        note: "机场到酒店",
+        attachmentName: "",
+        splitSettled: true,
+      },
+      "taxi",
+      new Date("2026-08-02T10:30:00"),
+    );
+
+    assert.equal(next.category, "交通");
+    assert.equal(next.item, "打车 / Uber");
+    assert.equal(next.date, "2026-08-02");
+    assert.equal(next.payer, "us");
+    assert.equal(next.status, "confirmed");
+    assert.equal(next.splitSettled, false);
+    assert.equal(next.currency, "AUD");
+    assert.equal(next.amount, "88.50");
+    assert.equal(next.note, "机场到酒店");
   });
 
   it("turns a bank message into a draft expense", () => {

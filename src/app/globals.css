@@ -100,6 +100,7 @@ button {
 .hero-actions,
 .row,
 .filters,
+.quick-templates,
 .nav,
 .summary-grid,
 .settlement-grid,
@@ -110,6 +111,7 @@ button {
 
 .hero-actions,
 .filters,
+.quick-templates,
 .form-grid {
   flex-wrap: wrap;
 }
