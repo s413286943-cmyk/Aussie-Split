@@ -162,15 +162,20 @@ export default function TripLedgerApp({ view }) {
 
   return (
     <UnlockGate intro="输入旅行访问码后进入共享账本和行程。">
-      <div className="app-shell" ref={shellRef} data-motion="shell">
-        <header className="hero" data-motion="hero">
-          <div>
-            <span className="hero-kicker">Aussie Chill · trip wallet</span>
-            <h1>Aussie Chill Split Bill</h1>
+      <div className="app-shell docket-shell" ref={shellRef}>
+        <header className="hero ledger-hero" data-motion="hero">
+          <div className="hero-copy">
+            <span className="hero-kicker">Travel docket · Australia 2026</span>
+            <h1>Aussie Chill</h1>
             <p>
-              2026.07.28-08.13，两对夫妻澳洲旅行账本。机票已单独 split，本账本只记录旅行中共同费用，按币种分别结算。
+              2026.07.28-08.13，好友澳洲旅行账本。机票已单独 split，本账本只记录旅行中共同费用，按币种分别结算。
             </p>
           </div>
+          <aside className="hero-ticket" aria-label="旅行摘要">
+            <span>共享票夹</span>
+            <strong>墨尔本进 · 悉尼出</strong>
+            <p>{syncState}</p>
+          </aside>
           <div className="hero-actions">
             <Link className="button primary" href="/add">记一笔</Link>
             <Link className="button" href="/settlement">看结算</Link>
@@ -210,9 +215,11 @@ export default function TripLedgerApp({ view }) {
 
 function Dashboard({ expenses, ledger, activity, onUpdate, onConfirm }) {
   const recent = expenses.slice(0, 5);
+  const stats = dashboardStats(expenses, activity);
 
   return (
     <>
+      <DashboardDocket stats={stats} />
       <SummaryCards ledger={ledger} />
       <RecentActivity activity={dashboardActivityPreview(activity)} action={<Link href="/activity" className="button small">全部</Link>} />
       <section className="section ledger-section">
@@ -223,6 +230,33 @@ function Dashboard({ expenses, ledger, activity, onUpdate, onConfirm }) {
         <ExpenseList expenses={recent} onUpdate={onUpdate} onConfirm={onConfirm} />
       </section>
     </>
+  );
+}
+
+function DashboardDocket({ stats }) {
+  return (
+    <section className="section command-deck" data-motion="section" aria-label="旅行账本状态">
+      <article className="docket-status">
+        <span>{stats.tripLabel}</span>
+        <h2>{stats.tripValue}</h2>
+        <p>{stats.tripDetail}</p>
+      </article>
+      <div className="docket-metrics">
+        <DocketMetric label="待分摊" value={stats.pendingSplitCount} detail="需要后续处理" />
+        <DocketMetric label="待确认" value={stats.draftCount} detail="草稿费用" />
+        <DocketMetric label="操作记录" value={stats.activityCount} detail="最近同步" />
+      </div>
+    </section>
+  );
+}
+
+function DocketMetric({ label, value, detail }) {
+  return (
+    <article>
+      <span>{label}</span>
+      <strong>{value}</strong>
+      <p>{detail}</p>
+    </article>
   );
 }
 
@@ -238,6 +272,14 @@ function RecentActivity({ activity, action, fullPage = false }) {
         {action || <span className="muted">{activity.length ? `${activity.length} 条` : "暂无操作"}</span>}
       </div>
       <div className="activity-list">
+        {!activity.length && (
+          <article className="activity-row empty-state" data-motion="row">
+            <div>
+              <h3>还没有最近操作</h3>
+              <p className="muted">新增、编辑、确认、删除费用后会显示在这里。</p>
+            </div>
+          </article>
+        )}
         {activity.map((entry) => (
           <article className="activity-row" key={entry.id} data-motion="row">
             <div>
@@ -256,16 +298,16 @@ function SummaryCards({ ledger }) {
   const entries = Object.entries(ledger.currencies);
 
   return (
-    <section className="section summary-grid ledger-summary">
+      <section className="section summary-grid ledger-summary">
       {entries.map(([currency, bucket]) => (
-        <article className="card summary-card" key={currency} data-motion="summary-card">
+        <article className={`card summary-card currency-${currency.toLowerCase()}`} key={currency} data-motion="summary-card">
           <span className="muted">{currency} 已确认总额</span>
           <strong>{formatMoney(currency, bucket.total)}</strong>
           <p className="muted">每对夫妻承担 {formatMoney(currency, bucket.eachCoupleShare)}</p>
         </article>
       ))}
       {entries.map(([currency, bucket]) => (
-        <article className="card summary-card is-net" key={`${currency}-net`} data-motion="summary-card">
+        <article className={`card summary-card is-net currency-${currency.toLowerCase()}`} key={`${currency}-net`} data-motion="summary-card">
           <span className="muted">{currency} 当前应收</span>
           <strong>{formatMoney(currency, Math.abs(bucket.netOtherOwesUs))}</strong>
           <p className="muted">
@@ -292,7 +334,10 @@ function Expenses({ expenses, onUpdate, onConfirm, onDelete }) {
   return (
     <section className="section ledger-section expenses-section">
       <div className="section-head" data-motion="section">
-        <h2>费用明细</h2>
+        <div>
+          <span className="section-kicker">Receipt stream</span>
+          <h2>费用明细</h2>
+        </div>
         <span className="muted">{filtered.length} 条</span>
       </div>
       <div className="filters">
@@ -485,9 +530,12 @@ function AddExpense({ onAdd }) {
   }
 
   return (
-    <section className="section form-card expense-form-card" data-motion="section">
+    <section className="section form-card expense-form-card capture-card" data-motion="section">
       <div className="section-head">
-        <h2>记一笔</h2>
+        <div>
+          <span className="section-kicker">Quick capture</span>
+          <h2>记一笔</h2>
+        </div>
         <span className="muted">默认 50/50 split</span>
       </div>
       <div className="stack">
@@ -572,7 +620,7 @@ function Settlement({ ledger }) {
     <>
       <section className="section settlement-grid ledger-summary">
         {entries.map(([currency, bucket]) => (
-          <article className="card summary-card settlement-card" key={currency} data-motion="summary-card">
+          <article className={`card summary-card settlement-card currency-${currency.toLowerCase()}`} key={currency} data-motion="summary-card">
             <span className="muted">{currency} 结算</span>
             <strong>{formatMoney(currency, Math.abs(bucket.netOtherOwesUs))}</strong>
             <p className="muted">
@@ -610,6 +658,50 @@ function Select({ value, onChange, options }) {
       {options.map((option) => <option key={option} value={option}>{option}</option>)}
     </select>
   );
+}
+
+function dashboardStats(expenses, activity) {
+  const pendingSplitCount = expenses.filter((expense) => expense.status === "confirmed" && !expense.splitSettled).length;
+  const draftCount = expenses.filter((expense) => expense.status === "draft").length;
+  const tripClock = tripStatus();
+
+  return {
+    pendingSplitCount,
+    draftCount,
+    activityCount: activity.length,
+    ...tripClock,
+  };
+}
+
+function tripStatus(now = new Date()) {
+  const start = new Date(2026, 6, 28);
+  const end = new Date(2026, 7, 13);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dayMs = 24 * 60 * 60 * 1000;
+
+  if (today < start) {
+    const days = Math.ceil((start.getTime() - today.getTime()) / dayMs);
+    return {
+      tripLabel: "行前票夹",
+      tripValue: `T-${days}`,
+      tripDetail: "先把酒店、租车、门票和预付账单收齐。",
+    };
+  }
+
+  if (today <= end) {
+    const day = Math.floor((today.getTime() - start.getTime()) / dayMs);
+    return {
+      tripLabel: "旅行中",
+      tripValue: `D${day}`,
+      tripDetail: "当天发生的共同费用，先记再慢慢补细节。",
+    };
+  }
+
+  return {
+    tripLabel: "返程后",
+    tripValue: "收尾",
+    tripDetail: "核对待分摊和待确认项目，完成最终结算。",
+  };
 }
 
 function emptyForm() {

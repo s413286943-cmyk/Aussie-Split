@@ -64,7 +64,7 @@ function ItineraryContent() {
   }, []);
 
   return (
-    <main className="itinerary-shell" ref={shellRef}>
+    <main className="itinerary-shell route-atlas" ref={shellRef}>
       <Hero nextDay={nextDay} weather={weatherByDay[nextDay.id]} />
       <TodayConsole day={todayDay} weather={weatherByDay[todayDay.id]} />
       <DayJump days={itinerary.days} />
@@ -96,7 +96,7 @@ function TodayConsole({ day, weather }) {
   const quickResources = collectTodayResources(day);
 
   return (
-    <section className="today-console" aria-label="今日旅行控制台" data-motion="today-console">
+    <section className="today-console docket-panel" aria-label="今日旅行控制台" data-motion="today-console">
       <div className="today-summary">
         <span>今日旅行控制台</span>
         <h2>{day.label} · {day.date.slice(5).replace("-", ".")} {day.weekday} · {day.city}</h2>
@@ -117,7 +117,7 @@ function TodayConsole({ day, weather }) {
           <strong>{weather?.detail || day.clothingNote}</strong>
         </article>
       </div>
-      <div className="today-detail-grid">
+      <div className="today-detail-grid route-detail-grid">
         <div className="today-plan">
           <h3>今天节奏</h3>
           {day.blocks.map((block) => (
@@ -146,7 +146,7 @@ function TodayConsole({ day, weather }) {
 
 function Hero({ nextDay, weather }) {
   return (
-    <header className="itinerary-hero" data-motion="itinerary-hero">
+    <header className="itinerary-hero route-hero" data-motion="itinerary-hero">
       <Image
         className="itinerary-hero-image"
         src={itinerary.trip.coverImageUrl}
@@ -180,7 +180,7 @@ function Hero({ nextDay, weather }) {
 
 function DayJump({ days }) {
   return (
-    <section className="day-jump" aria-label="快速跳转" data-motion="day-jump">
+    <section className="day-jump route-jump" aria-label="快速跳转" data-motion="day-jump">
       {days.map((day) => (
         <a key={day.id} href={`#${day.id}`}>{day.label}</a>
       ))}
@@ -190,7 +190,7 @@ function DayJump({ days }) {
 
 function StageSection({ stage, days, weatherByDay, eagerImage }) {
   return (
-    <section className="stage-section">
+    <section className="stage-section route-stage">
       <div className="stage-head" data-motion="stage-head">
         <div>
           <span>{days[0].date.slice(5).replace("-", ".")} - {days.at(-1).date.slice(5).replace("-", ".")}</span>
@@ -247,7 +247,7 @@ function DayCard({ day, weather, compact = false }) {
   }
 
   return (
-    <article className={compact ? "day-card compact" : "day-card"} id={day.id} data-motion="day-card">
+    <article className={compact ? "day-card route-day-card compact" : "day-card route-day-card"} id={day.id} data-motion="day-card">
       <div className="day-cover">
         <Image
           className="day-cover-image"
