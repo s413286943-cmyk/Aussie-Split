@@ -807,6 +807,15 @@
               "sourceNote": "Google Maps"
             },
             {
+              "id": "snow-monkey-ramen-map",
+              "title": "Snow Monkey Ramen Lorne",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Snow+Monkey+Ramen+Lorne",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
               "id": "apollo-map",
               "title": "Apollo Bay",
               "type": "map",
@@ -1018,15 +1027,24 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：Apollo Bay café；午餐：轻食 / picnic；晚餐：买食材 → 到 Southern Ocean Villas 后看天气和时间：可去附近 public electric BBQ；不行就 villa 厨房自炊",
+          "activity": "早餐：Apollo Bay café；午餐：轻食 / picnic；晚餐：Apollo Bay 主采购食材 → 抵达 Southern Ocean Villas 后看天气和时间：可去附近 public electric BBQ；不行就 villa 厨房自炊",
           "highlight": "每日餐食参考",
-          "tip": "核心是 BBQ-style dinner，不强求户外；villa 有完整厨房、锅具、餐具、油盐胡椒和锡纸",
+          "tip": "不把 Port Campbell 当主采购点；核心是 BBQ-style dinner，不强求户外；villa 有完整厨房、锅具、餐具、油盐胡椒和锡纸",
           "resources": [
             {
               "id": "apollo-map",
               "title": "Apollo Bay",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Apollo+Bay+Victoria",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "port-campbell-map",
+              "title": "Port Campbell",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Victoria",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -1257,10 +1275,28 @@
               "sourceNote": "Google Maps"
             },
             {
+              "id": "timboon-icecream-map",
+              "title": "Timboon Fine Ice Cream",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Timboon+Fine+Ice+Cream",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
               "id": "port-campbell-map",
               "title": "Port Campbell",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Victoria",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "holiday-inn-airport-map",
+              "title": "Holiday Inn Melbourne Airport",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Holiday+Inn+Melbourne+Airport",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -1376,7 +1412,7 @@
       "lat": -16.9186,
       "lon": 145.7781,
       "title": "Reef Magic 外礁一日游",
-      "focus": "Reef Magic 外礁（浮潜 / 半潜艇 / 玻璃底船 / 平台体验）",
+      "focus": "Reef Magic 外礁平台一日游已订 ¥5,260：Outer Reef Pontoon，浮潜 / 半潜艇 / 玻璃底船 / 平台体验",
       "lodging": "Southern Cross Atrium Apartments",
       "climateNote": "海上日晒强，船舱空调可能很冷。",
       "clothingNote": "防晒衣比防晒霜更重要，带薄外套并提前吃晕船药。",
@@ -1388,19 +1424,38 @@
           "sortOrder": 10,
           "period": "早上",
           "place": "凯恩斯码头",
-          "activity": "登船出海",
-          "highlight": "前往外堡礁",
-          "tip": "提前吃晕船药；不要卡点到码头",
-          "resources": []
+          "activity": "Reef Magic check-in，登船出海",
+          "highlight": "前往外礁平台",
+          "tip": "提前吃晕船药；不要卡点到码头；带好泳衣、防晒衣、毛巾、薄外套",
+          "resources": [
+            {
+              "id": "reef-fleet-terminal-map",
+              "title": "Reef Fleet Terminal",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Reef+Fleet+Terminal+Cairns",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "reef-magic-official",
+              "title": "Reef Magic",
+              "type": "official",
+              "url": "https://www.reefmagic.com.au/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "官网"
+            }
+          ]
         },
         {
           "dayId": "d7",
           "sortOrder": 20,
           "period": "全天",
           "place": "Outer Reef Pontoon",
-          "activity": "浮潜、半潜艇、玻璃底船、可选深潜",
-          "highlight": "珊瑚、热带鱼、大堡礁体验",
-          "tip": "防晒衣比防晒霜更重要；船舱空调可能很冷",
+          "activity": "浮潜、半潜艇、玻璃底船、海底观景室、可选深潜 / 海底漫步",
+          "highlight": "珊瑚、热带鱼、大堡礁平台体验",
+          "tip": "防晒衣比防晒霜更重要；船舱空调可能很冷；不下水的人也有体验",
           "resources": [
             {
               "id": "reef-magic-official",
@@ -1418,10 +1473,20 @@
           "sortOrder": 30,
           "period": "中午",
           "place": "船上 / 平台",
-          "activity": "自助午餐",
+          "activity": "外礁平台午餐",
           "highlight": "轻松补给",
           "tip": "不要吃太撑，避免晕船",
-          "resources": []
+          "resources": [
+            {
+              "id": "reef-magic-official",
+              "title": "Reef Magic",
+              "type": "official",
+              "url": "https://www.reefmagic.com.au/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "官网"
+            }
+          ]
         },
         {
           "dayId": "d7",
@@ -1431,16 +1496,26 @@
           "activity": "下船休息",
           "highlight": "通常会比较疲惫",
           "tip": "晚上不要订太正式的餐厅",
-          "resources": []
+          "resources": [
+            {
+              "id": "reef-fleet-terminal-map",
+              "title": "Reef Fleet Terminal",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Reef+Fleet+Terminal+Cairns",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
         },
         {
           "dayId": "d7",
           "sortOrder": 50,
           "period": "晚上",
           "place": "码头附近",
-          "activity": "Salt House / Dundee’s / Prawn Star 可选",
+          "activity": "Prawn Star / Salt House / Dundee’s 可选",
           "highlight": "海边晚餐",
-          "tip": "轻松即可",
+          "tip": "轻松即可，不要再安排夜间项目",
           "resources": [
             {
               "id": "prawn-star-map",
@@ -1459,6 +1534,35 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "dundees-map",
+              "title": "Dundee’s Cairns",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Dundee%27s+Cairns",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d7",
+          "sortOrder": 80,
+          "period": "提醒",
+          "place": "今日提醒",
+          "activity": "Reef Magic 是凯恩斯段核心项目，重点是完成一次稳定的大堡礁外礁体验。",
+          "highlight": "海况、风浪、晕船和体力比晴雨更影响体验",
+          "tip": "不必追求拍很多水下画面，先保证舒适和安全。",
+          "resources": [
+            {
+              "id": "reef-magic-official",
+              "title": "Reef Magic",
+              "type": "official",
+              "url": "https://www.reefmagic.com.au/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "官网"
             }
           ]
         },
@@ -1467,9 +1571,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：酒店轻食；午餐：Reef Magic 船上自助；晚餐：Prawn Star / Salt House",
+          "activity": "早餐：酒店轻食；午餐：Reef Magic 外礁平台午餐（已订）；晚餐：Prawn Star / Salt House",
           "highlight": "每日餐食参考",
-          "tip": "海鲜核心日；出海后不要订太正式的餐厅",
+          "tip": "出海后不要订太正式的餐厅，视体力轻松吃",
           "resources": [
             {
               "id": "reef-magic-official",
@@ -2126,8 +2230,8 @@
       "city": "悉尼市区",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "歌剧院、植物园、Mrs Macquarie's Chair",
-      "focus": "Circular Quay（Ferry+海港桥+歌剧院）+ Opera House（Man O’War Steps）+ Botanic Garden + Mrs Macquarie’s Chair（同框机位）+ QVB",
+      "title": "悉尼经典地标与歌剧院中文导览",
+      "focus": "Circular Quay + Sydney Opera House 中文导览 9:30 已订 + Man O’War Steps + Royal Botanic Garden + Mrs Macquarie’s Chair + QVB",
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "悉尼冬季晴天概率较好，早晚凉。",
       "clothingNote": "薄羽绒或风衣，海港边风大时注意保暖。",
@@ -2137,11 +2241,11 @@
         {
           "dayId": "d12",
           "sortOrder": 10,
-          "period": "上午",
-          "place": "Circular Quay / Opera House",
-          "activity": "歌剧院外观或内部导览",
-          "highlight": "悉尼核心地标",
-          "tip": "中文导览可提前订；拍照：📍环形码头正面低机位 + 歌剧院帆形剪影",
+          "period": "08:15–08:30",
+          "place": "Circular Quay",
+          "activity": "抵达海港区",
+          "highlight": "Ferry、海港桥、歌剧院远景",
+          "tip": "早到人少，光线舒服；可拍 Circular Quay 低机位 + Ferry + Opera House",
           "resources": [
             {
               "id": "circular-quay-map",
@@ -2166,11 +2270,80 @@
         {
           "dayId": "d12",
           "sortOrder": 20,
-          "period": "中午",
+          "period": "08:30–09:10",
+          "place": "Opera House 外观",
+          "activity": "歌剧院外观、台阶、Man O’War Steps 初拍",
+          "highlight": "悉尼核心地标",
+          "tip": "导览前先拍外观，避免后面人多；重点拍帆形结构、台阶、侧面海港机位",
+          "resources": [
+            {
+              "id": "opera-house-map",
+              "title": "Sydney Opera House",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d12",
+          "sortOrder": 30,
+          "period": "09:30–10:30",
+          "place": "Sydney Opera House",
+          "activity": "中文内部导览已订",
+          "highlight": "建筑故事、内部空间、剧院结构",
+          "tip": "提前到集合点；导览需步行和上下台阶；允许拍摄的空间再拍，不要影响团队",
+          "resources": [
+            {
+              "id": "opera-house-map",
+              "title": "Sydney Opera House",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "opera-house-official",
+              "title": "Sydney Opera House Tour",
+              "type": "official",
+              "url": "https://www.sydneyoperahouse.com/tours-and-experiences",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "官网"
+            }
+          ]
+        },
+        {
+          "dayId": "d12",
+          "sortOrder": 40,
+          "period": "10:30–11:00",
+          "place": "Opera House 周边",
+          "activity": "补拍 / 咖啡 / 短休息",
+          "highlight": "导览后消化一下",
+          "tip": "不急着赶路；可补 Man O’War Steps / 歌剧院侧面",
+          "resources": [
+            {
+              "id": "opera-house-map",
+              "title": "Sydney Opera House",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d12",
+          "sortOrder": 50,
+          "period": "11:00–12:30",
           "place": "Royal Botanic Garden",
-          "activity": "植物园散步",
+          "activity": "植物园海港步道",
           "highlight": "海港景观非常好",
-          "tip": "路线轻松；拍照：📍草坪远景框住歌剧院+海港桥",
+          "tip": "这段不是赶景点，是慢慢走向 Mrs Macquarie’s Chair；可拍草坪远景框住歌剧院 + 海港桥",
           "resources": [
             {
               "id": "botanic-garden-map",
@@ -2185,12 +2358,32 @@
         },
         {
           "dayId": "d12",
-          "sortOrder": 30,
-          "period": "下午",
+          "sortOrder": 60,
+          "period": "12:30–13:30",
+          "place": "Circular Quay / CBD",
+          "activity": "简单午餐 / 咖啡",
+          "highlight": "补体力",
+          "tip": "不建议这天中午专门跑太远吃饭",
+          "resources": [
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d12",
+          "sortOrder": 70,
+          "period": "13:30–15:00",
           "place": "Mrs Macquarie’s Chair",
-          "activity": "拍歌剧院 + 海港大桥同框",
-          "highlight": "最经典机位",
-          "tip": "晴天很好看；拍照：📍石椅机位左侧45°构图（标准明信片角度）",
+          "activity": "歌剧院 + 海港大桥同框",
+          "highlight": "悉尼最经典机位",
+          "tip": "晴天很好看，风大注意保暖；可在石椅机位左侧 45° 构图",
           "resources": [
             {
               "id": "mrs-macquarie-map",
@@ -2205,28 +2398,47 @@
         },
         {
           "dayId": "d12",
-          "sortOrder": 40,
-          "period": "傍晚",
-          "place": "QVB / Westfield",
+          "sortOrder": 80,
+          "period": "15:00–17:00",
+          "place": "QVB / Westfield / CBD",
           "activity": "购物、室内休息",
           "highlight": "建筑漂亮，适合逛",
-          "tip": "商店关门较早；拍照：📍QVB穹顶仰拍对称构图",
-          "resources": []
+          "tip": "商店关门较早，别拖太晚；QVB 穹顶适合仰拍对称构图",
+          "resources": [
+            {
+              "id": "qvb-map",
+              "title": "QVB",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Building+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
         },
         {
           "dayId": "d12",
-          "sortOrder": 50,
+          "sortOrder": 90,
           "period": "晚上",
           "place": "CBD / Darling Harbour",
-          "activity": "晚餐",
-          "highlight": "城市夜景",
-          "tip": "不要太晚睡，次日自驾；拍照：📍达令港水面倒影夜景",
+          "activity": "Hello Auntie / CBD 晚餐",
+          "highlight": "城市核心日收尾",
+          "tip": "不一定要升级晚餐，给 D14 / D15 留空间；达令港夜景可选",
           "resources": [
             {
               "id": "darling-harbour-map",
               "title": "Darling Harbour",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Darling+Harbour+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "hello-auntie-map",
+              "title": "Hello Auntie Sydney",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hello+Auntie+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -2238,15 +2450,42 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：bills / Toby’s Estate；午餐：Sydney Fish Market / Gumshara / Mamak；晚餐：Hello Auntie",
+          "activity": "早餐：bills / Toby’s Estate；午餐：Circular Quay / CBD 简餐；晚餐：Hello Auntie",
           "highlight": "每日餐食参考",
-          "tip": "城市核心日；不一定要升级晚餐，给 D14 / D15 留空间",
+          "tip": "9:30 歌剧院中文导览已订；午餐不建议跑太远，给下午植物园和 QVB 留节奏",
           "resources": [
             {
-              "id": "sydney-fish-market-map",
-              "title": "Sydney Fish Market",
+              "id": "bills-sydney-map",
+              "title": "bills Sydney",
               "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Fish+Market",
+              "url": "https://www.google.com/maps/search/?api=1&query=bills+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "tobys-estate-map",
+              "title": "Toby’s Estate Sydney",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Toby%27s+Estate+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "hello-auntie-map",
+              "title": "Hello Auntie Sydney",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hello+Auntie+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -2526,8 +2765,8 @@
       "city": "悉尼",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "出海观鲸 + Bondi",
-      "focus": "出海观鲸 + Bondi；晚餐优先 Totti’s Bondi / Icebergs / Bondi Bistro",
+      "title": "出海观鲸 + Bondi + Totti’s",
+      "focus": "Captain Cook 出海观鲸已订 + Bondi Beach / Icebergs / Tamarama；Totti’s Bondi 18:30 晚餐已订",
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "出海风大，海况影响体感。",
       "clothingNote": "提前吃晕船药，穿防风外套；Bondi 步道不必全程走完。",
@@ -2539,15 +2778,24 @@
           "sortOrder": 10,
           "period": "上午",
           "place": "Circular Quay / Darling Harbour",
-          "activity": "出海观鲸",
+          "activity": "Captain Cook 出海观鲸",
           "highlight": "座头鲸迁徙季",
-          "tip": "提前吃晕船药，穿防风外套；拍照：📍船尾回看悉尼天际线+海港桥",
+          "tip": "提前吃晕船药，穿防风外套；重点看海况和风；可拍船尾回看悉尼天际线 + 海港桥",
           "resources": [
             {
               "id": "circular-quay-map",
               "title": "Circular Quay",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "darling-harbour-map",
+              "title": "Darling Harbour",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Darling+Harbour+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -2560,15 +2808,6 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "预订参考"
-            },
-            {
-              "id": "darling-harbour-map",
-              "title": "Darling Harbour",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Darling+Harbour+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
             }
           ]
         },
@@ -2577,9 +2816,9 @@
           "sortOrder": 20,
           "period": "中午",
           "place": "返回市区",
-          "activity": "简单午餐",
-          "highlight": "休整",
-          "tip": "出海后不要马上安排重体力",
+          "activity": "简单午餐 / 回酒店短休",
+          "highlight": "出海后恢复体力",
+          "tip": "不要马上安排重体力；视晕船和疲劳程度调整",
           "resources": []
         },
         {
@@ -2589,7 +2828,7 @@
           "place": "Bondi Beach",
           "activity": "海滩散步、Icebergs 拍照",
           "highlight": "悉尼最有名海滩",
-          "tip": "冬天不晒，适合走；拍照：📍Icebergs泳池与海浪同框",
+          "tip": "冬天不晒，但海边风大；可拍 Icebergs 泳池与海浪同框",
           "resources": [
             {
               "id": "bondi-map",
@@ -2614,11 +2853,11 @@
         {
           "dayId": "d14",
           "sortOrder": 40,
-          "period": "傍晚",
-          "place": "Bondi to Coogee Coastal Walk",
+          "period": "下午后段",
+          "place": "Tamarama / Bondi to Coogee Coastal Walk",
           "activity": "走一段即可",
           "highlight": "悬崖步道、海岸线",
-          "tip": "不必全程走完；拍照：📍Tamarama海湾俯拍点",
+          "tip": "不必全程走完，体力够走到 Tamarama 就很好；可拍 Tamarama 海湾俯拍点",
           "resources": [
             {
               "id": "bondi-map",
@@ -2643,11 +2882,40 @@
         {
           "dayId": "d14",
           "sortOrder": 50,
+          "period": "18:30",
+          "place": "Totti’s Bondi",
+          "activity": "晚餐已订",
+          "highlight": "分享型 Italian，适合 4 人",
+          "tip": "观鲸 + Bondi 后比正式海景餐更轻松；可拍餐桌、puffy bread、shared plates",
+          "resources": [
+            {
+              "id": "tottis-bondi-map",
+              "title": "Totti's Bondi",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Totti%27s+Bondi",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "tottis-bondi-official",
+              "title": "Totti's Bondi",
+              "type": "official",
+              "url": "https://merivale.com/venues/tottis/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "官网"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 60,
           "period": "晚上",
-          "place": "Bondi / CBD",
-          "activity": "晚餐",
-          "highlight": "轻松收尾",
-          "tip": "看体力决定回市区还是海边吃；拍照：📍Bondi夜色海岸线",
+          "place": "Bondi → 酒店",
+          "activity": "回酒店休息",
+          "highlight": "完成海洋体验日",
+          "tip": "不要再加夜间项目",
           "resources": [
             {
               "id": "bondi-map",
@@ -2665,9 +2933,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：CBD café；午餐：Bondi casual / Chickorea（备选）；晚餐：Totti’s Bondi / Icebergs / Bondi Bistro（🔥）",
+          "activity": "早餐：CBD café；午餐：Bondi casual / Chickorea（备选）；晚餐：Totti’s Bondi 18:30（已订）",
           "highlight": "每日餐食参考",
-          "tip": "最适合放 Totti’s 的一天；Bondi 动线顺，观鲸后吃分享型 Italian 比正式海景餐更轻松",
+          "tip": "观鲸后不要安排太重；下午 Bondi 拍 Icebergs / Tamarama，18:30 坐下吃分享型 Italian",
           "resources": [
             {
               "id": "whale-watch-official",
@@ -2688,10 +2956,10 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "icebergs-map",
-              "title": "Bondi Icebergs",
+              "id": "chickorea-map",
+              "title": "Chickorea Bondi",
               "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Icebergs",
+              "url": "https://www.google.com/maps/search/?api=1&query=Chickorea+Bondi",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -2706,13 +2974,13 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "bondi-bistro-map",
-              "title": "Bondi Bistro",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Bistro",
+              "id": "tottis-bondi-official",
+              "title": "Totti's Bondi",
+              "type": "official",
+              "url": "https://merivale.com/venues/tottis/",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "官网"
             }
           ]
         }
@@ -2727,7 +2995,7 @@
       "lat": -33.8688,
       "lon": 151.2093,
       "title": "Manly Ferry + 最后采购 + Cafe Sydney",
-      "focus": "Manly Ferry + Manly Beach + QVB + Cafe Sydney 告别晚餐",
+      "focus": "Manly Ferry + Manly Beach + QVB / Chemist Warehouse 最后采购 + Cafe Sydney 17:30 Outdoor Terrace Dining 告别晚餐已订",
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "悉尼早晚凉，渡轮上海风明显。",
       "clothingNote": "薄外套随身；晚餐注意 smart dress code。",
@@ -2739,15 +3007,24 @@
           "sortOrder": 10,
           "period": "上午",
           "place": "Circular Quay → Manly",
-          "activity": "坐 Ferry 去 Manly",
+          "activity": "坐公共 Manly Ferry 去 Manly",
           "highlight": "渡轮本身就是海港巡游",
-          "tip": "坐船看歌剧院和海港大桥角度很好",
+          "tip": "不需要额外订 Captain Cook 观光船；公共 F1 Manly Ferry 已经很经典",
           "resources": [
             {
               "id": "circular-quay-map",
               "title": "Circular Quay",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "manly-ferry-map",
+              "title": "Manly Ferry",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Ferry+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -2761,22 +3038,31 @@
           "place": "Manly Beach",
           "activity": "海边午餐、散步",
           "highlight": "比 Bondi 更松弛",
-          "tip": "可吃炸鱼薯条 / beach brunch，不要吃太撑",
+          "tip": "可吃 fish & chips / beach brunch，不要吃太撑",
           "resources": [
-            {
-              "id": "bondi-map",
-              "title": "Bondi Beach",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Beach",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
             {
               "id": "manly-beach-map",
               "title": "Manly Beach",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Manly+Beach+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "hugos-manly-map",
+              "title": "Hugos Manly",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hugos+Manly",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "felons-manly-map",
+              "title": "Felons Manly",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Felons+Manly",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -2786,12 +3072,21 @@
         {
           "dayId": "d15",
           "sortOrder": 30,
-          "period": "下午",
+          "period": "14:30–15:30",
           "place": "QVB / Chemist Warehouse / 超市",
           "activity": "最后采购",
           "highlight": "药妆、保健品、伴手礼",
-          "tip": "今天必须买完；买完后回酒店整理购物袋和退税物品",
+          "tip": "今天必须买完；注意同店 A$300 以上 TRS 退税条件",
           "resources": [
+            {
+              "id": "qvb-map",
+              "title": "QVB",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Building+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
             {
               "id": "chemist-warehouse-map",
               "title": "Chemist Warehouse Sydney CBD",
@@ -2806,11 +3101,78 @@
         {
           "dayId": "d15",
           "sortOrder": 40,
-          "period": "晚上",
-          "place": "Cafe Sydney / Circular Quay",
-          "activity": "告别晚餐",
-          "highlight": "海港景观 + seafood / modern Australian，很适合作为澳洲最后一晚",
-          "tip": "建议提前订 18:00–19:00；主餐厅/露台适合完整晚餐，Lounge 更适合饮料和甜点；注意 smart dress code、信用卡 surcharge",
+          "period": "15:30–16:30",
+          "place": "酒店",
+          "activity": "整理购物袋和退税物品",
+          "highlight": "为 D16 机场退税做准备",
+          "tip": "把 tax invoice、商品、护照、支付卡放好；行李别乱",
+          "resources": [
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "trs-official",
+              "title": "TRS 退税",
+              "type": "official",
+              "url": "https://www.abf.gov.au/entering-and-leaving-australia/tourist-refund-scheme",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "澳洲边防官网"
+            }
+          ]
+        },
+        {
+          "dayId": "d15",
+          "sortOrder": 50,
+          "period": "16:40",
+          "place": "酒店 → Circular Quay",
+          "activity": "出发去 Cafe Sydney",
+          "highlight": "避免迟到",
+          "tip": "穿得稍正式，但带外套，Outdoor Terrace 晚上可能冷",
+          "resources": [
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "cafe-sydney-map",
+              "title": "Cafe Sydney",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Cafe+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d15",
+          "sortOrder": 60,
+          "period": "17:00–17:20",
+          "place": "Circular Quay 外部",
+          "activity": "外面拍日落 / 蓝调光线",
+          "highlight": "歌剧院、海港桥、夕光",
+          "tip": "不要 17:30 才从酒店出发",
           "resources": [
             {
               "id": "circular-quay-map",
@@ -2821,6 +3183,26 @@
               "imageAlt": "",
               "sourceNote": "Google Maps"
             },
+            {
+              "id": "opera-house-map",
+              "title": "Sydney Opera House",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d15",
+          "sortOrder": 70,
+          "period": "17:30",
+          "place": "Cafe Sydney",
+          "activity": "Outdoor Terrace Dining 告别晚餐已订",
+          "highlight": "海港景观 + seafood / modern Australian",
+          "tip": "香槟 add-on 不需要，到店后再点酒更灵活；注意 1.5% card surcharge",
+          "resources": [
             {
               "id": "cafe-sydney-map",
               "title": "Cafe Sydney",
@@ -2843,13 +3225,87 @@
         },
         {
           "dayId": "d15",
+          "sortOrder": 80,
+          "period": "晚上",
+          "place": "Circular Quay / 酒店",
+          "activity": "晚餐后回酒店",
+          "highlight": "全程收尾",
+          "tip": "回去后最终整理 D16 返程行李",
+          "resources": [
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d15",
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：café / Single O / Toby’s Estate；午餐：Manly fish & chips / Hugos / Felons Manly；晚餐：Cafe Sydney（终极🔥）",
+          "activity": "早餐：café / Single O / Toby’s Estate；午餐：Manly fish & chips / Hugos / Felons Manly；晚餐：Cafe Sydney 17:30 Outdoor Terrace Dining（已订）",
           "highlight": "每日餐食参考",
-          "tip": "收尾夜，保持 Cafe Sydney 的仪式感",
+          "tip": "16:40 左右出发去 Circular Quay；17:00–17:20 外面拍日落光线；17:30 入座；注意带外套",
           "resources": [
+            {
+              "id": "single-o-map",
+              "title": "Single O Sydney",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Single+O+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "tobys-estate-map",
+              "title": "Toby’s Estate Sydney",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Toby%27s+Estate+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "manly-beach-map",
+              "title": "Manly Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Beach+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "hugos-manly-map",
+              "title": "Hugos Manly",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hugos+Manly",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "felons-manly-map",
+              "title": "Felons Manly",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Felons+Manly",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
             {
               "id": "cafe-sydney-map",
               "title": "Cafe Sydney",
@@ -2867,15 +3323,6 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "官网"
-            },
-            {
-              "id": "felons-manly-map",
-              "title": "Felons Manly",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Felons+Manly",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
             }
           ]
         }
