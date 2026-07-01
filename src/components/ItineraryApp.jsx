@@ -66,6 +66,7 @@ function ItineraryContent() {
   return (
     <main className="itinerary-shell route-atlas" ref={shellRef}>
       <Hero nextDay={nextDay} weather={weatherByDay[nextDay.id]} />
+      <RouteManifest days={itinerary.days} stages={itinerary.stages} />
       <TodayConsole day={todayDay} weather={weatherByDay[todayDay.id]} />
       <DayJump days={itinerary.days} />
       <section className="stage-stack" aria-label="行程时间线">
@@ -94,14 +95,21 @@ function ItineraryContent() {
 
 function TodayConsole({ day, weather }) {
   const quickResources = collectTodayResources(day);
+  const keyStops = primaryBlocks(day).slice(0, 3);
 
   return (
     <section className="today-console docket-panel" aria-label="今日旅行控制台" data-motion="today-console">
-      <div className="today-summary">
-        <span>今日旅行控制台</span>
-        <h2>{day.label} · {day.date.slice(5).replace("-", ".")} {day.weekday} · {day.city}</h2>
-        <p>{day.title}</p>
-        <small>{day.focus}</small>
+      <div className="today-command-head">
+        <div className="today-summary">
+          <span>今日旅行控制台</span>
+          <h2>{day.label} · {formatShortDate(day)} {day.weekday} · {day.city}</h2>
+          <p>{day.title}</p>
+          <small>{day.focus}</small>
+        </div>
+        <div className="today-route-note">
+          <span>当日主线</span>
+          {keyStops.map((block) => <strong key={`${day.id}-${block.sortOrder}`}>{block.place}</strong>)}
+        </div>
       </div>
       <div className="today-status-grid">
         <article>
@@ -167,6 +175,11 @@ function Hero({ nextDay, weather }) {
           <span>好友出行</span>
           <span>城市风光 · 海岸自驾 · 大堡礁</span>
         </div>
+        <div className="hero-route-strip" aria-label="行程阶段">
+          {itinerary.stages.map((stage) => (
+            <span key={stage.id}>{stage.title}</span>
+          ))}
+        </div>
       </div>
       <aside className="hero-weather">
         <span>下一站</span>
@@ -175,6 +188,53 @@ function Hero({ nextDay, weather }) {
         <small>{weather?.detail || nextDay.clothingNote}</small>
       </aside>
     </header>
+  );
+}
+
+function RouteManifest({ days, stages }) {
+  const bookendDays = days.filter((day) => day.id === "d0" || day.id === "d16");
+
+  return (
+    <section className="route-manifest" aria-label="路线总览" data-motion="day-jump">
+      <div className="manifest-lead">
+        <span>Route atlas</span>
+        <h2>D0-D16 每日路书</h2>
+        <p>先看今天怎么走，再按阶段翻每日安排。</p>
+      </div>
+      <div className="manifest-stages">
+        <article className="manifest-stage manifest-bookends">
+          <span>出发 / 返程</span>
+          <h3>上海往返</h3>
+          <p>{bookendDays.map((day) => day.city).join(" → ")}</p>
+          <div className="manifest-days">
+            {bookendDays.map((day) => (
+              <a key={day.id} href={`#${day.id}`}>
+                <strong>{day.label}</strong>
+                <small>{formatShortDate(day)}</small>
+              </a>
+            ))}
+          </div>
+        </article>
+        {stages.map((stage, index) => {
+          const stageDays = days.filter((day) => stage.dayIds.includes(day.id));
+          return (
+            <article className={`manifest-stage stage-tone-${index + 1}`} key={stage.id}>
+              <span>{formatStageRange(stageDays)}</span>
+              <h3>{stage.title}</h3>
+              <p>{stageDays[0].city} → {stageDays.at(-1).city}</p>
+              <div className="manifest-days">
+                {stageDays.map((day) => (
+                  <a key={day.id} href={`#${day.id}`}>
+                    <strong>{day.label}</strong>
+                    <small>{formatShortDate(day)}</small>
+                  </a>
+                ))}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -189,12 +249,18 @@ function DayJump({ days }) {
 }
 
 function StageSection({ stage, days, weatherByDay, eagerImage }) {
+  const stageStops = days.map((day) => day.city).join(" / ");
+
   return (
     <section className="stage-section route-stage">
       <div className="stage-head" data-motion="stage-head">
         <div>
-          <span>{days[0].date.slice(5).replace("-", ".")} - {days.at(-1).date.slice(5).replace("-", ".")}</span>
+          <span>{formatStageRange(days)}</span>
           <h2>{stage.title}</h2>
+          <p>{stageStops}</p>
+          <div className="stage-days">
+            {days.map((day) => <a key={day.id} href={`#${day.id}`}>{day.label}</a>)}
+          </div>
         </div>
         <div className="stage-image">
           <Image
@@ -228,6 +294,11 @@ function DayCard({ day, weather, compact = false }) {
 
   if (!day) return null;
 
+  const dayWeather = weather || fallbackWeather(day);
+  const keyStops = primaryBlocks(day).slice(0, 4);
+  const foodBlock = day.blocks.find((block) => block.period === "饮食");
+  const resourcesCount = day.blocks.reduce((total, block) => total + (block.resources?.length || 0), 0);
+
   function handleDetailsToggle(event) {
     if (!event.currentTarget.open) return;
 
@@ -258,7 +329,7 @@ function DayCard({ day, weather, compact = false }) {
         />
         <div>
           <span>{day.label}</span>
-          <strong>{day.date.slice(5).replace("-", ".")} {day.weekday}</strong>
+          <strong>{formatShortDate(day)} {day.weekday}</strong>
         </div>
       </div>
       <div className="day-body">
@@ -270,7 +341,26 @@ function DayCard({ day, weather, compact = false }) {
           <span>{day.lodging === "-" ? "返程" : day.lodging}</span>
         </div>
         <p className="focus">{day.focus}</p>
-        <WeatherStrip weather={weather || fallbackWeather(day)} />
+        <div className="day-brief-grid">
+          <WeatherStrip weather={dayWeather} />
+          <article className="day-brief-card">
+            <span>路书重点</span>
+            <strong>{keyStops.length ? `${keyStops.length} 个主要停靠` : "机动安排"}</strong>
+            <small>{resourcesCount ? `${resourcesCount} 个快捷链接` : "无外部链接"}</small>
+          </article>
+        </div>
+        <div className="route-stop-list" aria-label={`${day.label} 主要停靠`}>
+          {keyStops.map((block) => (
+            <span key={`${day.id}-stop-${block.sortOrder}`}>{block.place}</span>
+          ))}
+        </div>
+        {foodBlock && (
+          <div className="food-brief" data-food-block="true">
+            <span>饮食安排</span>
+            <p>{foodBlock.activity}</p>
+            {foodBlock.tip && <small>{foodBlock.tip}</small>}
+          </div>
+        )}
         <details onToggle={handleDetailsToggle}>
           <summary>查看当天安排</summary>
           <div className="timeline">
@@ -320,6 +410,19 @@ function ResourceLinks({ resources }) {
       ))}
     </div>
   );
+}
+
+function primaryBlocks(day) {
+  return day.blocks.filter((block) => block.period !== "饮食");
+}
+
+function formatShortDate(day) {
+  return day.date.slice(5).replace("-", ".");
+}
+
+function formatStageRange(days) {
+  if (!days.length) return "";
+  return `${days[0].label}-${days.at(-1).label} · ${formatShortDate(days[0])}-${formatShortDate(days.at(-1))}`;
 }
 
 function findNextDay(days) {
