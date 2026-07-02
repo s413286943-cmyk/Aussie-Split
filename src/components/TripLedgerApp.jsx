@@ -18,7 +18,13 @@ import {
   setExpenseSplitSettled,
   splitSettledLabel,
 } from "@/lib/ledger";
-import { activityDisplaySummary, createActivityEntry, dashboardActivityPreview, recentActivity } from "@/lib/activity";
+import {
+  actionFeedbackMessage,
+  activityDisplaySummary,
+  createActivityEntry,
+  dashboardActivityPreview,
+  recentActivity,
+} from "@/lib/activity";
 import { coupleName, formatPayerLabel, formatSettlementDirection } from "@/lib/couples";
 import { pulseElement, revealPage } from "@/lib/motion";
 import {
@@ -38,10 +44,12 @@ const activityStorageKey = "aussie-chill-activity-v1";
 
 export default function TripLedgerApp({ view }) {
   const shellRef = useRef(null);
+  const noticeTimerRef = useRef(null);
   const [ready, setReady] = useState(false);
   const [expenses, setExpenses] = useState(seedExpenses);
   const [activity, setActivity] = useState([]);
   const [activityPulseKey, setActivityPulseKey] = useState(0);
+  const [actionNotice, setActionNotice] = useState(null);
   const [syncState, setSyncState] = useState("本机保存");
   const ledger = useMemo(() => calculateLedger(expenses), [expenses]);
 
@@ -104,6 +112,18 @@ export default function TripLedgerApp({ view }) {
     return () => tween?.kill();
   }, [activityPulseKey]);
 
+  useEffect(() => {
+    return () => {
+      if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
+    };
+  }, []);
+
+  function showActionNotice(message, tone = "success") {
+    if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
+    setActionNotice({ id: Date.now(), message, tone });
+    noticeTimerRef.current = window.setTimeout(() => setActionNotice(null), 3200);
+  }
+
   async function persist(nextExpenses, remoteAction) {
     setExpenses(nextExpenses);
     localStorage.setItem(storageKey, JSON.stringify(nextExpenses));
@@ -132,13 +152,16 @@ export default function TripLedgerApp({ view }) {
   async function addExpense(expense) {
     const nextExpenses = [expense, ...expenses];
     await persist(nextExpenses, () => upsertRemoteExpense(expense));
+    showActionNotice(actionFeedbackMessage("add", expense));
     await recordActivity(createActivityEntry("add", expense));
   }
 
   async function updateExpense(expense) {
     const previousExpense = expenses.find((item) => item.id === expense.id);
     const nextExpenses = expenses.map((item) => (item.id === expense.id ? expense : item));
+    const feedbackAction = previousExpense && Boolean(previousExpense.splitSettled) !== Boolean(expense.splitSettled) ? "split" : "edit";
     await persist(nextExpenses, () => upsertRemoteExpense(expense));
+    showActionNotice(actionFeedbackMessage(feedbackAction, expense));
     await recordActivity(createActivityEntry("edit", expense, new Date(), previousExpense));
   }
 
@@ -146,6 +169,7 @@ export default function TripLedgerApp({ view }) {
     const confirmed = { ...expense, status: "confirmed" };
     const nextExpenses = expenses.map((item) => (item.id === expense.id ? confirmed : item));
     await persist(nextExpenses, () => upsertRemoteExpense(confirmed));
+    showActionNotice(actionFeedbackMessage("confirm", confirmed));
     await recordActivity(createActivityEntry("confirm", confirmed));
   }
 
@@ -153,7 +177,10 @@ export default function TripLedgerApp({ view }) {
     const removed = expenses.find((item) => item.id === id);
     const nextExpenses = expenses.filter((item) => item.id !== id);
     await persist(nextExpenses, () => deleteRemoteExpense(id));
-    if (removed) await recordActivity(createActivityEntry("delete", removed));
+    if (removed) {
+      showActionNotice(actionFeedbackMessage("delete", removed));
+      await recordActivity(createActivityEntry("delete", removed));
+    }
   }
 
   if (!ready) {
@@ -184,6 +211,8 @@ export default function TripLedgerApp({ view }) {
           </div>
         </header>
 
+        <ActionNotice notice={actionNotice} />
+
         {view === "dashboard" && (
           <Dashboard
             expenses={expenses}
@@ -210,6 +239,16 @@ export default function TripLedgerApp({ view }) {
         </nav>
       </div>
     </UnlockGate>
+  );
+}
+
+function ActionNotice({ notice }) {
+  if (!notice) return null;
+
+  return (
+    <div className={`action-toast ${notice.tone}`} role="status" aria-live="polite" aria-atomic="true">
+      {notice.message}
+    </div>
   );
 }
 

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  actionFeedbackMessage,
   activityDisplaySummary,
   createActivityEntry,
   dashboardActivityPreview,
@@ -114,5 +115,14 @@ describe("expense activity", () => {
 
     assert.equal(preview.length, 3);
     assert.deepEqual(preview.map((entry) => entry.item), ["项目4", "项目3", "项目2"]);
+  });
+
+  it("formats user-facing success feedback after ledger actions", () => {
+    assert.equal(actionFeedbackMessage("add", expense), "已保存：晚餐 ¥100.00");
+    assert.equal(actionFeedbackMessage("edit", expense), "已保存修改：晚餐");
+    assert.equal(actionFeedbackMessage("confirm", expense), "已确认：晚餐");
+    assert.equal(actionFeedbackMessage("delete", expense), "已删除：晚餐");
+    assert.equal(actionFeedbackMessage("split", { ...expense, splitSettled: true }), "已标记已分摊：晚餐");
+    assert.equal(actionFeedbackMessage("split", { ...expense, splitSettled: false }), "已标记待分摊：晚餐");
   });
 });

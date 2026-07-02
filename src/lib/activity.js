@@ -39,6 +39,19 @@ export function activityDisplaySummary(entry) {
   return editFallbackSummary({ verb: actionLabels.edit, item, amount, currency });
 }
 
+export function actionFeedbackMessage(action, expense) {
+  const item = expense.item || "未命名费用";
+  const amount = Number(expense.amount || 0);
+  const currency = expense.currency || "CNY";
+
+  if (action === "add") return `已保存：${item} ${formatMoney(currency, amount)}`;
+  if (action === "edit") return `已保存修改：${item}`;
+  if (action === "confirm") return `已确认：${item}`;
+  if (action === "delete") return `已删除：${item}`;
+  if (action === "split") return `已标记${splitSettledLabel(expense.splitSettled)}：${item}`;
+  return `已更新：${item}`;
+}
+
 export function recentActivity(entries, limit = 8) {
   return [...(entries || [])]
     .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime())
