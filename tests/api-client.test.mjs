@@ -159,6 +159,16 @@ describe("protected browser integration contract", () => {
     assert.doesNotMatch(unlockSource, /defaultTripCode|placeholder=["']aussie["']/);
   });
 
+  it("connects unlock errors to the access input and focuses the gate input", () => {
+    assert.match(unlockSource, /inputRef\.current\?\.focus\(\)/);
+    assert.match(unlockSource, /ref=\{inputRef\}/);
+    assert.match(unlockSource, /aria-describedby=\{error \? errorId : undefined\}/);
+    assert.match(unlockSource, /aria-invalid=\{Boolean\(error\)\}/);
+    assert.match(unlockSource, /id=\{errorId\}/);
+    assert.match(unlockSource, /role="alert"/);
+    assert.match(unlockSource, /aria-live="assertive"/);
+  });
+
   it("routes ledger reads and atomic writes through apiClient while retaining local cache", () => {
     assert.match(ledgerSource, /from ["']@\/lib\/apiClient["']/);
     assert.match(ledgerSource, /fetchLedgerSnapshot/);
@@ -173,6 +183,15 @@ describe("protected browser integration contract", () => {
     assert.match(itinerarySource, /from ["']@\/lib\/apiClient["']/);
     assert.match(itinerarySource, /fetchLedgerSnapshot/);
     assert.doesNotMatch(itinerarySource, /supabaseRest|fetchRemote/);
+  });
+
+  it("shows whether itinerary ledger figures are current or locally cached", () => {
+    assert.match(itinerarySource, /setLedgerFreshness\("current"\)/);
+    assert.match(itinerarySource, /setLedgerFreshness\("cached"\)/);
+    assert.match(itinerarySource, /账本已同步 · 当前数据/);
+    assert.match(itinerarySource, /本机缓存 · 可能不是最新/);
+    assert.match(itinerarySource, /role="status"/);
+    assert.match(itinerarySource, /aria-live="polite"/);
   });
 
   it("leaves no direct data-service reference in browser entry modules", () => {

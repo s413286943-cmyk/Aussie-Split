@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   ACCESS_REQUIRED_EVENT,
@@ -60,9 +60,15 @@ export default function UnlockGate({ children, intro = "输入旅行访问码后
 }
 
 function Unlock({ intro, onUnlock }) {
+  const inputRef = useRef(null);
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const errorId = "access-code-error";
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   async function submit(event) {
     event.preventDefault();
@@ -90,9 +96,17 @@ function Unlock({ intro, onUnlock }) {
         <form className="stack" onSubmit={submit}>
           <label>
             访问码
-            <input value={code} onChange={(event) => setCode(event.target.value)} placeholder="输入访问码" autoComplete="current-password" />
+            <input
+              ref={inputRef}
+              value={code}
+              onChange={(event) => setCode(event.target.value)}
+              placeholder="输入访问码"
+              autoComplete="current-password"
+              aria-describedby={error ? errorId : undefined}
+              aria-invalid={Boolean(error)}
+            />
           </label>
-          {error && <p className="muted">{error}</p>}
+          {error && <p id={errorId} className="muted" role="alert" aria-live="assertive">{error}</p>}
           <button className="button primary" type="submit" disabled={submitting}>
             {submitting ? "验证中" : "进入"}
           </button>

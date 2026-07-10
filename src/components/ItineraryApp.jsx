@@ -48,19 +48,34 @@ function ItineraryContent() {
     itinerary.days.map((day) => [day.id, fallbackWeather(day)])
   ));
   const [ledgerExpenses, setLedgerExpenses] = useState(readLocalLedgerExpenses);
+  const [ledgerFreshness, setLedgerFreshness] = useState("checking");
   const [checkedKitByDay, setCheckedKitByDay] = useState(readLocalChecklist);
   const nextDay = useMemo(() => findNextDay(itinerary.days), []);
   const todayDay = useMemo(() => findTodayDay(itinerary.days), []);
 
   useEffect(() => {
+    let cancelled = false;
+
     fetchLedgerSnapshot()
       .then((snapshot) => {
+        if (cancelled) return;
+        setLedgerFreshness("current");
         const remote = (snapshot.expenses || []).filter((expense) => !expense.deletedAt);
         if (!remote?.length) return;
         setLedgerExpenses(remote);
-        localStorage.setItem(ledgerStorageKey, JSON.stringify(remote));
+        try {
+          localStorage.setItem(ledgerStorageKey, JSON.stringify(remote));
+        } catch {
+          // The fresh snapshot remains usable for the current session.
+        }
       })
-      .catch(() => {});
+      .catch(() => {
+        if (!cancelled) setLedgerFreshness("cached");
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -123,6 +138,7 @@ function ItineraryContent() {
         day={todayDay}
         weather={weatherByDay[todayDay.id]}
         ledgerExpenses={ledgerExpenses}
+        ledgerFreshness={ledgerFreshness}
         checkedKitItems={checkedKitByDay[todayDay.id] || []}
         onToggleKitItem={toggleKitItem}
       />
@@ -152,7 +168,7 @@ function ItineraryContent() {
   );
 }
 
-function TodayConsole({ day, weather, ledgerExpenses, checkedKitItems, onToggleKitItem }) {
+function TodayConsole({ day, weather, ledgerExpenses, ledgerFreshness, checkedKitItems, onToggleKitItem }) {
   const quickResources = collectTodayResources(day);
   const keyStops = primaryBlocks(day).slice(0, 3);
   const carryItems = buildDayCarryChecklist(day);
@@ -205,7 +221,7 @@ function TodayConsole({ day, weather, ledgerExpenses, checkedKitItems, onToggleK
           checkedItems={checkedKitItems}
           onToggleItem={onToggleKitItem}
         />
-        <TodayLedgerDock day={day} summary={ledgerSummary} />
+        <TodayLedgerDock day={day} summary={ledgerSummary} freshness={ledgerFreshness} />
       </div>
       <div className="today-detail-grid route-detail-grid">
         <div className="today-plan">
@@ -309,8 +325,13 @@ function TodayCarryChecklist({ day, items, checkedItems, onToggleItem }) {
   );
 }
 
-function TodayLedgerDock({ day, summary }) {
+function TodayLedgerDock({ day, summary, freshness }) {
   const totalText = formatLedgerTotals(summary.totalsByCurrency);
+  const freshnessText = freshness === "current"
+    ? "账本已同步 · 当前数据"
+    : freshness === "cached"
+      ? "本机缓存 · 可能不是最新"
+      : "正在核对账本数据";
   const quickActions = [
     { label: "记餐饮", category: "dining", item: `${day.label} 餐饮` },
     { label: "记交通", category: "交通", item: `${day.label} 交通` },
@@ -323,6 +344,7 @@ function TodayLedgerDock({ day, summary }) {
         <span>今天账本</span>
         <strong>{summary.count ? `${summary.count} 笔` : "未记账"}</strong>
       </div>
+      <small className="muted" role="status" aria-live="polite">{freshnessText}</small>
       <div className="ledger-dock-metrics">
         <article>
           <span>今日合计</span>
