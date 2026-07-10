@@ -18,15 +18,6 @@ export class ApiClientError extends Error {
   }
 }
 
-export class StaleOperationError extends Error {
-  constructor() {
-    super("A newer ledger update is already saved");
-    this.name = "StaleOperationError";
-    this.code = "stale_operation";
-    this.status = 409;
-  }
-}
-
 export function shouldReopenCachedAccess(error, hasOfflineAccess) {
   return Boolean(hasOfflineAccess) && !(error instanceof AccessRequiredError);
 }
@@ -56,9 +47,6 @@ export async function applyLedgerOperations(operations) {
     body: JSON.stringify({ operations }),
   });
   if (!Array.isArray(response.results)) throw new ApiClientError(response.status);
-  if (response.results.some((result) => result?.status === "stale")) {
-    throw new StaleOperationError();
-  }
   return response;
 }
 

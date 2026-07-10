@@ -63,7 +63,7 @@ describe("browser protected API client", () => {
     );
   });
 
-  it("rejects a stale operation result so the ledger coordinator marks sync failed", async () => {
+  it("returns stale operation acknowledgements with the fresh server snapshot", async () => {
     globalThis.fetch = async () => Response.json({
       results: [{ opId: "op-stale", status: "stale" }],
       expenses: [],
@@ -71,12 +71,12 @@ describe("browser protected API client", () => {
       serverTime: "2026-07-10T00:00:00.000Z",
     });
 
-    await assert.rejects(
-      () => applyLedgerOperations([{ opId: "op-stale" }]),
-      (error) => error?.name === "StaleOperationError"
-        && error?.code === "stale_operation"
-        && error?.status === 409,
-    );
+    const response = await applyLedgerOperations([{ opId: "op-stale" }]);
+
+    assert.deepEqual(response.results, [{ opId: "op-stale", status: "stale" }]);
+    assert.deepEqual(response.expenses, []);
+    assert.deepEqual(response.activity, []);
+    assert.equal(response.serverTime, "2026-07-10T00:00:00.000Z");
   });
 
   it("reopens cached data after a transient online failure only when the offline marker exists", () => {
