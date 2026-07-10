@@ -102,11 +102,11 @@ Run `npm test`, `npm run lint`, and `npm run build`. Expected: 46 existing tests
 - Create outside Git: `.backups/<timestamp>/tables/*.json`
 - Create outside Git: `.backups/<timestamp>/storage/*.json`
 
-- [ ] **Step 1: Write failing mutation-version tests**
+- [x] **Step 1: Write failing mutation-version tests**
 
 Use fixed-width versions shaped as `<13-digit millis>-<6-digit counter>-<client id>`. Test that `nextMutationVersion` is strictly greater than the highest locally generated or remotely observed version even when the device clock moves backward, and that the client id deterministically breaks same-time ties. Legacy rows without a version receive a valid migration version rather than being rejected.
 
-- [ ] **Step 2: Implement the pure version helper**
+- [x] **Step 2: Implement the pure version helper**
 
 Create `src/lib/mutationVersion.js` with:
 
@@ -119,33 +119,33 @@ export function legacyMutationVersion({ createdAt, index, clientId = "legacy" })
 
 The implementation rejects malformed new-operation versions, but the migration helper assigns versions to existing local rows.
 
-- [ ] **Step 3: Write the failing compatibility migration contract test**
+- [x] **Step 3: Write the failing compatibility migration contract test**
 
-Assert the additive migration adds `updated_at`, `deleted_at`, and `mutation_version` to expenses; backfills every expense; extends canonical `attachments` with `receipt_id`, original name, MIME, size, finalized/deleted timestamps, and unique receipt/path constraints; creates private-schema `expense_operations`, `access_attempts`, and `ledger_settings`; adds indexes on `attachments.expense_id` and `members.trip_id`; and defines public service-only RPCs plus private trigger functions. It must not change RLS/grants on legacy application tables or drop a column. It must create non-exposed `app_private`, revoke schema/table access from `PUBLIC`, `anon`, and `authenticated`, enable RLS on its tables, and grant only minimum service-role access.
+Assert the additive migration adds `updated_at`, `deleted_at`, and `mutation_version` to expenses; backfills every expense; extends canonical `attachments` with `receipt_id`, original name, MIME, size, finalized/deleted timestamps, and unique receipt/path constraints; creates private-schema `expense_operations` and `access_attempts`; adds indexes on `attachments.expense_id` and `members.trip_id`; and defines public service-only RPCs plus private trigger functions. It must not change RLS/grants on legacy application tables or drop a column. It must create non-exposed `app_private`, revoke schema/table access from `PUBLIC`, `anon`, and `authenticated`, enable RLS on its tables, and grant only minimum service-role access.
 
-- [ ] **Step 4: Generate and implement the additive migration**
+- [x] **Step 4: Generate and implement the additive migration**
 
-Create the file with `supabase migration new shared_ledger_compatibility`. Private `app_private.enforce_expense_mutation` and `app_private.convert_legacy_expense_delete` trigger functions are owned by `postgres`, use `SECURITY DEFINER`, fully qualify every object, have a fixed `pg_catalog, public, app_private` search path, and revoke execution from all client roles. This limited definer boundary lets anonymous bridge writes read locked settings and convert DELETE without exposing a callable privileged function. The insert/update trigger atomically rejects incoming versions less than or equal to the stored version and rejects physical timestamps over five minutes ahead of database time. While `app_private.ledger_settings.legacy_writes_enabled=true`, a write that omitted the version receives a server-generated version; after bridge verification it raises `stale_or_unversioned_mutation`. The delete trigger converts legacy physical deletes to versioned tombstones while enabled and rejects them afterward. Public `apply_expense_operation` inserts the `opId`; duplicates return immediately; otherwise it applies through the same trigger contract and records activity only for an applied mutation. Public RPCs are `SECURITY INVOKER`, fixed-search-path, and service-role-only.
+Create the file with `supabase migration new shared_ledger_compatibility`. Private `app_private.enforce_expense_mutation` and `app_private.reject_physical_expense_delete` trigger functions are owned by `postgres`, use `SECURITY INVOKER`, fully qualify every object, have a fixed `pg_catalog, public, app_private` search path, and revoke direct execution from client roles. They need no private-table access. The insert/update trigger atomically requires a valid incoming version, rejects versions less than or equal to the stored version, and rejects physical timestamps over five minutes ahead of database time. The delete trigger always raises `physical_delete_disabled`; the pre-deployed bridge uses a versioned soft-delete UPDATE. Public `apply_expense_operation` inserts the `opId`; duplicates return immediately; otherwise it applies through the same trigger contract and records activity only for an applied mutation. Public RPCs are `SECURITY INVOKER`, fixed-search-path, and service-role-only.
 
-- [ ] **Step 5: Implement durable login throttling in SQL**
+- [x] **Step 5: Implement durable login throttling in SQL**
 
 `consume_access_attempt(address_hash)` allows five failures per 15-minute window, returns the remaining attempts and `blocked_until`, and never stores a raw IP. `reset_access_attempt(address_hash)` removes the successful source entry. Both functions are service-role-only.
 
-- [ ] **Step 6: Back up live table and Storage state**
+- [x] **Step 6: Back up live table and Storage state**
 
 Export all five public tables, their definitions/grants, `storage.buckets` configuration, `storage.objects` inventory, and relevant `storage.objects` policies. Record row counts, object counts, currency totals, and SHA-256 hashes in the ignored backup manifest. Keep reviewed rollback SQL in Git.
 
-- [ ] **Step 7: Rehearse compatibility migration, rollback, and reapply**
+- [x] **Step 7: Rehearse compatibility migration, rollback, and reapply**
 
-Run the actual migration, the compatibility rollback, and the migration again on a disposable local Postgres/Supabase database. Execute integration assertions as `anon` as well as `service_role`: anonymous bridge writes can pass the protected triggers but cannot read/alter private settings or preclaim operation ids; service RPCs can; stale versions fail. The rollback may remove service-only functions/tables in the disposable environment but is not the production emergency path. Expected after reapply: old seed rows remain, versions are populated, duplicate op ids are ignored, and older mutation versions are stale.
+Run the actual migration, the compatibility rollback, and the migration again on a disposable local Postgres/Supabase database. Execute integration assertions as `anon` as well as `service_role`: anonymous bridge writes with a newer version pass, unversioned/stale writes and physical deletes fail, client roles cannot preclaim operation ids or alter throttling state, and service RPCs work. The rollback may remove service-only functions/tables in the disposable environment but is not the production emergency path. Expected after reapply: old seed rows remain, versions are populated, duplicate op ids are ignored, and older mutation versions are stale.
 
-- [ ] **Step 8: Commit and pre-deploy a feature-detecting bridge client**
+- [x] **Step 8: Commit and pre-deploy a feature-detecting bridge client**
 
 Update the direct Supabase adapter so it first detects whether the compatibility columns exist. Against the old schema it retains the baseline read/write behavior; against the new schema it fetches only `deleted_at=is.null`, maps/saves `mutation_version`, and soft-deletes with a newly allocated version. Assign a version to every add/edit/confirm/split/delete before localStorage and remote writes. Commit and deploy this build before DDL, then verify it still works against the old schema.
 
-- [ ] **Step 9: Apply the additive migration and close legacy writes**
+- [x] **Step 9: Apply the additive migration and close legacy writes**
 
-Commit the reviewed SQL before applying it. Apply only the compatibility migration; the deployed bridge must detect and switch without redeploying. Verify add/edit/delete/Undo/reload, stale direct writes are rejected atomically, old physical deletes become tombstones, and row counts/totals remain correct. Set `legacy_writes_enabled=false`, verify an unrefreshed baseline client can no longer mutate, and record this bridge deployment as the emergency browser rollback while public grants exist. Run advisors and commit as `feat: add ordered ledger operations`.
+Commit the reviewed SQL before applying it. Apply only the compatibility migration; the deployed bridge must detect and switch without redeploying. Verify add/edit/delete/Undo/reload, stale direct writes are rejected atomically, bridge deletes become tombstones, physical deletes fail, and row counts/totals remain correct. Verify an unrefreshed baseline client can no longer mutate and record the bridge deployment as the emergency browser rollback while public grants exist. Run advisors and commit as `feat: add ordered ledger operations`.
 
 ### Task 3: Add Server-Side Access And Protected APIs
 
