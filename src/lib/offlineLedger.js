@@ -5,6 +5,7 @@ import {
   commitLocalMutation,
   commitSyncResponse,
   getOutboxBatch,
+  getOutboxOperation,
   loadOfflineLedger,
   migrateLegacyLocalStorage,
   openOfflineDb,
@@ -62,15 +63,17 @@ export async function commitOfflineMutation(context, options) {
 
 export async function undoOfflineDelete(context, options) {
   assertContext(context);
+  const pendingOperation = await getOutboxOperation(context.db, options.deleteOpId);
+  const expense = options.expense ?? pendingOperation?.beforeExpense;
   const cancelled = await undoPendingDelete(context.db, {
     deleteOpId: options.deleteOpId,
-    expense: options.expense,
+    expense,
     activityId: options.deleteActivityId,
   });
 
   const state = await commitOfflineMutation(context, {
     type: "upsert",
-    expense: options.expense,
+    expense,
     activity: options.activity,
     opId: options.opId,
     now: options.now,

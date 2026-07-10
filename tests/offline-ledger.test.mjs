@@ -83,7 +83,14 @@ describe("offline ledger lifecycle", () => {
   });
 
   it("cancels an unsynced delete but creates a newer upsert after a synced delete", async () => {
-    const context = await initializedContext();
+    const indexedDB = new IDBFactory();
+    const storage = memoryStorage();
+    let context = await initializeOfflineLedger({
+      indexedDB,
+      storage,
+      now: baseNow,
+      randomUUID: uuidSequence(),
+    });
     const added = await commitOfflineMutation(context, {
       type: "upsert",
       expense: expenseFixture(),
@@ -104,9 +111,15 @@ describe("offline ledger lifecycle", () => {
       opId: "op-delete-one",
       now: baseNow + 3_000,
     });
+    closeOfflineLedger(context);
+    context = await initializeOfflineLedger({
+      indexedDB,
+      storage,
+      now: baseNow + 3_500,
+      randomUUID: uuidSequence(),
+    });
     const cancelled = await undoOfflineDelete(context, {
       deleteOpId: "op-delete-one",
-      expense: original,
       deleteActivityId: "activity-delete-one",
       now: baseNow + 4_000,
       opId: "op-restore-unused",
