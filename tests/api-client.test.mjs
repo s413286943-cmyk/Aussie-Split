@@ -9,9 +9,12 @@ import {
   applyLedgerOperations,
   checkAccessSession,
   clearAccessSession,
+  createReceiptUploadContract,
   createExpenseOperation,
   fetchActivity,
   fetchLedgerSnapshot,
+  fetchReceipt,
+  finalizeReceipt,
   unlockAccessSession,
 } from "../src/lib/apiClient.js";
 import * as protectedApi from "../src/lib/apiClient.js";
@@ -35,6 +38,9 @@ describe("browser protected API client", () => {
         return Response.json({ expenses: [], activity: [], serverTime: "2026-07-10T00:00:00.000Z" });
       }
       if (String(url).startsWith("/api/activity")) return Response.json({ activity: [] });
+      if (url === "/api/receipts/upload-url") return Response.json({ mode: "signed-put" });
+      if (url === "/api/receipts/finalize") return Response.json({ receipt: { receiptId: "receipt-one" } });
+      if (url === "/api/receipts/expense-one") return Response.json({ signedUrl: "https://signed.example" });
       throw new Error(`Unexpected URL: ${url}`);
     };
 
@@ -44,6 +50,9 @@ describe("browser protected API client", () => {
     await fetchLedgerSnapshot();
     await applyLedgerOperations([]);
     await fetchActivity(50);
+    await createReceiptUploadContract({ expenseId: "expense-one" });
+    await finalizeReceipt({ expenseId: "expense-one", receiptId: "receipt-one" });
+    await fetchReceipt("expense-one");
 
     assert.equal(calls.every((call) => call.url.startsWith("/api/")), true);
     assert.equal(calls.every((call) => !call.url.startsWith("http")), true);
@@ -60,6 +69,17 @@ describe("browser protected API client", () => {
     await assert.rejects(
       () => fetchLedgerSnapshot(),
       (error) => error instanceof AccessRequiredError && error.code === "access_required",
+    );
+  });
+
+  it("retains a sanitized server error code for recoverable receipt retries", async () => {
+    globalThis.fetch = async () => Response.json({ error: "receipt_object_missing" }, { status: 409 });
+
+    await assert.rejects(
+      () => finalizeReceipt({ expenseId: "expense-one", receiptId: "receipt-one" }),
+      (error) => error instanceof ApiClientError
+        && error.status === 409
+        && error.serverCode === "receipt_object_missing",
     );
   });
 
@@ -156,6 +176,7 @@ describe("protected browser integration contract", () => {
     assert.match(unlockSource, /navigator\.onLine/);
     assert.match(unlockSource, /ACCESS_REQUIRED_EVENT/);
     assert.match(unlockSource, /shouldReopenCachedAccess/);
+    assert.match(unlockSource, /session\.authenticated === true[\s\S]*localStorage\.setItem\(offlineAccessKey, "yes"\)/);
     assert.doesNotMatch(unlockSource, /defaultTripCode|placeholder=["']aussie["']/);
   });
 

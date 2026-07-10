@@ -9,11 +9,22 @@
 
 ## 本地运行
 
+先配置仅服务端可见的环境变量：
+
+```bash
+TRIP_CODE=your-shared-code
+SESSION_SECRET=your-random-session-secret
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
+
+不要把访问码、session secret 或 service-role key 放进 `NEXT_PUBLIC_*`。
+
 ```bash
 npm run dev
 ```
 
-默认访问码是 `aussie`。上线时可以在 Vercel 里设置 `NEXT_PUBLIC_TRIP_CODE` 改成自己的访问码。
+账本通过受保护的同源 API 访问 Supabase。本机 IndexedDB 会保存账本、待同步操作和待上传小票；断网时可继续记账，恢复网络后自动重试。
 
 ## 行程快捷更新
 
@@ -44,23 +55,22 @@ npm run itinerary:seed
 
 ## Supabase
 
-不配置 Supabase 时，网页会用浏览器本机保存，适合先试用。
-
 上线共享时：
 
 1. 新建 Supabase project。
 2. 在 SQL editor 执行 `supabase/schema.sql`。
-3. 创建 Storage bucket：`receipts`。
-4. 在 Vercel 环境变量中设置：
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `NEXT_PUBLIC_TRIP_CODE`
+3. 后续升级按时间顺序执行 `supabase/migrations/` 中未应用的迁移。
+4. `schema.sql` / 私密小票迁移会创建并锁定 `receipts` bucket；不要改成 public。
+5. 在 Vercel 的 Preview 和 Production 环境设置 `TRIP_CODE`、`SESSION_SECRET`、`SUPABASE_URL`、`SUPABASE_SERVICE_ROLE_KEY`。
+
+浏览器不会持有 Supabase key。小票先写入本机队列，账单同步确认后通过短期签名凭证直传私密 Storage；查看时使用 5 分钟有效的签名链接。
 
 ## 验证
 
 ```bash
 npm test
+npm run lint
 npm run build
 ```
 
-核心测试覆盖：初始 10 条、不含机票、多币种分开结算、双方付款抵扣、银行短信生成待确认草稿、D0-D16 行程导入、资源链接引用、天气 fallback。
+核心测试覆盖：多币种结算、已分摊排除、服务端访问控制、幂等同步、离线新增/编辑/删除/撤销、私密小票上传与清理、D0-D16 行程导入、资源链接和天气 fallback。

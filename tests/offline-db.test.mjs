@@ -834,8 +834,12 @@ describe("receipt blob persistence", () => {
       receiptId: "receipt-a",
       expenseId: "expense-a",
       blob: new Blob(["receipt bytes"], { type: "image/png" }),
-      name: "receipt.png",
+      originalName: "receipt.png",
+      mimeType: "image/png",
+      sizeBytes: 13,
       createdAt: serverTime,
+      attempts: 0,
+      lastError: "",
     };
 
     assert.deepEqual(await offlineDb.putReceiptBlob(db, receipt), receipt);
@@ -852,7 +856,202 @@ describe("receipt blob persistence", () => {
     assert.equal(await offlineDb.getReceiptBlob(db, "receipt-a"), undefined);
     assert.equal(await offlineDb.deleteReceiptBlob(db, "receipt-a"), false);
   });
+
+  it("stores the expense operation and receipt Blob atomically", async () => {
+    const db = await openDatabase();
+    const receipt = receiptFixture();
+    const committed = await offlineDb.commitLocalMutation(db, {
+      ...mutationInput(),
+      receipt,
+    });
+
+    assert.equal(committed.expense.attachmentName, "receipt.png");
+    assert.equal(committed.expense.receiptId, "receipt-a");
+    assert.equal(committed.expense.attachmentStatus, "pending");
+    assert.equal(committed.operation.expense.attachmentName, undefined);
+    assert.equal((await offlineDb.getReceiptBlob(db, "receipt-a")).expenseId, "expense-a");
+
+    await assert.rejects(offlineDb.commitLocalMutation(db, {
+      ...mutationInput({ expenseId: "expense-b", activityId: "activity-b" }),
+      receipt: receiptFixture({ expenseId: "expense-b", receiptId: "receipt-b" }),
+    }));
+    assert.equal((await offlineDb.loadOfflineLedger(db)).expenses.some(({ id }) => id === "expense-b"), false);
+    assert.equal(await offlineDb.getReceiptBlob(db, "receipt-b"), undefined);
+  });
+
+  it("uploads only acknowledged active expenses and commits finalization atomically", async () => {
+    assert.equal(typeof offlineDb.claimReadyReceiptBlobs, "function");
+    assert.equal(typeof offlineDb.getReadyReceiptBlobs, "function");
+    assert.equal(typeof offlineDb.commitReceiptFinalization, "function");
+    assert.equal(typeof offlineDb.markReceiptUploadFailure, "function");
+
+    const db = await openDatabase();
+    const committed = await offlineDb.commitLocalMutation(db, {
+      ...mutationInput(),
+      receipt: receiptFixture(),
+    });
+    assert.deepEqual(await offlineDb.getReadyReceiptBlobs(db), []);
+
+    const lease = await offlineDb.acquireSyncLease(db, {
+      owner: "tab-a",
+      now: serverMillis,
+      ttlMs: 30_000,
+    });
+    await offlineDb.commitSyncResponse(db, {
+      owner: "tab-a",
+      fence: lease.fence,
+      snapshot: {
+        expenses: [committed.operation.expense],
+        activity: [committed.activity],
+        serverTime,
+      },
+      acknowledgedOpIds: [committed.operation.opId],
+      mergeRemoteSnapshot,
+    });
+
+    const [ready] = await offlineDb.claimReadyReceiptBlobs(db, {
+      owner: "receipt-worker-a",
+      now: serverMillis + 500,
+      ttlMs: 60_000,
+      limit: 10,
+    });
+    assert.equal(ready.receiptId, "receipt-a");
+    assert.equal((await offlineDb.loadOfflineLedger(db)).expenses[0].attachmentStatus, "pending");
+
+    await offlineDb.markReceiptUploadFailure(db, "receipt-a", {
+      now: serverMillis + 1_000,
+      message: "offline",
+      owner: "receipt-worker-a",
+    });
+    assert.equal((await offlineDb.getReceiptBlob(db, "receipt-a")).attempts, 1);
+
+    const [retried] = await offlineDb.claimReadyReceiptBlobs(db, {
+      owner: "receipt-worker-b",
+      now: serverMillis + 2_000,
+      ttlMs: 60_000,
+      limit: 10,
+    });
+    assert.equal(retried.receiptId, "receipt-a");
+
+    await offlineDb.commitReceiptFinalization(db, {
+      receiptId: "receipt-a",
+      expenseId: "expense-a",
+      owner: "receipt-worker-b",
+      attachment: {
+        receiptId: "receipt-a",
+        expenseId: "expense-a",
+        originalName: "receipt.png",
+        storagePath: "expense-a/receipt-a-receipt.png",
+        finalizedAt: serverTime,
+      },
+    });
+    assert.equal(await offlineDb.getReceiptBlob(db, "receipt-a"), undefined);
+    const [expense] = (await offlineDb.loadOfflineLedger(db)).expenses;
+    assert.equal(expense.attachmentName, "receipt.png");
+    assert.equal(expense.attachmentPath, "expense-a/receipt-a-receipt.png");
+    assert.equal(expense.attachmentStatus, "uploaded");
+  });
+
+  it("claims one ready receipt for only one tab and recovers an expired claim", async () => {
+    const db = await openDatabase();
+    const committed = await offlineDb.commitLocalMutation(db, {
+      ...mutationInput(),
+      receipt: receiptFixture(),
+    });
+    const lease = await offlineDb.acquireSyncLease(db, {
+      owner: "tab-a",
+      now: serverMillis,
+      ttlMs: 30_000,
+    });
+    await offlineDb.commitSyncResponse(db, {
+      owner: "tab-a",
+      fence: lease.fence,
+      snapshot: {
+        expenses: [committed.operation.expense],
+        activity: [committed.activity],
+        serverTime,
+      },
+      acknowledgedOpIds: [committed.operation.opId],
+      mergeRemoteSnapshot,
+    });
+
+    const [tabA, tabB] = await Promise.all([
+      offlineDb.claimReadyReceiptBlobs(db, {
+        owner: "receipt-tab-a", now: serverMillis + 1_000, ttlMs: 60_000, limit: 10,
+      }),
+      offlineDb.claimReadyReceiptBlobs(db, {
+        owner: "receipt-tab-b", now: serverMillis + 1_000, ttlMs: 60_000, limit: 10,
+      }),
+    ]);
+    assert.equal(tabA.length + tabB.length, 1);
+    const winner = tabA.length ? "receipt-tab-a" : "receipt-tab-b";
+    const loser = tabA.length ? "receipt-tab-b" : "receipt-tab-a";
+    assert.deepEqual(await offlineDb.claimReadyReceiptBlobs(db, {
+      owner: loser, now: serverMillis + 60_999, ttlMs: 60_000, limit: 10,
+    }), []);
+    const [recovered] = await offlineDb.claimReadyReceiptBlobs(db, {
+      owner: loser, now: serverMillis + 61_000, ttlMs: 60_000, limit: 10,
+    });
+    assert.equal(recovered.receiptId, "receipt-a");
+    assert.notEqual(recovered.uploadClaimOwner, winner);
+  });
+
+  it("atomically adopts a different finalized remote receipt after conflict", async () => {
+    assert.equal(typeof offlineDb.commitReceiptConflictResolution, "function");
+    const db = await openDatabase();
+    const committed = await offlineDb.commitLocalMutation(db, {
+      ...mutationInput(),
+      receipt: receiptFixture(),
+    });
+    const lease = await offlineDb.acquireSyncLease(db, {
+      owner: "tab-a", now: serverMillis, ttlMs: 30_000,
+    });
+    await offlineDb.commitSyncResponse(db, {
+      owner: "tab-a",
+      fence: lease.fence,
+      snapshot: { expenses: [committed.operation.expense], activity: [committed.activity], serverTime },
+      acknowledgedOpIds: [committed.operation.opId],
+      mergeRemoteSnapshot,
+    });
+    await offlineDb.claimReadyReceiptBlobs(db, {
+      owner: "receipt-worker", now: serverMillis + 1_000, ttlMs: 60_000, limit: 10,
+    });
+
+    await offlineDb.commitReceiptConflictResolution(db, {
+      localReceiptId: "receipt-a",
+      expenseId: "expense-a",
+      owner: "receipt-worker",
+      attachment: {
+        receiptId: "receipt-remote",
+        expenseId: "expense-a",
+        originalName: "remote.jpg",
+        storagePath: "expense-a/receipt-remote-remote.jpg",
+        finalizedAt: serverTime,
+      },
+    });
+
+    assert.equal(await offlineDb.getReceiptBlob(db, "receipt-a"), undefined);
+    const [expense] = (await offlineDb.loadOfflineLedger(db)).expenses;
+    assert.equal(expense.receiptId, "receipt-remote");
+    assert.equal(expense.attachmentName, "remote.jpg");
+    assert.equal(expense.attachmentStatus, "uploaded");
+  });
 });
+
+function receiptFixture(overrides = {}) {
+  return {
+    receiptId: "receipt-a",
+    expenseId: "expense-a",
+    blob: new Blob(["receipt bytes"], { type: "image/png" }),
+    originalName: "receipt.png",
+    mimeType: "image/png",
+    sizeBytes: 13,
+    createdAt: serverTime,
+    attempts: 0,
+    lastError: "",
+    ...overrides,
+  };
+}
 
 async function openDatabase() {
   const db = await offlineDb.openOfflineDb({ indexedDB: testIndexedDB });

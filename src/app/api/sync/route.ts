@@ -1,5 +1,7 @@
 import "server-only";
 
+import { after } from "next/server.js";
+
 import {
   assertSameOriginMutation,
   authenticationRequiredResponse,
@@ -15,6 +17,7 @@ import {
   fetchActivity,
   fetchLedgerSnapshot,
 } from "../../../lib/server/supabase.js";
+import { cleanupReceipts } from "../../../lib/server/receipts.js";
 
 export const runtime = "nodejs";
 
@@ -23,7 +26,9 @@ export async function GET(request: Request) {
   if (accessResponse) return accessResponse;
 
   try {
-    return privateJsonResponse(await freshSnapshot());
+    const snapshot = await freshSnapshot();
+    scheduleReceiptCleanup();
+    return privateJsonResponse(snapshot);
   } catch {
     return upstreamUnavailableResponse();
   }
@@ -48,7 +53,9 @@ export async function POST(request: Request) {
 
   try {
     const results = await applyExpenseOperations(operations);
-    return privateJsonResponse({ results, ...await freshSnapshot() });
+    const snapshot = await freshSnapshot();
+    scheduleReceiptCleanup();
+    return privateJsonResponse({ results, ...snapshot });
   } catch {
     return upstreamUnavailableResponse();
   }
@@ -72,4 +79,12 @@ async function freshSnapshot() {
     activity,
     serverTime: new Date().toISOString(),
   };
+}
+
+function scheduleReceiptCleanup() {
+  try {
+    after(() => cleanupReceipts().catch(() => undefined));
+  } catch {
+    // Unit calls and non-Next runtimes have no request lifecycle to extend.
+  }
 }

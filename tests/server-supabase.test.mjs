@@ -116,11 +116,15 @@ describe("server-only Supabase transport", () => {
       deletedAt: null,
       attachmentName: "receipt.jpg",
       attachmentPath: "expense-visible/receipt-id.jpg",
+      receiptId: "receipt-id",
+      attachmentStatus: "uploaded",
     });
     assert.equal(expenses[1].deletedAt, "2026-07-10T00:00:01.000Z");
     assert.equal(expenses[1].date, "");
     assert.equal(expenses[1].attachmentName, "");
     assert.equal(expenses[1].attachmentPath, "");
+    assert.equal(expenses[1].receiptId, "");
+    assert.equal(expenses[1].attachmentStatus, "none");
     assert.equal(calls.length, 2);
     assert.equal(calls.some((call) => /\/expenses\?select=\*&order=date\.asc$/.test(call.url)), true);
     const attachmentCall = calls.find((call) => call.url.includes("/attachments?"));

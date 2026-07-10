@@ -8,6 +8,7 @@ import {
   commitOfflineMutation,
   initializeOfflineLedger,
   syncOfflineLedger,
+  syncOfflineReceipts,
   undoOfflineDelete,
 } from "../src/lib/offlineLedger.js";
 import { compareMutationVersions } from "../src/lib/mutationVersion.js";
@@ -191,6 +192,175 @@ describe("offline ledger lifecycle", () => {
     );
     closeOfflineLedger(context);
   });
+
+  it("uploads a queued receipt only after its expense operation is acknowledged", async () => {
+    const context = await initializedContext();
+    await commitOfflineMutation(context, {
+      type: "upsert",
+      expense: expenseFixture(),
+      activity: activityFixture(),
+      opId: "op-with-receipt",
+      now: baseNow + 1_000,
+      receipt: receiptFixture(),
+    });
+    const calls = [];
+
+    assert.equal((await syncOfflineReceipts(context, {
+      async uploadReceipt() {
+        calls.push("upload");
+      },
+      now: () => baseNow + 1_500,
+    })).uploaded, 0);
+
+    await syncOfflineLedger(context, {
+      now: () => baseNow + 2_000,
+      async sendOperations(batch) {
+        calls.push("expense");
+        return responseFor(batch);
+      },
+    });
+    const receipts = await syncOfflineReceipts(context, {
+      async uploadReceipt(receipt) {
+        calls.push("upload");
+        return {
+          receipt: {
+            receiptId: receipt.receiptId,
+            expenseId: receipt.expenseId,
+            originalName: receipt.originalName,
+            storagePath: "expense-one/receipt-one-receipt.png",
+            finalizedAt: new Date(baseNow + 2_500).toISOString(),
+          },
+        };
+      },
+      now: () => baseNow + 2_500,
+    });
+
+    assert.deepEqual(calls, ["expense", "upload"]);
+    assert.equal(receipts.uploaded, 1);
+    assert.equal(receipts.failed, 0);
+    assert.equal(receipts.state.expenses[0].attachmentStatus, "uploaded");
+    closeOfflineLedger(context);
+  });
+
+  it("keeps a failed receipt queued without failing the saved expense", async () => {
+    const context = await initializedContext();
+    await commitOfflineMutation(context, {
+      type: "upsert",
+      expense: expenseFixture(),
+      activity: activityFixture(),
+      opId: "op-with-failed-receipt",
+      now: baseNow + 1_000,
+      receipt: receiptFixture(),
+    });
+    await syncOfflineLedger(context, {
+      now: () => baseNow + 2_000,
+      sendOperations: responseFor,
+    });
+
+    const result = await syncOfflineReceipts(context, {
+      async uploadReceipt() {
+        throw new Error("network unavailable");
+      },
+      now: () => baseNow + 3_000,
+    });
+
+    assert.equal(result.uploaded, 0);
+    assert.equal(result.failed, 1);
+    assert.equal(result.state.expenses[0].item, "Dinner");
+    assert.equal(result.state.expenses[0].attachmentStatus, "pending");
+    closeOfflineLedger(context);
+  });
+
+  it("lets only one tab upload the same acknowledged receipt", async () => {
+    const indexedDB = new IDBFactory();
+    const storage = memoryStorage();
+    const first = await initializeOfflineLedger({
+      indexedDB,
+      storage,
+      now: baseNow,
+      randomUUID: uuidSequence(),
+    });
+    await commitOfflineMutation(first, {
+      type: "upsert",
+      expense: expenseFixture(),
+      activity: activityFixture(),
+      opId: "op-shared-receipt",
+      now: baseNow + 1_000,
+      receipt: receiptFixture(),
+    });
+    await syncOfflineLedger(first, {
+      now: () => baseNow + 2_000,
+      sendOperations: responseFor,
+    });
+    const second = await initializeOfflineLedger({
+      indexedDB,
+      storage,
+      now: baseNow + 2_500,
+      randomUUID: uuidSequence(),
+    });
+    let uploadCalls = 0;
+    const uploadReceipt = async (receipt) => {
+      uploadCalls += 1;
+      await new Promise((resolve) => setTimeout(resolve, 25));
+      return {
+        receipt: {
+          receiptId: receipt.receiptId,
+          expenseId: receipt.expenseId,
+          originalName: receipt.originalName,
+          storagePath: "expense-one/receipt-one-receipt.png",
+          finalizedAt: new Date(baseNow + 3_000).toISOString(),
+        },
+      };
+    };
+
+    const results = await Promise.all([
+      syncOfflineReceipts(first, { uploadReceipt, now: () => baseNow + 3_000 }),
+      syncOfflineReceipts(second, { uploadReceipt, now: () => baseNow + 3_000 }),
+    ]);
+
+    assert.equal(uploadCalls, 1);
+    assert.equal(results.reduce((sum, result) => sum + result.uploaded, 0), 1);
+    closeOfflineLedger(first);
+    closeOfflineLedger(second);
+  });
+
+  it("replaces a conflicting local Blob with the finalized remote receipt", async () => {
+    const context = await initializedContext();
+    await commitOfflineMutation(context, {
+      type: "upsert",
+      expense: expenseFixture(),
+      activity: activityFixture(),
+      opId: "op-conflicting-receipt",
+      now: baseNow + 1_000,
+      receipt: receiptFixture(),
+    });
+    await syncOfflineLedger(context, {
+      now: () => baseNow + 2_000,
+      sendOperations: responseFor,
+    });
+
+    const result = await syncOfflineReceipts(context, {
+      now: () => baseNow + 3_000,
+      async uploadReceipt() {
+        return {
+          resolvedConflict: true,
+          receipt: {
+            receiptId: "receipt-remote",
+            expenseId: "expense-one",
+            originalName: "remote.jpg",
+            storagePath: "expense-one/receipt-remote-remote.jpg",
+            finalizedAt: new Date(baseNow + 2_500).toISOString(),
+          },
+        };
+      },
+    });
+
+    assert.equal(result.failed, 0);
+    assert.equal(result.uploaded, 1);
+    assert.equal(result.state.expenses[0].receiptId, "receipt-remote");
+    assert.equal(result.state.expenses[0].attachmentStatus, "uploaded");
+    closeOfflineLedger(context);
+  });
 });
 
 async function initializedContext() {
@@ -247,6 +417,21 @@ function activityFixture(overrides = {}) {
     currency: "AUD",
     summary: "Added dinner",
     createdAt: new Date(baseNow + 1_000).toISOString(),
+    ...overrides,
+  };
+}
+
+function receiptFixture(overrides = {}) {
+  return {
+    receiptId: "receipt-one",
+    expenseId: "expense-one",
+    blob: new Blob(["receipt bytes"], { type: "image/png" }),
+    originalName: "receipt.png",
+    mimeType: "image/png",
+    sizeBytes: 13,
+    createdAt: new Date(baseNow + 1_000).toISOString(),
+    attempts: 0,
+    lastError: "",
     ...overrides,
   };
 }

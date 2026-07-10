@@ -4,11 +4,13 @@ const MAX_OPERATION_BATCH = 100;
 const MAX_ACTIVITY_LIMIT = 100;
 
 export class SupabaseUpstreamError extends Error {
-  constructor(status = 0) {
+  constructor(status = 0, upstreamCode = "", upstreamMessage = "") {
     super("The ledger data service is unavailable");
     this.name = "SupabaseUpstreamError";
     this.code = "supabase_upstream_error";
     this.status = status;
+    this.upstreamCode = upstreamCode;
+    this.upstreamMessage = upstreamMessage;
   }
 }
 
@@ -22,8 +24,8 @@ export class SupabaseConfigurationError extends Error {
 
 export async function fetchLedgerSnapshot() {
   const [expenseRows, attachmentRows] = await Promise.all([
-    serviceJson("/rest/v1/expenses?select=*&order=date.asc"),
-    serviceJson(
+    supabaseServiceJson("/rest/v1/expenses?select=*&order=date.asc"),
+    supabaseServiceJson(
       "/rest/v1/attachments?select=expense_id,receipt_id,original_name,mime_type,size_bytes,storage_path,finalized_at,created_at"
       + "&finalized_at=not.is.null&deleted_at=is.null&order=created_at.desc",
     ),
@@ -49,7 +51,7 @@ export async function applyExpenseOperations(operations) {
 
   const results = [];
   for (const operation of operations) {
-    const result = await serviceJson("/rest/v1/rpc/apply_expense_operation", {
+    const result = await supabaseServiceJson("/rest/v1/rpc/apply_expense_operation", {
       method: "POST",
       body: JSON.stringify({ operation }),
     });
@@ -68,14 +70,14 @@ export async function applyExpenseOperations(operations) {
 
 export async function fetchActivity(limit = 50) {
   const safeLimit = clampInteger(limit, 1, MAX_ACTIVITY_LIMIT);
-  const rows = await serviceJson(
+  const rows = await supabaseServiceJson(
     `/rest/v1/expense_activity?select=*&order=created_at.desc&limit=${safeLimit}`,
   );
   if (!Array.isArray(rows)) throw new SupabaseUpstreamError();
   return rows.map(mapActivity);
 }
 
-async function serviceJson(path, options = {}) {
+export async function supabaseServiceJson(path, options = {}) {
   const { url, serviceRole } = readSupabaseConfig();
   let response;
   try {
@@ -92,13 +94,20 @@ async function serviceJson(path, options = {}) {
   } catch {
     throw new SupabaseUpstreamError();
   }
-  if (!response.ok) throw new SupabaseUpstreamError(response.status);
+  if (!response.ok) {
+    const upstream = await readUpstreamError(response);
+    throw new SupabaseUpstreamError(response.status, upstream.code, upstream.message);
+  }
 
   try {
     return await response.json();
   } catch {
     throw new SupabaseUpstreamError(response.status);
   }
+}
+
+export function supabaseServiceUrl() {
+  return readSupabaseConfig().url;
 }
 
 function readSupabaseConfig(env = process.env) {
@@ -127,6 +136,8 @@ function mapExpense(row, attachment) {
     deletedAt: row.deleted_at || null,
     attachmentName: attachment?.original_name || "",
     attachmentPath: attachment?.storage_path || "",
+    receiptId: attachment?.receipt_id || "",
+    attachmentStatus: attachment ? "uploaded" : "none",
   };
 }
 
@@ -147,4 +158,20 @@ function clampInteger(value, minimum, maximum) {
   const parsed = Number.parseInt(String(value), 10);
   if (!Number.isFinite(parsed)) return minimum;
   return Math.min(Math.max(parsed, minimum), maximum);
+}
+
+async function readUpstreamError(response) {
+  try {
+    const payload = await response.json();
+    return {
+      code: safeUpstreamText(payload?.code),
+      message: safeUpstreamText(payload?.message),
+    };
+  } catch {
+    return { code: "", message: "" };
+  }
+}
+
+function safeUpstreamText(value) {
+  return typeof value === "string" && value.length <= 128 ? value : "";
 }

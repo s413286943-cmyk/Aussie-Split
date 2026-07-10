@@ -7,6 +7,7 @@ import { describe, it } from "node:test";
 const testsDirectory = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(testsDirectory, "..");
 const migration = readSql("supabase/migrations/20260710035744_shared_ledger_compatibility.sql");
+const receiptMigration = readSql("supabase/migrations/20260710140534_private_receipts.sql");
 const rollback = readSql("supabase/rollback/remove_shared_ledger_compatibility.sql");
 const schema = readSql("supabase/schema.sql");
 
@@ -170,7 +171,78 @@ describe("shared-ledger compatibility migration contract", () => {
       /create schema if not exists app_private/i,
       /create or replace function public\.apply_expense_operation/i,
       /create or replace function public\.consume_access_attempt/i,
+      /create or replace function public\.create_receipt_upload_intent/i,
+      /create or replace function public\.finalize_receipt_upload/i,
+      /create or replace function public\.claim_receipt_cleanup/i,
+      /insert into storage\.buckets/i,
     ]);
+  });
+});
+
+describe("private receipt migration contract", () => {
+  it("enforces canonical active receipt metadata and supporting indexes", () => {
+    expectAll(receiptMigration, [
+      /add column if not exists cleanup_claimed_at timestamptz/i,
+      /add column if not exists cleanup_claim_token text/i,
+      /mime_type in \('image\/jpeg', 'image\/png', 'image\/heic', 'image\/heif', 'image\/webp'\)/i,
+      /size_bytes between 1 and 10485760/i,
+      /create unique index(?: if not exists)? attachments_active_expense_unique[\s\S]*expense_id[\s\S]*receipt_id is not null[\s\S]*deleted_at is null/i,
+      /create index(?: if not exists)? attachments_pending_cleanup_idx[\s\S]*finalized_at is null/i,
+    ]);
+  });
+
+  it("keeps the receipts bucket private with a ten MiB image allowlist", () => {
+    expectAll(receiptMigration, [
+      /insert into storage\.buckets/i,
+      /values \(\s*'receipts',\s*'receipts',\s*false,\s*10485760/i,
+      /array\['image\/jpeg', 'image\/png', 'image\/heic', 'image\/heif', 'image\/webp'\]/i,
+      /on conflict \(id\) do update/i,
+      /public = false/i,
+    ]);
+  });
+
+  it("claims bounded cleanup work without blocking concurrent workers", () => {
+    expectAll(receiptMigration, [
+      /create or replace function public\.claim_receipt_cleanup/i,
+      /security invoker/i,
+      /for update of a skip locked/i,
+      /interval '24 hours'/i,
+      /interval '7 days'/i,
+      /interval '30 minutes'/i,
+      /cleanup_claim_token = claim_receipt_cleanup\.claim_token/i,
+      /revoke execute on function public\.claim_receipt_cleanup\(text, integer\) from public, anon, authenticated/i,
+      /grant execute on function public\.claim_receipt_cleanup\(text, integer\) to service_role/i,
+      /create or replace function public\.verify_receipt_cleanup_claim/i,
+      /cleanup_claim_token is distinct from requested_claim_token/i,
+      /create or replace function public\.finish_receipt_cleanup_claim/i,
+      /mark_deleted boolean/i,
+      /receipt_cleanup_in_progress/i,
+      /create trigger block_expense_restore_during_receipt_cleanup/i,
+      /grant execute on function public\.verify_receipt_cleanup_claim\(uuid, text\) to service_role/i,
+      /grant execute on function public\.finish_receipt_cleanup_claim\(uuid, text, boolean\) to service_role/i,
+    ]);
+  });
+
+  it("creates and finalizes receipt intents atomically for active expenses", () => {
+    expectAll(receiptMigration, [
+      /create or replace function public\.create_receipt_upload_intent\(receipt jsonb\)/i,
+      /for update/i,
+      /receipt_expense_unavailable/i,
+      /receipt_conflict/i,
+      /insert into public\.attachments/i,
+      /create or replace function public\.finalize_receipt_upload\(\s*requested_expense_id text,\s*requested_receipt_id text\s*\)/i,
+      /finalized_at = coalesce\(finalized_at, pg_catalog\.now\(\)\)/i,
+      /revoke execute on function public\.create_receipt_upload_intent\(jsonb\) from public, anon, authenticated/i,
+      /grant execute on function public\.create_receipt_upload_intent\(jsonb\) to service_role/i,
+      /revoke execute on function public\.finalize_receipt_upload\(text, text\) from public, anon, authenticated/i,
+      /grant execute on function public\.finalize_receipt_upload\(text, text\) to service_role/i,
+    ]);
+  });
+
+  it("does not enable RLS or revoke the compatibility bridge", () => {
+    assert.doesNotMatch(receiptMigration, /alter table public\.[a-z_]+\s+enable row level security/i);
+    assert.doesNotMatch(receiptMigration, /revoke[^;]*on (?:table )?public\.(?:expenses|attachments|expense_activity)/i);
+    assert.doesNotMatch(receiptMigration, /(?:drop table|truncate|delete from)\s+public\./i);
   });
 });
 

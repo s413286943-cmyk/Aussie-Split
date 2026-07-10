@@ -437,6 +437,15 @@ describe("TripLedger durable outbox contract", () => {
     assert.doesNotMatch(undoSource, /deleteRemoteExpense|applyLedgerOperations/);
   });
 
+  it("does not replace an active delete Undo with a receipt retry notice", () => {
+    const syncSource = functionSource(tripLedgerSource, "requestLedgerSync");
+    assert.match(tripLedgerSource, /deferredReceiptFailureRef/);
+    assert.match(syncSource, /pendingDeleteRef\.current/);
+    assert.match(syncSource, /deferredReceiptFailureRef\.current\s*=\s*true/);
+    assert.match(syncSource, /setSyncState\("小票待重试"\)/);
+    assert.match(functionSource(tripLedgerSource, "finalizePendingDelete"), /小票待重试/);
+  });
+
   it("serializes one reusable sync loop and retries on connectivity lifecycle events", () => {
     const syncSource = functionSource(tripLedgerSource, "requestLedgerSync");
     assert.match(syncSource, /syncPromiseRef\.current/);

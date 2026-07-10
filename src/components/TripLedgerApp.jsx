@@ -28,14 +28,17 @@ import {
 } from "@/lib/activity";
 import { coupleName, formatPayerLabel, formatSettlementDirection } from "@/lib/couples";
 import { pulseElement, revealPage, shakeElement } from "@/lib/motion";
-import { applyLedgerOperations } from "@/lib/apiClient";
+import { applyLedgerOperations, fetchReceipt } from "@/lib/apiClient";
 import {
   closeOfflineLedger,
   commitOfflineMutation,
   initializeOfflineLedger,
   syncOfflineLedger,
+  syncOfflineReceipts,
   undoOfflineDelete,
 } from "@/lib/offlineLedger";
+import { createReceiptBlobRecord } from "@/lib/receipt";
+import { uploadReceiptRecord } from "@/lib/receiptUpload";
 import { createSerialLedgerActionQueue } from "@/lib/sync";
 import { syncStateLabel } from "@/lib/syncEngine";
 import UnlockGate from "@/components/UnlockGate";
@@ -55,6 +58,7 @@ function TripLedgerContent({ view }) {
   const shellRef = useRef(null);
   const noticeTimerRef = useRef(null);
   const pendingDeleteRef = useRef(null);
+  const deferredReceiptFailureRef = useRef(false);
   const mountedRef = useRef(false);
   const offlineContextRef = useRef(null);
   const expensesRef = useRef(seedExpenses);
@@ -70,6 +74,18 @@ function TripLedgerContent({ view }) {
   const [feedbackAnimation, setFeedbackAnimation] = useState(null);
   const [syncState, setSyncState] = useState("正在同步");
   const ledger = useMemo(() => calculateLedger(expenses), [expenses]);
+
+  const showActionNotice = useCallback((message, tone = "success", options = {}) => {
+    if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
+    setActionNotice({
+      id: Date.now(),
+      message,
+      tone,
+      actionLabel: options.actionLabel,
+      onAction: options.onAction,
+    });
+    noticeTimerRef.current = window.setTimeout(() => setActionNotice(null), options.duration ?? 3200);
+  }, []);
 
   const applyOfflineState = useCallback((state) => {
     if (!mountedRef.current) return;
@@ -114,13 +130,27 @@ function TripLedgerContent({ view }) {
             sendOperations: applyLedgerOperations,
             now: Date.now,
           });
-          applyOfflineState(synced.state);
+          const receiptSync = await syncOfflineReceipts(context, {
+            uploadReceipt: uploadReceiptRecord,
+            now: Date.now,
+          });
+          applyOfflineState(receiptSync.state);
           if (!mountedRef.current) continue;
           if (synced.result.reason === "lease_unavailable") {
             syncRetryTimerRef.current = window.setTimeout(requestLedgerSync, 500);
           }
           const failed = !synced.result.completed && synced.result.reason !== "lease_unavailable";
-          setSyncState(syncStateLabel({ pendingCount: synced.state.outboxCount, failed }));
+          if (receiptSync.failed > 0) {
+            if (failed) setSyncState("同步失败，可重试");
+            else setSyncState("小票待重试");
+            if (pendingDeleteRef.current) {
+              deferredReceiptFailureRef.current = true;
+            } else {
+              showActionNotice("账单已保存，小票待重试", "warning");
+            }
+          } else {
+            setSyncState(syncStateLabel({ pendingCount: receiptSync.state.outboxCount, failed }));
+          }
         } catch {
           if (mountedRef.current) setSyncState("同步失败，可重试");
         }
@@ -138,7 +168,7 @@ function TripLedgerContent({ view }) {
 
     syncPromiseRef.current = promise;
     return promise;
-  }, [applyOfflineState]);
+  }, [applyOfflineState, showActionNotice]);
 
   useEffect(() => {
     let cancelled = false;
@@ -230,18 +260,6 @@ function TripLedgerContent({ view }) {
     return () => tween?.kill();
   }, [feedbackAnimation]);
 
-  function showActionNotice(message, tone = "success", options = {}) {
-    if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
-    setActionNotice({
-      id: Date.now(),
-      message,
-      tone,
-      actionLabel: options.actionLabel,
-      onAction: options.onAction,
-    });
-    noticeTimerRef.current = window.setTimeout(() => setActionNotice(null), options.duration ?? 3200);
-  }
-
   function playFeedback(targetId, tone = "success") {
     setFeedbackAnimation({ id: Date.now(), targetId, tone });
   }
@@ -280,6 +298,7 @@ function TripLedgerContent({ view }) {
         opId,
         now,
         createdAt: entry.createdAt,
+        receipt: mutationOptions.receipt,
       });
       const versionedExpense = nextState.rawExpenses.find((item) => item.id === candidate.id);
       applyOfflineState(nextState);
@@ -296,11 +315,11 @@ function TripLedgerContent({ view }) {
     });
   }
 
-  async function addExpense(expense) {
+  async function addExpense(expense, receipt) {
     try {
       const committed = await commitLedgerMutation(
         () => expense,
-        { activityAction: "add" },
+        { activityAction: "add", receipt },
       );
       const versionedExpense = committed.expense;
       showPersistNotice("add", versionedExpense, "expense-form");
@@ -335,6 +354,20 @@ function TripLedgerContent({ view }) {
       showActionNotice(`保存修改失败：${expense.item || "这笔费用"}`, "danger");
       playFeedback(expense.id, "danger");
       throw new Error("expense-update-failed");
+    }
+  }
+
+  async function viewReceipt(expense) {
+    const popup = window.open("", "_blank");
+    if (popup) popup.opener = null;
+    try {
+      const result = await fetchReceipt(expense.id);
+      if (popup) popup.location.replace(result.signedUrl);
+      else window.location.assign(result.signedUrl);
+    } catch {
+      popup?.close();
+      showActionNotice(`小票打开失败：${expense.item}`, "danger");
+      playFeedback(expense.id, "danger");
     }
   }
 
@@ -399,6 +432,8 @@ function TripLedgerContent({ view }) {
 
     if (pending.timer) window.clearTimeout(pending.timer);
     pendingDeleteRef.current = null;
+    const receiptFailureDeferred = deferredReceiptFailureRef.current;
+    deferredReceiptFailureRef.current = false;
 
     try {
       const now = Date.now();
@@ -422,11 +457,17 @@ function TripLedgerContent({ view }) {
       setSyncState(syncStateLabel({ pendingCount: result.state.outboxCount }));
       if (result.requiresSync) requestLedgerSync();
     } catch {
-      showActionNotice(`恢复失败：${pending.expense.item}`, "danger");
+      showActionNotice(
+        `恢复失败：${pending.expense.item}${receiptFailureDeferred ? "；小票待重试" : ""}`,
+        "danger",
+      );
       playFeedback(pending.expense.id, "danger");
       return;
     }
-    showActionNotice(`已恢复：${pending.expense.item}`, "success");
+    showActionNotice(
+      `已恢复：${pending.expense.item}${receiptFailureDeferred ? "；小票待重试" : ""}`,
+      receiptFailureDeferred ? "warning" : "success",
+    );
     playFeedback(pending.expense.id, "success");
   }
 
@@ -442,6 +483,10 @@ function TripLedgerContent({ view }) {
     if (!pending || pending.id !== id) return;
     pendingDeleteRef.current = null;
     requestLedgerSync();
+    if (deferredReceiptFailureRef.current) {
+      deferredReceiptFailureRef.current = false;
+      showActionNotice("账单已保存，小票待重试", "warning");
+    }
   }
 
   if (!ready) {
@@ -488,11 +533,12 @@ function TripLedgerContent({ view }) {
             activity={activity}
             onUpdate={updateExpense}
             onConfirm={confirmExpense}
+            onViewReceipt={viewReceipt}
             onInvalid={showFormWarning}
           />
         )}
         {view === "expenses" && (
-          <Expenses expenses={expenses} onUpdate={updateExpense} onConfirm={confirmExpense} onDelete={removeExpense} onInvalid={showFormWarning} />
+          <Expenses expenses={expenses} onUpdate={updateExpense} onConfirm={confirmExpense} onDelete={removeExpense} onViewReceipt={viewReceipt} onInvalid={showFormWarning} />
         )}
         {view === "add" && <AddExpense onAdd={addExpense} onInvalid={showFormWarning} />}
         {view === "settlement" && <Settlement ledger={ledger} />}
@@ -525,7 +571,7 @@ function ActionNotice({ notice }) {
   );
 }
 
-function Dashboard({ expenses, ledger, activity, onUpdate, onConfirm, onInvalid }) {
+function Dashboard({ expenses, ledger, activity, onUpdate, onConfirm, onViewReceipt, onInvalid }) {
   const recent = expenses.slice(0, 5);
   const stats = dashboardStats(expenses, activity);
 
@@ -539,7 +585,7 @@ function Dashboard({ expenses, ledger, activity, onUpdate, onConfirm, onInvalid 
           <h2>最近记录</h2>
           <Link href="/expenses" className="button small">全部</Link>
         </div>
-        <ExpenseList expenses={recent} onUpdate={onUpdate} onConfirm={onConfirm} onInvalid={onInvalid} />
+        <ExpenseList expenses={recent} onUpdate={onUpdate} onConfirm={onConfirm} onViewReceipt={onViewReceipt} onInvalid={onInvalid} />
       </section>
     </>
   );
@@ -634,7 +680,7 @@ function SummaryCards({ ledger }) {
   );
 }
 
-function Expenses({ expenses, onUpdate, onConfirm, onDelete, onInvalid }) {
+function Expenses({ expenses, onUpdate, onConfirm, onDelete, onViewReceipt, onInvalid }) {
   const [urlFilters, setUrlFilters] = useState({ split: "全部", highlightId: "" });
   const [category, setCategory] = useState("全部");
   const [currency, setCurrency] = useState("全部");
@@ -678,12 +724,12 @@ function Expenses({ expenses, onUpdate, onConfirm, onDelete, onInvalid }) {
           <option value="them">{coupleName("them")}</option>
         </select>
       </div>
-      <ExpenseList expenses={filtered} onUpdate={onUpdate} onConfirm={onConfirm} onDelete={onDelete} onInvalid={onInvalid} highlightId={urlFilters.highlightId} />
+      <ExpenseList expenses={filtered} onUpdate={onUpdate} onConfirm={onConfirm} onDelete={onDelete} onViewReceipt={onViewReceipt} onInvalid={onInvalid} highlightId={urlFilters.highlightId} />
     </section>
   );
 }
 
-function ExpenseList({ expenses, onUpdate, onConfirm, onDelete, onInvalid, highlightId = "" }) {
+function ExpenseList({ expenses, onUpdate, onConfirm, onDelete, onViewReceipt, onInvalid, highlightId = "" }) {
   const [editingId, setEditingId] = useState("");
   const [editForm, setEditForm] = useState(null);
   const [busyId, setBusyId] = useState("");
@@ -753,6 +799,8 @@ function ExpenseList({ expenses, onUpdate, onConfirm, onDelete, onInvalid, highl
       {expenses.map((expense) => {
         const isEditing = editingId === expense.id && editForm;
         const isBusy = busyId === expense.id;
+        const receiptPending = expense.attachmentStatus === "pending";
+        const receiptUploaded = expense.attachmentStatus === "uploaded" || Boolean(expense.attachmentPath);
 
         if (isEditing) {
           return (
@@ -822,7 +870,8 @@ function ExpenseList({ expenses, onUpdate, onConfirm, onDelete, onInvalid, highl
                 <span className={expense.status === "draft" ? "tag draft" : "tag"}>{expense.status === "draft" ? "待确认" : "已确认"}</span>
                 <span className={expense.payer === "them" ? "tag other" : "tag"}>{formatPayerLabel(expense.payer)}</span>
                 {expense.splitSettled && <span className="tag settled">已分摊</span>}
-                {expense.attachmentName && <span className="tag">有小票</span>}
+                {receiptPending && <span className="tag draft">小票待上传</span>}
+                {receiptUploaded && <span className="tag">有小票</span>}
               </div>
             </div>
             <div className="stack row-actions">
@@ -839,6 +888,11 @@ function ExpenseList({ expenses, onUpdate, onConfirm, onDelete, onInvalid, highl
                 </button>
               )}
               {onUpdate && <button className="button small" onClick={() => startEdit(expense)} disabled={isBusy}>编辑</button>}
+              {onViewReceipt && receiptUploaded && (
+                <button className="button small" type="button" onClick={() => onViewReceipt(expense)} disabled={isBusy}>
+                  查看小票
+                </button>
+              )}
               {onConfirm && expense.status === "draft" && (
                 <button className="button small primary" onClick={() => confirmRow(expense)} disabled={isBusy}>确认</button>
               )}
@@ -910,11 +964,26 @@ function AddExpense({ onAdd, onInvalid }) {
 
     setSaving(true);
     try {
+      const expenseId = form.id || `expense-${Date.now()}`;
+      let receiptRecord;
+      if (receipt) {
+        try {
+          receiptRecord = createReceiptBlobRecord({
+            expenseId,
+            receiptId: `receipt-${globalThis.crypto.randomUUID()}`,
+            file: receipt,
+            createdAt: new Date().toISOString(),
+          });
+        } catch {
+          onInvalid?.("小票仅支持 JPG、PNG、HEIC、HEIF、WebP，且不能超过 10 MB");
+          return;
+        }
+      }
       const nextExpense = createCapturedExpense(form, {
-        id: form.id || `expense-${Date.now()}`,
-        attachmentName: receipt?.name || form.attachmentName || "",
+        id: expenseId,
+        attachmentName: receiptRecord?.originalName || form.attachmentName || "",
       });
-      await onAdd(nextExpense);
+      await onAdd(nextExpense, receiptRecord);
 
       const nextDefaults = {
         category: form.category,
@@ -1004,7 +1073,11 @@ function AddExpense({ onAdd, onInvalid }) {
             </label>
             <label className="full">
               小票图片
-              <input type="file" accept="image/*" onChange={(event) => setReceipt(event.target.files?.[0] || null)} />
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png,.heic,.heif,.webp,image/jpeg,image/png,image/heic,image/heif,image/webp"
+                onChange={(event) => setReceipt(event.target.files?.[0] || null)}
+              />
             </label>
             <label className="full">
               备注

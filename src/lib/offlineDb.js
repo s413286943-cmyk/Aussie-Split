@@ -134,11 +134,17 @@ export async function commitLocalMutation(db, options) {
     throw new TypeError("Activity expense id does not match the mutation");
   }
   assertNonemptyString(options.opId, "operation id");
+  if (options.receipt !== undefined) {
+    assertReceiptBlob(options.receipt);
+    if (options.receipt.expenseId !== options.expense.id) {
+      throw new TypeError("Receipt expense id does not match the mutation");
+    }
+  }
 
   const now = options.now ?? Date.now();
   const timestamp = isoTimestamp(now, "mutation time");
   const createdAt = validTimestamp(options.createdAt ?? timestamp, "operation creation time");
-  const transaction = db.transaction(["expenses", "activity", "outbox", "meta"], "readwrite");
+  const transaction = db.transaction(["expenses", "activity", "outbox", "receiptBlobs", "meta"], "readwrite");
   const completed = transactionComplete(transaction);
 
   try {
@@ -168,6 +174,12 @@ export async function commitLocalMutation(db, options) {
       mutationVersion,
       updatedAt: timestamp,
       deletedAt: options.type === "delete" ? timestamp : null,
+      ...(options.receipt ? {
+        attachmentName: options.receipt.originalName,
+        attachmentPath: "",
+        receiptId: options.receipt.receiptId,
+        attachmentStatus: "pending",
+      } : {}),
     };
     const operation = options.type === "delete"
       ? {
@@ -190,6 +202,7 @@ export async function commitLocalMutation(db, options) {
     expenseStore.put(expense);
     transaction.objectStore("activity").put(options.activity);
     transaction.objectStore("outbox").add(operation);
+    if (options.receipt) transaction.objectStore("receiptBlobs").put(options.receipt);
 
     await completed;
     return { expense, activity: options.activity, operation };
@@ -439,7 +452,7 @@ export async function commitSyncResponse(db, options) {
     throw new TypeError("Invalid remote snapshot merger");
   }
 
-  const transaction = db.transaction(["expenses", "activity", "outbox", "meta"], "readwrite");
+  const transaction = db.transaction(["expenses", "activity", "outbox", "receiptBlobs", "meta"], "readwrite");
   const completed = transactionComplete(transaction);
 
   try {
@@ -467,10 +480,23 @@ export async function commitSyncResponse(db, options) {
     assertUniqueRecords(merged.expenses, "merged expense");
     assertUniqueRecords(merged.activity, "merged activity");
     for (const expense of merged.expenses) parseMutationVersion(expense.mutationVersion);
+    const pendingReceipts = await requestResult(transaction.objectStore("receiptBlobs").getAll());
+    const receiptByExpense = new Map(pendingReceipts.map((receipt) => [receipt.expenseId, receipt]));
+    const mergedExpenses = merged.expenses.map((expense) => {
+      const receipt = receiptByExpense.get(expense.id);
+      if (!receipt || expense.deletedAt) return expense;
+      return {
+        ...expense,
+        attachmentName: receipt.originalName,
+        attachmentPath: "",
+        receiptId: receipt.receiptId,
+        attachmentStatus: "pending",
+      };
+    });
     const highWaterRecord = await requestResult(meta.get("mutationHighWater"));
     const highWater = greatestMutationVersion([
       ...(highWaterRecord?.value ? [highWaterRecord.value] : []),
-      ...merged.expenses.map((expense) => expense.mutationVersion),
+      ...mergedExpenses.map((expense) => expense.mutationVersion),
     ]);
     const expenseStore = transaction.objectStore("expenses");
     const activityStore = transaction.objectStore("activity");
@@ -486,7 +512,7 @@ export async function commitSyncResponse(db, options) {
     );
 
     expenseStore.clear();
-    for (const expense of merged.expenses) expenseStore.put(expense);
+    for (const expense of mergedExpenses) expenseStore.put(expense);
     for (const activityId of staleActivityIds) {
       if (!pendingActivityIds.has(activityId)) activityStore.delete(activityId);
     }
@@ -498,7 +524,7 @@ export async function commitSyncResponse(db, options) {
     await completed;
     return {
       accepted: true,
-      expenses: merged.expenses,
+      expenses: mergedExpenses,
       activity: activityHistory,
       outboxCount: pendingOperations.length,
     };
@@ -583,6 +609,251 @@ export async function deleteReceiptBlob(db, receiptId) {
   store.delete(receiptId);
   await completed;
   return true;
+}
+
+export async function getReadyReceiptBlobs(db) {
+  const transaction = db.transaction(["receiptBlobs", "expenses", "outbox"], "readonly");
+  const completed = transactionComplete(transaction);
+  const [receipts, expenses, operations] = await Promise.all([
+    requestResult(transaction.objectStore("receiptBlobs").getAll()),
+    requestResult(transaction.objectStore("expenses").getAll()),
+    requestResult(transaction.objectStore("outbox").getAll()),
+  ]);
+  await completed;
+  const expenseById = new Map(expenses.map((expense) => [expense.id, expense]));
+  const pendingExpenseIds = new Set(operations.map((operation) => operation.expenseId));
+  return receipts
+    .filter((receipt) => {
+      const expense = expenseById.get(receipt.expenseId);
+      return expense && !expense.deletedAt && !pendingExpenseIds.has(receipt.expenseId);
+    })
+    .sort((left, right) => Date.parse(left.createdAt) - Date.parse(right.createdAt));
+}
+
+export async function claimReadyReceiptBlobs(db, options) {
+  assertNonemptyString(options?.owner, "receipt claim owner");
+  if (!Number.isSafeInteger(options?.now) || options.now < 0) {
+    throw new RangeError("Invalid receipt claim time");
+  }
+  if (!Number.isSafeInteger(options?.ttlMs) || options.ttlMs < 1) {
+    throw new RangeError("Invalid receipt claim TTL");
+  }
+  if (!Number.isInteger(options?.limit) || options.limit < 1 || options.limit > 25) {
+    throw new RangeError("Invalid receipt claim limit");
+  }
+
+  const transaction = db.transaction(["receiptBlobs", "expenses", "outbox"], "readwrite");
+  const completed = transactionComplete(transaction);
+  try {
+    const receiptStore = transaction.objectStore("receiptBlobs");
+    const [receipts, expenses, operations] = await Promise.all([
+      requestResult(receiptStore.getAll()),
+      requestResult(transaction.objectStore("expenses").getAll()),
+      requestResult(transaction.objectStore("outbox").getAll()),
+    ]);
+    const expenseById = new Map(expenses.map((expense) => [expense.id, expense]));
+    const pendingExpenseIds = new Set(operations.map((operation) => operation.expenseId));
+    const claimed = receipts
+      .filter((receipt) => {
+        const expense = expenseById.get(receipt.expenseId);
+        const claimActive = Number.isSafeInteger(receipt.uploadClaimExpiresAt)
+          && receipt.uploadClaimExpiresAt > options.now;
+        return expense
+          && !expense.deletedAt
+          && !pendingExpenseIds.has(receipt.expenseId)
+          && !claimActive;
+      })
+      .sort((left, right) => Date.parse(left.createdAt) - Date.parse(right.createdAt))
+      .slice(0, options.limit)
+      .map((receipt) => ({
+        ...receipt,
+        uploadClaimOwner: options.owner,
+        uploadClaimExpiresAt: options.now + options.ttlMs,
+      }));
+    for (const receipt of claimed) receiptStore.put(receipt);
+    await completed;
+    return claimed;
+  } catch (error) {
+    abortTransaction(transaction);
+    await completed.then(() => undefined, () => undefined);
+    throw error;
+  }
+}
+
+export async function renewReceiptUploadClaim(db, options) {
+  assertNonemptyString(options?.receiptId, "receipt id");
+  assertNonemptyString(options?.owner, "receipt claim owner");
+  if (!Number.isSafeInteger(options?.now) || options.now < 0) {
+    throw new RangeError("Invalid receipt claim time");
+  }
+  if (!Number.isSafeInteger(options?.ttlMs) || options.ttlMs < 1) {
+    throw new RangeError("Invalid receipt claim TTL");
+  }
+  const transaction = db.transaction("receiptBlobs", "readwrite");
+  const completed = transactionComplete(transaction);
+  try {
+    const store = transaction.objectStore("receiptBlobs");
+    const receipt = await requestResult(store.get(options.receiptId));
+    if (
+      !receipt
+      || receipt.uploadClaimOwner !== options.owner
+      || !Number.isSafeInteger(receipt.uploadClaimExpiresAt)
+      || receipt.uploadClaimExpiresAt <= options.now
+    ) {
+      await completed;
+      return false;
+    }
+    store.put({
+      ...receipt,
+      uploadClaimExpiresAt: options.now + options.ttlMs,
+    });
+    await completed;
+    return true;
+  } catch (error) {
+    abortTransaction(transaction);
+    await completed.then(() => undefined, () => undefined);
+    throw error;
+  }
+}
+
+export async function markReceiptUploadFailure(db, receiptId, options = {}) {
+  assertNonemptyString(receiptId, "receipt id");
+  assertNonemptyString(options.owner, "receipt claim owner");
+  if (!Number.isSafeInteger(options.now) || options.now < 0) {
+    throw new RangeError("Invalid receipt failure time");
+  }
+  const transaction = db.transaction("receiptBlobs", "readwrite");
+  const completed = transactionComplete(transaction);
+  try {
+    const store = transaction.objectStore("receiptBlobs");
+    const receipt = await requestResult(store.get(receiptId));
+    if (!receipt || receipt.uploadClaimOwner !== options.owner) {
+      await completed;
+      return null;
+    }
+    const updated = {
+      ...receipt,
+      attempts: (Number.isSafeInteger(receipt.attempts) ? receipt.attempts : 0) + 1,
+      lastError: typeof options.message === "string" ? options.message.slice(0, 120) : "upload_failed",
+      lastAttemptAt: new Date(options.now).toISOString(),
+      uploadClaimOwner: "",
+      uploadClaimExpiresAt: 0,
+    };
+    store.put(updated);
+    await completed;
+    return updated;
+  } catch (error) {
+    abortTransaction(transaction);
+    await completed.then(() => undefined, () => undefined);
+    throw error;
+  }
+}
+
+export async function commitReceiptFinalization(db, options) {
+  assertNonemptyString(options?.receiptId, "receipt id");
+  assertNonemptyString(options?.expenseId, "expense id");
+  assertNonemptyString(options?.owner, "receipt claim owner");
+  const attachment = options?.attachment;
+  if (
+    !attachment
+    || attachment.receiptId !== options.receiptId
+    || attachment.expenseId !== options.expenseId
+    || typeof attachment.originalName !== "string"
+    || !attachment.originalName
+    || typeof attachment.storagePath !== "string"
+    || !attachment.storagePath
+    || typeof attachment.finalizedAt !== "string"
+    || !Number.isFinite(Date.parse(attachment.finalizedAt))
+  ) {
+    throw new TypeError("Invalid finalized receipt");
+  }
+
+  const transaction = db.transaction(["receiptBlobs", "expenses"], "readwrite");
+  const completed = transactionComplete(transaction);
+  try {
+    const receiptStore = transaction.objectStore("receiptBlobs");
+    const expenseStore = transaction.objectStore("expenses");
+    const [receipt, expense] = await Promise.all([
+      requestResult(receiptStore.get(options.receiptId)),
+      requestResult(expenseStore.get(options.expenseId)),
+    ]);
+    if (!receipt || receipt.uploadClaimOwner !== options.owner) {
+      await completed;
+      return null;
+    }
+    if (receipt.expenseId !== options.expenseId || !expense || expense.deletedAt) {
+      throw new TypeError("Receipt finalization target is unavailable");
+    }
+    const updatedExpense = {
+      ...expense,
+      attachmentName: attachment.originalName,
+      attachmentPath: attachment.storagePath,
+      receiptId: attachment.receiptId,
+      attachmentStatus: "uploaded",
+    };
+    expenseStore.put(updatedExpense);
+    receiptStore.delete(options.receiptId);
+    await completed;
+    return updatedExpense;
+  } catch (error) {
+    abortTransaction(transaction);
+    await completed.then(() => undefined, () => undefined);
+    throw error;
+  }
+}
+
+export async function commitReceiptConflictResolution(db, options) {
+  assertNonemptyString(options?.localReceiptId, "local receipt id");
+  assertNonemptyString(options?.expenseId, "expense id");
+  assertNonemptyString(options?.owner, "receipt claim owner");
+  const attachment = options?.attachment;
+  if (
+    !attachment
+    || typeof attachment.receiptId !== "string"
+    || !attachment.receiptId
+    || attachment.expenseId !== options.expenseId
+    || typeof attachment.originalName !== "string"
+    || !attachment.originalName
+    || typeof attachment.storagePath !== "string"
+    || !attachment.storagePath
+    || typeof attachment.finalizedAt !== "string"
+    || !Number.isFinite(Date.parse(attachment.finalizedAt))
+  ) {
+    throw new TypeError("Invalid finalized receipt");
+  }
+
+  const transaction = db.transaction(["receiptBlobs", "expenses"], "readwrite");
+  const completed = transactionComplete(transaction);
+  try {
+    const receiptStore = transaction.objectStore("receiptBlobs");
+    const expenseStore = transaction.objectStore("expenses");
+    const [receipt, expense] = await Promise.all([
+      requestResult(receiptStore.get(options.localReceiptId)),
+      requestResult(expenseStore.get(options.expenseId)),
+    ]);
+    if (!receipt || receipt.uploadClaimOwner !== options.owner) {
+      await completed;
+      return null;
+    }
+    if (receipt.expenseId !== options.expenseId || !expense || expense.deletedAt) {
+      throw new TypeError("Receipt conflict target is unavailable");
+    }
+    const updatedExpense = {
+      ...expense,
+      attachmentName: attachment.originalName,
+      attachmentPath: attachment.storagePath,
+      receiptId: attachment.receiptId,
+      attachmentStatus: "uploaded",
+    };
+    expenseStore.put(updatedExpense);
+    receiptStore.delete(options.localReceiptId);
+    await completed;
+    return updatedExpense;
+  } catch (error) {
+    abortTransaction(transaction);
+    await completed.then(() => undefined, () => undefined);
+    throw error;
+  }
 }
 
 function createSchema(db) {
@@ -671,6 +942,14 @@ function assertReceiptBlob(receipt) {
   }
   assertNonemptyString(receipt.receiptId, "receipt id");
   assertNonemptyString(receipt.expenseId, "expense id");
+  assertNonemptyString(receipt.originalName, "receipt original name");
+  assertNonemptyString(receipt.mimeType, "receipt MIME type");
+  if (!Number.isSafeInteger(receipt.sizeBytes) || receipt.sizeBytes < 1) {
+    throw new TypeError("Invalid receipt size");
+  }
+  if (typeof receipt.createdAt !== "string" || !Number.isFinite(Date.parse(receipt.createdAt))) {
+    throw new TypeError("Invalid receipt creation time");
+  }
   if (
     !receipt.blob
     || typeof receipt.blob.arrayBuffer !== "function"
@@ -679,6 +958,7 @@ function assertReceiptBlob(receipt) {
   ) {
     throw new TypeError("Invalid receipt blob");
   }
+  if (receipt.blob.size !== receipt.sizeBytes) throw new TypeError("Invalid receipt Blob size");
 }
 
 function assertNonemptyString(value, label) {

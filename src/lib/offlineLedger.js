@@ -4,13 +4,18 @@ import {
   closeOfflineDb,
   commitDeleteUndo,
   commitLocalMutation,
+  commitReceiptConflictResolution,
+  commitReceiptFinalization,
   commitSyncResponse,
+  claimReadyReceiptBlobs,
   getOutboxBatch,
   loadOfflineLedger,
+  markReceiptUploadFailure,
   migrateLegacyLocalStorage,
   openOfflineDb,
   releaseSyncLease,
   renewSyncLease,
+  renewReceiptUploadClaim,
 } from "./offlineDb.js";
 import { createMutationTabId, loadMutationState } from "./sync.js";
 import { flushPendingOperations, visibleExpenses } from "./syncEngine.js";
@@ -97,6 +102,66 @@ export async function syncOfflineLedger(context, options) {
   }
 
   return { result, state: context.state };
+}
+
+export async function syncOfflineReceipts(context, options) {
+  assertContext(context);
+  if (typeof options?.uploadReceipt !== "function") {
+    throw new TypeError("Receipt upload function is required");
+  }
+  const now = options.now ?? Date.now;
+  if (typeof now !== "function") throw new TypeError("Invalid receipt sync clock");
+
+  const claimOwner = `receipt-${context.tabId}`;
+  const claimTtlMs = options.claimTtlMs ?? 10 * 60 * 1000;
+  const ready = await claimReadyReceiptBlobs(context.db, {
+    owner: claimOwner,
+    now: now(),
+    ttlMs: claimTtlMs,
+    limit: 10,
+  });
+  let uploaded = 0;
+  let failed = 0;
+  let skipped = 0;
+  for (const receipt of ready) {
+    try {
+      const result = await options.uploadReceipt(receipt, {
+        onProgress: () => renewReceiptUploadClaim(context.db, {
+          receiptId: receipt.receiptId,
+          owner: claimOwner,
+          now: now(),
+          ttlMs: claimTtlMs,
+        }),
+      });
+      const attachment = result?.receipt;
+      const finalized = result?.resolvedConflict || attachment?.receiptId !== receipt.receiptId
+        ? await commitReceiptConflictResolution(context.db, {
+            localReceiptId: receipt.receiptId,
+            expenseId: receipt.expenseId,
+            owner: claimOwner,
+            attachment,
+          })
+        : await commitReceiptFinalization(context.db, {
+            receiptId: receipt.receiptId,
+            expenseId: receipt.expenseId,
+            owner: claimOwner,
+            attachment,
+          });
+      if (finalized) uploaded += 1;
+      else skipped += 1;
+    } catch {
+      const retained = await markReceiptUploadFailure(context.db, receipt.receiptId, {
+        now: now(),
+        message: "upload_failed",
+        owner: claimOwner,
+      });
+      if (retained) failed += 1;
+      else skipped += 1;
+    }
+  }
+
+  context.state = await context.load();
+  return { uploaded, failed, skipped, state: context.state };
 }
 
 async function loadOfflineView(db) {

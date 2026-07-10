@@ -28,7 +28,11 @@ export default function UnlockGate({ children, intro = "输入旅行访问码后
 
       try {
         const session = await checkAccessSession();
-        if (!cancelled) setUnlocked(session.authenticated === true);
+        if (!cancelled) {
+          const authenticated = session.authenticated === true;
+          if (authenticated) localStorage.setItem(offlineAccessKey, "yes");
+          setUnlocked(authenticated);
+        }
       } catch (error) {
         if (!cancelled) {
           const hasOfflineAccess = localStorage.getItem(offlineAccessKey) === "yes";

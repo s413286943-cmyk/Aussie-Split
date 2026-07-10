@@ -10,11 +10,12 @@ export class AccessRequiredError extends Error {
 }
 
 export class ApiClientError extends Error {
-  constructor(status = 0) {
+  constructor(status = 0, serverCode = "") {
     super("The protected API request failed");
     this.name = "ApiClientError";
     this.code = "api_request_failed";
     this.status = status;
+    this.serverCode = serverCode;
   }
 }
 
@@ -56,6 +57,25 @@ export function fetchActivity(limit = 50) {
   return requestJson(`/api/activity?limit=${safeLimit}`);
 }
 
+export function createReceiptUploadContract(metadata) {
+  return requestJson("/api/receipts/upload-url", {
+    method: "POST",
+    body: JSON.stringify(metadata),
+  });
+}
+
+export function finalizeReceipt(metadata) {
+  return requestJson("/api/receipts/finalize", {
+    method: "POST",
+    body: JSON.stringify(metadata),
+  });
+}
+
+export function fetchReceipt(expenseId) {
+  if (typeof expenseId !== "string" || !expenseId) throw new TypeError("Invalid expense id");
+  return requestJson(`/api/receipts/${encodeURIComponent(expenseId)}`);
+}
+
 export function createExpenseOperation(type, expense, activity, options = {}) {
   if (type !== "upsert" && type !== "delete") throw new TypeError("Invalid expense operation type");
   if (!expense?.id || !expense?.mutationVersion || !activity) {
@@ -93,7 +113,18 @@ async function requestJson(path, options = {}) {
     notifyAccessRequired();
     throw new AccessRequiredError();
   }
-  if (!response.ok) throw new ApiClientError(response.status);
+  if (!response.ok) {
+    let serverCode = "";
+    try {
+      const payload = await response.json();
+      if (typeof payload?.error === "string" && /^[a-z0-9_]{1,64}$/.test(payload.error)) {
+        serverCode = payload.error;
+      }
+    } catch {
+      serverCode = "";
+    }
+    throw new ApiClientError(response.status, serverCode);
+  }
 
   try {
     return await response.json();
