@@ -135,6 +135,13 @@ describe("legacyMutationVersion", () => {
     });
   });
 
+  it("uses the fallback for an impossible ISO calendar date", () => {
+    assert.equal(
+      legacyMutationVersion({ createdAt: "2026-02-30T01:02:03.004Z", index: 8 }),
+      "0000000000000-000008-legacy",
+    );
+  });
+
   it("rejects an invalid source index", () => {
     assert.throws(
       () => legacyMutationVersion({ createdAt: "2026-07-10T01:02:03.004Z", index: -1 }),

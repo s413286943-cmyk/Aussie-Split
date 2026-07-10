@@ -1,4 +1,5 @@
 const VERSION_PATTERN = /^(\d{13})-(\d{6})-([a-z0-9]+(?:-[a-z0-9]+)*)$/;
+const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?(?:Z|[+-](\d{2}):(\d{2})))?$/;
 const MAX_MILLIS = 9_999_999_999_999;
 const MAX_COUNTER = 999_999;
 
@@ -63,9 +64,41 @@ function legacyMillis(createdAt) {
 
   if (createdAt instanceof Date) millis = createdAt.getTime();
   else if (typeof createdAt === "number") millis = createdAt;
-  else if (typeof createdAt === "string" && createdAt.trim()) millis = Date.parse(createdAt);
+  else if (typeof createdAt === "string" && createdAt.trim()) millis = parseIsoMillis(createdAt.trim());
 
   return isMillis(millis) ? millis : 0;
+}
+
+function parseIsoMillis(value) {
+  const match = ISO_DATE_PATTERN.exec(value);
+  if (!match || !hasValidIsoFields(match)) return Number.NaN;
+  return Date.parse(value);
+}
+
+function hasValidIsoFields(match) {
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const hour = match[4] === undefined ? 0 : Number(match[4]);
+  const minute = match[5] === undefined ? 0 : Number(match[5]);
+  const second = match[6] === undefined ? 0 : Number(match[6]);
+  const fraction = match[7] || "";
+  const offsetHour = match[8] === undefined ? 0 : Number(match[8]);
+  const offsetMinute = match[9] === undefined ? 0 : Number(match[9]);
+
+  if (month < 1 || month > 12 || day < 1 || day > daysInMonth(year, month)) return false;
+  if (minute > 59 || second > 59 || offsetHour > 23 || offsetMinute > 59) return false;
+  if (hour < 24) return true;
+  return hour === 24 && minute === 0 && second === 0 && !/[1-9]/.test(fraction);
+}
+
+function daysInMonth(year, month) {
+  if (month === 2) return isLeapYear(year) ? 29 : 28;
+  return [4, 6, 9, 11].includes(month) ? 30 : 31;
+}
+
+function isLeapYear(year) {
+  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
 }
 
 function normalizeClientId(clientId) {
