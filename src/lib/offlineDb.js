@@ -35,7 +35,7 @@ export function closeOfflineDb(db) {
 }
 
 export async function migrateLegacyLocalStorage(db, options) {
-  const transaction = db.transaction(["expenses", "activity", "meta"], "readwrite");
+  const transaction = db.transaction(["expenses", "activity", "outbox", "meta"], "readwrite");
   const completed = transactionComplete(transaction);
   const meta = transaction.objectStore("meta");
 
@@ -50,20 +50,38 @@ export async function migrateLegacyLocalStorage(db, options) {
     const activity = parseLegacyArray(options.storage.getItem(LEGACY_ACTIVITY_KEY), LEGACY_ACTIVITY_KEY);
     assertLegacyRecords(expenses, "expense");
     assertLegacyRecords(activity, "activity");
-    const migratedExpenses = expenses.map((expense, index) => ({
-      ...expense,
-      mutationVersion: validMutationVersion(expense?.mutationVersion)
+    const migratedExpenses = expenses.map((expense, index) => {
+      const mutationVersion = validMutationVersion(expense?.mutationVersion)
         ? expense.mutationVersion
         : legacyMutationVersion({
             createdAt: expense?.updatedAt ?? expense?.createdAt ?? options.now,
             index,
             clientId: options.clientId,
-          }),
-    }));
+          });
+      return {
+        ...expense,
+        mutationVersion,
+        updatedAt: legacyUpdatedAt(expense, mutationVersion),
+        deletedAt: expense.deletedAt ?? null,
+      };
+    });
     const highWater = greatestMutationVersion(migratedExpenses.map((expense) => expense.mutationVersion));
 
-    for (const expense of migratedExpenses) transaction.objectStore("expenses").put(expense);
     for (const entry of activity) transaction.objectStore("activity").put(entry);
+    for (const [index, expense] of migratedExpenses.entries()) {
+      const entry = matchingLegacyActivity(activity, expense) ?? legacyActivity(expense, index, options.clientId);
+      transaction.objectStore("expenses").put(expense);
+      transaction.objectStore("activity").put(entry);
+      transaction.objectStore("outbox").add({
+        opId: `legacy-op-${String(index).padStart(6, "0")}-${options.clientId}`,
+        type: "upsert",
+        expenseId: expense.id,
+        mutationVersion: expense.mutationVersion,
+        expense,
+        activity: entry,
+        createdAt: expense.updatedAt,
+      });
+    }
     meta.put({ key: "localStorageMigrated", value: true });
     if (highWater) meta.put({ key: "mutationHighWater", value: highWater });
 
@@ -150,6 +168,7 @@ export async function commitLocalMutation(db, options) {
       expenseId: expense.id,
       mutationVersion,
       expense: options.type === "delete" ? null : expense,
+      ...(options.type === "delete" ? { beforeExpense: currentExpense ?? options.expense } : {}),
       activity: options.activity,
       createdAt,
     };
@@ -198,8 +217,6 @@ export async function countOutbox(db) {
 
 export async function undoPendingDelete(db, options) {
   assertNonemptyString(options?.deleteOpId, "delete operation id");
-  assertRecordId(options?.expense, "expense");
-  if (options.expense.mutationVersion) parseMutationVersion(options.expense.mutationVersion);
   if (options.activityId !== undefined) assertNonemptyString(options.activityId, "activity id");
 
   const transaction = db.transaction(["expenses", "activity", "outbox"], "readwrite");
@@ -208,13 +225,18 @@ export async function undoPendingDelete(db, options) {
   try {
     const outbox = transaction.objectStore("outbox");
     const operation = await requestResult(outbox.get(options.deleteOpId));
-    if (operation?.type !== "delete" || operation.expenseId !== options.expense.id) {
+    if (operation?.type !== "delete") {
       await completed;
       return false;
     }
 
+    const expense = options.expense ?? operation.beforeExpense;
+    assertRecordId(expense, "expense");
+    if (expense.mutationVersion) parseMutationVersion(expense.mutationVersion);
+    if (operation.expenseId !== expense.id) throw new TypeError("Undo expense does not match delete operation");
+
     outbox.delete(options.deleteOpId);
-    transaction.objectStore("expenses").put(options.expense);
+    transaction.objectStore("expenses").put(expense);
     if (options.activityId) transaction.objectStore("activity").delete(options.activityId);
 
     await completed;
@@ -381,17 +403,18 @@ export async function clearLegacyStorageAfterSync(db, storage) {
   if (!storage || typeof storage.removeItem !== "function") {
     throw new TypeError("Invalid legacy storage");
   }
-  const transaction = db.transaction("meta", "readwrite");
+  const transaction = db.transaction(["meta", "outbox"], "readwrite");
   const completed = transactionComplete(transaction);
 
   try {
     const meta = transaction.objectStore("meta");
-    const [migrated, lastSyncAt, cleared] = await Promise.all([
+    const [migrated, lastSyncAt, cleared, outboxCount] = await Promise.all([
       requestResult(meta.get("localStorageMigrated")),
       requestResult(meta.get("lastSyncAt")),
       requestResult(meta.get("legacyStorageCleared")),
+      requestResult(transaction.objectStore("outbox").count()),
     ]);
-    if (migrated?.value !== true || !lastSyncAt?.value || cleared?.value === true) {
+    if (migrated?.value !== true || !lastSyncAt?.value || cleared?.value === true || outboxCount !== 0) {
       await completed;
       return false;
     }
@@ -460,6 +483,39 @@ function createSchema(db) {
   const receiptBlobs = db.createObjectStore("receiptBlobs", { keyPath: "receiptId" });
   receiptBlobs.createIndex("expenseId", "expenseId", { unique: true });
   db.createObjectStore("meta", { keyPath: "key" });
+}
+
+function legacyUpdatedAt(expense, mutationVersion) {
+  for (const candidate of [expense.updatedAt, expense.createdAt]) {
+    if (typeof candidate === "string" && Number.isFinite(Date.parse(candidate))) return candidate;
+  }
+  return new Date(parseMutationVersion(mutationVersion).millis).toISOString();
+}
+
+function matchingLegacyActivity(activity, expense) {
+  return [...activity].reverse().find((entry) =>
+    entry.expenseId === expense.id
+    && ["add", "edit", "confirm"].includes(entry.action)
+    && entry.item === expense.item
+    && entry.amount === expense.amount
+    && entry.currency === expense.currency
+    && typeof entry.summary === "string"
+    && typeof entry.createdAt === "string"
+    && Number.isFinite(Date.parse(entry.createdAt)),
+  );
+}
+
+function legacyActivity(expense, index, clientId) {
+  return {
+    id: `legacy-activity-${String(index).padStart(6, "0")}-${clientId}`,
+    expenseId: expense.id,
+    action: "edit",
+    item: expense.item,
+    amount: expense.amount,
+    currency: expense.currency,
+    summary: `从本机恢复了 ${expense.item || "未命名费用"}`,
+    createdAt: expense.updatedAt,
+  };
 }
 
 function parseLegacyArray(serialized, key) {

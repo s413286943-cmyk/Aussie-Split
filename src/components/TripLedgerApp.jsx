@@ -4,7 +4,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   applyExpenseEdit,
@@ -24,49 +24,23 @@ import {
   activityDisplaySummary,
   createActivityEntry,
   dashboardActivityPreview,
-  recentActivity,
 } from "@/lib/activity";
 import { coupleName, formatPayerLabel, formatSettlementDirection } from "@/lib/couples";
 import { pulseElement, revealPage, shakeElement } from "@/lib/motion";
+import { applyLedgerOperations } from "@/lib/apiClient";
 import {
-  applyLedgerOperations,
-  createExpenseOperation,
-  fetchLedgerSnapshot,
-} from "@/lib/apiClient";
-import {
-  allocatePersistedExpenseMutation,
-  createMutationTabId,
-  createSerialLedgerActionQueue,
-  createSyncRequestCoordinator,
-  parseStoredArray,
-  prependExpenseToList,
-  preparePersistedBootstrapExpenses,
-  removeExpenseFromList,
-  replaceExpenseInList,
-  restoreExpenseInList,
-  shouldUploadLocalCache,
-  withTimeout,
-} from "@/lib/sync";
+  closeOfflineLedger,
+  commitOfflineMutation,
+  initializeOfflineLedger,
+  syncOfflineLedger,
+  undoOfflineDelete,
+} from "@/lib/offlineLedger";
+import { createSerialLedgerActionQueue } from "@/lib/sync";
+import { syncStateLabel } from "@/lib/syncEngine";
 import UnlockGate from "@/components/UnlockGate";
 
-const storageKey = "aussie-chill-expenses-v1";
-const activityStorageKey = "aussie-chill-activity-v1";
 const addDefaultsStorageKey = "aussie-chill-add-defaults-v1";
 const undoDeleteMs = 5000;
-
-function fetchRemoteExpenses() {
-  return fetchLedgerSnapshot();
-}
-
-function deleteRemoteExpense(tombstone) {
-  const entry = createActivityEntry("delete", tombstone);
-  return {
-    entry,
-    run: () => applyLedgerOperations([
-      createExpenseOperation("delete", tombstone, entry),
-    ]),
-  };
-}
 
 export default function TripLedgerApp({ view }) {
   return (
@@ -80,102 +54,135 @@ function TripLedgerContent({ view }) {
   const shellRef = useRef(null);
   const noticeTimerRef = useRef(null);
   const pendingDeleteRef = useRef(null);
-  const mutationStateRef = useRef(null);
-  const mutationTabIdRef = useRef(null);
+  const mountedRef = useRef(false);
+  const offlineContextRef = useRef(null);
   const expensesRef = useRef(seedExpenses);
   const ledgerActionQueueRef = useRef(null);
-  const syncRequestCoordinatorRef = useRef(null);
+  const syncPromiseRef = useRef(null);
+  const syncRequestedRef = useRef(false);
   const [ready, setReady] = useState(false);
   const [expenses, setExpenses] = useState(seedExpenses);
   const [activity, setActivity] = useState([]);
   const [activityPulseKey, setActivityPulseKey] = useState(0);
   const [actionNotice, setActionNotice] = useState(null);
   const [feedbackAnimation, setFeedbackAnimation] = useState(null);
-  const [syncState, setSyncState] = useState("已本机保存，待同步");
+  const [syncState, setSyncState] = useState("正在同步");
   const ledger = useMemo(() => calculateLedger(expenses), [expenses]);
+
+  const applyOfflineState = useCallback((state) => {
+    if (!mountedRef.current) return;
+    expensesRef.current = state.expenses;
+    setExpenses(state.expenses);
+    setActivity(state.activity);
+  }, []);
+
+  const requestLedgerSync = useCallback(function requestLedgerSync() {
+    syncRequestedRef.current = true;
+    if (syncPromiseRef.current || !offlineContextRef.current) {
+      return syncPromiseRef.current ?? Promise.resolve();
+    }
+
+    const promise = (async () => {
+      while (syncRequestedRef.current && offlineContextRef.current) {
+        syncRequestedRef.current = false;
+        const context = offlineContextRef.current;
+        const before = await context.load();
+
+        if (!navigator.onLine) {
+          if (mountedRef.current) {
+            setSyncState(before.meta.lastSyncAt
+              ? syncStateLabel({ pendingCount: before.outboxCount })
+              : before.outboxCount > 0
+                ? syncStateLabel({ pendingCount: before.outboxCount })
+                : "同步失败，可重试");
+          }
+          continue;
+        }
+
+        if (mountedRef.current) {
+          setSyncState(syncStateLabel({ pendingCount: before.outboxCount, syncing: true }));
+        }
+
+        try {
+          const synced = await syncOfflineLedger(context, {
+            sendOperations: applyLedgerOperations,
+            now: Date.now,
+          });
+          applyOfflineState(synced.state);
+          if (!mountedRef.current) continue;
+          const failed = !synced.result.completed && synced.result.reason !== "lease_unavailable";
+          setSyncState(syncStateLabel({ pendingCount: synced.state.outboxCount, failed }));
+        } catch {
+          if (mountedRef.current) setSyncState("同步失败，可重试");
+        }
+      }
+    })().finally(() => {
+      syncPromiseRef.current = null;
+      if (syncRequestedRef.current && offlineContextRef.current) {
+        queueMicrotask(() => requestLedgerSync());
+      }
+    });
+
+    syncPromiseRef.current = promise;
+    return promise;
+  }, [applyOfflineState]);
 
   useEffect(() => {
     let cancelled = false;
-    const savedExpenses = parseStoredArray(localStorage.getItem(storageKey), null);
-    const localActivity = recentActivity(parseStoredArray(localStorage.getItem(activityStorageKey), []));
+    mountedRef.current = true;
     ledgerActionQueueRef.current = ledgerActionQueueRef.current ?? createSerialLedgerActionQueue();
-    syncRequestCoordinatorRef.current = syncRequestCoordinatorRef.current ?? createSyncRequestCoordinator();
-    if (localActivity.length) setActivity(localActivity);
 
     async function initializeLedger() {
-      let localRowsPrepared = false;
+      let initialized = false;
       try {
-        const initialExpenses = savedExpenses ?? seedExpenses;
-        const tabId = mutationTabIdRef.current ?? createMutationTabId();
-        mutationTabIdRef.current = tabId;
-        const prepared = await preparePersistedBootstrapExpenses(initialExpenses, {
+        const context = await initializeOfflineLedger({
           storage: localStorage,
-          tabId,
         });
-        if (cancelled) return;
-
-        mutationStateRef.current = prepared.state;
-        expensesRef.current = prepared.expenses;
-        setExpenses(prepared.expenses);
-        if (savedExpenses) localStorage.setItem(storageKey, JSON.stringify(prepared.expenses));
-        localRowsPrepared = true;
-
-        try {
-          const snapshot = await withTimeout(fetchRemoteExpenses(), { timeoutMs: 7000 });
-          if (cancelled) return;
-          const remote = Array.isArray(snapshot.expenses) ? snapshot.expenses : [];
-
-          if (shouldUploadLocalCache(savedExpenses, remote)) {
-            const operations = prepared.expenses.map((expense) => {
-              const entry = createActivityEntry("add", expense);
-              return createExpenseOperation("upsert", expense, entry);
-            });
-            const uploaded = await applyLedgerOperations(operations);
-            if (cancelled) return;
-            if (uploaded.activity?.length) {
-              const nextActivity = recentActivity(uploaded.activity);
-              setActivity(nextActivity);
-              localStorage.setItem(activityStorageKey, JSON.stringify(nextActivity));
-            }
-            setSyncState("已同步");
-            return;
-          }
-          if (remote?.length) {
-            const preparedRemote = await preparePersistedBootstrapExpenses(remote, {
-              storage: localStorage,
-              tabId,
-            });
-            if (cancelled) return;
-            mutationStateRef.current = preparedRemote.state;
-            const visibleExpenses = preparedRemote.expenses.filter((expense) => !expense.deletedAt);
-            expensesRef.current = visibleExpenses;
-            setExpenses(visibleExpenses);
-            localStorage.setItem(storageKey, JSON.stringify(visibleExpenses));
-            setSyncState("已同步");
-          } else {
-            setSyncState("已同步");
-          }
-          if (snapshot.activity?.length) {
-            const nextActivity = recentActivity(snapshot.activity);
-            setActivity(nextActivity);
-            localStorage.setItem(activityStorageKey, JSON.stringify(nextActivity));
-          }
-        } catch {
-          if (!cancelled) setSyncState("同步失败，可重试");
+        if (cancelled) {
+          closeOfflineLedger(context);
+          return;
         }
+
+        offlineContextRef.current = context;
+        applyOfflineState(context.state);
+        setSyncState(syncStateLabel({ pendingCount: context.state.outboxCount }));
+        initialized = true;
       } catch {
-        if (!cancelled) setSyncState("保存失败");
+        if (!cancelled) {
+          expensesRef.current = [];
+          setExpenses([]);
+          setActivity([]);
+          setSyncState("保存失败");
+        }
       } finally {
-        if (!cancelled && localRowsPrepared) setReady(true);
+        if (!cancelled) {
+          setReady(true);
+          if (initialized) requestLedgerSync();
+        }
       }
     }
 
     initializeLedger();
 
+    const handleOnline = () => requestLedgerSync();
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") requestLedgerSync();
+    };
+    window.addEventListener("online", handleOnline);
+    document.addEventListener("visibilitychange", handleVisibility);
+
     return () => {
       cancelled = true;
+      mountedRef.current = false;
+      window.removeEventListener("online", handleOnline);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
+      if (pendingDeleteRef.current?.timer) window.clearTimeout(pendingDeleteRef.current.timer);
+      const context = offlineContextRef.current;
+      offlineContextRef.current = null;
+      Promise.resolve(syncPromiseRef.current).finally(() => closeOfflineLedger(context));
     };
-  }, []);
+  }, [applyOfflineState, requestLedgerSync]);
 
   useEffect(() => {
     if (!ready) return undefined;
@@ -207,17 +214,6 @@ function TripLedgerContent({ view }) {
     return () => tween?.kill();
   }, [feedbackAnimation]);
 
-  useEffect(() => {
-    return () => {
-      if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
-      const pending = pendingDeleteRef.current;
-      if (!pending) return;
-      if (pending.timer) window.clearTimeout(pending.timer);
-      const deletion = deleteRemoteExpense(pending.tombstone);
-      deletion.run().catch(() => {});
-    };
-  }, []);
-
   function showActionNotice(message, tone = "success", options = {}) {
     if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
     setActionNotice({
@@ -234,17 +230,9 @@ function TripLedgerContent({ view }) {
     setFeedbackAnimation({ id: Date.now(), targetId, tone });
   }
 
-  function showPersistNotice(action, expense, result) {
-    const baseMessage = actionFeedbackMessage(action, expense);
-    const tone = result.remoteFailed ? "warning" : "success";
-    const message = result.remoteFailed ? `${baseMessage}；已先保存在本机` : baseMessage;
-    showActionNotice(message, tone);
-    playFeedback(expense.id, tone);
-  }
-
-  function showRemoteFallbackNotice(expense, targetId = expense.id) {
-    showActionNotice(`同步失败，可重试：${expense.item || "这笔费用"} 已先保存在本机`, "warning");
-    playFeedback(targetId, "warning");
+  function showPersistNotice(action, expense, targetId = expense.id) {
+    showActionNotice(actionFeedbackMessage(action, expense), "success");
+    playFeedback(targetId, "success");
   }
 
   function showFormWarning(message) {
@@ -252,94 +240,55 @@ function TripLedgerContent({ view }) {
     playFeedback("expense-form", "warning");
   }
 
-  function renderSyncAggregate(state) {
-    if (state === "failed") {
-      setSyncState("同步失败，可重试");
-    } else if (state === "syncing") {
-      setSyncState("正在同步");
-    } else {
-      setSyncState("已同步");
-    }
-  }
-
-  function startRemoteSync(expenseId, remoteAction, onRemoteFailure) {
-    const coordinator = syncRequestCoordinatorRef.current;
-    const token = coordinator.begin(expenseId);
-    renderSyncAggregate(coordinator.current());
-
-    Promise.resolve()
-      .then(() => remoteAction())
-      .then(() => {
-        const settled = coordinator.settle(token, "synced");
-        if (!settled.accepted) return;
-        renderSyncAggregate(settled.state);
-      })
-      .catch((error) => {
-        const settled = coordinator.settle(token, "failed");
-        if (!settled.accepted) return;
-        renderSyncAggregate(settled.state);
-        onRemoteFailure?.(error);
-      });
-
-    return { remoteFailed: false };
-  }
-
-  async function commitLedgerMutation(createCandidate, deriveNextExpenses, options) {
+  async function commitLedgerMutation(createCandidate, options) {
     return ledgerActionQueueRef.current(async () => {
+      const mutationOptions = options ?? {};
+      const context = offlineContextRef.current;
+      if (!context) throw new Error("Offline ledger is unavailable");
       const currentExpenses = expensesRef.current;
       const candidate = createCandidate(currentExpenses);
       if (!candidate) return null;
-
-      const allocated = await allocatePersistedExpenseMutation(candidate, mutationStateRef.current, {
-        storage: localStorage,
-        ...(options ?? {}),
+      const previousExpense = currentExpenses.find((item) => item.id === candidate.id) ?? null;
+      const now = mutationOptions.now ?? Date.now();
+      const entry = createActivityEntry(
+        mutationOptions.activityAction ?? "edit",
+        candidate,
+        new Date(now),
+        mutationOptions.activityAction === "edit" ? previousExpense : null,
+      );
+      const opId = mutationOptions.opId ?? newOperationId();
+      const nextState = await commitOfflineMutation(context, {
+        type: mutationOptions.type ?? "upsert",
+        expense: candidate,
+        activity: entry,
+        opId,
+        now,
+        createdAt: entry.createdAt,
       });
-      const nextExpenses = deriveNextExpenses(currentExpenses, allocated.expense);
-      localStorage.setItem(storageKey, JSON.stringify(nextExpenses));
-      mutationStateRef.current = allocated.state;
-      expensesRef.current = nextExpenses;
-      setExpenses(nextExpenses);
+      const versionedExpense = nextState.rawExpenses.find((item) => item.id === candidate.id);
+      applyOfflineState(nextState);
+      setSyncState(syncStateLabel({ pendingCount: nextState.outboxCount }));
+      setActivityPulseKey((key) => key + 1);
       return {
-        expense: allocated.expense,
+        expense: versionedExpense,
+        entry,
+        opId,
+        previousExpense,
         previousExpenses: currentExpenses,
-        nextExpenses,
+        state: nextState,
       };
     });
-  }
-
-  function recordActivity(entry) {
-    setActivity((current) => {
-      const nextActivity = recentActivity([entry, ...current]);
-      try {
-        localStorage.setItem(activityStorageKey, JSON.stringify(nextActivity));
-      } catch {
-        // Activity cache is secondary to the actual ledger state.
-      }
-      return nextActivity;
-    });
-    setActivityPulseKey((key) => key + 1);
-  }
-
-  function syncExpenseOperation(type, expense, entry) {
-    return applyLedgerOperations([createExpenseOperation(type, expense, entry)]);
   }
 
   async function addExpense(expense) {
     try {
       const committed = await commitLedgerMutation(
         () => expense,
-        (currentExpenses, versionedExpense) => prependExpenseToList(currentExpenses, versionedExpense)
+        { activityAction: "add" },
       );
       const versionedExpense = committed.expense;
-      const entry = createActivityEntry("add", versionedExpense);
-      const result = startRemoteSync(
-        versionedExpense.id,
-        () => syncExpenseOperation("upsert", versionedExpense, entry),
-        () => showRemoteFallbackNotice(versionedExpense, "expense-form")
-      );
-      showPersistNotice("add", versionedExpense, result);
-      playFeedback("expense-form", result.remoteFailed ? "warning" : "success");
-      recordActivity(entry);
+      showPersistNotice("add", versionedExpense, "expense-form");
+      requestLedgerSync();
     } catch {
       showActionNotice(`保存失败：${expense.item || "这笔费用"}`, "danger");
       playFeedback("expense-form", "danger");
@@ -358,20 +307,14 @@ function TripLedgerContent({ view }) {
           }
           return { ...expense, mutationVersion: latestExpense.mutationVersion };
         },
-        (currentExpenses, versionedExpense) => replaceExpenseInList(currentExpenses, versionedExpense)
+        { activityAction: "edit" },
       );
       if (!committed) return;
       const versionedExpense = committed.expense;
-      const previousExpense = committed.previousExpenses.find((item) => item.id === expense.id);
+      const previousExpense = committed.previousExpense;
       const feedbackAction = previousExpense && Boolean(previousExpense.splitSettled) !== Boolean(versionedExpense.splitSettled) ? "split" : "edit";
-      const entry = createActivityEntry("edit", versionedExpense, new Date(), previousExpense);
-      const result = startRemoteSync(
-        versionedExpense.id,
-        () => syncExpenseOperation("upsert", versionedExpense, entry),
-        () => showRemoteFallbackNotice(versionedExpense)
-      );
-      showPersistNotice(feedbackAction, versionedExpense, result);
-      recordActivity(entry);
+      showPersistNotice(feedbackAction, versionedExpense);
+      requestLedgerSync();
     } catch {
       showActionNotice(`保存修改失败：${expense.item || "这笔费用"}`, "danger");
       playFeedback(expense.id, "danger");
@@ -386,18 +329,12 @@ function TripLedgerContent({ view }) {
           const latestExpense = currentExpenses.find((item) => item.id === expense.id);
           return latestExpense ? { ...latestExpense, status: "confirmed" } : null;
         },
-        (currentExpenses, confirmed) => replaceExpenseInList(currentExpenses, confirmed)
+        { activityAction: "confirm" },
       );
       if (!committed) return;
       const confirmed = committed.expense;
-      const entry = createActivityEntry("confirm", confirmed);
-      const result = startRemoteSync(
-        confirmed.id,
-        () => syncExpenseOperation("upsert", confirmed, entry),
-        () => showRemoteFallbackNotice(confirmed)
-      );
-      showPersistNotice("confirm", confirmed, result);
-      recordActivity(entry);
+      showPersistNotice("confirm", confirmed);
+      requestLedgerSync();
     } catch {
       showActionNotice(`确认失败：${expense.item || "这笔费用"}`, "danger");
       playFeedback(expense.id, "danger");
@@ -410,23 +347,23 @@ function TripLedgerContent({ view }) {
 
     let removed = null;
     try {
+      const opId = newOperationId();
       const committed = await commitLedgerMutation(
         (currentExpenses) => currentExpenses.find((item) => item.id === id) ?? null,
-        (currentExpenses) => removeExpenseFromList(currentExpenses, id),
-        { deleted: true }
+        { type: "delete", activityAction: "delete", opId },
       );
       if (!committed) return;
-      removed = committed.previousExpenses.find((item) => item.id === id);
-      const removedIndex = committed.previousExpenses.findIndex((item) => item.id === id);
+      removed = committed.previousExpense;
       const tombstone = committed.expense;
       const timer = window.setTimeout(() => finalizePendingDelete(id), undoDeleteMs);
-      pendingDeleteRef.current = { id, expense: removed, tombstone, index: removedIndex, timer };
-      const aggregateState = syncRequestCoordinatorRef.current.current();
-      if (aggregateState === "synced") {
-        setSyncState("已本机保存，待同步");
-      } else {
-        renderSyncAggregate(aggregateState);
-      }
+      pendingDeleteRef.current = {
+        id,
+        expense: removed,
+        tombstone,
+        opId,
+        deleteActivityId: committed.entry.id,
+        timer,
+      };
       showActionNotice(actionFeedbackMessage("delete", removed), "warning", {
         actionLabel: "撤销",
         onAction: () => undoDelete(id),
@@ -448,22 +385,31 @@ function TripLedgerContent({ view }) {
     pendingDeleteRef.current = null;
 
     try {
-      await ledgerActionQueueRef.current(async () => {
-        const nextExpenses = restoreExpenseInList(
-          expensesRef.current,
-          pending.expense,
-          pending.index
-        );
-        localStorage.setItem(storageKey, JSON.stringify(nextExpenses));
-        expensesRef.current = nextExpenses;
-        setExpenses(nextExpenses);
+      const now = Date.now();
+      const activity = {
+        ...createActivityEntry("edit", pending.expense, new Date(now), pending.tombstone),
+        summary: `恢复了 ${pending.expense.item || "未命名费用"}`,
+      };
+      const result = await ledgerActionQueueRef.current(async () => {
+        const context = offlineContextRef.current;
+        if (!context) throw new Error("Offline ledger is unavailable");
+        return undoOfflineDelete(context, {
+          deleteOpId: pending.opId,
+          expense: pending.expense,
+          deleteActivityId: pending.deleteActivityId,
+          activity,
+          opId: newOperationId(),
+          now,
+        });
       });
+      applyOfflineState(result.state);
+      setSyncState(syncStateLabel({ pendingCount: result.state.outboxCount }));
+      if (result.synchronized) requestLedgerSync();
     } catch {
       showActionNotice(`恢复失败：${pending.expense.item}`, "danger");
       playFeedback(pending.expense.id, "danger");
       return;
     }
-    renderSyncAggregate(syncRequestCoordinatorRef.current.current());
     showActionNotice(`已恢复：${pending.expense.item}`, "success");
     playFeedback(pending.expense.id, "success");
   }
@@ -479,14 +425,7 @@ function TripLedgerContent({ view }) {
     const pending = pendingDeleteRef.current;
     if (!pending || pending.id !== id) return;
     pendingDeleteRef.current = null;
-    const deletion = deleteRemoteExpense(pending.tombstone);
-
-    startRemoteSync(
-      pending.tombstone.id,
-      deletion.run,
-      () => showRemoteFallbackNotice(pending.expense, "expense-list")
-    );
-    recordActivity(deletion.entry);
+    requestLedgerSync();
   }
 
   if (!ready) {
@@ -512,7 +451,15 @@ function TripLedgerContent({ view }) {
             <Link className="button primary" href="/add">记一笔</Link>
             <Link className="button" href="/settlement">看结算</Link>
             <Link className="button" href="/itinerary">看行程</Link>
-            <span className="button">{syncState}</span>
+            <button
+              className="button"
+              type="button"
+              onClick={requestLedgerSync}
+              disabled={syncState === "正在同步"}
+              aria-label={syncState === "同步失败，可重试" ? "重试同步" : "立即同步账本"}
+            >
+              {syncState}
+            </button>
           </div>
         </header>
 
@@ -1196,4 +1143,9 @@ function emptyForm(defaults = {}) {
 
 function removeEmptyValues(values) {
   return Object.fromEntries(Object.entries(values).filter(([, value]) => value));
+}
+
+function newOperationId() {
+  if (!globalThis.crypto?.randomUUID) throw new Error("Web Crypto randomUUID is unavailable");
+  return `op-${globalThis.crypto.randomUUID()}`;
 }

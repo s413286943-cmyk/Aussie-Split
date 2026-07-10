@@ -5,9 +5,14 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import itinerary from "@/data/itinerary.generated.json";
-import { fetchLedgerSnapshot } from "@/lib/apiClient";
+import { applyLedgerOperations } from "@/lib/apiClient";
 import { formatMoney, seedExpenses } from "@/lib/ledger";
 import { pulseElement, revealOnScroll, revealPage } from "@/lib/motion";
+import {
+  closeOfflineLedger,
+  initializeOfflineLedger,
+  syncOfflineLedger,
+} from "@/lib/offlineLedger";
 import {
   buildDayCarryChecklist,
   buildDayDocket,
@@ -22,7 +27,6 @@ import {
 import { fetchDayWeather, fallbackWeather } from "@/lib/weather";
 import UnlockGate from "@/components/UnlockGate";
 
-const ledgerStorageKey = "aussie-chill-expenses-v1";
 const checklistStorageKey = "aussie-chill-day-kit-v1";
 
 const resourceLabels = {
@@ -47,7 +51,7 @@ function ItineraryContent() {
   const [weatherByDay, setWeatherByDay] = useState(() => Object.fromEntries(
     itinerary.days.map((day) => [day.id, fallbackWeather(day)])
   ));
-  const [ledgerExpenses, setLedgerExpenses] = useState(readLocalLedgerExpenses);
+  const [ledgerExpenses, setLedgerExpenses] = useState(seedExpenses);
   const [ledgerFreshness, setLedgerFreshness] = useState("checking");
   const [checkedKitByDay, setCheckedKitByDay] = useState(readLocalChecklist);
   const nextDay = useMemo(() => findNextDay(itinerary.days), []);
@@ -55,26 +59,67 @@ function ItineraryContent() {
 
   useEffect(() => {
     let cancelled = false;
+    let context = null;
+    let syncPromise = null;
 
-    fetchLedgerSnapshot()
-      .then((snapshot) => {
-        if (cancelled) return;
-        setLedgerFreshness("current");
-        const remote = (snapshot.expenses || []).filter((expense) => !expense.deletedAt);
-        if (!remote?.length) return;
-        setLedgerExpenses(remote);
-        try {
-          localStorage.setItem(ledgerStorageKey, JSON.stringify(remote));
-        } catch {
-          // The fresh snapshot remains usable for the current session.
-        }
-      })
-      .catch(() => {
+    async function syncLedger() {
+      if (!context) return;
+      if (!navigator.onLine) {
         if (!cancelled) setLedgerFreshness("cached");
-      });
+        return;
+      }
+      if (syncPromise) return syncPromise;
+
+      if (!cancelled) setLedgerFreshness("checking");
+      syncPromise = syncOfflineLedger(context, {
+        sendOperations: applyLedgerOperations,
+        now: Date.now,
+      })
+        .then((synced) => {
+          if (cancelled) return;
+          setLedgerExpenses(synced.state.expenses);
+          setLedgerFreshness(synced.result.completed ? "current" : "cached");
+        })
+        .catch(() => {
+          if (!cancelled) setLedgerFreshness("cached");
+        })
+        .finally(() => {
+          syncPromise = null;
+        });
+      return syncPromise;
+    }
+
+    async function initializeLedger() {
+      try {
+        const initialized = await initializeOfflineLedger({ storage: localStorage });
+        if (cancelled) {
+          closeOfflineLedger(initialized);
+          return;
+        }
+
+        context = initialized;
+        setLedgerExpenses(initialized.state.expenses);
+        setLedgerFreshness("cached");
+        await syncLedger();
+      } catch {
+        if (!cancelled) setLedgerFreshness("cached");
+      }
+    }
+
+    initializeLedger();
+
+    const handleOnline = () => syncLedger();
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") syncLedger();
+    };
+    window.addEventListener("online", handleOnline);
+    document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
       cancelled = true;
+      window.removeEventListener("online", handleOnline);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      Promise.resolve(syncPromise).finally(() => closeOfflineLedger(context));
     };
   }, []);
 
@@ -733,17 +778,6 @@ function findNextDay(days) {
     const [year, month, date] = day.date.split("-").map(Number);
     return new Date(year, month - 1, date).getTime() >= today;
   }) || days.at(-1);
-}
-
-function readLocalLedgerExpenses() {
-  if (typeof window === "undefined") return seedExpenses;
-
-  try {
-    const savedExpenses = localStorage.getItem(ledgerStorageKey);
-    return savedExpenses ? JSON.parse(savedExpenses) : seedExpenses;
-  } catch {
-    return seedExpenses;
-  }
 }
 
 function readLocalChecklist() {

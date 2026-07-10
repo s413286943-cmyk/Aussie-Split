@@ -398,7 +398,7 @@ describe("sync request ordering", () => {
   });
 });
 
-describe("TripLedger bridge action contract", () => {
+describe("TripLedger durable outbox contract", () => {
   it("routes add, edit, confirm, and delete through the serialized local commit", () => {
     for (const name of ["addExpense", "updateExpense", "confirmExpense", "removeExpense"]) {
       assert.match(functionSource(tripLedgerSource, name), /await commitLedgerMutation\(/);
@@ -410,47 +410,55 @@ describe("TripLedger bridge action contract", () => {
     assert.match(updateSource, /setExpenseSplitSettled\(latestExpense/);
   });
 
-  it("keeps allocation, latest-list derivation, cache write, ref, and state update in one queue unit", () => {
+  it("commits IndexedDB before updating refs and React state", () => {
     const commitSource = functionSource(tripLedgerSource, "commitLedgerMutation");
     assert.match(commitSource, /ledgerActionQueueRef\.current/);
     assert.match(commitSource, /expensesRef\.current/);
-    assert.match(commitSource, /await allocatePersistedExpenseMutation/);
-    assert.match(commitSource, /localStorage\.setItem/);
-    assert.match(commitSource, /setExpenses/);
+    assert.match(commitSource, /await commitOfflineMutation/);
+    assert.match(commitSource, /applyOfflineState/);
+    assert.ok(commitSource.indexOf("await commitOfflineMutation") < commitSource.indexOf("applyOfflineState"));
+    assert.doesNotMatch(commitSource, /localStorage\.setItem/);
   });
 
-  it("preallocates one tombstone and reuses it for final and unmount deletion", () => {
+  it("persists one delete operation immediately and retains its id for Undo", () => {
     const removeSource = functionSource(tripLedgerSource, "removeExpense");
     assert.equal((removeSource.match(/await commitLedgerMutation\(/g) || []).length, 1);
-    assert.match(removeSource, /\{ deleted: true \}/);
-    assert.equal((tripLedgerSource.match(/deleteRemoteExpense\(pending\.tombstone\)/g) || []).length, 2);
+    assert.match(removeSource, /type:\s*"delete"/);
+    assert.match(removeSource, /opId/);
+    assert.match(removeSource, /deleteActivityId/);
+    assert.doesNotMatch(tripLedgerSource, /deleteRemoteExpense/);
   });
 
-  it("keeps pre-sync Undo free of remote deletion", () => {
+  it("uses the durable Undo path and only schedules a compensating sync when needed", () => {
     const undoSource = functionSource(tripLedgerSource, "undoDelete");
     assert.match(undoSource, /ledgerActionQueueRef\.current/);
-    assert.match(undoSource, /renderSyncAggregate\(syncRequestCoordinatorRef\.current\.current\(\)\)/);
-    assert.doesNotMatch(undoSource, /setSyncState\(supabaseConfigured \? "已同步"/);
-    assert.doesNotMatch(undoSource, /deleteRemoteExpense/);
+    assert.match(undoSource, /undoOfflineDelete/);
+    assert.match(undoSource, /result\.synchronized/);
+    assert.doesNotMatch(undoSource, /deleteRemoteExpense|applyLedgerOperations/);
   });
 
-  it("suppresses stale failure callbacks and keys every remote request by expense", () => {
-    const remoteSource = functionSource(tripLedgerSource, "startRemoteSync");
-    assert.match(remoteSource, /coordinator\.begin\(expenseId\)/);
-    assert.match(remoteSource, /if \(!settled\.accepted\) return/);
-    assert.ok(remoteSource.indexOf("if (!settled.accepted) return") < remoteSource.indexOf("onRemoteFailure?.(error)"));
-
-    for (const name of ["addExpense", "updateExpense", "confirmExpense", "finalizePendingDelete"]) {
-      assert.match(functionSource(tripLedgerSource, name), /startRemoteSync\([^,]+\.id,/);
-    }
+  it("serializes one reusable sync loop and retries on connectivity lifecycle events", () => {
+    const syncSource = functionSource(tripLedgerSource, "requestLedgerSync");
+    assert.match(syncSource, /syncPromiseRef\.current/);
+    assert.match(syncSource, /syncRequestedRef\.current/);
+    assert.match(syncSource, /syncOfflineLedger/);
+    assert.match(tripLedgerSource, /addEventListener\("online"/);
+    assert.match(tripLedgerSource, /addEventListener\("visibilitychange"/);
+    assert.match(tripLedgerSource, /document\.visibilityState === "visible"/);
   });
 
-  it("versions seed fallback and settles the initial remote read before enabling actions", () => {
+  it("opens the durable local ledger before enabling actions, then refreshes online", () => {
     const bootstrapSource = functionSource(tripLedgerSource, "initializeLedger");
-    assert.match(bootstrapSource, /savedExpenses \?\? seedExpenses/);
-    assert.match(bootstrapSource, /withTimeout\(fetchRemoteExpenses\(\)/);
-    assert.ok(bootstrapSource.indexOf("await withTimeout") < bootstrapSource.indexOf("setReady(true)"));
+    assert.match(bootstrapSource, /await initializeOfflineLedger/);
+    assert.match(bootstrapSource, /applyOfflineState\(context\.state/);
+    assert.ok(bootstrapSource.indexOf("applyOfflineState(context.state") < bootstrapSource.indexOf("setReady(true)"));
+    assert.match(bootstrapSource, /requestLedgerSync/);
     assert.equal((tripLedgerSource.match(/setReady\(true\)/g) || []).length, 1);
+  });
+
+  it("does not write the ledger or activity arrays back to localStorage", () => {
+    assert.doesNotMatch(tripLedgerSource, /aussie-chill-expenses-v1|aussie-chill-activity-v1/);
+    assert.doesNotMatch(tripLedgerSource, /localStorage\.setItem\(storageKey|localStorage\.setItem\(activityStorageKey/);
   });
 });
 

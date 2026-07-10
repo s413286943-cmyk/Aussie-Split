@@ -63,13 +63,28 @@ describe("legacy localStorage migration", () => {
     const db = await openDatabase();
     const now = 1_780_000_000_000;
     const preservedVersion = "1770000000000-000004-existing-client";
+    const { mutationVersion: ignoredBVersion, updatedAt: ignoredBUpdatedAt, ...expenseB } = expenseFixture({ id: "expense-b", item: "午餐" });
+    const { mutationVersion: ignoredCVersion, updatedAt: ignoredCUpdatedAt, ...expenseC } = expenseFixture({ id: "expense-c", item: "晚餐" });
+    void ignoredBVersion;
+    void ignoredBUpdatedAt;
+    void ignoredCVersion;
+    void ignoredCUpdatedAt;
     const expenses = [
-      { id: "expense-a", item: "早餐", mutationVersion: preservedVersion },
-      { id: "expense-b", item: "午餐" },
-      { id: "expense-c", item: "晚餐" },
+      expenseFixture({ id: "expense-a", item: "早餐", mutationVersion: preservedVersion }),
+      expenseB,
+      expenseC,
     ];
     const activity = [
-      { id: "activity-a", expenseId: "expense-a", createdAt: "2026-07-10T01:00:00.000Z" },
+      {
+        id: "activity-a",
+        expenseId: "expense-a",
+        action: "edit",
+        item: "早餐",
+        amount: 88.5,
+        currency: "AUD",
+        summary: "Edited breakfast",
+        createdAt: "2026-07-10T01:00:00.000Z",
+      },
     ];
     const storage = memoryStorage({
       "aussie-chill-expenses-v1": JSON.stringify(expenses),
@@ -85,11 +100,20 @@ describe("legacy localStorage migration", () => {
     const ledger = await offlineDb.loadOfflineLedger(db);
     assert.deepEqual(ledger.expenses, [
       expenses[0],
-      { ...expenses[1], mutationVersion: "1780000000000-000001-legacy-device" },
-      { ...expenses[2], mutationVersion: "1780000000000-000002-legacy-device" },
+      { ...expenses[1], mutationVersion: "1780000000000-000001-legacy-device", updatedAt: "2026-05-28T20:26:40.000Z" },
+      { ...expenses[2], mutationVersion: "1780000000000-000002-legacy-device", updatedAt: "2026-05-28T20:26:40.000Z" },
     ]);
-    assert.deepEqual(ledger.activity, activity);
-    assert.equal(ledger.outboxCount, 0);
+    assert.deepEqual(ledger.activity.find(({ id }) => id === "activity-a"), activity[0]);
+    assert.equal(ledger.activity.length, 3);
+    assert.equal(ledger.outboxCount, 3);
+    assert.deepEqual(
+      (await offlineDb.getOutboxBatch(db)).map(({ expenseId, type }) => ({ expenseId, type })),
+      [
+        { expenseId: "expense-b", type: "upsert" },
+        { expenseId: "expense-c", type: "upsert" },
+        { expenseId: "expense-a", type: "upsert" },
+      ],
+    );
     assert.equal(ledger.meta.localStorageMigrated, true);
     assert.equal(ledger.meta.mutationHighWater, "1780000000000-000002-legacy-device");
     assert.equal(storage.getItem("aussie-chill-expenses-v1"), JSON.stringify(expenses));
@@ -229,6 +253,7 @@ describe("atomic local mutations", () => {
       expenseId: "expense-a",
       mutationVersion: deleted.expense.mutationVersion,
       expense: null,
+      beforeExpense: added.expense,
       activity: deleteActivity,
       createdAt: "2026-05-28T20:26:42.000Z",
     });
@@ -271,7 +296,7 @@ describe("outbox reads", () => {
 });
 
 describe("pending delete Undo", () => {
-  it("atomically removes a pending delete and restores the prior expense", async () => {
+  it("atomically restores a pending delete after the database is closed and reopened", async () => {
     assert.equal(typeof offlineDb.undoPendingDelete, "function");
 
     const db = await openDatabase();
@@ -291,19 +316,22 @@ describe("pending delete Undo", () => {
       },
     });
 
-    assert.equal(await offlineDb.undoPendingDelete(db, {
+    offlineDb.closeOfflineDb(db);
+    openDatabases.delete(db);
+    const reopened = await openDatabase();
+
+    assert.equal(await offlineDb.undoPendingDelete(reopened, {
       deleteOpId: "op-delete",
-      expense: added.expense,
       activityId: "activity-delete",
     }), true);
 
-    const ledger = await offlineDb.loadOfflineLedger(db);
+    const ledger = await offlineDb.loadOfflineLedger(reopened);
     assert.deepEqual(ledger.expenses, [added.expense]);
     assert.deepEqual(ledger.activity.map(({ id }) => id), ["activity-add"]);
     assert.equal(ledger.outboxCount, 1);
     assert.equal(ledger.meta.mutationHighWater, deleted.expense.mutationVersion);
-    assert.equal(await offlineDb.getOutboxOperation(db, "op-delete"), undefined);
-    assert.equal(await offlineDb.undoPendingDelete(db, {
+    assert.equal(await offlineDb.getOutboxOperation(reopened, "op-delete"), undefined);
+    assert.equal(await offlineDb.undoPendingDelete(reopened, {
       deleteOpId: "op-delete",
       expense: added.expense,
     }), false);
@@ -474,8 +502,9 @@ describe("legacy storage cleanup", () => {
     assert.equal(typeof offlineDb.clearLegacyStorageAfterSync, "function");
 
     const db = await openDatabase();
+    const legacyExpense = expenseFixture({ item: "Legacy dinner" });
     const storage = memoryStorage({
-      "aussie-chill-expenses-v1": JSON.stringify([{ id: "expense-a", item: "Legacy dinner" }]),
+      "aussie-chill-expenses-v1": JSON.stringify([legacyExpense]),
       "aussie-chill-activity-v1": "[]",
       "unrelated-key": "keep-me",
     });
@@ -498,6 +527,23 @@ describe("legacy storage cleanup", () => {
       fence: lease.fence,
       snapshot: { expenses: [], activity: [], serverTime },
       acknowledgedOpIds: [],
+      mergeRemoteSnapshot,
+    });
+
+    assert.equal((await offlineDb.loadOfflineLedger(db)).expenses[0].item, "Legacy dinner");
+    assert.equal(await offlineDb.clearLegacyStorageAfterSync(db, storage), false);
+    assert.notEqual(storage.getItem("aussie-chill-expenses-v1"), null);
+
+    const [legacyOperation] = await offlineDb.getOutboxBatch(db);
+    await offlineDb.commitSyncResponse(db, {
+      owner: "tab-a",
+      fence: lease.fence,
+      snapshot: {
+        expenses: [legacyOperation.expense],
+        activity: [legacyOperation.activity],
+        serverTime,
+      },
+      acknowledgedOpIds: [legacyOperation.opId],
       mergeRemoteSnapshot,
     });
 

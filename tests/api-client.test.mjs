@@ -169,24 +169,29 @@ describe("protected browser integration contract", () => {
     assert.match(unlockSource, /aria-live="assertive"/);
   });
 
-  it("routes ledger reads and atomic writes through apiClient while retaining local cache", () => {
+  it("routes durable outbox writes through the protected API client", () => {
     assert.match(ledgerSource, /from ["']@\/lib\/apiClient["']/);
-    assert.match(ledgerSource, /fetchLedgerSnapshot/);
     assert.match(ledgerSource, /applyLedgerOperations/);
-    assert.match(ledgerSource, /createExpenseOperation/);
-    assert.match(ledgerSource, /aussie-chill-expenses-v1/);
-    assert.match(ledgerSource, /setSyncState\("同步失败，可重试"\)/);
+    assert.match(ledgerSource, /initializeOfflineLedger/);
+    assert.match(ledgerSource, /commitOfflineMutation/);
+    assert.match(ledgerSource, /syncOfflineLedger/);
+    assert.match(ledgerSource, /undoOfflineDelete/);
+    assert.match(ledgerSource, /同步失败，可重试/);
     assert.doesNotMatch(ledgerSource, /from ["']@\/lib\/supabaseRest["']|upsertRemoteExpense|insertRemoteActivity/);
   });
 
-  it("uses the protected snapshot for itinerary ledger reads", () => {
+  it("uses the durable offline ledger and protected outbox sync for itinerary reads", () => {
     assert.match(itinerarySource, /from ["']@\/lib\/apiClient["']/);
-    assert.match(itinerarySource, /fetchLedgerSnapshot/);
+    assert.match(itinerarySource, /applyLedgerOperations/);
+    assert.match(itinerarySource, /initializeOfflineLedger/);
+    assert.match(itinerarySource, /syncOfflineLedger/);
+    assert.match(itinerarySource, /closeOfflineLedger/);
+    assert.doesNotMatch(itinerarySource, /aussie-chill-expenses-v1|fetchLedgerSnapshot/);
     assert.doesNotMatch(itinerarySource, /supabaseRest|fetchRemote/);
   });
 
   it("shows whether itinerary ledger figures are current or locally cached", () => {
-    assert.match(itinerarySource, /setLedgerFreshness\("current"\)/);
+    assert.match(itinerarySource, /synced\.result\.completed \? "current" : "cached"/);
     assert.match(itinerarySource, /setLedgerFreshness\("cached"\)/);
     assert.match(itinerarySource, /账本已同步 · 当前数据/);
     assert.match(itinerarySource, /本机缓存 · 可能不是最新/);
