@@ -37,6 +37,7 @@ describe("offline application shell", () => {
     assert.match(serviceWorkerSource, /url\.pathname\.startsWith\(["']\/api\/["']\)/);
     assert.match(serviceWorkerSource, /request\.mode === ["']navigate["']/);
     assert.match(serviceWorkerSource, /url\.pathname\.startsWith\(["']\/_next\/static\/["']\)/);
+    assert.match(serviceWorkerSource, /url\.pathname === ["']\/_next\/image["']/);
     assert.match(serviceWorkerSource, /url\.pathname\.startsWith\(["']\/itinerary\/["']\)/);
     assert.match(serviceWorkerSource, /networkFirst/);
     assert.match(serviceWorkerSource, /cacheFirst/);

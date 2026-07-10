@@ -1,7 +1,7 @@
 const CACHE_PREFIX = "aussie-chill-";
 const SHELL_CACHE = CACHE_PREFIX + "shell-v2";
 const STATIC_CACHE = CACHE_PREFIX + "static-v2";
-const ITINERARY_CACHE = CACHE_PREFIX + "itinerary-v1";
+const ITINERARY_CACHE = CACHE_PREFIX + "itinerary-v2";
 const PRECACHE_URLS = [
   "/",
   "/itinerary",
@@ -48,7 +48,7 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(cacheFirst(request, STATIC_CACHE));
     return;
   }
-  if (url.pathname.startsWith("/itinerary/")) {
+  if (url.pathname === "/_next/image" || url.pathname.startsWith("/itinerary/")) {
     event.respondWith(staleWhileRevalidate(request, ITINERARY_CACHE));
   }
 });
@@ -112,9 +112,14 @@ async function cacheFirst(request, cacheName) {
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
-  const network = fetch(request).then(async (response) => {
-    if (response.ok) await cache.put(request, response.clone());
-    return response;
-  });
-  return cached || network;
+  const network = fetch(request)
+    .then(async (response) => {
+      if (response.ok) await cache.put(request, response.clone());
+      return response;
+    })
+    .catch(() => null);
+  if (cached) return cached;
+  const response = await network;
+  if (response) return response;
+  throw new Error("Offline asset is not cached");
 }
