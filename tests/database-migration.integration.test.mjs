@@ -316,6 +316,7 @@ async function assertCoreBehavior(database, phase) {
   await assertActivityConflictRollsBack(database, phase, physical);
   await assertConcurrentOperationDeduplication(database, phase, physical);
   await assertDirectUpsertRpcRace(database, phase, physical);
+  await assertRpcUpsertDirectRace(database, phase, physical);
   await assertThrottling(database, phase);
 }
 
@@ -483,6 +484,38 @@ async function assertOperationShapeAndActivityValidation(database, phase, physic
     )
   `);
 
+  const missingExpenseOpId = `op-${phase}-delete-missing-expense`;
+  const missingExpenseActivityId = `activity-${phase}-delete-missing-expense`;
+  const missingExpenseOperation = operationPayload({
+    phase,
+    expenseId: deleteExpenseId,
+    opId: missingExpenseOpId,
+    mutationVersion: `${physical}-000155-service`,
+    activityId: missingExpenseActivityId,
+    item: "Delete target",
+    action: "delete",
+    type: "delete",
+  });
+  missingExpenseOperation.activity.amount = 22.5;
+  delete missingExpenseOperation.expense;
+  await expectOperationFailure(database, missingExpenseOperation, /invalid_expense_payload/);
+  assert.equal(
+    await scalar(database, `
+      select mutation_version || '|' || (deleted_at is null)
+      from public.expenses
+      where id = ${literal(deleteExpenseId)}
+    `),
+    `${deleteVersion}|true`,
+  );
+  assert.equal(
+    await scalar(database, `select count(*) from app_private.expense_operations where op_id = ${literal(missingExpenseOpId)}`),
+    "0",
+  );
+  assert.equal(
+    await scalar(database, `select count(*) from public.expense_activity where id = ${literal(missingExpenseActivityId)}`),
+    "0",
+  );
+
   const invalidDeletes = [
     ["action", (operation) => { operation.activity.action = "edit"; }],
     ["item", (operation) => { operation.activity.item = "Wrong item"; }],
@@ -572,6 +605,7 @@ async function assertActivityConflictRollsBack(database, phase, physical) {
 
 async function assertConcurrentOperationDeduplication(database, phase, physical) {
   const expenseId = `concurrent-${phase}`;
+  const marker = `concurrent-operation-${phase}`;
   const operation = operationPayload({
     phase,
     expenseId,
@@ -581,11 +615,27 @@ async function assertConcurrentOperationDeduplication(database, phase, physical)
     item: "Concurrent dinner",
     action: "add",
   });
-  const results = await Promise.all([
-    applyOperation(database, operation),
-    applyOperation(database, operation),
-  ]);
-  assert.deepEqual(results.map(({ status }) => status), ["applied", "applied"]);
+  const firstTransaction = sql(database, `
+    begin;
+    set role service_role;
+    select public.apply_expense_operation(${literal(JSON.stringify(operation))}::jsonb);
+    select pg_catalog.pg_sleep(0.8) /* ${marker} */;
+    commit;
+  `);
+  await waitForDatabaseSleep(database, marker);
+
+  let retrySettled = false;
+  const retry = applyOperation(database, operation).finally(() => {
+    retrySettled = true;
+  });
+  await delay(100);
+  assert.equal(retrySettled, false, "same-op retry must wait for the first transaction");
+
+  await firstTransaction;
+  assert.deepEqual(await retry, {
+    opId: `op-${phase}-concurrent`,
+    status: "applied",
+  });
   assert.equal(
     await scalar(database, `select count(*) from public.expense_activity where id = 'activity-${phase}-concurrent'`),
     "1",
@@ -595,6 +645,83 @@ async function assertConcurrentOperationDeduplication(database, phase, physical)
       select count(*)
       from app_private.expense_operations
       where op_id = 'op-${phase}-concurrent'
+        and result_status = 'applied'
+    `),
+    "1",
+  );
+}
+
+async function assertRpcUpsertDirectRace(database, phase, physical) {
+  const expenseId = `rpc-direct-race-${phase}`;
+  const marker = `rpc-direct-race-${phase}`;
+  const rpcVersion = `${physical}-000170-service`;
+  const directVersion = `${physical}-000171-direct-client`;
+  const operation = operationPayload({
+    phase,
+    expenseId,
+    opId: `op-${phase}-rpc-direct-race`,
+    mutationVersion: rpcVersion,
+    activityId: `activity-${phase}-rpc-direct-race`,
+    item: "RPC first",
+    action: "add",
+  });
+
+  const rpcTransaction = sql(database, `
+    begin;
+    set role service_role;
+    select public.apply_expense_operation(${literal(JSON.stringify(operation))}::jsonb);
+    select pg_catalog.pg_sleep(0.8) /* ${marker} */;
+    commit;
+  `);
+  await waitForDatabaseSleep(database, marker);
+
+  let directSettled = false;
+  const directWrite = sql(database, `
+    set role anon;
+    insert into public.expenses (
+      id, category, item, currency, amount, payer, status, note, split_settled, mutation_version
+    ) values (
+      ${literal(expenseId)}, 'dining', 'Direct newer', 'AUD', 99, 'us', 'confirmed',
+      'Direct writer after RPC', false, ${literal(directVersion)}
+    )
+    on conflict (id) do update
+    set
+      category = excluded.category,
+      item = excluded.item,
+      currency = excluded.currency,
+      amount = excluded.amount,
+      payer = excluded.payer,
+      status = excluded.status,
+      note = excluded.note,
+      split_settled = excluded.split_settled,
+      mutation_version = excluded.mutation_version
+  `).finally(() => {
+    directSettled = true;
+  });
+  await delay(100);
+  assert.equal(directSettled, false, "direct upsert must wait for the RPC transaction");
+
+  const [rpcResult, directResult] = await Promise.allSettled([rpcTransaction, directWrite]);
+  for (const result of [rpcResult, directResult]) {
+    if (result.status === "rejected") {
+      assert.doesNotMatch(databaseError(result.reason), /23505|duplicate key|40P01|deadlock detected/i);
+    }
+  }
+  assert.equal(rpcResult.status, "fulfilled", databaseError(rpcResult.reason));
+  assert.equal(directResult.status, "fulfilled", databaseError(directResult.reason));
+  assert.equal(
+    await scalar(database, `select item || '|' || mutation_version from public.expenses where id = ${literal(expenseId)}`),
+    `Direct newer|${directVersion}`,
+  );
+  assert.equal(
+    await scalar(database, `select count(*) from public.expense_activity where id = 'activity-${phase}-rpc-direct-race'`),
+    "1",
+  );
+  assert.equal(
+    await scalar(database, `
+      select count(*)
+      from app_private.expense_operations
+      where op_id = 'op-${phase}-rpc-direct-race'
         and result_status = 'applied'
     `),
     "1",
@@ -857,6 +984,26 @@ function cloneOperation(operation) {
 
 function delay(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+async function waitForDatabaseSleep(database, marker) {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const sleeping = await scalar(database, `
+      select exists (
+        select 1
+        from pg_catalog.pg_stat_activity
+        where datname = pg_catalog.current_database()
+          and pid <> pg_catalog.pg_backend_pid()
+          and wait_event = 'PgSleep'
+          and query like ${literal(`%${marker}%`)}
+      )
+    `);
+    if (sleeping === "t") {
+      return;
+    }
+    await delay(10);
+  }
+  assert.fail(`database transaction did not reach controlled sleep: ${marker}`);
 }
 
 function databaseError(error) {

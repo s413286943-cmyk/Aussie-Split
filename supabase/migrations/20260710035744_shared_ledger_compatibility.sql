@@ -276,6 +276,10 @@ begin
       raise exception 'invalid_activity_payload' using errcode = '22023';
     end if;
   elsif op_type = 'delete' then
+    if not (operation ? 'expense') then
+      raise exception 'invalid_expense_payload' using errcode = '22023';
+    end if;
+
     if not (
       pg_catalog.jsonb_typeof(expense_payload) = 'null'
       or (

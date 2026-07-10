@@ -115,6 +115,7 @@ describe("shared-ledger compatibility migration contract", () => {
       /requested_expense_id := operation ->> 'expenseId'/i,
       /expense_payload ->> 'id' is distinct from requested_expense_id/i,
       /activity_payload ->> 'expenseId' is distinct from requested_expense_id/i,
+      /op_type = 'delete'[\s\S]*operation \? 'expense'/i,
       /op_type = 'delete'[\s\S]*pg_catalog\.jsonb_typeof\(expense_payload\)[\s\S]*'null'/i,
       /op_type = 'delete'[\s\S]*activity_payload ->> 'action'[\s\S]*'delete'/i,
       /op_type = 'upsert'[\s\S]*activity_payload ->> 'action'[\s\S]*'add', 'edit', 'confirm'/i,
