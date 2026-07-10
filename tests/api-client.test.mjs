@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { afterEach, describe, it } from "node:test";
 
 import {
   AccessRequiredError,
+  ApiClientError,
   applyLedgerOperations,
   checkAccessSession,
   clearAccessSession,
@@ -12,6 +14,7 @@ import {
   fetchLedgerSnapshot,
   unlockAccessSession,
 } from "../src/lib/apiClient.js";
+import * as protectedApi from "../src/lib/apiClient.js";
 
 const originalFetch = globalThis.fetch;
 
@@ -58,6 +61,32 @@ describe("browser protected API client", () => {
       () => fetchLedgerSnapshot(),
       (error) => error instanceof AccessRequiredError && error.code === "access_required",
     );
+  });
+
+  it("rejects a stale operation result so the ledger coordinator marks sync failed", async () => {
+    globalThis.fetch = async () => Response.json({
+      results: [{ opId: "op-stale", status: "stale" }],
+      expenses: [],
+      activity: [],
+      serverTime: "2026-07-10T00:00:00.000Z",
+    });
+
+    await assert.rejects(
+      () => applyLedgerOperations([{ opId: "op-stale" }]),
+      (error) => error?.name === "StaleOperationError"
+        && error?.code === "stale_operation"
+        && error?.status === 409,
+    );
+  });
+
+  it("reopens cached data after a transient online failure only when the offline marker exists", () => {
+    assert.equal(protectedApi.shouldReopenCachedAccess(new ApiClientError(503), true), true);
+    assert.equal(protectedApi.shouldReopenCachedAccess(new ApiClientError(0), true), true);
+    assert.equal(protectedApi.shouldReopenCachedAccess(new ApiClientError(503), false), false);
+  });
+
+  it("never reopens cached data after an explicit 401", () => {
+    assert.equal(protectedApi.shouldReopenCachedAccess(new AccessRequiredError(), true), false);
   });
 
   it("builds atomic upsert and delete operations without writable attachment projections", () => {
@@ -126,6 +155,7 @@ describe("protected browser integration contract", () => {
     assert.match(unlockSource, /unlockAccessSession/);
     assert.match(unlockSource, /navigator\.onLine/);
     assert.match(unlockSource, /ACCESS_REQUIRED_EVENT/);
+    assert.match(unlockSource, /shouldReopenCachedAccess/);
     assert.doesNotMatch(unlockSource, /defaultTripCode|placeholder=["']aussie["']/);
   });
 
@@ -135,6 +165,7 @@ describe("protected browser integration contract", () => {
     assert.match(ledgerSource, /applyLedgerOperations/);
     assert.match(ledgerSource, /createExpenseOperation/);
     assert.match(ledgerSource, /aussie-chill-expenses-v1/);
+    assert.match(ledgerSource, /setSyncState\("同步失败，可重试"\)/);
     assert.doesNotMatch(ledgerSource, /from ["']@\/lib\/supabaseRest["']|upsertRemoteExpense|insertRemoteActivity/);
   });
 
@@ -151,4 +182,28 @@ describe("protected browser integration contract", () => {
       /NEXT_PUBLIC_SUPABASE|SUPABASE_SERVICE_ROLE_KEY|\/rest\/v1|\/storage\/v1/,
     );
   });
+
+  it("keeps every browser-eligible source file free of direct data-service access", () => {
+    const srcRoot = fileURLToPath(new URL("../src", import.meta.url));
+    const browserFiles = collectSourceFiles(srcRoot).filter((file) =>
+      !file.includes("/src/lib/server/") && !file.includes("/src/app/api/"),
+    );
+
+    for (const file of browserFiles) {
+      const source = readFileSync(file, "utf8");
+      assert.doesNotMatch(
+        source,
+        /NEXT_PUBLIC_SUPABASE|\/rest\/v1|\/storage\/v1|supabaseRest/,
+        file,
+      );
+    }
+  });
 });
+
+function collectSourceFiles(directory) {
+  return readdirSync(directory).flatMap((entry) => {
+    const path = `${directory}/${entry}`;
+    if (statSync(path).isDirectory()) return collectSourceFiles(path);
+    return /\.(?:js|jsx|ts|tsx)$/.test(path) ? [path] : [];
+  });
+}

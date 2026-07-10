@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import {
   ACCESS_REQUIRED_EVENT,
   checkAccessSession,
+  shouldReopenCachedAccess,
   unlockAccessSession,
 } from "@/lib/apiClient";
 import { offlineAccessKey } from "@/lib/access";
@@ -28,8 +29,11 @@ export default function UnlockGate({ children, intro = "输入旅行访问码后
       try {
         const session = await checkAccessSession();
         if (!cancelled) setUnlocked(session.authenticated === true);
-      } catch {
-        if (!cancelled) setUnlocked(false);
+      } catch (error) {
+        if (!cancelled) {
+          const hasOfflineAccess = localStorage.getItem(offlineAccessKey) === "yes";
+          setUnlocked(shouldReopenCachedAccess(error, hasOfflineAccess));
+        }
       } finally {
         if (!cancelled) setReady(true);
       }

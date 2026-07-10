@@ -24,8 +24,8 @@ export async function fetchLedgerSnapshot() {
   const [expenseRows, attachmentRows] = await Promise.all([
     serviceJson("/rest/v1/expenses?select=*&order=date.asc"),
     serviceJson(
-      "/rest/v1/attachments?select=expense_id,original_name,storage_path,created_at"
-      + "&deleted_at=is.null&order=created_at.desc",
+      "/rest/v1/attachments?select=expense_id,receipt_id,original_name,mime_type,size_bytes,storage_path,finalized_at,created_at"
+      + "&finalized_at=not.is.null&deleted_at=is.null&order=created_at.desc",
     ),
   ]);
   if (!Array.isArray(expenseRows) || !Array.isArray(attachmentRows)) {
@@ -125,7 +125,7 @@ function mapExpense(row, attachment) {
     mutationVersion: row.mutation_version,
     updatedAt: row.updated_at || "",
     deletedAt: row.deleted_at || null,
-    attachmentName: attachment?.original_name || row.attachment_name || "",
+    attachmentName: attachment?.original_name || "",
     attachmentPath: attachment?.storage_path || "",
   };
 }

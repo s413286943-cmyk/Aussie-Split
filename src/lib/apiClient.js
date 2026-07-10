@@ -18,6 +18,19 @@ export class ApiClientError extends Error {
   }
 }
 
+export class StaleOperationError extends Error {
+  constructor() {
+    super("A newer ledger update is already saved");
+    this.name = "StaleOperationError";
+    this.code = "stale_operation";
+    this.status = 409;
+  }
+}
+
+export function shouldReopenCachedAccess(error, hasOfflineAccess) {
+  return Boolean(hasOfflineAccess) && !(error instanceof AccessRequiredError);
+}
+
 export function checkAccessSession() {
   return requestJson("/api/access");
 }
@@ -37,11 +50,16 @@ export function fetchLedgerSnapshot() {
   return requestJson("/api/sync");
 }
 
-export function applyLedgerOperations(operations) {
-  return requestJson("/api/sync", {
+export async function applyLedgerOperations(operations) {
+  const response = await requestJson("/api/sync", {
     method: "POST",
     body: JSON.stringify({ operations }),
   });
+  if (!Array.isArray(response.results)) throw new ApiClientError(response.status);
+  if (response.results.some((result) => result?.status === "stale")) {
+    throw new StaleOperationError();
+  }
+  return response;
 }
 
 export function fetchActivity(limit = 50) {

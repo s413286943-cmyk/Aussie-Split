@@ -75,7 +75,7 @@ describe("server-only Supabase transport", () => {
             payer: "them",
             status: "draft",
             note: "",
-            attachment_name: "",
+            attachment_name: "legacy-deleted.jpg",
             split_settled: true,
             mutation_version: "1780000000001-000000-browser-b",
             updated_at: "2026-07-10T00:00:01.000Z",
@@ -86,8 +86,12 @@ describe("server-only Supabase transport", () => {
       return Response.json([
         {
           expense_id: "expense-visible",
+          receipt_id: "receipt-id",
           original_name: "receipt.jpg",
+          mime_type: "image/jpeg",
+          size_bytes: 1024,
           storage_path: "expense-visible/receipt-id.jpg",
+          finalized_at: "2026-07-10T00:00:02.000Z",
           created_at: "2026-07-10T00:00:02.000Z",
         },
       ]);
@@ -115,8 +119,14 @@ describe("server-only Supabase transport", () => {
     });
     assert.equal(expenses[1].deletedAt, "2026-07-10T00:00:01.000Z");
     assert.equal(expenses[1].date, "");
+    assert.equal(expenses[1].attachmentName, "");
+    assert.equal(expenses[1].attachmentPath, "");
     assert.equal(calls.length, 2);
     assert.equal(calls.some((call) => /\/expenses\?select=\*&order=date\.asc$/.test(call.url)), true);
+    const attachmentCall = calls.find((call) => call.url.includes("/attachments?"));
+    assert.match(attachmentCall.url, /finalized_at=not\.is\.null/);
+    assert.match(attachmentCall.url, /deleted_at=is\.null/);
+    assert.match(attachmentCall.url, /receipt_id,original_name,mime_type,size_bytes,storage_path,finalized_at/);
     for (const call of calls) {
       assert.equal(call.options.headers.apikey, "service-role-test-secret");
       assert.equal(call.options.headers.Authorization, "Bearer service-role-test-secret");
