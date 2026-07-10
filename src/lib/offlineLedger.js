@@ -28,6 +28,7 @@ export async function initializeOfflineLedger(options) {
     await migrateLegacyLocalStorage(db, {
       storage,
       clientId: identity.clientId,
+      highWater: identity.highWater,
       now: options.now ?? Date.now(),
     });
     const context = {

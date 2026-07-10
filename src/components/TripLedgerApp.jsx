@@ -60,6 +60,7 @@ function TripLedgerContent({ view }) {
   const ledgerActionQueueRef = useRef(null);
   const syncPromiseRef = useRef(null);
   const syncRequestedRef = useRef(false);
+  const syncRetryTimerRef = useRef(null);
   const [ready, setReady] = useState(false);
   const [expenses, setExpenses] = useState(seedExpenses);
   const [activity, setActivity] = useState([]);
@@ -77,6 +78,10 @@ function TripLedgerContent({ view }) {
   }, []);
 
   const requestLedgerSync = useCallback(function requestLedgerSync() {
+    if (syncRetryTimerRef.current) {
+      window.clearTimeout(syncRetryTimerRef.current);
+      syncRetryTimerRef.current = null;
+    }
     syncRequestedRef.current = true;
     if (syncPromiseRef.current || !offlineContextRef.current) {
       return syncPromiseRef.current ?? Promise.resolve();
@@ -110,6 +115,9 @@ function TripLedgerContent({ view }) {
           });
           applyOfflineState(synced.state);
           if (!mountedRef.current) continue;
+          if (synced.result.reason === "lease_unavailable") {
+            syncRetryTimerRef.current = window.setTimeout(requestLedgerSync, 500);
+          }
           const failed = !synced.result.completed && synced.result.reason !== "lease_unavailable";
           setSyncState(syncStateLabel({ pendingCount: synced.state.outboxCount, failed }));
         } catch {
@@ -181,6 +189,7 @@ function TripLedgerContent({ view }) {
       window.removeEventListener("online", handleOnline);
       document.removeEventListener("visibilitychange", handleVisibility);
       if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
+      if (syncRetryTimerRef.current) window.clearTimeout(syncRetryTimerRef.current);
       if (pendingDeleteRef.current?.timer) window.clearTimeout(pendingDeleteRef.current.timer);
       const context = offlineContextRef.current;
       offlineContextRef.current = null;

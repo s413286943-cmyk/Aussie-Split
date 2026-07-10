@@ -109,9 +109,9 @@ describe("legacy localStorage migration", () => {
     assert.deepEqual(
       (await offlineDb.getOutboxBatch(db)).map(({ expenseId, type }) => ({ expenseId, type })),
       [
+        { expenseId: "expense-a", type: "upsert" },
         { expenseId: "expense-b", type: "upsert" },
         { expenseId: "expense-c", type: "upsert" },
-        { expenseId: "expense-a", type: "upsert" },
       ],
     );
     assert.equal(ledger.meta.localStorageMigrated, true);
@@ -265,7 +265,7 @@ describe("atomic local mutations", () => {
 });
 
 describe("outbox reads", () => {
-  it("returns oldest-first bounded batches and an exact count", async () => {
+  it("returns mutation-version-ordered bounded batches even when the clock moves backward", async () => {
     assert.equal(typeof offlineDb.getOutboxBatch, "function");
     assert.equal(typeof offlineDb.countOutbox, "function");
 
@@ -285,11 +285,11 @@ describe("outbox reads", () => {
     assert.equal(await offlineDb.countOutbox(db), 2);
     assert.deepEqual(
       (await offlineDb.getOutboxBatch(db, 1)).map(({ opId }) => opId),
-      ["op-earlier"],
+      ["op-later"],
     );
     assert.deepEqual(
       (await offlineDb.getOutboxBatch(db)).map(({ opId }) => opId),
-      ["op-earlier", "op-later"],
+      ["op-later", "op-earlier"],
     );
     assert.equal((await offlineDb.getOutboxBatch(db, 1_000)).length, 2);
   });
@@ -503,9 +503,31 @@ describe("legacy storage cleanup", () => {
 
     const db = await openDatabase();
     const legacyExpense = expenseFixture({ item: "Legacy dinner" });
+    const legacyActivity = [
+      {
+        id: "legacy-history-one",
+        expenseId: legacyExpense.id,
+        action: "add",
+        item: legacyExpense.item,
+        amount: legacyExpense.amount,
+        currency: legacyExpense.currency,
+        summary: "Added legacy dinner",
+        createdAt: timestamp(-20_000),
+      },
+      {
+        id: "legacy-history-two",
+        expenseId: legacyExpense.id,
+        action: "edit",
+        item: legacyExpense.item,
+        amount: legacyExpense.amount,
+        currency: legacyExpense.currency,
+        summary: "Edited legacy dinner",
+        createdAt: timestamp(-10_000),
+      },
+    ];
     const storage = memoryStorage({
       "aussie-chill-expenses-v1": JSON.stringify([legacyExpense]),
-      "aussie-chill-activity-v1": "[]",
+      "aussie-chill-activity-v1": JSON.stringify(legacyActivity),
       "unrelated-key": "keep-me",
     });
     await offlineDb.migrateLegacyLocalStorage(db, {
@@ -551,7 +573,12 @@ describe("legacy storage cleanup", () => {
     assert.equal(storage.getItem("aussie-chill-expenses-v1"), null);
     assert.equal(storage.getItem("aussie-chill-activity-v1"), null);
     assert.equal(storage.getItem("unrelated-key"), "keep-me");
-    assert.equal((await offlineDb.loadOfflineLedger(db)).meta.legacyStorageCleared, true);
+    const finalLedger = await offlineDb.loadOfflineLedger(db);
+    assert.equal(finalLedger.meta.legacyStorageCleared, true);
+    assert.deepEqual(
+      finalLedger.activity.map(({ id }) => id).sort(),
+      legacyActivity.map(({ id }) => id).sort(),
+    );
     assert.equal(await offlineDb.clearLegacyStorageAfterSync(db, storage), false);
   });
 });

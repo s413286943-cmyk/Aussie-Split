@@ -65,7 +65,10 @@ export async function migrateLegacyLocalStorage(db, options) {
         deletedAt: expense.deletedAt ?? null,
       };
     });
-    const highWater = greatestMutationVersion(migratedExpenses.map((expense) => expense.mutationVersion));
+    const highWater = greatestMutationVersion([
+      ...(validMutationVersion(options.highWater) ? [options.highWater] : []),
+      ...migratedExpenses.map((expense) => expense.mutationVersion),
+    ]);
 
     for (const entry of activity) transaction.objectStore("activity").put(entry);
     for (const [index, expense] of migratedExpenses.entries()) {
@@ -200,11 +203,14 @@ export async function getOutboxBatch(db, limit = 100) {
   if (!Number.isInteger(limit) || limit < 1) throw new RangeError("Invalid outbox batch limit");
   const transaction = db.transaction("outbox", "readonly");
   const completed = transactionComplete(transaction);
-  const operations = await requestResult(
-    transaction.objectStore("outbox").index("createdAt").getAll(undefined, Math.min(limit, 100)),
-  );
+  const operations = await requestResult(transaction.objectStore("outbox").getAll());
   await completed;
-  return operations;
+  return operations
+    .sort((left, right) => {
+      const compared = compareMutationVersions(left.mutationVersion, right.mutationVersion);
+      return compared || left.opId.localeCompare(right.opId);
+    })
+    .slice(0, Math.min(limit, 100));
 }
 
 export async function countOutbox(db) {
@@ -361,7 +367,7 @@ export async function commitSyncResponse(db, options) {
     const serverTime = assertRemoteSnapshot(options.snapshot);
     const outbox = transaction.objectStore("outbox");
     for (const opId of new Set(options.acknowledgedOpIds)) outbox.delete(opId);
-    const pendingOperations = await requestResult(outbox.index("createdAt").getAll());
+    const pendingOperations = await requestResult(outbox.getAll());
     const merged = options.mergeRemoteSnapshot(options.snapshot, pendingOperations);
     if (merged?.then || !merged || !Array.isArray(merged.expenses) || !Array.isArray(merged.activity)) {
       throw new TypeError("Invalid merged remote snapshot");
@@ -376,11 +382,12 @@ export async function commitSyncResponse(db, options) {
     ]);
     const expenseStore = transaction.objectStore("expenses");
     const activityStore = transaction.objectStore("activity");
+    const existingActivity = await requestResult(activityStore.getAll());
+    const activityHistory = mergeActivityHistory(existingActivity, merged.activity);
 
     expenseStore.clear();
-    activityStore.clear();
     for (const expense of merged.expenses) expenseStore.put(expense);
-    for (const activity of merged.activity) activityStore.put(activity);
+    for (const activity of activityHistory) activityStore.put(activity);
     if (highWater) meta.put({ key: "mutationHighWater", value: highWater });
     meta.put({ key: "serverTime", value: serverTime });
     meta.put({ key: "lastSyncAt", value: serverTime });
@@ -389,7 +396,7 @@ export async function commitSyncResponse(db, options) {
     return {
       accepted: true,
       expenses: merged.expenses,
-      activity: merged.activity,
+      activity: activityHistory,
       outboxCount: pendingOperations.length,
     };
   } catch (error) {
@@ -665,6 +672,15 @@ function greatestMutationVersion(versions) {
     if (!greatest || compareMutationVersions(version, greatest) > 0) greatest = version;
   }
   return greatest;
+}
+
+function mergeActivityHistory(existingActivity, remoteActivity) {
+  const byId = new Map(existingActivity.map((activity) => [activity.id, activity]));
+  for (const activity of remoteActivity) byId.set(activity.id, activity);
+  return [...byId.values()].sort((left, right) => {
+    const compared = Date.parse(right.createdAt) - Date.parse(left.createdAt);
+    return compared || left.id.localeCompare(right.id);
+  });
 }
 
 function requestResult(request) {

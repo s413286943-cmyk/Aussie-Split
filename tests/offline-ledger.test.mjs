@@ -15,6 +15,29 @@ import { compareMutationVersions } from "../src/lib/mutationVersion.js";
 const baseNow = 1_780_000_000_000;
 
 describe("offline ledger lifecycle", () => {
+  it("carries the legacy mutation high-water above a rolled-back clock", async () => {
+    const previousHighWater = "1780000500000-000009-browser-old";
+    const context = await initializeOfflineLedger({
+      indexedDB: new IDBFactory(),
+      storage: memoryStorage({
+        "aussie-chill-mutation-high-water-v1": previousHighWater,
+      }),
+      now: baseNow,
+      randomUUID: uuidSequence(),
+    });
+
+    const committed = await commitOfflineMutation(context, {
+      type: "upsert",
+      expense: expenseFixture(),
+      activity: activityFixture(),
+      opId: "op-after-upgrade",
+      now: baseNow,
+    });
+
+    assert.equal(compareMutationVersions(committed.expenses[0].mutationVersion, previousHighWater), 1);
+    closeOfflineLedger(context);
+  });
+
   it("commits locally before rendering and keeps the operation across a database reopen", async () => {
     const indexedDB = new IDBFactory();
     const storage = memoryStorage();

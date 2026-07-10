@@ -61,8 +61,13 @@ function ItineraryContent() {
     let cancelled = false;
     let context = null;
     let syncPromise = null;
+    let retryTimer = null;
 
     async function syncLedger() {
+      if (retryTimer) {
+        window.clearTimeout(retryTimer);
+        retryTimer = null;
+      }
       if (!context) return;
       if (!navigator.onLine) {
         if (!cancelled) setLedgerFreshness("cached");
@@ -79,6 +84,9 @@ function ItineraryContent() {
           if (cancelled) return;
           setLedgerExpenses(synced.state.expenses);
           setLedgerFreshness(synced.result.completed ? "current" : "cached");
+          if (synced.result.reason === "lease_unavailable") {
+            retryTimer = window.setTimeout(syncLedger, 500);
+          }
         })
         .catch(() => {
           if (!cancelled) setLedgerFreshness("cached");
@@ -119,6 +127,7 @@ function ItineraryContent() {
       cancelled = true;
       window.removeEventListener("online", handleOnline);
       document.removeEventListener("visibilitychange", handleVisibility);
+      if (retryTimer) window.clearTimeout(retryTimer);
       Promise.resolve(syncPromise).finally(() => closeOfflineLedger(context));
     };
   }, []);

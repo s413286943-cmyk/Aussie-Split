@@ -445,6 +445,8 @@ describe("TripLedger durable outbox contract", () => {
     assert.match(tripLedgerSource, /addEventListener\("online"/);
     assert.match(tripLedgerSource, /addEventListener\("visibilitychange"/);
     assert.match(tripLedgerSource, /document\.visibilityState === "visible"/);
+    assert.match(tripLedgerSource, /lease_unavailable/);
+    assert.match(tripLedgerSource, /setTimeout\([^)]*requestLedgerSync/s);
   });
 
   it("opens the durable local ledger before enabling actions, then refreshes online", () => {

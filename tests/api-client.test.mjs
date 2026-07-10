@@ -186,6 +186,8 @@ describe("protected browser integration contract", () => {
     assert.match(itinerarySource, /initializeOfflineLedger/);
     assert.match(itinerarySource, /syncOfflineLedger/);
     assert.match(itinerarySource, /closeOfflineLedger/);
+    assert.match(itinerarySource, /lease_unavailable/);
+    assert.match(itinerarySource, /setTimeout\([^)]*syncLedger/s);
     assert.doesNotMatch(itinerarySource, /aussie-chill-expenses-v1|fetchLedgerSnapshot/);
     assert.doesNotMatch(itinerarySource, /supabaseRest|fetchRemote/);
   });
