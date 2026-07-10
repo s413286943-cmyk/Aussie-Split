@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Aussie Chill",
   description: "澳洲旅行两对夫妻行程与 split bill 账本",
+  applicationName: "Aussie Chill",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Aussie Chill",
+  },
 };
 
 export default function RootLayout({
@@ -13,7 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body>{children}</body>
+      <body>
+        {children}
+        <ServiceWorkerRegistration />
+      </body>
     </html>
   );
 }
