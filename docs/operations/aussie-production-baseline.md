@@ -7,6 +7,7 @@ Recorded on 2026-07-10 before reliability hardening.
 - Production alias: `https://aussie-split.vercel.app`
 - Verified Vercel deployment: `dpl_7tWP5SfbybJvRHadS6TM1vGB8roj`
 - Tombstone-aware bridge deployment: `dpl_DpLybLYhvNtb3DzYpHUha43RTn5h`
+- Current compatible bridge deployment: `dpl_J6g3jtS15zY7ACkcJGBKaouW4FyC`
 - Supabase project ref: `ycbkpkqrucukyyfjphiu`
 - Local safety branch: `codex/aussie-reliability-hardening`
 - Local safety commit: `ecf6db8d220108bb79edb799ff8f2fd6e4d150ff`
@@ -14,7 +15,7 @@ Recorded on 2026-07-10 before reliability hardening.
 
 The safety commit preserves the exact working tree that passed the baseline checks. It must remain available until the protected production deployment, database migration, offline replay, and rollback rehearsal are all verified.
 
-The bridge deployment was built with the production environment and aliased on 2026-07-10 before compatibility DDL. It is the browser rollback target while legacy public grants remain available.
+The bridge deployment was built with the production environment and aliased on 2026-07-10 before compatibility DDL. The current compatible build keeps that rollback path and excludes `已分摊` expenses from the current settlement balance while retaining historical confirmed totals.
 
 ## Live Data Snapshot
 
@@ -78,7 +79,8 @@ The compatibility migration is expected to remove the two index notices while le
 ## Compatibility Migration Checkpoint
 
 - Applied migration: `20260710080657_shared_ledger_compatibility`
-- Active bridge deployment: `dpl_DpLybLYhvNtb3DzYpHUha43RTn5h`
+- Active bridge deployment: `dpl_J6g3jtS15zY7ACkcJGBKaouW4FyC`
+- Pre-settlement-fix bridge rollback: `dpl_DpLybLYhvNtb3DzYpHUha43RTn5h`
 - Post-migration live expenses: 13 of 13 rows
 - Post-migration activity entries: 19
 - Post-migration attachments: 0
