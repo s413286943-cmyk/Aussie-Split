@@ -13,26 +13,29 @@
 ## Delivery Order And Rollback Boundary
 
 1. Preserve and reconcile the current code state without changing production behavior.
-2. Ship authenticated server APIs while the old direct client path still works.
-3. Switch the browser to the server API and verify production reads/writes.
-4. Back up Supabase, enable RLS, revoke browser roles, and verify direct anonymous access is denied.
-5. Add offline storage, receipts, itinerary data fixes, travel mode, and maintenance changes in independently testable commits.
+2. Back up public tables and Storage metadata, pre-deploy a schema-detecting bridge client, then apply an additive compatibility migration with atomic legacy-write protection.
+3. Ship authenticated server APIs and switch the browser to them while old table grants remain available for instant rollback.
+4. Add IndexedDB/outbox and direct signed receipt upload, then verify those complete paths on preview and production.
+5. Re-export live data, apply a separate RLS/grant lockdown migration, and verify direct anonymous table and Storage access is denied.
+6. Complete itinerary data fixes, travel mode, maintenance work, and rollback rehearsal in independently testable commits.
 
-The production database migration is not run until the compatible server API is deployed and verified. The pre-migration data export and rollback SQL remain outside Git in `.backups/`.
+Rollback SQL is reviewed and committed in Git. Only live data and Storage inventory exports remain outside Git in `.backups/`. The lockdown migration is never run until the additive migration, protected API, offline replay, and signed receipt flow are deployed and verified against production.
 
 ## File Responsibilities
 
-- `src/lib/server/session.ts`: sign and verify the HttpOnly shared-trip session cookie.
-- `src/lib/server/supabase.ts`: server-only Data API and Storage requests using `SUPABASE_SERVICE_ROLE_KEY`.
-- `src/lib/server/http.ts`: authenticated JSON response and input helpers shared by Route Handlers.
+- `src/lib/server/session.js`: sign and verify the HttpOnly shared-trip session cookie.
+- `src/lib/server/supabase.js`: server-only Data API and Storage requests using `SUPABASE_SERVICE_ROLE_KEY`.
+- `src/lib/server/http.js`: authenticated JSON, same-origin mutation, and no-store helpers shared by Route Handlers.
+- `src/lib/server/rateLimit.js`: hash the source address and consume/reset the durable access-attempt limit.
 - `src/app/api/access/route.ts`: create, inspect, and clear the access session.
 - `src/app/api/sync/route.ts`: return a complete snapshot and atomically apply idempotent client operations.
 - `src/app/api/activity/route.ts`: read full activity history for the dedicated page.
-- `src/app/api/receipts/route.ts`: upload a private receipt after an expense exists.
-- `src/app/api/receipts/[expenseId]/route.ts`: create a short-lived private receipt URL.
+- `src/app/api/receipts/upload-url/route.ts`: issue a short-lived, stable-path signed upload token.
+- `src/app/api/receipts/finalize/route.ts`: verify and idempotently attach an uploaded object.
+- `src/app/api/receipts/[expenseId]/route.ts`: create a short-lived private download URL.
 - `src/lib/apiClient.js`: the only browser-to-server ledger transport.
-- `src/lib/offlineDb.js`: IndexedDB schema, localStorage migration, snapshots, outbox, and receipt blobs.
-- `src/lib/syncEngine.js`: merge remote snapshots, replay pending operations, and derive sync labels.
+- `src/lib/offlineDb.js`: IndexedDB schema, localStorage migration, atomic snapshots, serialized outbox leases, and receipt blobs.
+- `src/lib/syncEngine.js`: generate monotonic mutation versions, merge remote snapshots, drain pending operations, and derive sync labels.
 - `src/lib/expenseValidation.js`: amount validation and duplicate warnings used by add and edit flows.
 - `src/lib/backup.js`: JSON export validation and non-destructive backup merge.
 - `src/components/ledger/*`: focused ledger shell, expense list, activity, add form, and backup controls.
@@ -40,8 +43,9 @@ The production database migration is not run until the compatible server API is 
 - `public/sw.js`: app-shell and runtime cache; API requests remain network-only.
 - `src/components/ServiceWorkerRegistration.tsx`: register the service worker after first render.
 - `src/app/manifest.ts`: install metadata and standalone display settings.
-- `supabase/migrations/*_secure_shared_ledger.sql`: schema, idempotent operation RPC, indexes, RLS, and grants.
-- `supabase/rollback/*_secure_shared_ledger.sql`: explicit rollback for the security migration.
+- `supabase/migrations/*_shared_ledger_compatibility.sql`: private internal schema, additive version/tombstone columns, canonical attachment metadata, backfill, idempotent operation RPC, throttling RPC, uniqueness, and indexes without changing legacy table grants.
+- `supabase/migrations/*_lock_down_shared_ledger.sql`: RLS, minimum grants, default privilege changes, and Storage policy cleanup.
+- `supabase/rollback/restore_legacy_shared_access.sql`: emergency compatibility policies that keep tombstones hidden; it does not drop data columns.
 - `scripts/import-itinerary.mjs`: require and resolve explicit daily operation fields from Excel.
 - `scripts/export-ledger-snapshot.mjs`: validate a server export and write the dated workbook ledger snapshot input.
 - `content/aussie-itinerary.xlsx`: authoritative itinerary content and explicit daily resource references.
@@ -56,15 +60,15 @@ The production database migration is not run until the compatible server API is 
 - Create: `.nvmrc`
 - Create: `docs/operations/aussie-production-baseline.md`
 
-- [ ] **Step 1: Record the verified baseline**
+- [x] **Step 1: Record the verified baseline**
 
 Document the current production URL, Supabase project ref, Vercel deployment id, local safety commit, row counts, totals by currency, and the commands used to verify the baseline. Do not include any API key or session token.
 
-- [ ] **Step 2: Reconcile Git ancestry without dropping either tree**
+- [x] **Step 2: Reconcile Git ancestry without dropping either tree**
 
 Run `git fetch origin`, compare `git cherry -v origin/main` and `git diff --stat origin/main`, and merge `origin/main` only after confirming every remote-only feature is represented in the preserved tree. Resolve conflicts in favor of the verified production baseline plus any genuinely missing remote change; never reset or force-push.
 
-- [ ] **Step 3: Pin the supported runtime and project root**
+- [x] **Step 3: Pin the supported runtime and project root**
 
 Create `.nvmrc` containing `22` and set:
 
@@ -79,16 +83,77 @@ const nextConfig = {
 };
 ```
 
-- [ ] **Step 4: Verify and commit the baseline**
+- [x] **Step 4: Verify and commit the baseline**
 
 Run `npm test`, `npm run lint`, and `npm run build`. Expected: 46 existing tests pass, lint exits 0, build exits 0, and the multiple-lockfile warning is absent. Commit as `chore: establish reliability hardening baseline`.
 
-### Task 2: Add Server-Side Access And Protected APIs
+### Task 2: Add The Compatibility Schema And Ordered Mutation Contract
 
 **Files:**
-- Create: `src/lib/server/session.ts`
-- Create: `src/lib/server/supabase.ts`
-- Create: `src/lib/server/http.ts`
+- Create: `supabase/migrations/<generated>_shared_ledger_compatibility.sql`
+- Create: `supabase/rollback/remove_shared_ledger_compatibility.sql`
+- Create: `src/lib/mutationVersion.js`
+- Modify: `supabase/schema.sql`
+- Modify: `src/lib/supabaseRest.js`
+- Modify: `src/components/TripLedgerApp.jsx`
+- Test: `tests/database-contract.test.mjs`
+- Test: `tests/mutation-version.test.mjs`
+- Test: `tests/sync.test.mjs`
+- Create outside Git: `.backups/<timestamp>/tables/*.json`
+- Create outside Git: `.backups/<timestamp>/storage/*.json`
+
+- [ ] **Step 1: Write failing mutation-version tests**
+
+Use fixed-width versions shaped as `<13-digit millis>-<6-digit counter>-<client id>`. Test that `nextMutationVersion` is strictly greater than the highest locally generated or remotely observed version even when the device clock moves backward, and that the client id deterministically breaks same-time ties. Legacy rows without a version receive a valid migration version rather than being rejected.
+
+- [ ] **Step 2: Implement the pure version helper**
+
+Create `src/lib/mutationVersion.js` with:
+
+```js
+export function parseMutationVersion(value) {}
+export function compareMutationVersions(left, right) {}
+export function nextMutationVersion({ previous = "", observed = "", now = Date.now(), clientId }) {}
+export function legacyMutationVersion({ createdAt, index, clientId = "legacy" }) {}
+```
+
+The implementation rejects malformed new-operation versions, but the migration helper assigns versions to existing local rows.
+
+- [ ] **Step 3: Write the failing compatibility migration contract test**
+
+Assert the additive migration adds `updated_at`, `deleted_at`, and `mutation_version` to expenses; backfills every expense; extends canonical `attachments` with `receipt_id`, original name, MIME, size, finalized/deleted timestamps, and unique receipt/path constraints; creates private-schema `expense_operations`, `access_attempts`, and `ledger_settings`; adds indexes on `attachments.expense_id` and `members.trip_id`; and defines public service-only RPCs plus private trigger functions. It must not change RLS/grants on legacy application tables or drop a column. It must create non-exposed `app_private`, revoke schema/table access from `PUBLIC`, `anon`, and `authenticated`, enable RLS on its tables, and grant only minimum service-role access.
+
+- [ ] **Step 4: Generate and implement the additive migration**
+
+Create the file with `supabase migration new shared_ledger_compatibility`. Private `app_private.enforce_expense_mutation` and `app_private.convert_legacy_expense_delete` trigger functions are owned by `postgres`, use `SECURITY DEFINER`, fully qualify every object, have a fixed `pg_catalog, public, app_private` search path, and revoke execution from all client roles. This limited definer boundary lets anonymous bridge writes read locked settings and convert DELETE without exposing a callable privileged function. The insert/update trigger atomically rejects incoming versions less than or equal to the stored version and rejects physical timestamps over five minutes ahead of database time. While `app_private.ledger_settings.legacy_writes_enabled=true`, a write that omitted the version receives a server-generated version; after bridge verification it raises `stale_or_unversioned_mutation`. The delete trigger converts legacy physical deletes to versioned tombstones while enabled and rejects them afterward. Public `apply_expense_operation` inserts the `opId`; duplicates return immediately; otherwise it applies through the same trigger contract and records activity only for an applied mutation. Public RPCs are `SECURITY INVOKER`, fixed-search-path, and service-role-only.
+
+- [ ] **Step 5: Implement durable login throttling in SQL**
+
+`consume_access_attempt(address_hash)` allows five failures per 15-minute window, returns the remaining attempts and `blocked_until`, and never stores a raw IP. `reset_access_attempt(address_hash)` removes the successful source entry. Both functions are service-role-only.
+
+- [ ] **Step 6: Back up live table and Storage state**
+
+Export all five public tables, their definitions/grants, `storage.buckets` configuration, `storage.objects` inventory, and relevant `storage.objects` policies. Record row counts, object counts, currency totals, and SHA-256 hashes in the ignored backup manifest. Keep reviewed rollback SQL in Git.
+
+- [ ] **Step 7: Rehearse compatibility migration, rollback, and reapply**
+
+Run the actual migration, the compatibility rollback, and the migration again on a disposable local Postgres/Supabase database. Execute integration assertions as `anon` as well as `service_role`: anonymous bridge writes can pass the protected triggers but cannot read/alter private settings or preclaim operation ids; service RPCs can; stale versions fail. The rollback may remove service-only functions/tables in the disposable environment but is not the production emergency path. Expected after reapply: old seed rows remain, versions are populated, duplicate op ids are ignored, and older mutation versions are stale.
+
+- [ ] **Step 8: Commit and pre-deploy a feature-detecting bridge client**
+
+Update the direct Supabase adapter so it first detects whether the compatibility columns exist. Against the old schema it retains the baseline read/write behavior; against the new schema it fetches only `deleted_at=is.null`, maps/saves `mutation_version`, and soft-deletes with a newly allocated version. Assign a version to every add/edit/confirm/split/delete before localStorage and remote writes. Commit and deploy this build before DDL, then verify it still works against the old schema.
+
+- [ ] **Step 9: Apply the additive migration and close legacy writes**
+
+Commit the reviewed SQL before applying it. Apply only the compatibility migration; the deployed bridge must detect and switch without redeploying. Verify add/edit/delete/Undo/reload, stale direct writes are rejected atomically, old physical deletes become tombstones, and row counts/totals remain correct. Set `legacy_writes_enabled=false`, verify an unrefreshed baseline client can no longer mutate, and record this bridge deployment as the emergency browser rollback while public grants exist. Run advisors and commit as `feat: add ordered ledger operations`.
+
+### Task 3: Add Server-Side Access And Protected APIs
+
+**Files:**
+- Create: `src/lib/server/session.js`
+- Create: `src/lib/server/supabase.js`
+- Create: `src/lib/server/http.js`
+- Create: `src/lib/server/rateLimit.js`
 - Create: `src/app/api/access/route.ts`
 - Create: `src/app/api/sync/route.ts`
 - Create: `src/app/api/activity/route.ts`
@@ -96,99 +161,45 @@ Run `npm test`, `npm run lint`, and `npm run build`. Expected: 46 existing tests
 - Modify: `src/components/UnlockGate.jsx`
 - Modify: `src/components/TripLedgerApp.jsx`
 - Modify: `src/components/ItineraryApp.jsx`
+- Modify: `src/lib/access.js`
+- Modify: `package.json`
+- Modify: `package-lock.json`
 - Test: `tests/session.test.mjs`
+- Test: `tests/http-security.test.mjs`
 - Test: `tests/api-client.test.mjs`
 - Test: `tests/server-supabase.test.mjs`
 
-- [ ] **Step 1: Write failing session tests**
+- [ ] **Step 1: Write failing session and request-security tests**
 
-Test that a token created for the configured trip verifies, a changed payload or signature fails, an expired token fails, and comparison of the submitted trip code is constant-time. The public interface is:
+Test valid, changed, and expired HMAC sessions; constant-time trip-code comparison; no configured-code fallback in production; same-origin mutation acceptance; cross-origin and `Sec-Fetch-Site: cross-site` rejection; and `Cache-Control: private, no-store` on every access/data response.
 
-```ts
-export function createSessionToken(now?: Date): string;
-export function verifySessionToken(token: string, now?: Date): boolean;
-export function matchesTripCode(candidate: string): boolean;
-export const sessionCookieName = "aussie_chill_session";
-```
+- [ ] **Step 2: Implement the signed session and server boundary**
 
-Run `node --test tests/session.test.mjs`. Expected: FAIL because the module does not exist.
+Pin the `server-only` package and import it from every file that can read `TRIP_CODE`, `SESSION_SECRET`, `SUPABASE_URL`, or `SUPABASE_SERVICE_ROLE_KEY`. Use HMAC-SHA256, a 30-day expiry, `crypto.timingSafeEqual`, and no public default code. The cookie is `HttpOnly`, `Secure` in production, `SameSite=Lax`, `Path=/`, and has `Max-Age=2592000`.
 
-- [ ] **Step 2: Implement the minimal signed session**
+- [ ] **Step 3: Connect the access route to durable throttling**
 
-Use HMAC-SHA256 with `SESSION_SECRET`, a 30-day expiry, `crypto.timingSafeEqual`, and server-only `TRIP_CODE`. The POST access route accepts `{ code }`, sets `HttpOnly`, `Secure` in production, `SameSite=Lax`, `Path=/`, and `Max-Age=2592000`; GET returns `{ authenticated }`; DELETE expires the cookie. Never return the configured code or token body.
+Hash the trusted source address with HMAC before calling `consume_access_attempt`. Check the limit before comparing the code, reset on success, and return one generic invalid/blocked response without revealing which check failed. POST and DELETE require same-origin metadata; GET only reports `{ authenticated }`. All three methods are no-store.
 
-- [ ] **Step 3: Write failing server transport tests**
+- [ ] **Step 4: Write failing server transport tests**
 
-Verify the server transport sends both `apikey` and `Authorization: Bearer <service role>` only from server code, maps snake_case rows including `updated_at`, `deleted_at`, `attachment_name`, and `attachment_path`, caps activity queries at 100, and throws a typed error containing the upstream status without leaking response secrets.
+Verify the server transport sends `apikey` and `Authorization: Bearer <service role>` only from server code, maps `mutation_version`, `updated_at`, and `deleted_at`, joins canonical attachment rows into read-only `attachmentName`/`attachmentPath` projections, drains operation batches through the RPC, caps activity at 100, and throws a typed upstream error without leaking response secrets.
 
-- [ ] **Step 4: Implement server-only Supabase transport**
+- [ ] **Step 5: Implement the server transport and authenticated routes**
 
-Expose these functions:
+Expose `fetchLedgerSnapshot`, `applyExpenseOperations`, and `fetchActivity`. Every route verifies the session before reading a body. `/api/sync` GET returns all current rows including tombstones plus activity and server time; POST accepts at most 100 validated operations and returns per-op status plus a fresh snapshot. `/api/activity?limit=50` clamps to 1-100.
 
-```ts
-export async function fetchLedgerSnapshot(): Promise<LedgerSnapshot>;
-export async function applyExpenseOperations(operations: ExpenseOperation[]): Promise<SyncResult>;
-export async function fetchActivity(limit: number): Promise<ActivityEntry[]>;
-export async function uploadReceipt(expenseId: string, file: File): Promise<ReceiptRecord>;
-export async function createReceiptUrl(expenseId: string): Promise<string>;
-```
+- [ ] **Step 6: Write failing browser API client tests**
 
-Reject missing `SUPABASE_URL` or `SUPABASE_SERVICE_ROLE_KEY` at call time with a server configuration error. Do not import this module from a client component.
+Test relative `/api/*` URLs, credentials, 401 as `AccessRequiredError`, same-origin JSON mutations, and zero browser references to Supabase keys or direct Data/Storage endpoints.
 
-- [ ] **Step 5: Write failing browser API client tests**
+- [ ] **Step 7: Switch unlock and data reads to the protected API**
 
-Test that browser calls use only relative `/api/*` URLs, include credentials, preserve 401 as `AccessRequiredError`, and never reference `NEXT_PUBLIC_SUPABASE_URL` or `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+`UnlockGate` checks GET `/api/access`; successful unlock stores only `aussie-chill-offline-access-v1=yes` for later offline reopening. Online 401 returns to the unlock form. Delete the public code comparison and placeholder. Both apps use `apiClient`; the existing local cache remains during this compatibility release.
 
-- [ ] **Step 6: Implement authenticated Route Handlers and browser client**
+- [ ] **Step 8: Deploy the compatible protected path**
 
-Every data route calls `verifySessionToken` before reading its body. `/api/sync` GET returns `{ expenses, activity, serverTime }`; POST accepts at most 100 validated operations and returns `{ acknowledgedOperationIds, expenses, activity, serverTime }`. `/api/activity?limit=50` clamps limit to 1-100.
-
-- [ ] **Step 7: Switch unlock and reads to the server session**
-
-`UnlockGate` first checks GET `/api/access`; successful unlock stores only an `aussie-chill-offline-access-v1=yes` device marker for offline reopening. Online 401 always returns to the unlock form. Replace direct Supabase imports in both apps with `apiClient` calls while retaining the existing local cache for this compatibility deployment.
-
-- [ ] **Step 8: Verify and commit**
-
-Run the three new test files, the full test suite, lint, and build. Search `src` for `NEXT_PUBLIC_SUPABASE` and direct `/rest/v1/` or `/storage/v1/` calls; expected matches: zero in client code. Commit as `feat: protect ledger behind server access`.
-
-### Task 3: Add Idempotent Database Operations And Lock Down Supabase
-
-**Files:**
-- Create: `supabase/migrations/<generated>_secure_shared_ledger.sql`
-- Create: `supabase/rollback/secure_shared_ledger.sql`
-- Modify: `supabase/schema.sql`
-- Test: `tests/database-contract.test.mjs`
-- Create outside Git: `.backups/<timestamp>/expenses.json`
-- Create outside Git: `.backups/<timestamp>/expense_activity.json`
-- Create outside Git: `.backups/<timestamp>/schema-summary.json`
-
-- [ ] **Step 1: Write the database contract test**
-
-The test reads the migration SQL and asserts it adds `updated_at`, `deleted_at`, and `attachment_path`; creates `expense_operations(op_id text primary key, created_at timestamptz)`; creates indexes on `attachments.expense_id` and `members.trip_id`; defines `apply_expense_operation`; enables RLS on all five existing public tables plus `expense_operations`; revokes all table privileges from `anon` and `authenticated`; explicitly grants the required privileges to `service_role`; and revokes function execution from `public`, `anon`, and `authenticated`.
-
-- [ ] **Step 2: Generate and implement the migration**
-
-Create the migration with `supabase migration new secure_shared_ledger`. The operation function accepts one JSON operation, inserts `opId` with `ON CONFLICT DO NOTHING`, and in the same transaction either upserts a newer expense or sets `deleted_at`; it inserts activity with `ON CONFLICT DO NOTHING`. It is `SECURITY INVOKER`, has a fixed `search_path`, and is executable only by `service_role`.
-
-- [ ] **Step 3: Add rollback SQL**
-
-Rollback restores grants required by the old direct browser client, disables RLS on the affected tables, drops only the new function/table/indexes/columns, and leaves all expense and activity rows intact. The rollback file starts with a warning that it reopens anonymous access and is emergency-only.
-
-- [ ] **Step 4: Stage the compatible server deployment**
-
-Set server-only Vercel variables `TRIP_CODE`, `SESSION_SECRET`, `SUPABASE_URL`, and `SUPABASE_SERVICE_ROLE_KEY`; deploy the API-compatible build; verify unlock, GET sync, add/edit/split/delete/undo, activity, and itinerary reads on the preview URL. The public Supabase variables may remain temporarily for rollback but must be unused by the shipped client.
-
-- [ ] **Step 5: Back up live data before DDL**
-
-Export all rows from `trips`, `members`, `expenses`, `expense_activity`, and `attachments`, plus table definitions and current grants, into the timestamped ignored backup directory. Record row counts and SHA-256 hashes in `manifest.json`.
-
-- [ ] **Step 6: Apply and verify the production migration**
-
-Apply the reviewed migration through Supabase migration tooling. Run Security Advisor and Performance Advisor. As `anon`, SELECT/INSERT/UPDATE/DELETE must fail; through the deployed authenticated `/api/sync`, all operations must succeed. Verify the original row counts and currency totals are unchanged.
-
-- [ ] **Step 7: Remove obsolete public variables and commit**
-
-Remove `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `NEXT_PUBLIC_TRIP_CODE` from production after the protected path is verified. Commit migration and code as `feat: lock down shared ledger data`.
+Set `TRIP_CODE`, `SESSION_SECRET`, `SUPABASE_URL`, and `SUPABASE_SERVICE_ROLE_KEY` as server-only Vercel variables. Commit the exact build, deploy preview, then production while legacy grants and public Supabase variables remain available for instant rollback to the tombstone-aware bridge release. Verify access throttle, unlock, GET sync, add/edit/split/delete/undo, activity, and itinerary reads through the server API. Commit as `feat: protect ledger behind server access`.
 
 ### Task 4: Build IndexedDB, Outbox, And Offline App Shell
 
@@ -215,13 +226,14 @@ Use operations shaped as:
   opId: "op-uuid",
   type: "upsert" | "delete",
   expenseId: "expense-id",
-  expense: null | { id: "expense-id", updatedAt: "ISO", deletedAt: null },
+  mutationVersion: "1780000000000-000001-device-id",
+  expense: null | { id: "expense-id", mutationVersion: "1780000000000-000001-device-id", deletedAt: null },
   activity: { id: "activity-id", expenseId: "expense-id", createdAt: "ISO" },
   createdAt: "ISO"
 }
 ```
 
-Test last-write-wins by `updatedAt`, tombstones hiding deleted rows, pending local operations being reapplied after a remote snapshot, duplicate `opId` acknowledgement being harmless, and activity deduplication by id.
+Test last-write-wins by `mutationVersion`, tombstones hiding deleted rows, pending local operations being reapplied after a remote snapshot, duplicate `opId` acknowledgement being harmless, synchronized-delete Undo generating a strictly newer version, and activity deduplication by id.
 
 - [ ] **Step 2: Implement pure operation and sync functions**
 
@@ -229,15 +241,15 @@ Expose `createUpsertOperation`, `createDeleteOperation`, `mergeRemoteSnapshot`, 
 
 - [ ] **Step 3: Write failing IndexedDB tests**
 
-Test versioned stores `expenses`, `activity`, `outbox`, `receiptBlobs`, and `meta`; atomic local operation + outbox writes; acknowledgement removal; localStorage migration only once; and retention of pending data across a database reopen.
+Test versioned stores `expenses`, `activity`, `outbox`, `receiptBlobs`, and `meta`; one transaction atomically allocates/persists the HLC high-water mark plus the local mutation and outbox row; acknowledgement removal; localStorage migration only once; lease fencing across two simulated tabs; and retention of pending data across a database reopen.
 
 - [ ] **Step 4: Implement native IndexedDB persistence**
 
-Use one database named `aussie-chill-v2`, version 1. Keep all write transactions small and await `transaction.oncomplete`. Migrate existing `aussie-chill-expenses-v1` and `aussie-chill-activity-v1` into the new stores, set `meta.localStorageMigrated=true`, and do not delete the old keys until a successful remote sync.
+Use one database named `aussie-chill-v2`, version 1. Keep all write transactions small and await `transaction.oncomplete`. Migrate existing `aussie-chill-expenses-v1` and `aussie-chill-activity-v1` into the new stores, assign legacy mutation versions in source order, set `meta.localStorageMigrated=true`, and do not delete the old keys until a successful remote sync. Reject remote physical components more than five minutes ahead of authenticated server time so a corrupt/future version cannot freeze later edits.
 
 - [ ] **Step 5: Integrate the outbox into the ledger**
 
-Every add/edit/confirm/split/delete writes local state and one operation before updating React state. Undo removes the pending delete operation when it has not synced; if the delete already synced, Undo enqueues a new upsert. Flush on initial online load, `online`, and visible-tab events. Sync state is derived as `已同步`, `已本机保存，待同步（N）`, `正在同步`, or `同步失败，可重试`.
+Every add/edit/confirm/split/delete writes local state and one operation before updating React state. Undo removes the pending delete operation when it has not synced; if the delete already synced, Undo creates a strictly newer mutation version and enqueues a new upsert. A renewable lease with monotonically increasing fence number in the IndexedDB `meta` store permits only one tab to flush; expired leases recover after a crash, and a response is committed only if owner and fence still match. Flush on initial online load, `online`, and visible-tab events, drain every 100-operation batch until empty, and atomically store each response snapshot plus acknowledgements before continuing. Sync state is derived as `已同步`, `已本机保存，待同步（N）`, `正在同步`, or `同步失败，可重试`.
 
 - [ ] **Step 6: Add the service worker and install manifest**
 
@@ -250,35 +262,46 @@ With Playwright: unlock online, visit every route once, go offline, reload `/iti
 ### Task 5: Implement Real Private Receipts
 
 **Files:**
-- Create: `src/app/api/receipts/route.ts`
+- Create: `src/app/api/receipts/upload-url/route.ts`
+- Create: `src/app/api/receipts/finalize/route.ts`
 - Create: `src/app/api/receipts/[expenseId]/route.ts`
 - Create: `src/components/ledger/ReceiptLink.jsx`
-- Modify: `src/lib/server/supabase.ts`
+- Modify: `src/lib/server/supabase.js`
 - Modify: `src/lib/offlineDb.js`
 - Modify: `src/lib/syncEngine.js`
 - Modify: `src/components/TripLedgerApp.jsx`
+- Modify: `package.json`
+- Modify: `package-lock.json`
 - Test: `tests/receipt.test.mjs`
 - Test: `e2e/receipt.spec.ts`
 
 - [ ] **Step 1: Write failing receipt validation tests**
 
-Accept JPEG, PNG, HEIC, and WebP up to 10 MB; reject other types, empty files, missing expense ids, and path traversal. Build storage paths as `<expenseId>/<uuid>-<sanitized-name>`.
+Accept JPEG, PNG, HEIC, and WebP up to 10 MB; reject other types, empty files, missing expense/receipt ids, and path traversal. Build one stable path as `<expenseId>/<receiptId>-<sanitized-name>` so retries cannot create duplicate objects.
 
-- [ ] **Step 2: Implement authenticated upload and signed read routes**
+- [ ] **Step 2: Issue authenticated signed upload tokens**
 
-POST uploads to the private `receipts` bucket with the service role, inserts an attachment row, and updates the expense attachment fields. GET resolves the attachment for the expense and returns a signed URL valid for 300 seconds. Expense delete removes its stored objects before soft-deleting the row.
+The upload-url route verifies the session, same origin, file metadata, and expense existence, then creates a Supabase signed upload token for the stable path. Configure the private bucket itself with the same MIME allowlist and 10 MB size cap. The browser uploads directly to Supabase Storage, so the file body never crosses the Vercel 4.5 MB request/response boundary. Pin and dynamically load `tus-js-client`; use Supabase's signed resumable upload flow for files above 6 MB and the same signed path/token flow for smaller files.
 
-- [ ] **Step 3: Queue receipt blobs offline**
+- [ ] **Step 3: Finalize idempotently and sign private reads**
+
+The finalize route verifies the object exists, matches expected size/type, and belongs to an active expense, then upserts one canonical attachment by `receipt_id` and `storage_path`. It never updates the expense row or its mutation version, so finalization cannot stale or overwrite a concurrent ledger edit. Snapshot reads derive attachment projections from this table. Repeating finalize returns the same record. GET resolves the attachment and returns a signed download URL valid for 300 seconds.
+
+- [ ] **Step 4: Queue receipt blobs offline**
 
 Store the file Blob and metadata in `receiptBlobs` under the expense id. After the expense upsert is acknowledged, upload the receipt, update the local expense with the returned attachment fields, and remove the Blob. A failed upload remains queued without changing the expense save result.
 
-- [ ] **Step 4: Replace the fake receipt tag with a usable control**
+- [ ] **Step 5: Preserve Undo and clean up later**
+
+Soft-deleting an expense does not remove its receipt. Undo therefore restores the same object and attachment. On authenticated sync, a bounded non-blocking cleanup removes finalized Storage objects and attachment rows only for tombstones older than seven days, and removes uploaded-but-never-finalized objects older than 24 hours. Retries are idempotent and never delete an active expense's object.
+
+- [ ] **Step 6: Replace the fake receipt tag with a usable control**
 
 Show `小票待上传` while queued, `查看小票` when remote, and no receipt tag otherwise. Opening a receipt requests a fresh signed URL and opens it in a new tab. Surface upload failure as `账单已保存，小票待重试`.
 
-- [ ] **Step 5: Verify and commit**
+- [ ] **Step 7: Verify and commit**
 
-Upload an image, reload, open it through the signed URL, confirm direct bucket URL fails, then delete and undo the expense. Commit as `feat: add private receipt evidence`.
+Upload small and 8-10 MB images, retry the same upload/finalize, reload, open through a signed URL, confirm unsigned direct bucket reads fail, then delete and undo the expense. Verify only one object/attachment exists and delayed cleanup excludes the restored row. Commit as `feat: add private receipt evidence`.
 
 ### Task 6: Make Itinerary Operations Explicit In Excel
 
@@ -379,6 +402,8 @@ Capture 1366x820, 599x913, and 390x844 screenshots of all routes. Verify no over
 - Create: `e2e/offline.spec.ts`
 - Create: `e2e/security.spec.ts`
 - Create: `e2e/backup.spec.ts`
+- Create: `supabase/migrations/<generated>_lock_down_shared_ledger.sql`
+- Create: `supabase/rollback/restore_legacy_shared_access.sql`
 - Modify: `src/lib/weather.js`
 - Modify: `package.json`
 - Modify: `package-lock.json`
@@ -392,7 +417,7 @@ Use the installed Chrome channel locally, start the app on an available port, an
 
 - [ ] **Step 2: Cover the complete story**
 
-Automate access denial/unlock/session persistence; add/edit/confirm/split/delete/undo; offline reload/reopen/reconnect; duplicate operation replay; receipt upload/read; pending filter; activity >8; backup export/import; D0-D16 map targets; and direct anonymous Supabase denial.
+Automate access denial/unlock/session persistence; add/edit/confirm/split/delete/undo; offline reload/reopen/reconnect; duplicate operation replay; receipt upload/read; pending filter; activity >8; backup export/import; and D0-D16 map targets. Keep separate `pre-lockdown` and `post-lockdown` projects: compatibility tests explicitly expect legacy anonymous access before migration, while direct anonymous Data/Storage denial assertions run only after lockdown.
 
 - [ ] **Step 3: Reduce weather requests**
 
@@ -406,26 +431,38 @@ Move focused components into the listed ledger/itinerary files and split CSS by 
 
 Use Node 22 LTS. Upgrade only compatible patch releases of Next/React/eslint config, inspect `npm audit --json`, and use a tested `overrides` entry for PostCSS only if the vulnerable version can be replaced without breaking Next. Never run `npm audit fix --force`.
 
-- [ ] **Step 6: Run full verification**
+- [ ] **Step 6: Deploy and verify the complete protected feature set before lockdown**
 
-Run `npm test`, `npm run lint`, `npm run build`, `npm run test:e2e`, `npm audit`, generated-JSON equality, Supabase advisors, direct-anon denial, authenticated production smoke tests, mobile/desktop screenshots, offline canvas/page checks, and a two-device sync test. Record exact counts and remaining advisories.
+Run unit/lint/build/E2E, commit the exact candidate, and deploy that commit's full server API, offline replay, signed receipts, itinerary data, and travel UI to preview, then production while legacy grants remain. Verify authenticated production reads/writes, offline replay, receipt upload/view, screenshots, and two-device sync. The tombstone-aware bridge deployment and public variables remain available for rollback.
 
-- [ ] **Step 7: Rehearse rollback**
+- [ ] **Step 7: Write and test the separate lockdown and emergency rollback**
 
-On a preview deployment, verify the prior safety commit can deploy, the database rollback script parses, and restoring the exported JSON reproduces the recorded row counts and totals. Do not execute the permission-opening rollback in production unless the protected API fails.
+The lockdown migration enables RLS on every public table, revokes existing and default table/function privileges from `PUBLIC`, `anon`, and `authenticated`, grants only required access to `service_role`, keeps the `receipts` bucket private, and removes any anonymous/authenticated `storage.objects` policy that can access it. The emergency rollback restores only bridge requirements: expense SELECT uses `deleted_at is null`, UPDATE uses `deleted_at is null` with a `WITH CHECK (true)` so the bridge can create a tombstone, INSERT has an explicit check, and physical DELETE remains ungranted. It never drops tombstone, version, attachment, or operation data. Run migration → rollback → reapply plus table and Storage access assertions on a disposable database.
 
-- [ ] **Step 8: Commit, push, and deploy production**
+- [ ] **Step 8: Back up production again and apply lockdown**
 
-Run final diff/secret checks, merge the implementation branch into the canonical GitHub history without force, deploy production, verify the alias `https://aussie-split.vercel.app`, and record the commit, deployment id, migration id, advisors, and rollback locations in the operations document. Commit as `release: harden Aussie Chill for travel`.
+Commit and push the reviewed migration/rollback before DDL. Re-export tables, grants, bucket configuration, object inventory, and policies with hashes. Apply the lockdown migration, run advisors, verify anonymous table reads/writes and unsigned/anonymous receipt access fail, then verify the authenticated API, signed uploads/downloads, offline reconnect, row counts, and currency totals still succeed.
+
+- [ ] **Step 9: Run final verification**
+
+Run `npm test`, `npm run lint`, `npm run build`, `npm run test:e2e`, `npm audit`, generated-JSON equality, Supabase advisors, direct-anon denial, authenticated production smoke tests, mobile/desktop screenshots, offline page checks, and a two-device sync test. Record exact counts and remaining advisories.
+
+- [ ] **Step 10: Commit, remove obsolete public configuration, and finish production delivery**
+
+Run final diff/secret checks, merge the implementation branch into the canonical GitHub history without force, remove `NEXT_PUBLIC_TRIP_CODE` immediately and remove public Supabase variables only after instant rollback to the prior compiled deployment is proven, verify the alias `https://aussie-split.vercel.app`, and record the commit, deployment id, both migration ids, advisors, backup hashes, and rollback locations in the operations document. Commit as `release: harden Aussie Chill for travel`.
 
 ## Self-Review Checklist
 
 - Every audit finding maps to one task above.
 - The browser never receives a database secret or the configured trip code.
-- Production RLS waits for a verified compatible server deployment.
+- Production RLS waits for the verified server API, offline replay, and signed receipt deployment.
+- Additive compatibility DDL and access lockdown are separate migrations.
+- Mutation ordering is deterministic across retries, clock rollback, and two devices.
+- Every mutation route is same-origin, no-store, throttled where appropriate, and server-only secrets never enter client bundles.
 - Offline mutations survive reload and reconnect without duplicates or resurrection.
 - Receipt labels only appear for real local-pending or remote files.
+- Receipt bodies upload directly with short-lived signatures and survive soft-delete Undo.
 - D0-D16 operational fields are explicit in Excel rather than inferred from prose.
 - Travel mode does not reintroduce Plan B.
 - Dashboard remains concise while full history and recovery stay accessible.
-- Tests, lint, build, browser QA, advisors, backups, and rollback are all fresh before release.
+- Tests, lint, build, browser QA, advisors, table/Storage backups, and migration-rollback-reapply evidence are all fresh before release.
