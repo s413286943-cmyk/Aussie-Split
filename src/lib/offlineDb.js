@@ -4,7 +4,11 @@ import {
   nextMutationVersion,
   parseMutationVersion,
 } from "./mutationVersion.js";
-import { parseIsoTimestamp } from "./operation.js";
+import {
+  createDeleteOperation,
+  createUpsertOperation,
+  parseIsoTimestamp,
+} from "./operation.js";
 
 const DATABASE_NAME = "aussie-chill-v2";
 const DATABASE_VERSION = 1;
@@ -54,7 +58,7 @@ export async function migrateLegacyLocalStorage(db, options) {
       const mutationVersion = validMutationVersion(expense?.mutationVersion)
         ? expense.mutationVersion
         : legacyMutationVersion({
-            createdAt: expense?.updatedAt ?? expense?.createdAt ?? options.now,
+            createdAt: expense?.updatedAt ?? expense?.createdAt,
             index,
             clientId: options.clientId,
           });
@@ -165,16 +169,22 @@ export async function commitLocalMutation(db, options) {
       updatedAt: timestamp,
       deletedAt: options.type === "delete" ? timestamp : null,
     };
-    const operation = {
-      opId: options.opId,
-      type: options.type,
-      expenseId: expense.id,
-      mutationVersion,
-      expense: options.type === "delete" ? null : expense,
-      ...(options.type === "delete" ? { beforeExpense: currentExpense ?? options.expense } : {}),
-      activity: options.activity,
-      createdAt,
-    };
+    const operation = options.type === "delete"
+      ? {
+          ...createDeleteOperation({
+            opId: options.opId,
+            expense,
+            activity: options.activity,
+            createdAt,
+          }),
+          beforeExpense: currentExpense ?? options.expense,
+        }
+      : createUpsertOperation({
+          opId: options.opId,
+          expense,
+          activity: options.activity,
+          createdAt,
+        });
 
     metaStore.put({ key: "mutationHighWater", value: mutationVersion });
     expenseStore.put(expense);
@@ -221,32 +231,98 @@ export async function countOutbox(db) {
   return count;
 }
 
-export async function undoPendingDelete(db, options) {
+export async function commitDeleteUndo(db, options) {
   assertNonemptyString(options?.deleteOpId, "delete operation id");
-  if (options.activityId !== undefined) assertNonemptyString(options.activityId, "activity id");
+  if (options?.expense !== undefined) assertRecordId(options.expense, "expense");
+  assertRecordId(options?.activity, "activity");
+  assertNonemptyString(options?.opId, "operation id");
+  if (options.deleteActivityId !== undefined) {
+    assertNonemptyString(options.deleteActivityId, "delete activity id");
+  }
 
-  const transaction = db.transaction(["expenses", "activity", "outbox"], "readwrite");
+  const now = options.now ?? Date.now();
+  const createdAt = isoTimestamp(now, "Undo mutation time");
+  const transaction = db.transaction(["expenses", "activity", "outbox", "meta"], "readwrite");
   const completed = transactionComplete(transaction);
 
   try {
     const outbox = transaction.objectStore("outbox");
-    const operation = await requestResult(outbox.get(options.deleteOpId));
-    if (operation?.type !== "delete") {
-      await completed;
-      return false;
+    const expenseStore = transaction.objectStore("expenses");
+    const metaStore = transaction.objectStore("meta");
+    const deleteOperation = await requestResult(outbox.get(options.deleteOpId));
+    const sourceExpense = options.expense ?? deleteOperation?.beforeExpense;
+    assertRecordId(sourceExpense, "expense");
+    if (options.activity.expenseId !== sourceExpense.id) {
+      throw new TypeError("Activity expense id does not match the Undo");
+    }
+    const [currentExpense, highWaterRecord] = await Promise.all([
+      requestResult(expenseStore.get(sourceExpense.id)),
+      requestResult(metaStore.get("mutationHighWater")),
+    ]);
+    if (deleteOperation && (
+      deleteOperation.type !== "delete"
+      || deleteOperation.expenseId !== sourceExpense.id
+    )) {
+      throw new TypeError("Undo expense does not match delete operation");
     }
 
-    const expense = options.expense ?? operation.beforeExpense;
-    assertRecordId(expense, "expense");
-    if (expense.mutationVersion) parseMutationVersion(expense.mutationVersion);
-    if (operation.expenseId !== expense.id) throw new TypeError("Undo expense does not match delete operation");
+    const observed = greatestMutationVersion([
+      highWaterRecord?.value,
+      currentExpense?.mutationVersion,
+      deleteOperation?.mutationVersion,
+      sourceExpense.mutationVersion,
+    ].filter(Boolean));
+    const mutationVersion = nextMutationVersion({
+      previous: highWaterRecord?.value ?? "",
+      observed,
+      now,
+      clientId: options.tabId ? `${options.clientId}-${options.tabId}` : options.clientId,
+    });
+    const baseExpense = currentExpense?.deletedAt == null
+      && currentExpense.mutationVersion
+      && (!sourceExpense.mutationVersion || (
+        compareMutationVersions(currentExpense.mutationVersion, sourceExpense.mutationVersion) > 0
+      ))
+      ? currentExpense
+      : sourceExpense;
+    const expense = {
+      ...baseExpense,
+      mutationVersion,
+      updatedAt: createdAt,
+      deletedAt: null,
+    };
+    const operation = createUpsertOperation({
+      opId: options.opId,
+      expense,
+      activity: {
+        ...options.activity,
+        item: expense.item,
+        amount: expense.amount,
+        currency: expense.currency,
+        createdAt,
+      },
+      createdAt,
+    });
+    const cancelledPendingDelete = deleteOperation?.type === "delete";
 
-    outbox.delete(options.deleteOpId);
-    transaction.objectStore("expenses").put(expense);
-    if (options.activityId) transaction.objectStore("activity").delete(options.activityId);
+    if (cancelledPendingDelete) {
+      outbox.delete(options.deleteOpId);
+      if (options.deleteActivityId) {
+        transaction.objectStore("activity").delete(options.deleteActivityId);
+      }
+    }
+    metaStore.put({ key: "mutationHighWater", value: mutationVersion });
+    expenseStore.put(expense);
+    transaction.objectStore("activity").put(operation.activity);
+    outbox.add(operation);
 
     await completed;
-    return true;
+    return {
+      cancelledPendingDelete,
+      expense,
+      activity: operation.activity,
+      operation,
+    };
   } catch (error) {
     abortTransaction(transaction);
     await completed.then(() => undefined, () => undefined);
@@ -348,6 +424,17 @@ export async function commitSyncResponse(db, options) {
     throw new TypeError("Invalid acknowledged operation ids");
   }
   for (const opId of options.acknowledgedOpIds) assertNonemptyString(opId, "acknowledged operation id");
+  const staleAcknowledgedOpIds = options.staleAcknowledgedOpIds ?? [];
+  if (!Array.isArray(staleAcknowledgedOpIds)) {
+    throw new TypeError("Invalid stale acknowledged operation ids");
+  }
+  for (const opId of staleAcknowledgedOpIds) {
+    assertNonemptyString(opId, "stale acknowledged operation id");
+  }
+  const acknowledgedSet = new Set(options.acknowledgedOpIds);
+  if (staleAcknowledgedOpIds.some((opId) => !acknowledgedSet.has(opId))) {
+    throw new TypeError("Stale acknowledgements must also be acknowledged");
+  }
   if (typeof options.mergeRemoteSnapshot !== "function") {
     throw new TypeError("Invalid remote snapshot merger");
   }
@@ -366,7 +453,12 @@ export async function commitSyncResponse(db, options) {
 
     const serverTime = assertRemoteSnapshot(options.snapshot);
     const outbox = transaction.objectStore("outbox");
-    for (const opId of new Set(options.acknowledgedOpIds)) outbox.delete(opId);
+    const staleActivityIds = new Set();
+    for (const opId of new Set(staleAcknowledgedOpIds)) {
+      const operation = await requestResult(outbox.get(opId));
+      if (operation?.activity?.id) staleActivityIds.add(operation.activity.id);
+    }
+    for (const opId of acknowledgedSet) outbox.delete(opId);
     const pendingOperations = await requestResult(outbox.getAll());
     const merged = options.mergeRemoteSnapshot(options.snapshot, pendingOperations);
     if (merged?.then || !merged || !Array.isArray(merged.expenses) || !Array.isArray(merged.activity)) {
@@ -383,10 +475,21 @@ export async function commitSyncResponse(db, options) {
     const expenseStore = transaction.objectStore("expenses");
     const activityStore = transaction.objectStore("activity");
     const existingActivity = await requestResult(activityStore.getAll());
-    const activityHistory = mergeActivityHistory(existingActivity, merged.activity);
+    const pendingActivityIds = new Set(
+      pendingOperations.map((operation) => operation?.activity?.id).filter(Boolean),
+    );
+    const activityHistory = mergeActivityHistory(
+      existingActivity.filter((entry) => (
+        !staleActivityIds.has(entry.id) || pendingActivityIds.has(entry.id)
+      )),
+      merged.activity,
+    );
 
     expenseStore.clear();
     for (const expense of merged.expenses) expenseStore.put(expense);
+    for (const activityId of staleActivityIds) {
+      if (!pendingActivityIds.has(activityId)) activityStore.delete(activityId);
+    }
     for (const activity of activityHistory) activityStore.put(activity);
     if (highWater) meta.put({ key: "mutationHighWater", value: highWater });
     meta.put({ key: "serverTime", value: serverTime });

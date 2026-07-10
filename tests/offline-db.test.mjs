@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
 
+import { parseExpenseOperationBatch } from "../src/lib/server/http.js";
 import { mergeRemoteSnapshot } from "../src/lib/syncEngine.js";
+import * as ledger from "../src/lib/ledger.js";
 
 const indexedDbApi = globalThis.indexedDB
   ? { indexedDB: globalThis.indexedDB }
@@ -100,8 +102,8 @@ describe("legacy localStorage migration", () => {
     const ledger = await offlineDb.loadOfflineLedger(db);
     assert.deepEqual(ledger.expenses, [
       expenses[0],
-      { ...expenses[1], mutationVersion: "1780000000000-000001-legacy-device", updatedAt: "2026-05-28T20:26:40.000Z" },
-      { ...expenses[2], mutationVersion: "1780000000000-000002-legacy-device", updatedAt: "2026-05-28T20:26:40.000Z" },
+      { ...expenses[1], mutationVersion: "0000000000000-000001-legacy-device", updatedAt: "1970-01-01T00:00:00.000Z" },
+      { ...expenses[2], mutationVersion: "0000000000000-000002-legacy-device", updatedAt: "1970-01-01T00:00:00.000Z" },
     ]);
     assert.deepEqual(ledger.activity.find(({ id }) => id === "activity-a"), activity[0]);
     assert.equal(ledger.activity.length, 3);
@@ -109,15 +111,39 @@ describe("legacy localStorage migration", () => {
     assert.deepEqual(
       (await offlineDb.getOutboxBatch(db)).map(({ expenseId, type }) => ({ expenseId, type })),
       [
-        { expenseId: "expense-a", type: "upsert" },
         { expenseId: "expense-b", type: "upsert" },
         { expenseId: "expense-c", type: "upsert" },
+        { expenseId: "expense-a", type: "upsert" },
       ],
     );
     assert.equal(ledger.meta.localStorageMigrated, true);
-    assert.equal(ledger.meta.mutationHighWater, "1780000000000-000002-legacy-device");
+    assert.equal(ledger.meta.mutationHighWater, preservedVersion);
     assert.equal(storage.getItem("aussie-chill-expenses-v1"), JSON.stringify(expenses));
     assert.equal(storage.getItem("aussie-chill-activity-v1"), JSON.stringify(activity));
+
+    const pending = await offlineDb.getOutboxBatch(db);
+    const merged = mergeRemoteSnapshot({
+      expenses: [
+        expenseFixture({
+          id: "expense-b",
+          item: "Remote lunch",
+          mutationVersion: version(-2_000, 0, "remote"),
+          updatedAt: timestamp(-2_000),
+        }),
+        expenseFixture({
+          id: "expense-c",
+          item: "Deleted remote dinner",
+          mutationVersion: version(-1_000, 0, "remote"),
+          updatedAt: timestamp(-1_000),
+          deletedAt: timestamp(-1_000),
+        }),
+      ],
+      activity: [],
+      serverTime,
+    }, pending);
+    assert.equal(merged.expenses.find(({ id }) => id === "expense-a").item, "早餐");
+    assert.equal(merged.expenses.find(({ id }) => id === "expense-b").item, "Remote lunch");
+    assert.notEqual(merged.expenses.find(({ id }) => id === "expense-c").deletedAt, null);
   });
 
   it("does not import legacy storage more than once", async () => {
@@ -168,31 +194,60 @@ describe("legacy localStorage migration", () => {
 });
 
 describe("atomic local mutations", () => {
+  it("carries a manual capture through IndexedDB and protected API validation", async () => {
+    assert.equal(typeof ledger.createCapturedExpense, "function");
+
+    const db = await openDatabase();
+    const expense = ledger.createCapturedExpense({
+      id: "",
+      category: "dining",
+      item: "Manual dinner",
+      date: "2026-08-01",
+      currency: "AUD",
+      amount: "42.50",
+      payer: "us",
+      status: "confirmed",
+      note: "",
+      attachmentName: "",
+      splitSettled: true,
+    }, { id: "expense-manual" });
+    const activity = {
+      id: "activity-manual",
+      expenseId: expense.id,
+      action: "add",
+      item: expense.item,
+      amount: expense.amount,
+      currency: expense.currency,
+      summary: "Added manual dinner",
+      createdAt: timestamp(-10_000),
+    };
+
+    await offlineDb.commitLocalMutation(db, {
+      type: "upsert",
+      expense,
+      activity,
+      clientId: "device-a",
+      tabId: "tab-a",
+      now: serverMillis - 10_000,
+      opId: "op-manual",
+      createdAt: activity.createdAt,
+    });
+
+    const operations = await offlineDb.getOutboxBatch(db);
+    assert.equal(operations[0].expense.splitSettled, false);
+    assert.doesNotThrow(() => parseExpenseOperationBatch({ operations }));
+  });
+
   it("persists a strictly versioned expense, activity, high-water mark, and complete operation", async () => {
     assert.equal(typeof offlineDb.commitLocalMutation, "function");
     assert.equal(typeof offlineDb.getOutboxOperation, "function");
 
     const db = await openDatabase();
-    const activity = {
-      id: "activity-a",
-      expenseId: "expense-a",
-      action: "add",
-      createdAt: "2026-05-28T20:26:40.000Z",
-    };
-    const committed = await offlineDb.commitLocalMutation(db, {
-      type: "upsert",
-      expense: { id: "expense-a", item: "早餐", amount: 20 },
-      activity,
-      clientId: "device-a",
-      tabId: "tab-a",
-      now: 1_780_000_000_000,
-      opId: "op-a",
-      createdAt: "2026-05-28T20:26:41.000Z",
-    });
+    const input = mutationInput();
+    const activity = input.activity;
+    const committed = await offlineDb.commitLocalMutation(db, input);
     const expectedExpense = {
-      id: "expense-a",
-      item: "早餐",
-      amount: 20,
+      ...input.expense,
       mutationVersion: "1780000000000-000000-device-a-tab-a",
       updatedAt: "2026-05-28T20:26:40.000Z",
       deletedAt: null,
@@ -231,6 +286,10 @@ describe("atomic local mutations", () => {
       id: "activity-delete",
       expenseId: "expense-a",
       action: "delete",
+      item: added.expense.item,
+      amount: added.expense.amount,
+      currency: added.expense.currency,
+      summary: "Deleted breakfast",
       createdAt: "2026-05-28T20:26:42.000Z",
     };
 
@@ -296,8 +355,8 @@ describe("outbox reads", () => {
 });
 
 describe("pending delete Undo", () => {
-  it("atomically restores a pending delete after the database is closed and reopened", async () => {
-    assert.equal(typeof offlineDb.undoPendingDelete, "function");
+  it("atomically restores a pending delete and queues its compensation after reopen", async () => {
+    assert.equal(typeof offlineDb.commitDeleteUndo, "function");
 
     const db = await openDatabase();
     const added = await offlineDb.commitLocalMutation(db, mutationInput({
@@ -312,6 +371,10 @@ describe("pending delete Undo", () => {
         id: "activity-delete",
         expenseId: "expense-a",
         action: "delete",
+        item: added.expense.item,
+        amount: added.expense.amount,
+        currency: added.expense.currency,
+        summary: "Deleted breakfast",
         createdAt: "2026-05-28T20:26:42.000Z",
       },
     });
@@ -320,21 +383,143 @@ describe("pending delete Undo", () => {
     openDatabases.delete(db);
     const reopened = await openDatabase();
 
-    assert.equal(await offlineDb.undoPendingDelete(reopened, {
+    const undoActivity = {
+      id: "activity-undo",
+      expenseId: "expense-a",
+      action: "edit",
+      item: added.expense.item,
+      amount: added.expense.amount,
+      currency: added.expense.currency,
+      summary: "Restored breakfast",
+      createdAt: "2026-05-28T20:26:43.000Z",
+    };
+    const restored = await offlineDb.commitDeleteUndo(reopened, {
       deleteOpId: "op-delete",
-      activityId: "activity-delete",
-    }), true);
+      deleteActivityId: "activity-delete",
+      expense: added.expense,
+      activity: undoActivity,
+      opId: "op-undo",
+      clientId: "device-a",
+      tabId: "tab-a",
+      now: 1_780_000_003_000,
+      createdAt: undoActivity.createdAt,
+    });
 
     const ledger = await offlineDb.loadOfflineLedger(reopened);
-    assert.deepEqual(ledger.expenses, [added.expense]);
-    assert.deepEqual(ledger.activity.map(({ id }) => id), ["activity-add"]);
-    assert.equal(ledger.outboxCount, 1);
-    assert.equal(ledger.meta.mutationHighWater, deleted.expense.mutationVersion);
+    assert.equal(restored.cancelledPendingDelete, true);
+    assert.equal(ledger.expenses[0].deletedAt, null);
+    assert.deepEqual(ledger.activity.map(({ id }) => id), ["activity-add", "activity-undo"]);
+    assert.equal(ledger.outboxCount, 2);
+    assert.equal(ledger.meta.mutationHighWater, restored.expense.mutationVersion);
     assert.equal(await offlineDb.getOutboxOperation(reopened, "op-delete"), undefined);
-    assert.equal(await offlineDb.undoPendingDelete(reopened, {
-      deleteOpId: "op-delete",
+    assert.equal((await offlineDb.getOutboxOperation(reopened, "op-undo")).type, "upsert");
+    assert.ok(restored.expense.mutationVersion > deleted.expense.mutationVersion);
+  });
+
+  it("rolls back the restore when the compensating operation cannot be written", async () => {
+    const db = await openDatabase();
+    const added = await offlineDb.commitLocalMutation(db, mutationInput({
+      opId: "op-add",
+      activityId: "activity-add",
+    }));
+    await offlineDb.commitLocalMutation(db, {
+      ...mutationInput({ opId: "op-delete", activityId: "activity-delete" }),
+      type: "delete",
       expense: added.expense,
-    }), false);
+      activity: {
+        id: "activity-delete",
+        expenseId: "expense-a",
+        action: "delete",
+        item: added.expense.item,
+        amount: added.expense.amount,
+        currency: added.expense.currency,
+        summary: "Deleted breakfast",
+        createdAt: "2026-05-28T20:26:42.000Z",
+      },
+    });
+
+    await assert.rejects(offlineDb.commitDeleteUndo(db, {
+      deleteOpId: "op-delete",
+      deleteActivityId: "activity-delete",
+      expense: added.expense,
+      activity: {
+        id: "activity-undo",
+        expenseId: "expense-a",
+        action: "edit",
+        item: added.expense.item,
+        amount: added.expense.amount,
+        currency: added.expense.currency,
+        summary: "Restored breakfast",
+        createdAt: "2026-05-28T20:26:43.000Z",
+      },
+      opId: "op-add",
+      clientId: "device-a",
+      tabId: "tab-a",
+      now: 1_780_000_003_000,
+      createdAt: "2026-05-28T20:26:43.000Z",
+    }));
+
+    const ledger = await offlineDb.loadOfflineLedger(db);
+    assert.notEqual(ledger.expenses[0].deletedAt, null);
+    assert.deepEqual(ledger.activity.map(({ id }) => id), ["activity-add", "activity-delete"]);
+    assert.equal(await offlineDb.getOutboxOperation(db, "op-delete").then(Boolean), true);
+    assert.equal(await offlineDb.getOutboxOperation(db, "op-undo"), undefined);
+  });
+
+  it("preserves a newer cross-tab edit when an older delete is undone", async () => {
+    const db = await openDatabase();
+    const added = await offlineDb.commitLocalMutation(db, mutationInput({
+      opId: "op-add",
+      activityId: "activity-add",
+    }));
+    await offlineDb.commitLocalMutation(db, {
+      ...mutationInput({ opId: "op-delete", activityId: "activity-delete" }),
+      type: "delete",
+      expense: added.expense,
+      activity: {
+        id: "activity-delete",
+        expenseId: "expense-a",
+        action: "delete",
+        item: added.expense.item,
+        amount: added.expense.amount,
+        currency: added.expense.currency,
+        summary: "Deleted breakfast",
+        createdAt: "2026-05-28T20:26:42.000Z",
+      },
+    });
+    const crossTab = await offlineDb.commitLocalMutation(db, {
+      ...completeMutationInput({
+        expenseId: "expense-a",
+        opId: "op-cross-tab",
+        activityId: "activity-cross-tab",
+        item: "Cross-tab brunch",
+      }),
+      now: 1_780_000_002_000,
+    });
+
+    const restored = await offlineDb.commitDeleteUndo(db, {
+      deleteOpId: "op-delete",
+      deleteActivityId: "activity-delete",
+      expense: added.expense,
+      activity: {
+        id: "activity-undo",
+        expenseId: "expense-a",
+        action: "edit",
+        item: added.expense.item,
+        amount: added.expense.amount,
+        currency: added.expense.currency,
+        summary: "Restored breakfast",
+        createdAt: "2026-05-28T20:26:43.000Z",
+      },
+      opId: "op-undo",
+      clientId: "device-a",
+      tabId: "tab-a",
+      now: 1_780_000_003_000,
+    });
+
+    assert.equal(restored.expense.item, crossTab.expense.item);
+    assert.equal(restored.activity.item, crossTab.expense.item);
+    assert.equal((await offlineDb.loadOfflineLedger(db)).expenses[0].item, "Cross-tab brunch");
   });
 });
 
@@ -391,6 +576,60 @@ describe("sync lease fencing", () => {
 });
 
 describe("sync response commits", () => {
+  it("drops only local activity for operations acknowledged as stale", async () => {
+    const db = await openDatabase();
+    const stale = await offlineDb.commitLocalMutation(
+      db,
+      completeMutationInput({ expenseId: "expense-a", opId: "op-stale", activityId: "activity-stale" }),
+    );
+    const pending = await offlineDb.commitLocalMutation(
+      db,
+      completeMutationInput({ expenseId: "expense-b", opId: "op-pending", activityId: "activity-pending" }),
+    );
+    const lease = await offlineDb.acquireSyncLease(db, {
+      owner: "tab-a",
+      now: serverMillis,
+      ttlMs: 30_000,
+    });
+    const remoteExpense = expenseFixture({
+      id: "expense-a",
+      item: "Newer remote dinner",
+      mutationVersion: version(-1_000, 0, "remote"),
+      updatedAt: timestamp(-1_000),
+    });
+    const remoteActivity = {
+      id: "activity-remote",
+      expenseId: "expense-a",
+      action: "edit",
+      item: remoteExpense.item,
+      amount: remoteExpense.amount,
+      currency: remoteExpense.currency,
+      summary: "Remote edit",
+      createdAt: timestamp(-1_000),
+    };
+
+    await offlineDb.commitSyncResponse(db, {
+      owner: "tab-a",
+      fence: lease.fence,
+      snapshot: {
+        expenses: [remoteExpense],
+        activity: [remoteActivity],
+        serverTime,
+      },
+      acknowledgedOpIds: [stale.operation.opId],
+      staleAcknowledgedOpIds: [stale.operation.opId],
+      mergeRemoteSnapshot,
+    });
+
+    const ledger = await offlineDb.loadOfflineLedger(db);
+    assert.deepEqual(
+      ledger.activity.map(({ id }) => id).sort(),
+      [remoteActivity.id, pending.activity.id].sort(),
+    );
+    assert.equal(await offlineDb.getOutboxOperation(db, stale.operation.opId), undefined);
+    assert.deepEqual(await offlineDb.getOutboxOperation(db, pending.operation.opId), pending.operation);
+  });
+
   it("acknowledges operations and atomically replaces stores with pending work reapplied", async () => {
     assert.equal(typeof offlineDb.commitSyncResponse, "function");
 
@@ -650,11 +889,26 @@ function mutationInput(overrides = {}) {
   const expenseId = overrides.expenseId ?? "expense-a";
   return {
     type: "upsert",
-    expense: { id: expenseId, item: "早餐", amount: 20 },
+    expense: {
+      id: expenseId,
+      category: "dining",
+      item: "早餐",
+      date: "2026-08-01",
+      currency: "AUD",
+      amount: 20,
+      payer: "us",
+      status: "confirmed",
+      note: "",
+      splitSettled: false,
+    },
     activity: {
       id: activityId,
       expenseId,
       action: "add",
+      item: "早餐",
+      amount: 20,
+      currency: "AUD",
+      summary: "Added breakfast",
       createdAt: "2026-05-28T20:26:40.000Z",
     },
     clientId: "device-a",

@@ -176,6 +176,16 @@ export function applyExpenseEdit(expense, form) {
   };
 }
 
+export function createCapturedExpense(form, options = {}) {
+  return {
+    ...form,
+    id: options.id || form.id,
+    amount: Number(form.amount),
+    attachmentName: options.attachmentName ?? form.attachmentName ?? "",
+    splitSettled: false,
+  };
+}
+
 export function setExpenseSplitSettled(expense, splitSettled) {
   return {
     ...expense,

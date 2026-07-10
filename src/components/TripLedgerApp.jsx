@@ -11,6 +11,7 @@ import {
   applyExpenseTemplate,
   calculateLedger,
   categories,
+  createCapturedExpense,
   expenseToEditableForm,
   expenseTemplates,
   formatMoney,
@@ -909,12 +910,10 @@ function AddExpense({ onAdd, onInvalid }) {
 
     setSaving(true);
     try {
-      const nextExpense = {
-        ...form,
+      const nextExpense = createCapturedExpense(form, {
         id: form.id || `expense-${Date.now()}`,
-        amount: Number(form.amount),
         attachmentName: receipt?.name || form.attachmentName || "",
-      };
+      });
       await onAdd(nextExpense);
 
       const nextDefaults = {
@@ -1152,6 +1151,7 @@ function emptyForm(defaults = {}) {
     status: "confirmed",
     note: "",
     attachmentName: "",
+    splitSettled: false,
     ...defaults,
   };
 }

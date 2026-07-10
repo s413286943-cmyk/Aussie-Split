@@ -2,16 +2,15 @@ import {
   acquireSyncLease,
   clearLegacyStorageAfterSync,
   closeOfflineDb,
+  commitDeleteUndo,
   commitLocalMutation,
   commitSyncResponse,
   getOutboxBatch,
-  getOutboxOperation,
   loadOfflineLedger,
   migrateLegacyLocalStorage,
   openOfflineDb,
   releaseSyncLease,
   renewSyncLease,
-  undoPendingDelete,
 } from "./offlineDb.js";
 import { createMutationTabId, loadMutationState } from "./sync.js";
 import { flushPendingOperations, visibleExpenses } from "./syncEngine.js";
@@ -64,23 +63,22 @@ export async function commitOfflineMutation(context, options) {
 
 export async function undoOfflineDelete(context, options) {
   assertContext(context);
-  const pendingOperation = await getOutboxOperation(context.db, options.deleteOpId);
-  const expense = options.expense ?? pendingOperation?.beforeExpense;
-  const cancelled = await undoPendingDelete(context.db, {
+  const committed = await commitDeleteUndo(context.db, {
     deleteOpId: options.deleteOpId,
-    expense,
-    activityId: options.deleteActivityId,
-  });
-
-  const state = await commitOfflineMutation(context, {
-    type: "upsert",
-    expense,
+    deleteActivityId: options.deleteActivityId,
+    expense: options.expense,
     activity: options.activity,
     opId: options.opId,
+    clientId: context.clientId,
+    tabId: context.tabId,
     now: options.now,
-    createdAt: options.activity.createdAt,
   });
-  return { synchronized: !cancelled, requiresSync: true, state };
+  context.state = await context.load();
+  return {
+    synchronized: !committed.cancelledPendingDelete,
+    requiresSync: true,
+    state: context.state,
+  };
 }
 
 export async function syncOfflineLedger(context, options) {

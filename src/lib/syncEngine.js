@@ -145,11 +145,16 @@ export async function flushPendingOperations({
       }
 
       const acknowledgedOpIds = acknowledgedOperationIds(response.results, batch);
+      const staleAcknowledgedOpIds = acknowledgedOperationIds(
+        response.results.filter((result) => result?.status === "stale"),
+        batch,
+      );
       const committed = await storage.commitSyncResponse({
         owner: lease.owner,
         fence: lease.fence,
         snapshot,
         acknowledgedOpIds,
+        staleAcknowledgedOpIds,
         mergeRemoteSnapshot,
       });
       if (!commitAccepted(committed)) {

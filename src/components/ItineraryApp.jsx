@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import itinerary from "@/data/itinerary.generated.json";
 import { applyLedgerOperations } from "@/lib/apiClient";
-import { formatMoney, seedExpenses } from "@/lib/ledger";
+import { formatMoney } from "@/lib/ledger";
 import { pulseElement, revealOnScroll, revealPage } from "@/lib/motion";
 import {
   closeOfflineLedger,
@@ -51,7 +51,7 @@ function ItineraryContent() {
   const [weatherByDay, setWeatherByDay] = useState(() => Object.fromEntries(
     itinerary.days.map((day) => [day.id, fallbackWeather(day)])
   ));
-  const [ledgerExpenses, setLedgerExpenses] = useState(seedExpenses);
+  const [ledgerExpenses, setLedgerExpenses] = useState([]);
   const [ledgerFreshness, setLedgerFreshness] = useState("checking");
   const [checkedKitByDay, setCheckedKitByDay] = useState(readLocalChecklist);
   const nextDay = useMemo(() => findNextDay(itinerary.days), []);
@@ -110,7 +110,10 @@ function ItineraryContent() {
         setLedgerFreshness("cached");
         await syncLedger();
       } catch {
-        if (!cancelled) setLedgerFreshness("cached");
+        if (!cancelled) {
+          setLedgerExpenses([]);
+          setLedgerFreshness("unavailable");
+        }
       }
     }
 
@@ -380,12 +383,15 @@ function TodayCarryChecklist({ day, items, checkedItems, onToggleItem }) {
 }
 
 function TodayLedgerDock({ day, summary, freshness }) {
-  const totalText = formatLedgerTotals(summary.totalsByCurrency);
+  const unavailable = freshness === "unavailable";
+  const totalText = unavailable ? "--" : formatLedgerTotals(summary.totalsByCurrency);
   const freshnessText = freshness === "current"
     ? "账本已同步 · 当前数据"
     : freshness === "cached"
       ? "本机缓存 · 可能不是最新"
-      : "正在核对账本数据";
+      : unavailable
+        ? "账本暂不可用 · 未显示缓存金额"
+        : "正在核对账本数据";
   const quickActions = [
     { label: "记餐饮", category: "dining", item: `${day.label} 餐饮` },
     { label: "记交通", category: "交通", item: `${day.label} 交通` },
@@ -396,7 +402,7 @@ function TodayLedgerDock({ day, summary, freshness }) {
     <section className="today-ledger-dock" aria-label={`${day.label} 账本联动`}>
       <div className="field-kit-head">
         <span>今天账本</span>
-        <strong>{summary.count ? `${summary.count} 笔` : "未记账"}</strong>
+        <strong>{unavailable ? "暂不可用" : summary.count ? `${summary.count} 笔` : "未记账"}</strong>
       </div>
       <small className="muted" role="status" aria-live="polite">{freshnessText}</small>
       <div className="ledger-dock-metrics">
@@ -406,11 +412,11 @@ function TodayLedgerDock({ day, summary, freshness }) {
         </article>
         <article>
           <span>待分摊</span>
-          <strong>{summary.pendingSplitCount}</strong>
+          <strong>{unavailable ? "--" : summary.pendingSplitCount}</strong>
         </article>
         <article>
           <span>待确认</span>
-          <strong>{summary.draftCount}</strong>
+          <strong>{unavailable ? "--" : summary.draftCount}</strong>
         </article>
       </div>
       <div className="ledger-dock-actions">
@@ -422,7 +428,7 @@ function TodayLedgerDock({ day, summary, freshness }) {
         <Link href="/expenses">看明细</Link>
       </div>
       <div className="ledger-dock-recent" aria-label="今日已记费用">
-        {summary.recentExpenses.length ? (
+        {!unavailable && summary.recentExpenses.length ? (
           summary.recentExpenses.map((expense) => (
             <div key={expense.id}>
               <span>{expense.item}</span>
@@ -430,7 +436,7 @@ function TodayLedgerDock({ day, summary, freshness }) {
             </div>
           ))
         ) : (
-          <p>今天发生共同费用后，从这里快速记一笔。</p>
+          <p>{unavailable ? "账本暂不可用，仍可从这里快速记一笔。" : "今天发生共同费用后，从这里快速记一笔。"}</p>
         )}
       </div>
     </section>

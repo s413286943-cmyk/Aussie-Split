@@ -13,6 +13,13 @@ export const metadata: Metadata = {
   },
 };
 
+const serviceWorkerRelease = requireBuildRelease(process.env.AUSSIE_BUILD_RELEASE);
+
+function requireBuildRelease(value: string | undefined): string {
+  if (!value) throw new Error("The application build release is unavailable");
+  return value;
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,7 +29,7 @@ export default function RootLayout({
     <html lang="zh-CN">
       <body>
         {children}
-        <ServiceWorkerRegistration />
+        <ServiceWorkerRegistration release={serviceWorkerRelease} />
       </body>
     </html>
   );

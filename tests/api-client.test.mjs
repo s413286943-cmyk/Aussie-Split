@@ -201,6 +201,14 @@ describe("protected browser integration contract", () => {
     assert.match(itinerarySource, /aria-live="polite"/);
   });
 
+  it("does not present seed expenses as a real cache when IndexedDB is unavailable", () => {
+    assert.doesNotMatch(itinerarySource, /seedExpenses/);
+    assert.match(itinerarySource, /useState\(\[\]\)/);
+    assert.match(itinerarySource, /setLedgerExpenses\(\[\]\)/);
+    assert.match(itinerarySource, /setLedgerFreshness\("unavailable"\)/);
+    assert.match(itinerarySource, /账本暂不可用 · 未显示缓存金额/);
+  });
+
   it("leaves no direct data-service reference in browser entry modules", () => {
     const browserSources = [accessSource, unlockSource, ledgerSource, itinerarySource].join("\n");
     assert.doesNotMatch(

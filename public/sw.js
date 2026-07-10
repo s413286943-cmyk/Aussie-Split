@@ -1,7 +1,12 @@
 const CACHE_PREFIX = "aussie-chill-";
-const SHELL_CACHE = CACHE_PREFIX + "shell-v2";
-const STATIC_CACHE = CACHE_PREFIX + "static-v2";
-const ITINERARY_CACHE = CACHE_PREFIX + "itinerary-v2";
+const RELEASE_PARAMETER = new URL(self.location.href).searchParams.get("release") || "legacy";
+const CACHE_RELEASE = /^[A-Za-z0-9._-]{1,128}$/.test(RELEASE_PARAMETER)
+  ? RELEASE_PARAMETER
+  : "legacy";
+const RELEASE_CACHE_PREFIX = `${CACHE_PREFIX}${CACHE_RELEASE}-`;
+const SHELL_CACHE = RELEASE_CACHE_PREFIX + "shell";
+const STATIC_CACHE = RELEASE_CACHE_PREFIX + "static";
+const ITINERARY_CACHE = RELEASE_CACHE_PREFIX + "itinerary";
 const PRECACHE_URLS = [
   "/",
   "/itinerary",
