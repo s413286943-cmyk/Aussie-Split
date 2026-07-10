@@ -25,6 +25,14 @@ describe("offline application shell", () => {
     }
   });
 
+  it("pre-caches the rendered Next static dependencies needed to hydrate offline", () => {
+    assert.match(serviceWorkerSource, /precacheApplicationShell/);
+    assert.match(serviceWorkerSource, /extractStaticAssetUrls/);
+    assert.match(serviceWorkerSource, /response\.clone\(\)\.text\(\)/);
+    assert.match(serviceWorkerSource, /caches\.open\(STATIC_CACHE\)/);
+    assert.match(serviceWorkerSource, /staticCache\.addAll/);
+  });
+
   it("keeps API requests network-only and uses explicit route strategies", () => {
     assert.match(serviceWorkerSource, /url\.pathname\.startsWith\(["']\/api\/["']\)/);
     assert.match(serviceWorkerSource, /request\.mode === ["']navigate["']/);

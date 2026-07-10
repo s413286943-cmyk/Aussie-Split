@@ -1,6 +1,6 @@
 const CACHE_PREFIX = "aussie-chill-";
-const SHELL_CACHE = CACHE_PREFIX + "shell-v1";
-const STATIC_CACHE = CACHE_PREFIX + "static-v1";
+const SHELL_CACHE = CACHE_PREFIX + "shell-v2";
+const STATIC_CACHE = CACHE_PREFIX + "static-v2";
 const ITINERARY_CACHE = CACHE_PREFIX + "itinerary-v1";
 const PRECACHE_URLS = [
   "/",
@@ -13,9 +13,7 @@ const PRECACHE_URLS = [
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(SHELL_CACHE).then((cache) => cache.addAll(PRECACHE_URLS)),
-  );
+  event.waitUntil(precacheApplicationShell());
 });
 
 self.addEventListener("activate", (event) => {
@@ -68,6 +66,37 @@ async function networkFirst(request, cacheName) {
     if (cached) return cached;
     throw error;
   }
+}
+
+async function precacheApplicationShell() {
+  const [shellCache, staticCache] = await Promise.all([
+    caches.open(SHELL_CACHE),
+    caches.open(STATIC_CACHE),
+  ]);
+  const staticAssetUrls = new Set();
+
+  await Promise.all(PRECACHE_URLS.map(async (url) => {
+    const response = await fetch(url, { cache: "reload" });
+    if (!response.ok) throw new Error(`Unable to pre-cache ${url}`);
+    await shellCache.put(url, response.clone());
+
+    if (response.headers.get("content-type")?.includes("text/html")) {
+      const html = await response.clone().text();
+      for (const assetUrl of extractStaticAssetUrls(html)) staticAssetUrls.add(assetUrl);
+    }
+  }));
+
+  await staticCache.addAll([...staticAssetUrls]);
+}
+
+function extractStaticAssetUrls(html) {
+  const urls = [];
+  const pattern = /(?:src|href)=["']([^"']*\/_next\/static\/[^"']+)["']/g;
+  for (const match of html.matchAll(pattern)) {
+    const url = new URL(match[1], self.location.origin);
+    if (url.origin === self.location.origin) urls.push(`${url.pathname}${url.search}`);
+  }
+  return urls;
 }
 
 async function cacheFirst(request, cacheName) {
