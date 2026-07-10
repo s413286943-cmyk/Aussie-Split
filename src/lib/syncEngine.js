@@ -127,7 +127,8 @@ export async function flushPendingOperations({
       const pending = await storage.getOutboxBatch(100);
       if (!Array.isArray(pending)) throw new TypeError("Invalid outbox batch");
       const batch = pending.slice(0, 100);
-      if (batch.length === 0) {
+      const refreshOnly = batch.length === 0 && batches === 0;
+      if (batch.length === 0 && !refreshOnly) {
         return flushResult(true, true, null, batches, acknowledged);
       }
 
@@ -153,6 +154,10 @@ export async function flushPendingOperations({
       });
       if (!commitAccepted(committed)) {
         return flushResult(true, false, "lease_lost", batches, acknowledged);
+      }
+
+      if (refreshOnly) {
+        return flushResult(true, true, null, batches, acknowledged);
       }
 
       batches += 1;

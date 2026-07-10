@@ -247,6 +247,39 @@ describe("sync state labels", () => {
 });
 
 describe("fenced outbox flush", () => {
+  it("refreshes and commits one server snapshot when the outbox is already empty", async () => {
+    const sentBatchSizes = [];
+    let commits = 0;
+    const storage = memorySyncStorage([], {
+      commit(input) {
+        commits += 1;
+        assert.deepEqual(input.acknowledgedOpIds, []);
+        assert.equal(input.snapshot.serverTime, serverTime);
+        return { accepted: true };
+      },
+    });
+
+    const result = await flushPendingOperations({
+      storage,
+      owner: "tab-a",
+      now: () => 1000,
+      async sendOperations(batch) {
+        sentBatchSizes.push(batch.length);
+        return syncResponse([]);
+      },
+    });
+
+    assert.deepEqual(sentBatchSizes, [0]);
+    assert.equal(commits, 1);
+    assert.deepEqual(result, {
+      acquired: true,
+      completed: true,
+      reason: null,
+      batches: 0,
+      acknowledged: 0,
+    });
+  });
+
   it("drains bounded batches and commits applied and stale acknowledgements", async () => {
     const outbox = Array.from({ length: 205 }, (_, index) => ({ opId: `op-${index}` }));
     const sentBatchSizes = [];
