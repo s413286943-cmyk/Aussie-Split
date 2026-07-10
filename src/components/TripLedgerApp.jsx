@@ -29,14 +29,10 @@ import {
 import { coupleName, formatPayerLabel, formatSettlementDirection } from "@/lib/couples";
 import { pulseElement, revealPage, shakeElement } from "@/lib/motion";
 import {
-  deleteRemoteExpense,
-  fetchRemoteActivity,
-  fetchRemoteExpenses,
-  insertRemoteActivity,
-  supabaseConfigured,
-  uploadRemoteReceipt,
-  upsertRemoteExpense,
-} from "@/lib/supabaseRest";
+  applyLedgerOperations,
+  createExpenseOperation,
+  fetchLedgerSnapshot,
+} from "@/lib/apiClient";
 import {
   allocatePersistedExpenseMutation,
   createMutationTabId,
@@ -58,7 +54,29 @@ const activityStorageKey = "aussie-chill-activity-v1";
 const addDefaultsStorageKey = "aussie-chill-add-defaults-v1";
 const undoDeleteMs = 5000;
 
+function fetchRemoteExpenses() {
+  return fetchLedgerSnapshot();
+}
+
+function deleteRemoteExpense(tombstone) {
+  const entry = createActivityEntry("delete", tombstone);
+  return {
+    entry,
+    run: () => applyLedgerOperations([
+      createExpenseOperation("delete", tombstone, entry),
+    ]),
+  };
+}
+
 export default function TripLedgerApp({ view }) {
+  return (
+    <UnlockGate intro="输入旅行访问码后进入共享账本和行程。">
+      <TripLedgerContent view={view} />
+    </UnlockGate>
+  );
+}
+
+function TripLedgerContent({ view }) {
   const shellRef = useRef(null);
   const noticeTimerRef = useRef(null);
   const pendingDeleteRef = useRef(null);
@@ -103,12 +121,22 @@ export default function TripLedgerApp({ view }) {
         localRowsPrepared = true;
 
         try {
-          const remote = await withTimeout(fetchRemoteExpenses(), { timeoutMs: 7000 });
+          const snapshot = await withTimeout(fetchRemoteExpenses(), { timeoutMs: 7000 });
           if (cancelled) return;
+          const remote = Array.isArray(snapshot.expenses) ? snapshot.expenses : [];
 
           if (shouldUploadLocalCache(savedExpenses, remote)) {
-            await Promise.all(prepared.expenses.map((expense) => upsertRemoteExpense(expense)));
+            const operations = prepared.expenses.map((expense) => {
+              const entry = createActivityEntry("add", expense);
+              return createExpenseOperation("upsert", expense, entry);
+            });
+            const uploaded = await applyLedgerOperations(operations);
             if (cancelled) return;
+            if (uploaded.activity?.length) {
+              const nextActivity = recentActivity(uploaded.activity);
+              setActivity(nextActivity);
+              localStorage.setItem(activityStorageKey, JSON.stringify(nextActivity));
+            }
             setSyncState("已同步");
             return;
           }
@@ -119,12 +147,18 @@ export default function TripLedgerApp({ view }) {
             });
             if (cancelled) return;
             mutationStateRef.current = preparedRemote.state;
-            expensesRef.current = preparedRemote.expenses;
-            setExpenses(preparedRemote.expenses);
-            localStorage.setItem(storageKey, JSON.stringify(preparedRemote.expenses));
+            const visibleExpenses = preparedRemote.expenses.filter((expense) => !expense.deletedAt);
+            expensesRef.current = visibleExpenses;
+            setExpenses(visibleExpenses);
+            localStorage.setItem(storageKey, JSON.stringify(visibleExpenses));
             setSyncState("已同步");
-          } else if (supabaseConfigured) {
+          } else {
             setSyncState("已同步");
+          }
+          if (snapshot.activity?.length) {
+            const nextActivity = recentActivity(snapshot.activity);
+            setActivity(nextActivity);
+            localStorage.setItem(activityStorageKey, JSON.stringify(nextActivity));
           }
         } catch {
           if (!cancelled) setSyncState("同步失败，可重试");
@@ -137,15 +171,6 @@ export default function TripLedgerApp({ view }) {
     }
 
     initializeLedger();
-
-    fetchRemoteActivity()
-      .then((remote) => {
-        if (cancelled || !remote?.length) return;
-        const nextActivity = recentActivity(remote);
-        setActivity(nextActivity);
-        localStorage.setItem(activityStorageKey, JSON.stringify(nextActivity));
-      })
-      .catch(() => {});
 
     return () => {
       cancelled = true;
@@ -188,8 +213,8 @@ export default function TripLedgerApp({ view }) {
       const pending = pendingDeleteRef.current;
       if (!pending) return;
       if (pending.timer) window.clearTimeout(pending.timer);
-      deleteRemoteExpense(pending.tombstone).catch(() => {});
-      insertRemoteActivity(createActivityEntry("delete", pending.expense)).catch(() => {});
+      const deletion = deleteRemoteExpense(pending.tombstone);
+      deletion.run().catch(() => {});
     };
   }, []);
 
@@ -230,8 +255,6 @@ export default function TripLedgerApp({ view }) {
   function renderSyncAggregate(state) {
     if (state === "failed") {
       setSyncState("同步失败，可重试");
-    } else if (!supabaseConfigured) {
-      setSyncState("已本机保存，待同步");
     } else if (state === "syncing") {
       setSyncState("正在同步");
     } else {
@@ -284,7 +307,7 @@ export default function TripLedgerApp({ view }) {
     });
   }
 
-  async function recordActivity(entry) {
+  function recordActivity(entry) {
     setActivity((current) => {
       const nextActivity = recentActivity([entry, ...current]);
       try {
@@ -295,11 +318,10 @@ export default function TripLedgerApp({ view }) {
       return nextActivity;
     });
     setActivityPulseKey((key) => key + 1);
-    try {
-      await insertRemoteActivity(entry);
-    } catch {
-      // Activity is helpful context, but it should never block core expense edits.
-    }
+  }
+
+  function syncExpenseOperation(type, expense, entry) {
+    return applyLedgerOperations([createExpenseOperation(type, expense, entry)]);
   }
 
   async function addExpense(expense) {
@@ -309,14 +331,15 @@ export default function TripLedgerApp({ view }) {
         (currentExpenses, versionedExpense) => prependExpenseToList(currentExpenses, versionedExpense)
       );
       const versionedExpense = committed.expense;
+      const entry = createActivityEntry("add", versionedExpense);
       const result = startRemoteSync(
         versionedExpense.id,
-        () => upsertRemoteExpense(versionedExpense),
+        () => syncExpenseOperation("upsert", versionedExpense, entry),
         () => showRemoteFallbackNotice(versionedExpense, "expense-form")
       );
       showPersistNotice("add", versionedExpense, result);
       playFeedback("expense-form", result.remoteFailed ? "warning" : "success");
-      recordActivity(createActivityEntry("add", versionedExpense));
+      recordActivity(entry);
     } catch {
       showActionNotice(`保存失败：${expense.item || "这笔费用"}`, "danger");
       playFeedback("expense-form", "danger");
@@ -341,13 +364,14 @@ export default function TripLedgerApp({ view }) {
       const versionedExpense = committed.expense;
       const previousExpense = committed.previousExpenses.find((item) => item.id === expense.id);
       const feedbackAction = previousExpense && Boolean(previousExpense.splitSettled) !== Boolean(versionedExpense.splitSettled) ? "split" : "edit";
+      const entry = createActivityEntry("edit", versionedExpense, new Date(), previousExpense);
       const result = startRemoteSync(
         versionedExpense.id,
-        () => upsertRemoteExpense(versionedExpense),
+        () => syncExpenseOperation("upsert", versionedExpense, entry),
         () => showRemoteFallbackNotice(versionedExpense)
       );
       showPersistNotice(feedbackAction, versionedExpense, result);
-      recordActivity(createActivityEntry("edit", versionedExpense, new Date(), previousExpense));
+      recordActivity(entry);
     } catch {
       showActionNotice(`保存修改失败：${expense.item || "这笔费用"}`, "danger");
       playFeedback(expense.id, "danger");
@@ -366,13 +390,14 @@ export default function TripLedgerApp({ view }) {
       );
       if (!committed) return;
       const confirmed = committed.expense;
+      const entry = createActivityEntry("confirm", confirmed);
       const result = startRemoteSync(
         confirmed.id,
-        () => upsertRemoteExpense(confirmed),
+        () => syncExpenseOperation("upsert", confirmed, entry),
         () => showRemoteFallbackNotice(confirmed)
       );
       showPersistNotice("confirm", confirmed, result);
-      recordActivity(createActivityEntry("confirm", confirmed));
+      recordActivity(entry);
     } catch {
       showActionNotice(`确认失败：${expense.item || "这笔费用"}`, "danger");
       playFeedback(expense.id, "danger");
@@ -454,13 +479,14 @@ export default function TripLedgerApp({ view }) {
     const pending = pendingDeleteRef.current;
     if (!pending || pending.id !== id) return;
     pendingDeleteRef.current = null;
+    const deletion = deleteRemoteExpense(pending.tombstone);
 
     startRemoteSync(
       pending.tombstone.id,
-      () => deleteRemoteExpense(pending.tombstone),
+      deletion.run,
       () => showRemoteFallbackNotice(pending.expense, "expense-list")
     );
-    recordActivity(createActivityEntry("delete", pending.expense));
+    recordActivity(deletion.entry);
   }
 
   if (!ready) {
@@ -468,8 +494,7 @@ export default function TripLedgerApp({ view }) {
   }
 
   return (
-    <UnlockGate intro="输入旅行访问码后进入共享账本和行程。">
-      <div className="app-shell docket-shell" ref={shellRef}>
+    <div className="app-shell docket-shell" ref={shellRef}>
         <header className="hero ledger-hero" data-motion="hero">
           <div className="hero-copy">
             <span className="hero-kicker">Travel docket · Australia 2026</span>
@@ -518,8 +543,7 @@ export default function TripLedgerApp({ view }) {
           <Link className={view === "settlement" ? "active" : ""} href="/settlement">结算</Link>
           <Link href="/itinerary">行程</Link>
         </nav>
-      </div>
-    </UnlockGate>
+    </div>
   );
 }
 
@@ -923,20 +947,11 @@ function AddExpense({ onAdd, onInvalid }) {
 
     setSaving(true);
     try {
-      let attachmentName = receipt?.name || form.attachmentName || "";
-      if (receipt) {
-        try {
-          attachmentName = (await uploadRemoteReceipt(receipt)) || receipt.name;
-        } catch {
-          attachmentName = receipt.name;
-        }
-      }
-
       const nextExpense = {
         ...form,
         id: form.id || `expense-${Date.now()}`,
         amount: Number(form.amount),
-        attachmentName,
+        attachmentName: receipt?.name || form.attachmentName || "",
       };
       await onAdd(nextExpense);
 

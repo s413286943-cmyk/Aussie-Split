@@ -5,9 +5,9 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import itinerary from "@/data/itinerary.generated.json";
+import { fetchLedgerSnapshot } from "@/lib/apiClient";
 import { formatMoney, seedExpenses } from "@/lib/ledger";
 import { pulseElement, revealOnScroll, revealPage } from "@/lib/motion";
-import { fetchRemoteExpenses } from "@/lib/supabaseRest";
 import {
   buildDayCarryChecklist,
   buildDayDocket,
@@ -53,8 +53,9 @@ function ItineraryContent() {
   const todayDay = useMemo(() => findTodayDay(itinerary.days), []);
 
   useEffect(() => {
-    fetchRemoteExpenses()
-      .then((remote) => {
+    fetchLedgerSnapshot()
+      .then((snapshot) => {
+        const remote = (snapshot.expenses || []).filter((expense) => !expense.deletedAt);
         if (!remote?.length) return;
         setLedgerExpenses(remote);
         localStorage.setItem(ledgerStorageKey, JSON.stringify(remote));

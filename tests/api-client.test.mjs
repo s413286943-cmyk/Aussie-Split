@@ -1,0 +1,154 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { afterEach, describe, it } from "node:test";
+
+import {
+  AccessRequiredError,
+  applyLedgerOperations,
+  checkAccessSession,
+  clearAccessSession,
+  createExpenseOperation,
+  fetchActivity,
+  fetchLedgerSnapshot,
+  unlockAccessSession,
+} from "../src/lib/apiClient.js";
+
+const originalFetch = globalThis.fetch;
+
+describe("browser protected API client", () => {
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it("uses only relative API URLs with same-origin credentials", async () => {
+    const calls = [];
+    globalThis.fetch = async (url, options = {}) => {
+      calls.push({ url: String(url), options });
+      if (url === "/api/access") return Response.json({ authenticated: true });
+      if (url === "/api/sync" && options.method === "POST") {
+        return Response.json({ results: [], expenses: [], activity: [], serverTime: "2026-07-10T00:00:00.000Z" });
+      }
+      if (url === "/api/sync") {
+        return Response.json({ expenses: [], activity: [], serverTime: "2026-07-10T00:00:00.000Z" });
+      }
+      if (String(url).startsWith("/api/activity")) return Response.json({ activity: [] });
+      throw new Error(`Unexpected URL: ${url}`);
+    };
+
+    await checkAccessSession();
+    await unlockAccessSession("shared-code");
+    await clearAccessSession();
+    await fetchLedgerSnapshot();
+    await applyLedgerOperations([]);
+    await fetchActivity(50);
+
+    assert.equal(calls.every((call) => call.url.startsWith("/api/")), true);
+    assert.equal(calls.every((call) => !call.url.startsWith("http")), true);
+    assert.equal(calls.every((call) => call.options.credentials === "same-origin"), true);
+    for (const call of calls.filter((entry) => ["POST", "DELETE"].includes(entry.options.method))) {
+      assert.equal(call.options.headers.Accept, "application/json");
+      if (call.options.body) assert.equal(call.options.headers["Content-Type"], "application/json");
+    }
+  });
+
+  it("maps a 401 response to AccessRequiredError", async () => {
+    globalThis.fetch = async () => Response.json({ error: "access_required" }, { status: 401 });
+
+    await assert.rejects(
+      () => fetchLedgerSnapshot(),
+      (error) => error instanceof AccessRequiredError && error.code === "access_required",
+    );
+  });
+
+  it("builds atomic upsert and delete operations without writable attachment projections", () => {
+    const expense = {
+      id: "expense-one",
+      category: "dining",
+      item: "Dinner",
+      date: "2026-08-01",
+      currency: "AUD",
+      amount: 10,
+      payer: "us",
+      status: "confirmed",
+      note: "",
+      splitSettled: false,
+      mutationVersion: "1780000000000-000001-browser-a",
+      updatedAt: "2026-07-10T00:00:00.000Z",
+      deletedAt: null,
+      attachmentName: "receipt.jpg",
+      attachmentPath: "expense-one/receipt.jpg",
+    };
+    const activity = {
+      id: "activity-one",
+      expenseId: expense.id,
+      action: "add",
+      item: expense.item,
+      amount: expense.amount,
+      currency: expense.currency,
+      summary: "Added dinner",
+      createdAt: "2026-07-10T00:00:00.000Z",
+    };
+
+    const upsert = createExpenseOperation("upsert", expense, activity, { opId: "op-one" });
+    const deleted = createExpenseOperation("delete", {
+      ...expense,
+      deletedAt: "2026-07-10T00:01:00.000Z",
+      mutationVersion: "1780000060000-000000-browser-a",
+    }, { ...activity, id: "activity-delete", action: "delete" }, { opId: "op-delete" });
+
+    assert.equal(upsert.opId, "op-one");
+    assert.equal(upsert.mutationVersion, expense.mutationVersion);
+    assert.equal(upsert.expense.attachmentName, undefined);
+    assert.equal(upsert.expense.attachmentPath, undefined);
+    assert.equal(upsert.expense.updatedAt, undefined);
+    assert.deepEqual(upsert.activity, activity);
+    assert.equal(deleted.type, "delete");
+    assert.equal(deleted.expense, null);
+    assert.equal(deleted.activity.action, "delete");
+  });
+
+  it("contains no Supabase key or direct Data and Storage endpoint references", () => {
+    const source = readFileSync(new URL("../src/lib/apiClient.js", import.meta.url), "utf8");
+    assert.doesNotMatch(source, /SUPABASE|NEXT_PUBLIC_|\/rest\/v1|\/storage\/v1/);
+  });
+});
+
+describe("protected browser integration contract", () => {
+  const accessSource = readFileSync(new URL("../src/lib/access.js", import.meta.url), "utf8");
+  const unlockSource = readFileSync(new URL("../src/components/UnlockGate.jsx", import.meta.url), "utf8");
+  const ledgerSource = readFileSync(new URL("../src/components/TripLedgerApp.jsx", import.meta.url), "utf8");
+  const itinerarySource = readFileSync(new URL("../src/components/ItineraryApp.jsx", import.meta.url), "utf8");
+
+  it("keeps only an offline reopening marker in browser access state", () => {
+    assert.match(accessSource, /aussie-chill-offline-access-v1/);
+    assert.doesNotMatch(accessSource, /defaultTripCode|NEXT_PUBLIC_TRIP_CODE|["']aussie["']/);
+    assert.match(unlockSource, /checkAccessSession/);
+    assert.match(unlockSource, /unlockAccessSession/);
+    assert.match(unlockSource, /navigator\.onLine/);
+    assert.match(unlockSource, /ACCESS_REQUIRED_EVENT/);
+    assert.doesNotMatch(unlockSource, /defaultTripCode|placeholder=["']aussie["']/);
+  });
+
+  it("routes ledger reads and atomic writes through apiClient while retaining local cache", () => {
+    assert.match(ledgerSource, /from ["']@\/lib\/apiClient["']/);
+    assert.match(ledgerSource, /fetchLedgerSnapshot/);
+    assert.match(ledgerSource, /applyLedgerOperations/);
+    assert.match(ledgerSource, /createExpenseOperation/);
+    assert.match(ledgerSource, /aussie-chill-expenses-v1/);
+    assert.doesNotMatch(ledgerSource, /from ["']@\/lib\/supabaseRest["']|upsertRemoteExpense|insertRemoteActivity/);
+  });
+
+  it("uses the protected snapshot for itinerary ledger reads", () => {
+    assert.match(itinerarySource, /from ["']@\/lib\/apiClient["']/);
+    assert.match(itinerarySource, /fetchLedgerSnapshot/);
+    assert.doesNotMatch(itinerarySource, /supabaseRest|fetchRemote/);
+  });
+
+  it("leaves no direct data-service reference in browser entry modules", () => {
+    const browserSources = [accessSource, unlockSource, ledgerSource, itinerarySource].join("\n");
+    assert.doesNotMatch(
+      browserSources,
+      /NEXT_PUBLIC_SUPABASE|SUPABASE_SERVICE_ROLE_KEY|\/rest\/v1|\/storage\/v1/,
+    );
+  });
+});
