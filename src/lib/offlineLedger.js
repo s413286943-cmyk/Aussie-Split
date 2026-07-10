@@ -68,11 +68,6 @@ export async function undoOfflineDelete(context, options) {
     activityId: options.deleteActivityId,
   });
 
-  if (cancelled) {
-    context.state = await context.load();
-    return { synchronized: false, state: context.state };
-  }
-
   const state = await commitOfflineMutation(context, {
     type: "upsert",
     expense: options.expense,
@@ -81,7 +76,7 @@ export async function undoOfflineDelete(context, options) {
     now: options.now,
     createdAt: options.activity.createdAt,
   });
-  return { synchronized: true, state };
+  return { synchronized: !cancelled, requiresSync: true, state };
 }
 
 export async function syncOfflineLedger(context, options) {

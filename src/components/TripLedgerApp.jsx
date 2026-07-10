@@ -116,12 +116,16 @@ function TripLedgerContent({ view }) {
           if (mountedRef.current) setSyncState("同步失败，可重试");
         }
       }
-    })().finally(() => {
-      syncPromiseRef.current = null;
-      if (syncRequestedRef.current && offlineContextRef.current) {
-        queueMicrotask(() => requestLedgerSync());
-      }
-    });
+    })()
+      .catch(() => {
+        if (mountedRef.current) setSyncState("同步失败，可重试");
+      })
+      .finally(() => {
+        syncPromiseRef.current = null;
+        if (syncRequestedRef.current && offlineContextRef.current) {
+          queueMicrotask(() => requestLedgerSync());
+        }
+      });
 
     syncPromiseRef.current = promise;
     return promise;
@@ -180,7 +184,9 @@ function TripLedgerContent({ view }) {
       if (pendingDeleteRef.current?.timer) window.clearTimeout(pendingDeleteRef.current.timer);
       const context = offlineContextRef.current;
       offlineContextRef.current = null;
-      Promise.resolve(syncPromiseRef.current).finally(() => closeOfflineLedger(context));
+      Promise.resolve(syncPromiseRef.current)
+        .catch(() => {})
+        .finally(() => closeOfflineLedger(context));
     };
   }, [applyOfflineState, requestLedgerSync]);
 
@@ -404,7 +410,7 @@ function TripLedgerContent({ view }) {
       });
       applyOfflineState(result.state);
       setSyncState(syncStateLabel({ pendingCount: result.state.outboxCount }));
-      if (result.synchronized) requestLedgerSync();
+      if (result.requiresSync) requestLedgerSync();
     } catch {
       showActionNotice(`恢复失败：${pending.expense.item}`, "danger");
       playFeedback(pending.expense.id, "danger");

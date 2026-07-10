@@ -97,7 +97,7 @@ describe("offline ledger lifecycle", () => {
     });
 
     const original = added.expenses[0];
-    await commitOfflineMutation(context, {
+    const firstDelete = await commitOfflineMutation(context, {
       type: "delete",
       expense: original,
       activity: activityFixture({ id: "activity-delete-one", action: "delete", summary: "Deleted dinner" }),
@@ -114,8 +114,13 @@ describe("offline ledger lifecycle", () => {
     });
 
     assert.equal(cancelled.synchronized, false);
+    assert.equal(cancelled.requiresSync, true);
     assert.equal(cancelled.state.expenses[0].deletedAt, null);
-    assert.equal(cancelled.state.outboxCount, 0);
+    assert.equal(cancelled.state.outboxCount, 1);
+    assert.equal(
+      compareMutationVersions(cancelled.state.expenses[0].mutationVersion, firstDelete.rawExpenses[0].mutationVersion),
+      1,
+    );
 
     const secondDelete = await commitOfflineMutation(context, {
       type: "delete",
@@ -141,6 +146,7 @@ describe("offline ledger lifecycle", () => {
     });
 
     assert.equal(restored.synchronized, true);
+    assert.equal(restored.requiresSync, true);
     assert.equal(restored.state.outboxCount, 1);
     assert.equal(restored.state.expenses[0].deletedAt, null);
     assert.equal(
@@ -161,12 +167,18 @@ async function initializedContext() {
 }
 
 function responseFor(batch) {
+  const expensesById = new Map();
+  for (const operation of batch) {
+    expensesById.set(
+      operation.expenseId,
+      operation.type === "delete"
+        ? { ...expenseFixture(), mutationVersion: operation.mutationVersion, updatedAt: operation.createdAt, deletedAt: operation.createdAt }
+        : operation.expense,
+    );
+  }
   return {
     results: batch.map(({ opId }) => ({ opId, status: "applied" })),
-    expenses: batch
-      .map((operation) => operation.type === "delete"
-        ? { ...expenseFixture(), mutationVersion: operation.mutationVersion, updatedAt: operation.createdAt, deletedAt: operation.createdAt }
-        : operation.expense),
+    expenses: [...expensesById.values()],
     activity: batch.map(({ activity }) => activity),
     serverTime: new Date(baseNow + 60_000).toISOString(),
   };

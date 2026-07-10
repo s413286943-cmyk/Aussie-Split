@@ -433,7 +433,7 @@ describe("TripLedger durable outbox contract", () => {
     const undoSource = functionSource(tripLedgerSource, "undoDelete");
     assert.match(undoSource, /ledgerActionQueueRef\.current/);
     assert.match(undoSource, /undoOfflineDelete/);
-    assert.match(undoSource, /result\.synchronized/);
+    assert.match(undoSource, /result\.requiresSync/);
     assert.doesNotMatch(undoSource, /deleteRemoteExpense|applyLedgerOperations/);
   });
 
