@@ -23,8 +23,12 @@ create table if not exists public.expenses (
   status text not null check (status in ('confirmed', 'draft')),
   note text not null default '',
   attachment_name text not null default '',
+  split_settled boolean not null default false,
   created_at timestamptz not null default now()
 );
+
+alter table public.expenses
+  add column if not exists split_settled boolean not null default false;
 
 create table if not exists public.attachments (
   id uuid primary key default gen_random_uuid(),

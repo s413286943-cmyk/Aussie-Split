@@ -2,7 +2,15 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import itinerary from "../src/data/itinerary.generated.json" with { type: "json" };
-import { collectTodayResources, findTodayDay } from "../src/lib/today.js";
+import {
+  buildDayDocket,
+  buildDayTimeline,
+  buildTodayCommand,
+  collectMapActions,
+  collectTodayResources,
+  findTodayDay,
+  parseMealPlan,
+} from "../src/lib/today.js";
 import { readWorkbook } from "../scripts/import-itinerary.mjs";
 
 describe("itinerary data", () => {
@@ -40,6 +48,39 @@ describe("itinerary data", () => {
     assert.ok(itinerary.days.every((day) => day.coverImageUrl.startsWith("/itinerary/")));
   });
 
+  it("keeps D3 visually before the Twelve Apostles route", () => {
+    const d3 = itinerary.days.find((day) => day.id === "d3");
+    const d4 = itinerary.days.find((day) => day.id === "d4");
+
+    assert.equal(d3.coverImageUrl, "/itinerary/d3-great-ocean-road-lorne.png");
+    assert.notEqual(d3.coverImageUrl, d4.coverImageUrl);
+    assert.doesNotMatch(d3.coverImageUrl, /twelve|apostles|gorge/i);
+    assert.match(d3.coverImageAlt, /Lorne|Apollo Bay|灯塔|大洋路早段/);
+  });
+
+  it("keeps Totti's on D14 and Cafe Sydney on D15 in the meal plan", () => {
+    const d14Text = itinerary.days.find((day) => day.id === "d14").blocks
+      .map((block) => `${block.place} ${block.activity} ${block.tip}`)
+      .join(" ");
+    const d15Text = itinerary.days.find((day) => day.id === "d15").blocks
+      .map((block) => `${block.place} ${block.activity} ${block.tip}`)
+      .join(" ");
+
+    assert.match(d14Text, /Totti/);
+    assert.match(d14Text, /Bondi/);
+    assert.match(d15Text, /Cafe Sydney/);
+  });
+
+  it("includes a daily meal-map block from D1 through D16", () => {
+    for (const dayId of Array.from({ length: 16 }, (_, index) => `d${index + 1}`)) {
+      const day = itinerary.days.find((item) => item.id === dayId);
+      assert.ok(
+        day.blocks.some((block) => block.period === "饮食" && block.place === "饮食安排"),
+        `${dayId} is missing daily meal-map block`,
+      );
+    }
+  });
+
   it("selects the right control-panel day for pre-trip, in-trip, and post-trip dates", () => {
     assert.equal(findTodayDay(itinerary.days, new Date("2026-06-25T10:00:00+08:00")).id, "d0");
     assert.equal(findTodayDay(itinerary.days, new Date("2026-07-31T10:00:00+10:00")).id, "d3");
@@ -55,5 +96,31 @@ describe("itinerary data", () => {
     assert.ok(resources.some((resource) => resource.type === "restaurant"));
     assert.ok(resources.every((resource) => ["map", "booking", "restaurant", "official"].includes(resource.type)));
     assert.equal(new Set(resources.map((resource) => resource.id)).size, resources.length);
+  });
+
+  it("builds a richer today command panel from itinerary data", () => {
+    const day = itinerary.days.find((item) => item.id === "d7");
+    const command = buildTodayCommand(day);
+
+    assert.match(command.transport, /船|码头/);
+    assert.ok(command.leaveBy.length > 0);
+    assert.ok(command.meals.dinner.length > 0);
+    assert.ok(command.notes.length > 0);
+  });
+
+  it("turns each day into timeline, docket, and map actions", () => {
+    const day = itinerary.days.find((item) => item.id === "d3");
+
+    assert.ok(buildDayTimeline(day).some((slot) => slot.label === "上午"));
+    assert.equal(buildDayDocket(day).length, 3);
+    assert.ok(collectMapActions(day).some((action) => action.url.includes("google.com/maps")));
+  });
+
+  it("parses daily meal plans into breakfast, lunch, and dinner", () => {
+    const meals = parseMealPlan(itinerary.days.find((item) => item.id === "d14"));
+
+    assert.match(meals.dinner, /Totti|Icebergs|Bondi/);
+    assert.ok(meals.breakfast.length > 0);
+    assert.ok(meals.lunch.length > 0);
   });
 });

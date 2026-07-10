@@ -2,8 +2,10 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  actionFeedbackMessage,
   activityDisplaySummary,
   createActivityEntry,
+  dashboardActivityPreview,
   recentActivity,
 } from "../src/lib/activity.js";
 
@@ -50,6 +52,18 @@ describe("expense activity", () => {
     );
   });
 
+  it("describes split-settled changes for edited expenses", () => {
+    assert.equal(
+      createActivityEntry(
+        "edit",
+        { ...expense, splitSettled: true },
+        new Date("2026-07-30T10:00:00.000Z"),
+        { ...expense, splitSettled: false },
+      ).summary,
+      "编辑了 晚餐：分摊状态 待分摊 → 已分摊",
+    );
+  });
+
   it("keeps edit activity informative when detailed changes are unavailable", () => {
     assert.equal(
       createActivityEntry("edit", expense, new Date("2026-07-30T10:00:00.000Z")).summary,
@@ -67,6 +81,19 @@ describe("expense activity", () => {
     );
   });
 
+  it("normalizes old split-settled activity wording at display time", () => {
+    assert.equal(
+      activityDisplaySummary({
+        action: "edit",
+        item: "晚餐",
+        amount: 100,
+        currency: "CNY",
+        summary: "编辑了 晚餐：分摊状态 未分摊 → 已分摊",
+      }),
+      "编辑了 晚餐：分摊状态 待分摊 → 已分摊",
+    );
+  });
+
   it("keeps the recent activity list newest-first and capped at eight", () => {
     const entries = Array.from({ length: 10 }, (_, index) =>
       createActivityEntry("edit", { ...expense, id: `expense-${index}`, item: `项目${index}` }, new Date(`2026-08-${String(index + 1).padStart(2, "0")}T10:00:00.000Z`)),
@@ -77,5 +104,39 @@ describe("expense activity", () => {
     assert.equal(recent.length, 8);
     assert.equal(recent[0].item, "项目9");
     assert.equal(recent.at(-1).item, "项目2");
+  });
+
+  it("collapses repeated edits on the same expense inside one minute", () => {
+    const entries = [
+      createActivityEntry("edit", { ...expense, amount: 128 }, new Date("2026-07-30T10:00:45.000Z"), expense),
+      createActivityEntry("edit", { ...expense, amount: 120 }, new Date("2026-07-30T10:00:10.000Z"), expense),
+      createActivityEntry("edit", { ...expense, amount: 110 }, new Date("2026-07-30T09:58:00.000Z"), expense),
+    ];
+
+    const recent = recentActivity(entries);
+
+    assert.equal(recent.length, 2);
+    assert.equal(recent[0].amount, 128);
+    assert.equal(recent[1].amount, 110);
+  });
+
+  it("keeps the dashboard activity preview newest-first and capped at three", () => {
+    const entries = Array.from({ length: 5 }, (_, index) =>
+      createActivityEntry("edit", { ...expense, id: `expense-${index}`, item: `项目${index}` }, new Date(`2026-08-${String(index + 1).padStart(2, "0")}T10:00:00.000Z`)),
+    );
+
+    const preview = dashboardActivityPreview(entries);
+
+    assert.equal(preview.length, 3);
+    assert.deepEqual(preview.map((entry) => entry.item), ["项目4", "项目3", "项目2"]);
+  });
+
+  it("formats user-facing success feedback after ledger actions", () => {
+    assert.equal(actionFeedbackMessage("add", expense), "已保存：晚餐 ¥100.00");
+    assert.equal(actionFeedbackMessage("edit", expense), "已保存修改：晚餐");
+    assert.equal(actionFeedbackMessage("confirm", expense), "已确认：晚餐");
+    assert.equal(actionFeedbackMessage("delete", expense), "已删除：晚餐");
+    assert.equal(actionFeedbackMessage("split", { ...expense, splitSettled: true }), "已标记已分摊：晚餐");
+    assert.equal(actionFeedbackMessage("split", { ...expense, splitSettled: false }), "已标记待分摊：晚餐");
   });
 });

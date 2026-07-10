@@ -5,10 +5,25 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import itinerary from "@/data/itinerary.generated.json";
+import { formatMoney, seedExpenses } from "@/lib/ledger";
 import { pulseElement, revealOnScroll, revealPage } from "@/lib/motion";
-import { collectTodayResources, findTodayDay } from "@/lib/today";
+import { fetchRemoteExpenses } from "@/lib/supabaseRest";
+import {
+  buildDayCarryChecklist,
+  buildDayDocket,
+  buildDayTimeline,
+  buildTodayCommand,
+  collectMapActions,
+  collectTodayResources,
+  findTodayDay,
+  parseMealPlan,
+  summarizeDayLedger,
+} from "@/lib/today";
 import { fetchDayWeather, fallbackWeather } from "@/lib/weather";
 import UnlockGate from "@/components/UnlockGate";
+
+const ledgerStorageKey = "aussie-chill-expenses-v1";
+const checklistStorageKey = "aussie-chill-day-kit-v1";
 
 const resourceLabels = {
   map: "地图",
@@ -32,8 +47,20 @@ function ItineraryContent() {
   const [weatherByDay, setWeatherByDay] = useState(() => Object.fromEntries(
     itinerary.days.map((day) => [day.id, fallbackWeather(day)])
   ));
+  const [ledgerExpenses, setLedgerExpenses] = useState(readLocalLedgerExpenses);
+  const [checkedKitByDay, setCheckedKitByDay] = useState(readLocalChecklist);
   const nextDay = useMemo(() => findNextDay(itinerary.days), []);
   const todayDay = useMemo(() => findTodayDay(itinerary.days), []);
+
+  useEffect(() => {
+    fetchRemoteExpenses()
+      .then((remote) => {
+        if (!remote?.length) return;
+        setLedgerExpenses(remote);
+        localStorage.setItem(ledgerStorageKey, JSON.stringify(remote));
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,10 +90,41 @@ function ItineraryContent() {
     };
   }, []);
 
+  function toggleKitItem(dayId, itemId) {
+    setCheckedKitByDay((current) => {
+      const checked = new Set(current[dayId] || []);
+      if (checked.has(itemId)) {
+        checked.delete(itemId);
+      } else {
+        checked.add(itemId);
+      }
+
+      const next = {
+        ...current,
+        [dayId]: [...checked],
+      };
+
+      try {
+        localStorage.setItem(checklistStorageKey, JSON.stringify(next));
+      } catch {
+        // The checklist remains usable for the current session.
+      }
+
+      return next;
+    });
+  }
+
   return (
-    <main className="itinerary-shell" ref={shellRef}>
+    <main className="itinerary-shell route-atlas" ref={shellRef}>
       <Hero nextDay={nextDay} weather={weatherByDay[nextDay.id]} />
-      <TodayConsole day={todayDay} weather={weatherByDay[todayDay.id]} />
+      <RouteManifest days={itinerary.days} stages={itinerary.stages} />
+      <TodayConsole
+        day={todayDay}
+        weather={weatherByDay[todayDay.id]}
+        ledgerExpenses={ledgerExpenses}
+        checkedKitItems={checkedKitByDay[todayDay.id] || []}
+        onToggleKitItem={toggleKitItem}
+      />
       <DayJump days={itinerary.days} />
       <section className="stage-stack" aria-label="行程时间线">
         {itinerary.stages.map((stage) => (
@@ -75,13 +133,14 @@ function ItineraryContent() {
             stage={stage}
             days={itinerary.days.filter((day) => stage.dayIds.includes(day.id))}
             weatherByDay={weatherByDay}
+            ledgerExpenses={ledgerExpenses}
             eagerImage={stage.id === "melbourne-road"}
           />
         ))}
       </section>
       <section className="final-day">
-        <DayCard day={itinerary.days.find((day) => day.id === "d0")} weather={weatherByDay.d0} compact />
-        <DayCard day={itinerary.days.find((day) => day.id === "d16")} weather={weatherByDay.d16} compact />
+        <DayCard day={itinerary.days.find((day) => day.id === "d0")} weather={weatherByDay.d0} ledgerExpenses={ledgerExpenses} compact />
+        <DayCard day={itinerary.days.find((day) => day.id === "d16")} weather={weatherByDay.d16} ledgerExpenses={ledgerExpenses} compact />
       </section>
       <nav className="nav" aria-label="主导航" data-motion="nav">
         <Link className="active" href="/itinerary">行程</Link>
@@ -92,18 +151,37 @@ function ItineraryContent() {
   );
 }
 
-function TodayConsole({ day, weather }) {
+function TodayConsole({ day, weather, ledgerExpenses, checkedKitItems, onToggleKitItem }) {
   const quickResources = collectTodayResources(day);
+  const keyStops = primaryBlocks(day).slice(0, 3);
+  const carryItems = buildDayCarryChecklist(day);
+  const ledgerSummary = summarizeDayLedger(day, ledgerExpenses);
+  const command = buildTodayCommand(day);
+  const docket = buildDayDocket(day, ledgerExpenses);
 
   return (
-    <section className="today-console" aria-label="今日旅行控制台" data-motion="today-console">
-      <div className="today-summary">
-        <span>今日旅行控制台</span>
-        <h2>{day.label} · {day.date.slice(5).replace("-", ".")} {day.weekday} · {day.city}</h2>
-        <p>{day.title}</p>
-        <small>{day.focus}</small>
+    <section className="today-console docket-panel" aria-label="今日旅行控制台" data-motion="today-console">
+      <div className="today-command-head">
+        <div className="today-summary">
+          <span>今日旅行控制台</span>
+          <h2>{day.label} · {formatShortDate(day)} {day.weekday} · {day.city}</h2>
+          <p>{day.title}</p>
+          <small>{day.focus}</small>
+        </div>
+        <div className="today-route-note">
+          <span>当日主线</span>
+          {keyStops.map((block) => <strong key={`${day.id}-${block.sortOrder}`}>{block.place}</strong>)}
+        </div>
       </div>
       <div className="today-status-grid">
+        <article>
+          <span>今日交通</span>
+          <strong>{command.transport}</strong>
+        </article>
+        <article>
+          <span>最晚出门</span>
+          <strong>{command.leaveBy}</strong>
+        </article>
         <article>
           <span>今晚住宿</span>
           <strong>{day.lodging}</strong>
@@ -117,7 +195,18 @@ function TodayConsole({ day, weather }) {
           <strong>{weather?.detail || day.clothingNote}</strong>
         </article>
       </div>
-      <div className="today-detail-grid">
+      <TodayMealBoard meals={command.meals} />
+      <TodayDocketStrip docket={docket} />
+      <div className="today-field-kit" aria-label="今日出门和账本联动">
+        <TodayCarryChecklist
+          day={day}
+          items={carryItems}
+          checkedItems={checkedKitItems}
+          onToggleItem={onToggleKitItem}
+        />
+        <TodayLedgerDock day={day} summary={ledgerSummary} />
+      </div>
+      <div className="today-detail-grid route-detail-grid">
         <div className="today-plan">
           <h3>今天节奏</h3>
           {day.blocks.map((block) => (
@@ -133,12 +222,139 @@ function TodayConsole({ day, weather }) {
         </div>
         <div className="today-links">
           <h3>快捷入口</h3>
-          {quickResources.map((resource) => (
+          {command.mapActions.map((action) => (
+            <a key={action.id} href={action.url} target="_blank" rel="noreferrer">
+              {action.label} · {action.title}
+            </a>
+          ))}
+          {quickResources.slice(0, 3).map((resource) => (
             <a key={resource.id} href={resource.url} target="_blank" rel="noreferrer">
               {resourceLabels[resource.type] || "链接"} · {resource.title}
             </a>
           ))}
+          <div className="today-note-list">
+            {command.notes.map((note) => <span key={note}>{note}</span>)}
+          </div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function TodayMealBoard({ meals }) {
+  return (
+    <section className="today-meal-board" aria-label="今日吃饭候选">
+      <article className="meal-breakfast">
+        <span>早餐</span>
+        <strong>{meals.breakfast}</strong>
+      </article>
+      <article className="meal-lunch">
+        <span>午餐</span>
+        <strong>{meals.lunch}</strong>
+      </article>
+      <article className="meal-dinner">
+        <span>晚餐</span>
+        <strong>{meals.dinner}</strong>
+      </article>
+      <p>{meals.note}</p>
+    </section>
+  );
+}
+
+function TodayDocketStrip({ docket }) {
+  return (
+    <section className="today-docket-strip" aria-label="今日票夹">
+      {docket.map((item) => (
+        <article className={`docket-${item.id}`} key={item.id}>
+          <span>{item.label}</span>
+          <strong>{item.title}</strong>
+          <p>{item.detail}</p>
+          <small>{item.status}</small>
+        </article>
+      ))}
+    </section>
+  );
+}
+
+function TodayCarryChecklist({ day, items, checkedItems, onToggleItem }) {
+  const checkedSet = new Set(checkedItems);
+  const completedCount = items.filter((item) => checkedSet.has(item.id)).length;
+
+  return (
+    <section className="carry-checklist" aria-label={`${day.label} 不要忘清单`}>
+      <div className="field-kit-head">
+        <span>今日不要忘</span>
+        <strong>{completedCount}/{items.length}</strong>
+      </div>
+      <div className="carry-checklist-items">
+        {items.map((item) => {
+          const checked = checkedSet.has(item.id);
+          return (
+            <label className={checked ? "carry-check-item is-checked" : "carry-check-item"} key={item.id}>
+              <input
+                type="checkbox"
+                checked={checked}
+                onChange={() => onToggleItem(day.id, item.id)}
+              />
+              <span>
+                <strong>{item.label}</strong>
+                <small>{item.detail}</small>
+              </span>
+            </label>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function TodayLedgerDock({ day, summary }) {
+  const totalText = formatLedgerTotals(summary.totalsByCurrency);
+  const quickActions = [
+    { label: "记餐饮", category: "dining", item: `${day.label} 餐饮` },
+    { label: "记交通", category: "交通", item: `${day.label} 交通` },
+    { label: "记门票", category: "活动", item: `${day.label} 活动 / 门票` },
+  ];
+
+  return (
+    <section className="today-ledger-dock" aria-label={`${day.label} 账本联动`}>
+      <div className="field-kit-head">
+        <span>今天账本</span>
+        <strong>{summary.count ? `${summary.count} 笔` : "未记账"}</strong>
+      </div>
+      <div className="ledger-dock-metrics">
+        <article>
+          <span>今日合计</span>
+          <strong>{totalText}</strong>
+        </article>
+        <article>
+          <span>待分摊</span>
+          <strong>{summary.pendingSplitCount}</strong>
+        </article>
+        <article>
+          <span>待确认</span>
+          <strong>{summary.draftCount}</strong>
+        </article>
+      </div>
+      <div className="ledger-dock-actions">
+        {quickActions.map((action) => (
+          <Link key={action.label} href={quickExpenseHref(day, action)}>
+            {action.label}
+          </Link>
+        ))}
+        <Link href="/expenses">看明细</Link>
+      </div>
+      <div className="ledger-dock-recent" aria-label="今日已记费用">
+        {summary.recentExpenses.length ? (
+          summary.recentExpenses.map((expense) => (
+            <div key={expense.id}>
+              <span>{expense.item}</span>
+              <strong>{formatMoney(expense.currency, expense.amount)}</strong>
+            </div>
+          ))
+        ) : (
+          <p>今天发生共同费用后，从这里快速记一笔。</p>
+        )}
       </div>
     </section>
   );
@@ -146,7 +362,7 @@ function TodayConsole({ day, weather }) {
 
 function Hero({ nextDay, weather }) {
   return (
-    <header className="itinerary-hero" data-motion="itinerary-hero">
+    <header className="itinerary-hero route-hero" data-motion="itinerary-hero">
       <Image
         className="itinerary-hero-image"
         src={itinerary.trip.coverImageUrl}
@@ -158,11 +374,19 @@ function Hero({ nextDay, weather }) {
       />
       <div className="itinerary-hero-copy">
         <p>{itinerary.trip.route}</p>
-        <h1>{itinerary.trip.title} · {itinerary.trip.subtitle}</h1>
+        <h1>
+          <span>{itinerary.trip.title} ·</span>
+          <span>{itinerary.trip.subtitle}</span>
+        </h1>
         <div className="hero-meta">
           <span>{itinerary.trip.dates}</span>
-          <span>2对夫妻</span>
+          <span>好友出行</span>
           <span>城市风光 · 海岸自驾 · 大堡礁</span>
+        </div>
+        <div className="hero-route-strip" aria-label="行程阶段">
+          {itinerary.stages.map((stage) => (
+            <span key={stage.id}>{stage.title}</span>
+          ))}
         </div>
       </div>
       <aside className="hero-weather">
@@ -175,9 +399,56 @@ function Hero({ nextDay, weather }) {
   );
 }
 
+function RouteManifest({ days, stages }) {
+  const bookendDays = days.filter((day) => day.id === "d0" || day.id === "d16");
+
+  return (
+    <section className="route-manifest" aria-label="路线总览" data-motion="day-jump">
+      <div className="manifest-lead">
+        <span>Route atlas</span>
+        <h2>D0-D16 每日路书</h2>
+        <p>先看今天怎么走，再按阶段翻每日安排。</p>
+      </div>
+      <div className="manifest-stages">
+        <article className="manifest-stage manifest-bookends">
+          <span>出发 / 返程</span>
+          <h3>上海往返</h3>
+          <p>{bookendDays.map((day) => day.city).join(" → ")}</p>
+          <div className="manifest-days">
+            {bookendDays.map((day) => (
+              <a key={day.id} href={`#${day.id}`}>
+                <strong>{day.label}</strong>
+                <small>{formatShortDate(day)}</small>
+              </a>
+            ))}
+          </div>
+        </article>
+        {stages.map((stage, index) => {
+          const stageDays = days.filter((day) => stage.dayIds.includes(day.id));
+          return (
+            <article className={`manifest-stage stage-tone-${index + 1}`} key={stage.id}>
+              <span>{formatStageRange(stageDays)}</span>
+              <h3>{stage.title}</h3>
+              <p>{stageDays[0].city} → {stageDays.at(-1).city}</p>
+              <div className="manifest-days">
+                {stageDays.map((day) => (
+                  <a key={day.id} href={`#${day.id}`}>
+                    <strong>{day.label}</strong>
+                    <small>{formatShortDate(day)}</small>
+                  </a>
+                ))}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 function DayJump({ days }) {
   return (
-    <section className="day-jump" aria-label="快速跳转" data-motion="day-jump">
+    <section className="day-jump route-jump" aria-label="快速跳转" data-motion="day-jump">
       {days.map((day) => (
         <a key={day.id} href={`#${day.id}`}>{day.label}</a>
       ))}
@@ -185,13 +456,19 @@ function DayJump({ days }) {
   );
 }
 
-function StageSection({ stage, days, weatherByDay, eagerImage }) {
+function StageSection({ stage, days, weatherByDay, ledgerExpenses, eagerImage }) {
+  const stageStops = days.map((day) => day.city).join(" / ");
+
   return (
-    <section className="stage-section">
+    <section className="stage-section route-stage">
       <div className="stage-head" data-motion="stage-head">
         <div>
-          <span>{days[0].date.slice(5).replace("-", ".")} - {days.at(-1).date.slice(5).replace("-", ".")}</span>
+          <span>{formatStageRange(days)}</span>
           <h2>{stage.title}</h2>
+          <p>{stageStops}</p>
+          <div className="stage-days">
+            {days.map((day) => <a key={day.id} href={`#${day.id}`}>{day.label}</a>)}
+          </div>
         </div>
         <div className="stage-image">
           <Image
@@ -205,14 +482,14 @@ function StageSection({ stage, days, weatherByDay, eagerImage }) {
       </div>
       <div className="day-grid">
         {days.map((day) => (
-          <DayCard key={day.id} day={day} weather={weatherByDay[day.id]} />
+          <DayCard key={day.id} day={day} weather={weatherByDay[day.id]} ledgerExpenses={ledgerExpenses} />
         ))}
       </div>
     </section>
   );
 }
 
-function DayCard({ day, weather, compact = false }) {
+function DayCard({ day, weather, ledgerExpenses = [], compact = false }) {
   const foodPulseRef = useRef({ tween: null, timeout: null });
 
   useEffect(() => {
@@ -224,6 +501,15 @@ function DayCard({ day, weather, compact = false }) {
   }, []);
 
   if (!day) return null;
+
+  const dayWeather = weather || fallbackWeather(day);
+  const keyStops = primaryBlocks(day).slice(0, 4);
+  const foodBlock = day.blocks.find((block) => block.period === "饮食");
+  const resourcesCount = day.blocks.reduce((total, block) => total + (block.resources?.length || 0), 0);
+  const timeline = buildDayTimeline(day);
+  const docket = buildDayDocket(day, ledgerExpenses);
+  const mapActions = collectMapActions(day);
+  const meals = parseMealPlan(day);
 
   function handleDetailsToggle(event) {
     if (!event.currentTarget.open) return;
@@ -244,7 +530,7 @@ function DayCard({ day, weather, compact = false }) {
   }
 
   return (
-    <article className={compact ? "day-card compact" : "day-card"} id={day.id} data-motion="day-card">
+    <article className={compact ? "day-card route-day-card compact" : "day-card route-day-card"} id={day.id} data-motion="day-card">
       <div className="day-cover">
         <Image
           className="day-cover-image"
@@ -255,7 +541,7 @@ function DayCard({ day, weather, compact = false }) {
         />
         <div>
           <span>{day.label}</span>
-          <strong>{day.date.slice(5).replace("-", ".")} {day.weekday}</strong>
+          <strong>{formatShortDate(day)} {day.weekday}</strong>
         </div>
       </div>
       <div className="day-body">
@@ -267,7 +553,29 @@ function DayCard({ day, weather, compact = false }) {
           <span>{day.lodging === "-" ? "返程" : day.lodging}</span>
         </div>
         <p className="focus">{day.focus}</p>
-        <WeatherStrip weather={weather || fallbackWeather(day)} />
+        <div className="day-brief-grid">
+          <WeatherStrip weather={dayWeather} />
+          <article className="day-brief-card">
+            <span>路书重点</span>
+            <strong>{keyStops.length ? `${keyStops.length} 个主要停靠` : "机动安排"}</strong>
+            <small>{resourcesCount ? `${resourcesCount} 个快捷链接` : "无外部链接"}</small>
+          </article>
+        </div>
+        <div className="route-stop-list" aria-label={`${day.label} 主要停靠`}>
+          {keyStops.map((block) => (
+            <span key={`${day.id}-stop-${block.sortOrder}`}>{block.place}</span>
+          ))}
+        </div>
+        {foodBlock && (
+          <div className="food-brief" data-food-block="true">
+            <span>饮食安排</span>
+            <p>{foodBlock.activity}</p>
+            {foodBlock.tip && <small>{foodBlock.tip}</small>}
+          </div>
+        )}
+        <DayExecutionGrid timeline={timeline} />
+        <DayDocket docket={docket} />
+        <DayMapActions actions={mapActions} meals={meals} />
         <details onToggle={handleDetailsToggle}>
           <summary>查看当天安排</summary>
           <div className="timeline">
@@ -291,6 +599,54 @@ function DayCard({ day, weather, compact = false }) {
         </details>
       </div>
     </article>
+  );
+}
+
+function DayExecutionGrid({ timeline }) {
+  return (
+    <section className="day-execution-grid" aria-label="每日时间轴">
+      {timeline.map((slot) => (
+        <article className={`slot-${slot.id}`} key={slot.id}>
+          <span>{slot.label}</span>
+          {slot.blocks.slice(0, 2).map((block) => (
+            <div key={`${block.dayId}-${block.sortOrder}`}>
+              <strong>{block.place}</strong>
+              <p>{block.activity}</p>
+            </div>
+          ))}
+        </article>
+      ))}
+    </section>
+  );
+}
+
+function DayDocket({ docket }) {
+  return (
+    <section className="day-docket" aria-label="住宿交通门票票夹">
+      {docket.map((item) => (
+        <a className={[`docket-${item.id}`, !item.href ? "is-disabled" : ""].filter(Boolean).join(" ")} key={item.id} href={item.href || undefined} target={item.href ? "_blank" : undefined} rel={item.href ? "noreferrer" : undefined}>
+          <span>{item.label}</span>
+          <strong>{item.title}</strong>
+          <small>{item.status} · {item.detail}</small>
+        </a>
+      ))}
+    </section>
+  );
+}
+
+function DayMapActions({ actions, meals }) {
+  return (
+    <section className="day-map-actions" aria-label="每日地图快捷入口">
+      <div>
+        <span>地图快捷</span>
+        <strong>{meals.dinner}</strong>
+      </div>
+      {actions.map((action) => (
+        <a key={action.id} href={action.url} target="_blank" rel="noreferrer">
+          {action.label}
+        </a>
+      ))}
+    </section>
   );
 }
 
@@ -319,6 +675,34 @@ function ResourceLinks({ resources }) {
   );
 }
 
+function formatLedgerTotals(totalsByCurrency) {
+  const entries = Object.entries(totalsByCurrency);
+  if (!entries.length) return "¥0.00";
+  return entries.map(([currency, amount]) => formatMoney(currency, amount)).join(" / ");
+}
+
+function quickExpenseHref(day, action) {
+  const params = new URLSearchParams({
+    date: day.date,
+    category: action.category,
+    item: action.item,
+  });
+  return `/add?${params.toString()}`;
+}
+
+function primaryBlocks(day) {
+  return day.blocks.filter((block) => block.period !== "饮食");
+}
+
+function formatShortDate(day) {
+  return day.date.slice(5).replace("-", ".");
+}
+
+function formatStageRange(days) {
+  if (!days.length) return "";
+  return `${days[0].label}-${days.at(-1).label} · ${formatShortDate(days[0])}-${formatShortDate(days.at(-1))}`;
+}
+
 function findNextDay(days) {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -326,4 +710,26 @@ function findNextDay(days) {
     const [year, month, date] = day.date.split("-").map(Number);
     return new Date(year, month - 1, date).getTime() >= today;
   }) || days.at(-1);
+}
+
+function readLocalLedgerExpenses() {
+  if (typeof window === "undefined") return seedExpenses;
+
+  try {
+    const savedExpenses = localStorage.getItem(ledgerStorageKey);
+    return savedExpenses ? JSON.parse(savedExpenses) : seedExpenses;
+  } catch {
+    return seedExpenses;
+  }
+}
+
+function readLocalChecklist() {
+  if (typeof window === "undefined") return {};
+
+  try {
+    const savedChecklist = localStorage.getItem(checklistStorageKey);
+    return savedChecklist ? JSON.parse(savedChecklist) : {};
+  } catch {
+    return {};
+  }
 }

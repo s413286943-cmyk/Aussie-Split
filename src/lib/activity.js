@@ -32,16 +32,34 @@ export function activityDisplaySummary(entry) {
   const amount = Number(entry.amount || 0);
   const currency = entry.currency || "CNY";
   const summary = entry.summary || "";
+  const displaySummary = normalizeActivitySummary(summary);
   const genericEditSummary = `${actionLabels.edit} ${item}`;
 
-  if (entry.action !== "edit" || (summary && summary !== genericEditSummary)) return summary;
+  if (entry.action !== "edit" || (summary && summary !== genericEditSummary)) return displaySummary;
   return editFallbackSummary({ verb: actionLabels.edit, item, amount, currency });
 }
 
+export function actionFeedbackMessage(action, expense) {
+  const item = expense.item || "未命名费用";
+  const amount = Number(expense.amount || 0);
+  const currency = expense.currency || "CNY";
+
+  if (action === "add") return `已保存：${item} ${formatMoney(currency, amount)}`;
+  if (action === "edit") return `已保存修改：${item}`;
+  if (action === "confirm") return `已确认：${item}`;
+  if (action === "delete") return `已删除：${item}`;
+  if (action === "split") return `已标记${splitSettledLabel(expense.splitSettled)}：${item}`;
+  return `已更新：${item}`;
+}
+
 export function recentActivity(entries, limit = 8) {
-  return [...(entries || [])]
-    .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime())
-    .slice(0, limit);
+  return collapseRepeatedEdits(
+    [...(entries || [])].sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime()),
+  ).slice(0, limit);
+}
+
+export function dashboardActivityPreview(entries) {
+  return recentActivity(entries, 3);
 }
 
 function activitySummary({ action, verb, expense, previousExpense, item, amount, currency }) {
@@ -74,6 +92,9 @@ function describeExpenseChanges(previousExpense, expense) {
   if ((previousExpense.status || "") !== (expense.status || "")) {
     changes.push(`状态 ${statusLabel(previousExpense.status)} → ${statusLabel(expense.status)}`);
   }
+  if (Boolean(previousExpense.splitSettled) !== Boolean(expense.splitSettled)) {
+    changes.push(`分摊状态 ${splitSettledLabel(previousExpense.splitSettled)} → ${splitSettledLabel(expense.splitSettled)}`);
+  }
   if ((previousExpense.item || "") !== (expense.item || "")) {
     changes.push(`项目 ${previousExpense.item || "未命名费用"} → ${expense.item || "未命名费用"}`);
   }
@@ -90,4 +111,34 @@ function statusLabel(status) {
   if (status === "draft") return "待确认";
   if (status === "confirmed") return "已确认";
   return status || "未填";
+}
+
+function splitSettledLabel(splitSettled) {
+  return splitSettled ? "已分摊" : "待分摊";
+}
+
+function normalizeActivitySummary(summary) {
+  return summary.replaceAll("未分摊", "待分摊");
+}
+
+function collapseRepeatedEdits(entries) {
+  const collapsed = [];
+
+  for (const entry of entries) {
+    const newestEntry = collapsed.at(-1);
+    if (shouldCollapseEdit(newestEntry, entry)) continue;
+    collapsed.push(entry);
+  }
+
+  return collapsed;
+}
+
+function shouldCollapseEdit(newestEntry, olderEntry) {
+  if (!newestEntry || !olderEntry) return false;
+  if (newestEntry.action !== "edit" || olderEntry.action !== "edit") return false;
+  if (newestEntry.expenseId !== olderEntry.expenseId) return false;
+
+  const newestTime = new Date(newestEntry.createdAt).getTime();
+  const olderTime = new Date(olderEntry.createdAt).getTime();
+  return Number.isFinite(newestTime) && Number.isFinite(olderTime) && Math.abs(newestTime - olderTime) <= 60 * 1000;
 }

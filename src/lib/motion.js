@@ -87,3 +87,32 @@ export function pulseElement(element) {
     { boxShadow: "0 0 0 10px rgba(20, 125, 114, 0)", duration: 0.72, ease: "power2.out", clearProps: "boxShadow" },
   );
 }
+
+export function shakeElement(element, tone = "success") {
+  if (!element || prefersReducedMotion()) return;
+
+  const color = tone === "danger" ? "184, 74, 59" : tone === "warning" ? "216, 148, 53" : "14, 124, 114";
+  const distance = tone === "danger" ? 8 : 5;
+  const timeline = gsap.timeline({ defaults: { ease: "power1.inOut" } });
+
+  timeline
+    .to(element, { x: -distance, duration: 0.055 })
+    .to(element, { x: distance, duration: 0.055 })
+    .to(element, { x: -distance * 0.65, duration: 0.055 })
+    .to(element, { x: distance * 0.45, duration: 0.055 })
+    .to(element, { x: 0, duration: 0.09, clearProps: "transform" });
+
+  timeline.fromTo(
+    element,
+    { boxShadow: `0 0 0 0 rgba(${color}, 0.28)` },
+    {
+      boxShadow: `0 0 0 12px rgba(${color}, 0)`,
+      duration: 0.58,
+      ease: "power2.out",
+      clearProps: "boxShadow",
+    },
+    0,
+  );
+
+  return timeline;
+}
