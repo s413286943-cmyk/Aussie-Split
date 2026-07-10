@@ -350,22 +350,51 @@ describe("initial ledger read safety", () => {
 });
 
 describe("sync request ordering", () => {
-  it("ignores an older success after a newer failure", () => {
+  it("keeps A failed after independent B succeeds", () => {
     const coordinator = createSyncRequestCoordinator();
-    const older = coordinator.begin();
-    const newer = coordinator.begin();
+    const requestA = coordinator.begin("expense-a");
+    const requestB = coordinator.begin("expense-b");
 
-    assert.equal(coordinator.settle(newer, "failed"), "failed");
-    assert.equal(coordinator.settle(older, "synced"), null);
+    assert.deepEqual(coordinator.settle(requestA, "failed"), { accepted: true, state: "failed" });
+    assert.deepEqual(coordinator.settle(requestB, "synced"), { accepted: true, state: "failed" });
+    assert.equal(coordinator.current(), "failed");
   });
 
-  it("ignores an older failure after a newer success", () => {
+  it("ignores an old A failure after newer A succeeds", () => {
     const coordinator = createSyncRequestCoordinator();
-    const older = coordinator.begin();
-    const newer = coordinator.begin();
+    const failed = coordinator.begin("expense-a");
+    coordinator.settle(failed, "failed");
+    const older = coordinator.begin("expense-a");
+    const newer = coordinator.begin("expense-a");
 
-    assert.equal(coordinator.settle(newer, "synced"), "synced");
-    assert.equal(coordinator.settle(older, "failed"), null);
+    assert.deepEqual(coordinator.settle(newer, "synced"), { accepted: true, state: "synced" });
+    assert.deepEqual(coordinator.settle(older, "failed"), { accepted: false, state: "synced" });
+    assert.equal(coordinator.current(), "synced");
+  });
+
+  it("keeps syncing while A is pending after independent B succeeds", () => {
+    const coordinator = createSyncRequestCoordinator();
+    coordinator.begin("expense-a");
+    const requestB = coordinator.begin("expense-b");
+
+    assert.deepEqual(coordinator.settle(requestB, "synced"), { accepted: true, state: "syncing" });
+    assert.equal(coordinator.current(), "syncing");
+  });
+
+  it("exposes failed and pending aggregate state for Undo", () => {
+    const coordinator = createSyncRequestCoordinator();
+    const requestA = coordinator.begin("expense-a");
+    coordinator.settle(requestA, "failed");
+    coordinator.begin("expense-b");
+
+    assert.equal(coordinator.current(), "failed");
+    assert.deepEqual(coordinator.snapshot(), {
+      state: "failed",
+      expenses: {
+        "expense-a": { failed: true, pending: false },
+        "expense-b": { failed: false, pending: true },
+      },
+    });
   });
 });
 
@@ -400,7 +429,20 @@ describe("TripLedger bridge action contract", () => {
   it("keeps pre-sync Undo free of remote deletion", () => {
     const undoSource = functionSource(tripLedgerSource, "undoDelete");
     assert.match(undoSource, /ledgerActionQueueRef\.current/);
+    assert.match(undoSource, /renderSyncAggregate\(syncRequestCoordinatorRef\.current\.current\(\)\)/);
+    assert.doesNotMatch(undoSource, /setSyncState\(supabaseConfigured \? "已同步"/);
     assert.doesNotMatch(undoSource, /deleteRemoteExpense/);
+  });
+
+  it("suppresses stale failure callbacks and keys every remote request by expense", () => {
+    const remoteSource = functionSource(tripLedgerSource, "startRemoteSync");
+    assert.match(remoteSource, /coordinator\.begin\(expenseId\)/);
+    assert.match(remoteSource, /if \(!settled\.accepted\) return/);
+    assert.ok(remoteSource.indexOf("if (!settled.accepted) return") < remoteSource.indexOf("onRemoteFailure?.(error)"));
+
+    for (const name of ["addExpense", "updateExpense", "confirmExpense", "finalizePendingDelete"]) {
+      assert.match(functionSource(tripLedgerSource, name), /startRemoteSync\([^,]+\.id,/);
+    }
   });
 
   it("versions seed fallback and settles the initial remote read before enabling actions", () => {

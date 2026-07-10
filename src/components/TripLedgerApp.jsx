@@ -227,20 +227,34 @@ export default function TripLedgerApp({ view }) {
     playFeedback("expense-form", "warning");
   }
 
-  function startRemoteSync(remoteAction, onRemoteFailure) {
+  function renderSyncAggregate(state) {
+    if (state === "failed") {
+      setSyncState("同步失败，可重试");
+    } else if (!supabaseConfigured) {
+      setSyncState("已本机保存，待同步");
+    } else if (state === "syncing") {
+      setSyncState("正在同步");
+    } else {
+      setSyncState("已同步");
+    }
+  }
+
+  function startRemoteSync(expenseId, remoteAction, onRemoteFailure) {
     const coordinator = syncRequestCoordinatorRef.current;
-    const requestGeneration = coordinator.begin();
-    if (supabaseConfigured) setSyncState("正在同步");
+    const token = coordinator.begin(expenseId);
+    renderSyncAggregate(coordinator.current());
 
     Promise.resolve()
       .then(() => remoteAction())
       .then(() => {
-        if (coordinator.settle(requestGeneration, "synced") !== "synced") return;
-        if (supabaseConfigured) setSyncState("已同步");
+        const settled = coordinator.settle(token, "synced");
+        if (!settled.accepted) return;
+        renderSyncAggregate(settled.state);
       })
       .catch((error) => {
-        if (coordinator.settle(requestGeneration, "failed") !== "failed") return;
-        setSyncState("同步失败，可重试");
+        const settled = coordinator.settle(token, "failed");
+        if (!settled.accepted) return;
+        renderSyncAggregate(settled.state);
         onRemoteFailure?.(error);
       });
 
@@ -262,7 +276,6 @@ export default function TripLedgerApp({ view }) {
       mutationStateRef.current = allocated.state;
       expensesRef.current = nextExpenses;
       setExpenses(nextExpenses);
-      syncRequestCoordinatorRef.current.invalidate();
       return {
         expense: allocated.expense,
         previousExpenses: currentExpenses,
@@ -297,6 +310,7 @@ export default function TripLedgerApp({ view }) {
       );
       const versionedExpense = committed.expense;
       const result = startRemoteSync(
+        versionedExpense.id,
         () => upsertRemoteExpense(versionedExpense),
         () => showRemoteFallbackNotice(versionedExpense, "expense-form")
       );
@@ -328,6 +342,7 @@ export default function TripLedgerApp({ view }) {
       const previousExpense = committed.previousExpenses.find((item) => item.id === expense.id);
       const feedbackAction = previousExpense && Boolean(previousExpense.splitSettled) !== Boolean(versionedExpense.splitSettled) ? "split" : "edit";
       const result = startRemoteSync(
+        versionedExpense.id,
         () => upsertRemoteExpense(versionedExpense),
         () => showRemoteFallbackNotice(versionedExpense)
       );
@@ -352,6 +367,7 @@ export default function TripLedgerApp({ view }) {
       if (!committed) return;
       const confirmed = committed.expense;
       const result = startRemoteSync(
+        confirmed.id,
         () => upsertRemoteExpense(confirmed),
         () => showRemoteFallbackNotice(confirmed)
       );
@@ -380,7 +396,12 @@ export default function TripLedgerApp({ view }) {
       const tombstone = committed.expense;
       const timer = window.setTimeout(() => finalizePendingDelete(id), undoDeleteMs);
       pendingDeleteRef.current = { id, expense: removed, tombstone, index: removedIndex, timer };
-      setSyncState("已本机保存，待同步");
+      const aggregateState = syncRequestCoordinatorRef.current.current();
+      if (aggregateState === "synced") {
+        setSyncState("已本机保存，待同步");
+      } else {
+        renderSyncAggregate(aggregateState);
+      }
       showActionNotice(actionFeedbackMessage("delete", removed), "warning", {
         actionLabel: "撤销",
         onAction: () => undoDelete(id),
@@ -411,14 +432,13 @@ export default function TripLedgerApp({ view }) {
         localStorage.setItem(storageKey, JSON.stringify(nextExpenses));
         expensesRef.current = nextExpenses;
         setExpenses(nextExpenses);
-        syncRequestCoordinatorRef.current.invalidate();
       });
     } catch {
       showActionNotice(`恢复失败：${pending.expense.item}`, "danger");
       playFeedback(pending.expense.id, "danger");
       return;
     }
-    setSyncState(supabaseConfigured ? "已同步" : "已本机保存，待同步");
+    renderSyncAggregate(syncRequestCoordinatorRef.current.current());
     showActionNotice(`已恢复：${pending.expense.item}`, "success");
     playFeedback(pending.expense.id, "success");
   }
@@ -436,6 +456,7 @@ export default function TripLedgerApp({ view }) {
     pendingDeleteRef.current = null;
 
     startRemoteSync(
+      pending.tombstone.id,
       () => deleteRemoteExpense(pending.tombstone),
       () => showRemoteFallbackNotice(pending.expense, "expense-list")
     );

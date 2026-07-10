@@ -35,19 +35,59 @@ function createSerialQueue() {
 }
 
 export function createSyncRequestCoordinator() {
-  let generation = 0;
+  let nextTokenId = 0;
+  const expenseStates = new Map();
+
+  function current() {
+    for (const state of expenseStates.values()) {
+      if (state.failed) return "failed";
+    }
+    for (const state of expenseStates.values()) {
+      if (state.pending) return "syncing";
+    }
+    return "synced";
+  }
 
   return {
-    begin() {
-      generation += 1;
-      return generation;
+    begin(expenseId) {
+      if (typeof expenseId !== "string" || !expenseId) {
+        throw new TypeError("A sync request requires an expense id");
+      }
+
+      nextTokenId += 1;
+      const previous = expenseStates.get(expenseId);
+      expenseStates.set(expenseId, {
+        latestTokenId: nextTokenId,
+        pending: true,
+        failed: previous?.failed ?? false,
+      });
+      return { expenseId, id: nextTokenId };
     },
-    invalidate() {
-      generation += 1;
-      return generation;
+    settle(token, outcome) {
+      if (outcome !== "synced" && outcome !== "failed") {
+        throw new TypeError("Invalid sync request outcome");
+      }
+
+      const state = token && expenseStates.get(token.expenseId);
+      if (!state || state.latestTokenId !== token.id) {
+        return { accepted: false, state: current() };
+      }
+
+      state.pending = false;
+      state.failed = outcome === "failed";
+      return { accepted: true, state: current() };
     },
-    settle(requestGeneration, value) {
-      return requestGeneration === generation ? value : null;
+    current,
+    snapshot() {
+      return {
+        state: current(),
+        expenses: Object.fromEntries(
+          Array.from(expenseStates, ([expenseId, state]) => [
+            expenseId,
+            { failed: state.failed, pending: state.pending },
+          ])
+        ),
+      };
     },
   };
 }
