@@ -2,7 +2,17 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import { seedExpenses } from "../src/lib/ledger.js";
-import { shouldUploadLocalCache } from "../src/lib/sync.js";
+import {
+  allocateExpenseMutation,
+  loadMutationState,
+  observeExpenseMutationVersions,
+  prepareBootstrapExpenses,
+  saveMutationState,
+  shouldUploadLocalCache,
+} from "../src/lib/sync.js";
+import { compareMutationVersions, parseMutationVersion } from "../src/lib/mutationVersion.js";
+
+const compatibleVersion = "1780000000000-000001-browser-a";
 
 describe("expense sync bootstrap", () => {
   it("uploads local cache when the remote ledger is empty", () => {
@@ -18,172 +28,292 @@ describe("expense sync bootstrap", () => {
 
     assert.equal(shouldUploadLocalCache(local, seedExpenses), false);
   });
+
+  it("allocates above observed versions even when the clock moves backward", () => {
+    const observed = "1780000005000-000009-browser-b";
+    const state = observeExpenseMutationVersions(
+      { clientId: "browser-a", highWater: "1780000000000-000001-browser-a" },
+      [{ mutationVersion: observed }]
+    );
+    const allocated = allocateExpenseMutation(
+      { id: "expense-1", item: "晚餐" },
+      state,
+      { now: 1770000000000 }
+    );
+
+    assert.equal(allocated.state.highWater, allocated.expense.mutationVersion);
+    assert.equal(compareMutationVersions(allocated.expense.mutationVersion, observed), 1);
+    assert.deepEqual(parseMutationVersion(allocated.expense.mutationVersion), {
+      millis: 1780000005000,
+      counter: 10,
+      clientId: "browser-a",
+    });
+  });
+
+  it("assigns ordered versions to every versionless bootstrap row", () => {
+    const input = [
+      { id: "expense-1", item: "早餐" },
+      { id: "expense-2", item: "午餐" },
+      { id: "expense-3", item: "晚餐" },
+    ];
+    const prepared = prepareBootstrapExpenses(
+      input,
+      { clientId: "browser-a", highWater: "" },
+      { now: 1780000000000 }
+    );
+
+    assert.equal(input[0].mutationVersion, undefined);
+    assert.equal(prepared.expenses.every((expense) => expense.mutationVersion), true);
+    assert.equal(compareMutationVersions(prepared.expenses[0].mutationVersion, prepared.expenses[1].mutationVersion), -1);
+    assert.equal(compareMutationVersions(prepared.expenses[1].mutationVersion, prepared.expenses[2].mutationVersion), -1);
+    assert.equal(prepared.state.highWater, prepared.expenses[2].mutationVersion);
+  });
+
+  it("allocates the deletion timestamp together with its reusable tombstone version", () => {
+    const allocated = allocateExpenseMutation(
+      { id: "expense-1", item: "晚餐", mutationVersion: compatibleVersion },
+      { clientId: "browser-a", highWater: compatibleVersion },
+      { now: 1780000005000, deleted: true }
+    );
+
+    assert.equal(allocated.expense.deletedAt, "2026-05-28T20:26:45.000Z");
+    assert.equal(allocated.expense.updatedAt, allocated.expense.deletedAt);
+    assert.equal(allocated.expense.mutationVersion, allocated.state.highWater);
+  });
+
+  it("persists one browser identity and its mutation high-water mark", () => {
+    const storage = memoryStorage();
+    let generated = 0;
+    const first = loadMutationState(storage, {
+      randomUUID: () => {
+        generated += 1;
+        return "123e4567-e89b-12d3-a456-426614174000";
+      },
+    });
+    const advanced = {
+      ...first,
+      highWater: compatibleVersion,
+    };
+    saveMutationState(storage, advanced);
+    const second = loadMutationState(storage, {
+      randomUUID: () => {
+        generated += 1;
+        return "00000000-0000-0000-0000-000000000000";
+      },
+    });
+
+    assert.equal(generated, 1);
+    assert.equal(second.clientId, "browser-123e4567-e89b-12d3-a456-426614174000");
+    assert.equal(second.highWater, compatibleVersion);
+  });
 });
 
-describe("Supabase REST headers", () => {
-  it("does not send publishable keys as bearer tokens", async () => {
-    const originalFetch = globalThis.fetch;
-    const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const calls = [];
+describe("Supabase REST compatibility bridge", () => {
+  it("falls back to legacy mode only for an explicit missing compatibility column", async () => {
+    await withSupabaseModule("legacyProbe", async ({ module, calls }) => {
+      const mode = await module.detectExpenseCompatibility();
+      const expenses = await module.fetchRemoteExpenses();
 
-    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_test";
-    globalThis.fetch = async (_url, options) => {
-      calls.push(options);
-      return { ok: true, json: async () => [] };
-    };
+      assert.equal(mode, "legacy");
+      assert.deepEqual(expenses, []);
+      assert.equal(calls.length, 2);
+      assert.match(calls[0].url, /select=mutation_version%2Cdeleted_at|select=mutation_version,deleted_at/);
+      assert.match(calls[1].url, /expenses\?select=\*&order=date\.asc$/);
+    }, [
+      jsonResponse(400, {
+        code: "42703",
+        message: "column expenses.mutation_version does not exist",
+      }),
+      jsonResponse(200, []),
+    ]);
+  });
 
-    try {
-      const { fetchRemoteExpenses } = await import(`../src/lib/supabaseRest.js?headers=${Date.now()}`);
-      await fetchRemoteExpenses();
-    } finally {
-      globalThis.fetch = originalFetch;
-      if (originalUrl === undefined) {
-        delete process.env.NEXT_PUBLIC_SUPABASE_URL;
-      } else {
-        process.env.NEXT_PUBLIC_SUPABASE_URL = originalUrl;
-      }
-      if (originalKey === undefined) {
-        delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      } else {
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = originalKey;
-      }
+  it("uses the tombstone filter and maps compatibility fields", async () => {
+    await withSupabaseModule("compatibleRead", async ({ module, calls }) => {
+      const expenses = await module.fetchRemoteExpenses();
+
+      assert.match(calls[1].url, /deleted_at=is\.null/);
+      assert.match(calls[1].url, /order=date\.asc/);
+      assert.equal(expenses.length, 1);
+      assert.equal(expenses[0].mutationVersion, compatibleVersion);
+      assert.equal(expenses[0].updatedAt, "2026-07-10T00:00:01.000Z");
+      assert.equal(expenses[0].deletedAt, null);
+      assert.equal(expenses[0].splitSettled, true);
+    }, [
+      jsonResponse(200, []),
+      jsonResponse(200, [
+        expenseRow({
+          mutation_version: compatibleVersion,
+          updated_at: "2026-07-10T00:00:01.000Z",
+          deleted_at: null,
+          split_settled: true,
+        }),
+        expenseRow({
+          id: "expense-deleted",
+          mutation_version: "1780000000000-000002-browser-a",
+          updated_at: "2026-07-10T00:00:02.000Z",
+          deleted_at: "2026-07-10T00:00:02.000Z",
+        }),
+      ]),
+    ]);
+  });
+
+  it("does not fall back when the compatibility probe fails unexpectedly", async () => {
+    await withSupabaseModule("failedProbe", async ({ module, calls }) => {
+      await assert.rejects(() => module.fetchRemoteExpenses(), /Unable to detect Supabase expense schema/);
+      assert.equal(calls.length, 1);
+    }, [jsonResponse(503, { message: "upstream unavailable secret-token-value" })]);
+  });
+
+  it("rejects unauthorized, unrelated, and network probe failures without exposing raw details", async () => {
+    const failures = [
+      jsonResponse(401, { message: "invalid key secret-token-value" }),
+      jsonResponse(400, { code: "PGRST100", message: "unrelated query failure secret-token-value" }),
+      new Error("network failed secret-token-value"),
+    ];
+
+    for (const [index, failure] of failures.entries()) {
+      await withSupabaseModule(`unsafeProbe-${index}`, async ({ module, calls }) => {
+        await assert.rejects(
+          () => module.detectExpenseCompatibility(),
+          (error) => {
+            assert.equal(error.code, "expense_schema_probe_failed");
+            assert.doesNotMatch(error.message, /secret-token-value/);
+            return true;
+          }
+        );
+        assert.equal(calls.length, 1);
+      }, [failure]);
     }
+  });
 
-    assert.equal(calls[0].headers.apikey, "sb_publishable_test");
-    assert.equal("Authorization" in calls[0].headers, false);
+  it("strips compatibility fields from legacy upserts", async () => {
+    await withSupabaseModule("legacyUpsert", async ({ module, calls }) => {
+      await module.upsertRemoteExpense(expenseModel({
+        mutationVersion: compatibleVersion,
+        updatedAt: "2026-07-10T00:00:01.000Z",
+        deletedAt: null,
+      }));
+
+      const body = JSON.parse(calls[1].options.body);
+      assert.equal(body.split_settled, true);
+      assert.equal("mutation_version" in body, false);
+      assert.equal("updated_at" in body, false);
+      assert.equal("deleted_at" in body, false);
+    }, [missingCompatibilityColumnResponse(), emptyResponse()]);
+  });
+
+  it("includes version fields in compatible upserts and rejects missing or malformed versions", async () => {
+    await withSupabaseModule("compatibleUpsert", async ({ module, calls }) => {
+      await assert.rejects(
+        () => module.upsertRemoteExpense(expenseModel({ mutationVersion: undefined })),
+        (error) => error?.code === "invalid_mutation_version"
+      );
+      await assert.rejects(
+        () => module.upsertRemoteExpense(expenseModel({ mutationVersion: "bad-version" })),
+        (error) => error?.code === "invalid_mutation_version"
+      );
+
+      await module.upsertRemoteExpense(expenseModel({
+        mutationVersion: compatibleVersion,
+        deletedAt: null,
+      }));
+
+      assert.equal(calls.length, 2);
+      const body = JSON.parse(calls[1].options.body);
+      assert.equal(body.mutation_version, compatibleVersion);
+      assert.equal(body.deleted_at, null);
+    }, [jsonResponse(200, []), emptyResponse()]);
+  });
+
+  it("uses physical DELETE in legacy mode and PATCH tombstones in compatible mode", async () => {
+    await withSupabaseModule("legacyDelete", async ({ module, calls }) => {
+      await module.deleteRemoteExpense({
+        id: "expense-1",
+        mutationVersion: compatibleVersion,
+        deletedAt: "2026-07-10T00:00:03.000Z",
+      });
+
+      assert.equal(calls[1].options.method, "DELETE");
+      assert.equal(calls[1].options.body, undefined);
+    }, [missingCompatibilityColumnResponse(), emptyResponse()]);
+
+    await withSupabaseModule("compatibleDelete", async ({ module, calls }) => {
+      await module.deleteRemoteExpense({
+        id: "expense-1",
+        mutationVersion: compatibleVersion,
+        deletedAt: "2026-07-10T00:00:03.000Z",
+      });
+
+      assert.equal(calls[1].options.method, "PATCH");
+      assert.deepEqual(JSON.parse(calls[1].options.body), {
+        mutation_version: compatibleVersion,
+        deleted_at: "2026-07-10T00:00:03.000Z",
+      });
+    }, [jsonResponse(200, []), emptyResponse()]);
+  });
+
+  it("surfaces stale writes as a safe typed error", async () => {
+    await withSupabaseModule("staleWrite", async ({ module }) => {
+      await assert.rejects(
+        () => module.upsertRemoteExpense(expenseModel({ mutationVersion: compatibleVersion })),
+        (error) => {
+          assert.equal(error.name, "RemoteExpenseWriteError");
+          assert.equal(error.code, "stale_mutation_version");
+          assert.equal(error.status, 409);
+          assert.doesNotMatch(error.message, /secret-token-value/);
+          return true;
+        }
+      );
+    }, [
+      jsonResponse(200, []),
+      jsonResponse(409, { code: "40001", message: "stale_mutation_version secret-token-value" }),
+    ]);
+  });
+});
+
+describe("Supabase REST existing behavior", () => {
+  it("does not send publishable keys as bearer tokens", async () => {
+    await withSupabaseModule("headers", async ({ module, calls }) => {
+      await module.fetchRemoteExpenses();
+
+      assert.equal(calls[0].options.headers.apikey, "sb_publishable_test");
+      assert.equal("Authorization" in calls[0].options.headers, false);
+      assert.equal(calls[1].options.headers.apikey, "sb_publishable_test");
+      assert.equal("Authorization" in calls[1].options.headers, false);
+    }, [jsonResponse(200, []), jsonResponse(200, [])]);
   });
 
   it("loads the split-settled flag from remote expenses", async () => {
-    const originalFetch = globalThis.fetch;
-    const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_test";
-    globalThis.fetch = async () => ({
-      ok: true,
-      json: async () => [
-        {
-          id: "expense-1",
-          category: "dining",
-          item: "晚餐",
-          date: "2026-08-01",
-          currency: "CNY",
-          amount: 100,
-          payer: "us",
-          status: "confirmed",
-          note: "",
-          attachment_name: "",
-          split_settled: true,
-        },
-      ],
-    });
-
-    try {
-      const { fetchRemoteExpenses } = await import(`../src/lib/supabaseRest.js?splitSettledFetch=${Date.now()}`);
-      const expenses = await fetchRemoteExpenses();
-
+    await withSupabaseModule("splitSettledFetch", async ({ module }) => {
+      const expenses = await module.fetchRemoteExpenses();
       assert.equal(expenses[0].splitSettled, true);
-    } finally {
-      globalThis.fetch = originalFetch;
-      restoreEnv(originalUrl, originalKey);
-    }
+    }, [
+      jsonResponse(200, []),
+      jsonResponse(200, [expenseRow({ mutation_version: compatibleVersion, split_settled: true })]),
+    ]);
   });
 
   it("saves the split-settled flag to remote expenses", async () => {
-    const originalFetch = globalThis.fetch;
-    const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const calls = [];
-
-    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_test";
-    globalThis.fetch = async (url, options) => {
-      calls.push({ url, options });
-      return { ok: true };
-    };
-
-    try {
-      const { upsertRemoteExpense } = await import(`../src/lib/supabaseRest.js?splitSettledSave=${Date.now()}`);
-      await upsertRemoteExpense({
-        id: "expense-1",
-        category: "dining",
-        item: "晚餐",
-        date: "2026-08-01",
-        currency: "CNY",
-        amount: 100,
-        payer: "us",
-        status: "confirmed",
-        note: "",
-        attachmentName: "",
-        splitSettled: true,
-      });
-
-      assert.equal(JSON.parse(calls[0].options.body).split_settled, true);
-    } finally {
-      globalThis.fetch = originalFetch;
-      restoreEnv(originalUrl, originalKey);
-    }
+    await withSupabaseModule("splitSettledSave", async ({ module, calls }) => {
+      await module.upsertRemoteExpense(expenseModel({ mutationVersion: compatibleVersion }));
+      assert.equal(JSON.parse(calls[1].options.body).split_settled, true);
+    }, [jsonResponse(200, []), emptyResponse()]);
   });
 
   it("loads remote expense activity newest-first", async () => {
-    const originalFetch = globalThis.fetch;
-    const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const calls = [];
-
-    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_test";
-    globalThis.fetch = async (url, options) => {
-      calls.push({ url, options });
-      return {
-        ok: true,
-        json: async () => [
-          {
-            id: "activity-1",
-            expense_id: "expense-1",
-            action: "add",
-            item: "晚餐",
-            amount: 100,
-            currency: "CNY",
-            summary: "新增了 ¥100.00 晚餐",
-            created_at: "2026-07-30T10:00:00.000Z",
-          },
-        ],
-      };
-    };
-
-    try {
-      const { fetchRemoteActivity } = await import(`../src/lib/supabaseRest.js?activityFetch=${Date.now()}`);
-      const activity = await fetchRemoteActivity();
+    await withSupabaseModule("activityFetch", async ({ module, calls }) => {
+      const activity = await module.fetchRemoteActivity();
 
       assert.match(calls[0].url, /expense_activity\?select=\*&order=created_at\.desc&limit=8/);
       assert.equal(activity[0].expenseId, "expense-1");
       assert.equal(activity[0].createdAt, "2026-07-30T10:00:00.000Z");
-    } finally {
-      globalThis.fetch = originalFetch;
-      restoreEnv(originalUrl, originalKey);
-    }
+    }, [jsonResponse(200, [activityRow()])]);
   });
 
   it("inserts remote expense activity without blocking on response rows", async () => {
-    const originalFetch = globalThis.fetch;
-    const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const calls = [];
-
-    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_test";
-    globalThis.fetch = async (url, options) => {
-      calls.push({ url, options });
-      return { ok: true };
-    };
-
-    try {
-      const { insertRemoteActivity } = await import(`../src/lib/supabaseRest.js?activityInsert=${Date.now()}`);
-      await insertRemoteActivity({
+    await withSupabaseModule("activityInsert", async ({ module, calls }) => {
+      await module.insertRemoteActivity({
         id: "activity-1",
         expenseId: "expense-1",
         action: "add",
@@ -198,12 +328,108 @@ describe("Supabase REST headers", () => {
       assert.equal(calls[0].options.method, "POST");
       assert.equal(JSON.parse(calls[0].options.body).expense_id, "expense-1");
       assert.equal(JSON.parse(calls[0].options.body).created_at, "2026-07-30T10:00:00.000Z");
-    } finally {
-      globalThis.fetch = originalFetch;
-      restoreEnv(originalUrl, originalKey);
-    }
+    }, [emptyResponse()]);
   });
 });
+
+async function withSupabaseModule(suffix, run, responses) {
+  const originalFetch = globalThis.fetch;
+  const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const calls = [];
+  let responseIndex = 0;
+
+  process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_test";
+  globalThis.fetch = async (url, options = {}) => {
+    calls.push({ url, options });
+    const response = responses[Math.min(responseIndex, responses.length - 1)];
+    responseIndex += 1;
+    if (response instanceof Error) throw response;
+    return response;
+  };
+
+  try {
+    const api = await import(`../src/lib/supabaseRest.js?${suffix}=${Date.now()}-${Math.random()}`);
+    await run({ module: api, calls });
+  } finally {
+    globalThis.fetch = originalFetch;
+    restoreEnv(originalUrl, originalKey);
+  }
+}
+
+function jsonResponse(status, body) {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    json: async () => body,
+    text: async () => JSON.stringify(body),
+  };
+}
+
+function emptyResponse() {
+  return jsonResponse(204, null);
+}
+
+function missingCompatibilityColumnResponse() {
+  return jsonResponse(400, {
+    code: "PGRST204",
+    message: "Could not find the 'deleted_at' column of 'expenses' in the schema cache",
+  });
+}
+
+function expenseRow(overrides = {}) {
+  return {
+    id: "expense-1",
+    category: "dining",
+    item: "晚餐",
+    date: "2026-08-01",
+    currency: "CNY",
+    amount: 100,
+    payer: "us",
+    status: "confirmed",
+    note: "",
+    attachment_name: "",
+    split_settled: false,
+    mutation_version: compatibleVersion,
+    updated_at: "2026-07-10T00:00:01.000Z",
+    deleted_at: null,
+    ...overrides,
+  };
+}
+
+function expenseModel(overrides = {}) {
+  return {
+    id: "expense-1",
+    category: "dining",
+    item: "晚餐",
+    date: "2026-08-01",
+    currency: "CNY",
+    amount: 100,
+    payer: "us",
+    status: "confirmed",
+    note: "",
+    attachmentName: "",
+    splitSettled: true,
+    mutationVersion: compatibleVersion,
+    updatedAt: "2026-07-10T00:00:01.000Z",
+    deletedAt: null,
+    ...overrides,
+  };
+}
+
+function activityRow() {
+  return {
+    id: "activity-1",
+    expense_id: "expense-1",
+    action: "add",
+    item: "晚餐",
+    amount: 100,
+    currency: "CNY",
+    summary: "新增了 ¥100.00 晚餐",
+    created_at: "2026-07-30T10:00:00.000Z",
+  };
+}
 
 function restoreEnv(originalUrl, originalKey) {
   if (originalUrl === undefined) {
@@ -216,4 +442,16 @@ function restoreEnv(originalUrl, originalKey) {
   } else {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = originalKey;
   }
+}
+
+function memoryStorage() {
+  const values = new Map();
+  return {
+    getItem(key) {
+      return values.has(key) ? values.get(key) : null;
+    },
+    setItem(key, value) {
+      values.set(key, String(value));
+    },
+  };
 }
