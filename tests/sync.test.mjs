@@ -1,18 +1,24 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 
 import { seedExpenses } from "../src/lib/ledger.js";
 import {
   allocateExpenseMutation,
+  allocatePersistedExpenseMutation,
+  createSerialMutationLockRunner,
   loadMutationState,
+  mutationClockLockName,
   observeExpenseMutationVersions,
   prepareBootstrapExpenses,
   saveMutationState,
   shouldUploadLocalCache,
+  runWithMutationClockLock,
 } from "../src/lib/sync.js";
 import { compareMutationVersions, parseMutationVersion } from "../src/lib/mutationVersion.js";
 
 const compatibleVersion = "1780000000000-000001-browser-a";
+const tripLedgerSource = readFileSync(new URL("../src/components/TripLedgerApp.jsx", import.meta.url), "utf8");
 
 describe("expense sync bootstrap", () => {
   it("uploads local cache when the remote ledger is empty", () => {
@@ -105,6 +111,140 @@ describe("expense sync bootstrap", () => {
     assert.equal(generated, 1);
     assert.equal(second.clientId, "browser-123e4567-e89b-12d3-a456-426614174000");
     assert.equal(second.highWater, compatibleVersion);
+  });
+
+  it("serializes overlapping allocations from two tabs sharing one mutation clock", async () => {
+    const storage = memoryStorage();
+    const lockRunner = createSerialMutationLockRunner();
+    const tabA = loadMutationState(storage, {
+      randomUUID: () => "123e4567-e89b-12d3-a456-426614174000",
+      tabId: "tab-a",
+    });
+    const tabB = loadMutationState(storage, {
+      randomUUID: () => "00000000-0000-0000-0000-000000000000",
+      tabId: "tab-b",
+    });
+
+    const allocations = await Promise.all([
+      allocatePersistedExpenseMutation(
+        { id: "expense-a", item: "早餐" },
+        tabA,
+        { storage, lockRunner, now: 1780000000000 }
+      ),
+      allocatePersistedExpenseMutation(
+        { id: "expense-b", item: "午餐" },
+        tabB,
+        { storage, lockRunner, now: 1780000000000 }
+      ),
+    ]);
+
+    const [firstVersion, secondVersion] = allocations.map((result) => result.expense.mutationVersion);
+    assert.notEqual(firstVersion, secondVersion);
+    assert.equal(compareMutationVersions(firstVersion, secondVersion), -1);
+    assert.equal(storage.getItem("aussie-chill-mutation-high-water-v1"), secondVersion);
+  });
+
+  it("requests the origin-wide named Web Lock when the API is available", async () => {
+    const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+    let requestedName = "";
+    Object.defineProperty(globalThis, "navigator", {
+      configurable: true,
+      value: {
+        locks: {
+          request(name, task) {
+            requestedName = name;
+            return Promise.resolve(task());
+          },
+        },
+      },
+    });
+
+    try {
+      assert.equal(await runWithMutationClockLock(() => "locked"), "locked");
+      assert.equal(requestedName, mutationClockLockName);
+    } finally {
+      Object.defineProperty(globalThis, "navigator", originalNavigator);
+    }
+  });
+
+  it("uses tab identity to avoid duplicate versions when origin-wide locks are unavailable", () => {
+    const expense = { id: "expense-1", item: "晚餐" };
+    const commonState = { clientId: "browser-stable", highWater: compatibleVersion };
+    const fromTabA = allocateExpenseMutation(
+      expense,
+      { ...commonState, tabId: "tab-a" },
+      { now: 1780000000000 }
+    );
+    const fromTabB = allocateExpenseMutation(
+      expense,
+      { ...commonState, tabId: "tab-b" },
+      { now: 1780000000000 }
+    );
+
+    assert.notEqual(fromTabA.expense.mutationVersion, fromTabB.expense.mutationVersion);
+    assert.notEqual(
+      parseMutationVersion(fromTabA.expense.mutationVersion).clientId,
+      parseMutationVersion(fromTabB.expense.mutationVersion).clientId
+    );
+  });
+
+  it("never lets a stale tab state move persisted high-water backward", () => {
+    const storage = memoryStorage({
+      "aussie-chill-mutation-client-id-v1": "browser-stable",
+      "aussie-chill-mutation-high-water-v1": "1780000005000-000009-browser-newer",
+    });
+    const saved = saveMutationState(storage, {
+      clientId: "browser-stable",
+      tabId: "tab-stale",
+      highWater: compatibleVersion,
+    });
+
+    assert.equal(saved.highWater, "1780000005000-000009-browser-newer");
+    assert.equal(
+      storage.getItem("aussie-chill-mutation-high-water-v1"),
+      "1780000005000-000009-browser-newer"
+    );
+  });
+
+  it("versions fallback seed rows without treating them as a saved cache upload", () => {
+    const savedExpenses = null;
+    const initialExpenses = savedExpenses ?? seedExpenses;
+    const prepared = prepareBootstrapExpenses(
+      initialExpenses,
+      { clientId: "browser-a", tabId: "tab-a", highWater: "" },
+      { now: 1780000000000 }
+    );
+
+    assert.equal(prepared.expenses.length, seedExpenses.length);
+    assert.equal(prepared.expenses.every((expense) => expense.mutationVersion), true);
+    assert.equal(shouldUploadLocalCache(savedExpenses, []), false);
+  });
+});
+
+describe("TripLedger bridge action contract", () => {
+  it("awaits allocation for add, edit, confirm, and split update paths", () => {
+    for (const name of ["addExpense", "updateExpense", "confirmExpense"]) {
+      assert.match(functionSource(tripLedgerSource, name), /await allocateLocalMutation\(/);
+    }
+    assert.match(functionSource(tripLedgerSource, "toggleSplitSettled"), /await onUpdate\(setExpenseSplitSettled/);
+  });
+
+  it("preallocates one tombstone and reuses it for final and unmount deletion", () => {
+    const removeSource = functionSource(tripLedgerSource, "removeExpense");
+    assert.equal((removeSource.match(/await allocateLocalMutation\(/g) || []).length, 1);
+    assert.match(removeSource, /\{ deleted: true \}/);
+    assert.equal((tripLedgerSource.match(/deleteRemoteExpense\(pending\.tombstone\)/g) || []).length, 2);
+  });
+
+  it("keeps pre-sync Undo free of remote deletion", () => {
+    assert.doesNotMatch(functionSource(tripLedgerSource, "undoDelete"), /deleteRemoteExpense/);
+  });
+
+  it("versions seed fallback and settles the initial remote read before enabling actions", () => {
+    const bootstrapSource = functionSource(tripLedgerSource, "initializeLedger");
+    assert.match(bootstrapSource, /savedExpenses \?\? seedExpenses/);
+    assert.ok(bootstrapSource.indexOf("await fetchRemoteExpenses()") < bootstrapSource.indexOf("setReady(true)"));
+    assert.equal((tripLedgerSource.match(/setReady\(true\)/g) || []).length, 1);
   });
 });
 
@@ -444,8 +584,8 @@ function restoreEnv(originalUrl, originalKey) {
   }
 }
 
-function memoryStorage() {
-  const values = new Map();
+function memoryStorage(initialValues = {}) {
+  const values = new Map(Object.entries(initialValues));
   return {
     getItem(key) {
       return values.has(key) ? values.get(key) : null;
@@ -454,4 +594,17 @@ function memoryStorage() {
       values.set(key, String(value));
     },
   };
+}
+
+function functionSource(source, name) {
+  const start = source.indexOf(`function ${name}(`);
+  assert.notEqual(start, -1, `Missing function ${name}`);
+  const bodyStart = source.indexOf("{", start);
+  let depth = 0;
+  for (let index = bodyStart; index < source.length; index += 1) {
+    if (source[index] === "{") depth += 1;
+    if (source[index] === "}") depth -= 1;
+    if (depth === 0) return source.slice(start, index + 1);
+  }
+  throw new Error(`Unclosed function ${name}`);
 }

@@ -6,11 +6,37 @@ import {
 
 export const mutationClientIdStorageKey = "aussie-chill-mutation-client-id-v1";
 export const mutationHighWaterStorageKey = "aussie-chill-mutation-high-water-v1";
+export const mutationClockLockName = "aussie-chill-mutation-clock-v1";
+
+const fallbackMutationLockRunner = createSerialMutationLockRunner();
 
 export function shouldUploadLocalCache(localExpenses, remoteExpenses) {
   if (!Array.isArray(localExpenses) || localExpenses.length === 0) return false;
   if (!Array.isArray(remoteExpenses) || remoteExpenses.length === 0) return true;
   return false;
+}
+
+export function createSerialMutationLockRunner() {
+  let tail = Promise.resolve();
+
+  return function runSerially(task) {
+    const result = tail.then(task, task);
+    tail = result.then(() => undefined, () => undefined);
+    return result;
+  };
+}
+
+export function runWithMutationClockLock(task) {
+  if (typeof globalThis.navigator?.locks?.request === "function") {
+    return globalThis.navigator.locks.request(mutationClockLockName, task);
+  }
+  return fallbackMutationLockRunner(task);
+}
+
+export function createMutationTabId(randomUUID = defaultRandomUUID) {
+  const tabId = `tab-${String(randomUUID()).toLowerCase()}`;
+  if (!isClientId(tabId)) throw new TypeError("Unable to create mutation tab id");
+  return tabId;
 }
 
 export function loadMutationState(storage, options = {}) {
@@ -20,16 +46,29 @@ export function loadMutationState(storage, options = {}) {
     : createBrowserClientId(options.randomUUID ?? defaultRandomUUID);
   const storedHighWater = storage.getItem(mutationHighWaterStorageKey);
   const highWater = isMutationVersion(storedHighWater) ? storedHighWater : "";
-  const state = { clientId, highWater };
+  const state = {
+    clientId,
+    highWater,
+    ...(options.tabId ? { tabId: options.tabId } : {}),
+  };
 
-  saveMutationState(storage, state);
-  return state;
+  return saveMutationState(storage, state);
 }
 
 export function saveMutationState(storage, state) {
   assertMutationState(state);
-  storage.setItem(mutationClientIdStorageKey, state.clientId);
-  if (state.highWater) storage.setItem(mutationHighWaterStorageKey, state.highWater);
+  const storedClientId = storage.getItem(mutationClientIdStorageKey);
+  const clientId = isClientId(storedClientId) ? storedClientId : state.clientId;
+  const storedHighWater = storage.getItem(mutationHighWaterStorageKey);
+  const highWater = greaterMutationVersion(
+    state.highWater,
+    isMutationVersion(storedHighWater) ? storedHighWater : ""
+  );
+  const persistedState = { ...state, clientId, highWater };
+
+  storage.setItem(mutationClientIdStorageKey, clientId);
+  if (highWater) storage.setItem(mutationHighWaterStorageKey, highWater);
+  return persistedState;
 }
 
 export function observeExpenseMutationVersions(state, expenses) {
@@ -39,7 +78,7 @@ export function observeExpenseMutationVersions(state, expenses) {
   for (const expense of Array.isArray(expenses) ? expenses : []) {
     const candidate = expense?.mutationVersion;
     if (!isMutationVersion(candidate)) continue;
-    if (!highWater || compareMutationVersions(candidate, highWater) > 0) highWater = candidate;
+    highWater = greaterMutationVersion(highWater, candidate);
   }
 
   return highWater === state.highWater ? state : { ...state, highWater };
@@ -52,7 +91,7 @@ export function allocateExpenseMutation(expense, state, options = {}) {
     previous: state.highWater,
     observed: isMutationVersion(expense?.mutationVersion) ? expense.mutationVersion : "",
     now,
-    clientId: state.clientId,
+    clientId: allocatorClientId(state),
   });
   const timestamp = new Date(now).toISOString();
   const deletedAt = options.deleted ? timestamp : null;
@@ -69,6 +108,26 @@ export function allocateExpenseMutation(expense, state, options = {}) {
       highWater: mutationVersion,
     },
   };
+}
+
+export async function allocatePersistedExpenseMutation(expense, state, options) {
+  const {
+    storage,
+    lockRunner = runWithMutationClockLock,
+    randomUUID = defaultRandomUUID,
+    ...allocationOptions
+  } = options;
+
+  return lockRunner(() => {
+    const tabState = state.tabId ? state : { ...state, tabId: createMutationTabId(randomUUID) };
+    const persistedState = mergePersistedMutationState(storage, tabState);
+    const observedState = observeExpenseMutationVersions(persistedState, [expense]);
+    const allocated = allocateExpenseMutation(expense, observedState, allocationOptions);
+    return {
+      expense: allocated.expense,
+      state: saveMutationState(storage, allocated.state),
+    };
+  });
 }
 
 export function prepareBootstrapExpenses(expenses, state, options = {}) {
@@ -89,6 +148,49 @@ export function prepareBootstrapExpenses(expenses, state, options = {}) {
   };
 }
 
+export async function preparePersistedBootstrapExpenses(expenses, options) {
+  const {
+    storage,
+    tabId,
+    lockRunner = runWithMutationClockLock,
+    randomUUID = defaultRandomUUID,
+    ...allocationOptions
+  } = options;
+
+  return lockRunner(() => {
+    const state = loadMutationState(storage, { randomUUID, tabId });
+    const prepared = prepareBootstrapExpenses(expenses, state, allocationOptions);
+    return {
+      expenses: prepared.expenses,
+      state: saveMutationState(storage, prepared.state),
+    };
+  });
+}
+
+function mergePersistedMutationState(storage, state) {
+  assertMutationState(state);
+  const storedClientId = storage.getItem(mutationClientIdStorageKey);
+  const storedHighWater = storage.getItem(mutationHighWaterStorageKey);
+  return {
+    ...state,
+    clientId: isClientId(storedClientId) ? storedClientId : state.clientId,
+    highWater: greaterMutationVersion(
+      state.highWater,
+      isMutationVersion(storedHighWater) ? storedHighWater : ""
+    ),
+  };
+}
+
+function greaterMutationVersion(left, right) {
+  if (!left) return right;
+  if (!right) return left;
+  return compareMutationVersions(left, right) >= 0 ? left : right;
+}
+
+function allocatorClientId(state) {
+  return state.tabId ? `${state.clientId}-${state.tabId}` : state.clientId;
+}
+
 function createBrowserClientId(randomUUID) {
   const uuid = randomUUID();
   const clientId = `browser-${String(uuid).toLowerCase()}`;
@@ -103,6 +205,7 @@ function defaultRandomUUID() {
 
 function assertMutationState(state) {
   if (!state || !isClientId(state.clientId)) throw new TypeError("Invalid mutation state");
+  if (state.tabId && !isClientId(state.tabId)) throw new TypeError("Invalid mutation tab id");
   if (state.highWater && !isMutationVersion(state.highWater)) throw new TypeError("Invalid mutation high-water mark");
 }
 

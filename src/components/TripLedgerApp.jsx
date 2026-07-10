@@ -38,11 +38,9 @@ import {
   upsertRemoteExpense,
 } from "@/lib/supabaseRest";
 import {
-  allocateExpenseMutation,
-  loadMutationState,
-  observeExpenseMutationVersions,
-  prepareBootstrapExpenses,
-  saveMutationState,
+  allocatePersistedExpenseMutation,
+  createMutationTabId,
+  preparePersistedBootstrapExpenses,
   shouldUploadLocalCache,
 } from "@/lib/sync";
 import UnlockGate from "@/components/UnlockGate";
@@ -57,6 +55,7 @@ export default function TripLedgerApp({ view }) {
   const noticeTimerRef = useRef(null);
   const pendingDeleteRef = useRef(null);
   const mutationStateRef = useRef(null);
+  const mutationTabIdRef = useRef(null);
   const [ready, setReady] = useState(false);
   const [expenses, setExpenses] = useState(seedExpenses);
   const [activity, setActivity] = useState([]);
@@ -67,51 +66,77 @@ export default function TripLedgerApp({ view }) {
   const ledger = useMemo(() => calculateLedger(expenses), [expenses]);
 
   useEffect(() => {
+    let cancelled = false;
     const saved = localStorage.getItem(storageKey);
-    let savedExpenses = saved ? JSON.parse(saved) : null;
+    const savedExpenses = saved ? JSON.parse(saved) : null;
     const savedActivity = localStorage.getItem(activityStorageKey);
     const localActivity = savedActivity ? recentActivity(JSON.parse(savedActivity)) : [];
-    let mutationState = loadMutationState(localStorage);
-    if (savedExpenses) {
-      const prepared = prepareBootstrapExpenses(savedExpenses, mutationState);
-      savedExpenses = prepared.expenses;
-      mutationState = prepared.state;
-      localStorage.setItem(storageKey, JSON.stringify(savedExpenses));
-    }
-    mutationStateRef.current = mutationState;
-    saveMutationState(localStorage, mutationState);
-    if (savedExpenses) setExpenses(savedExpenses);
     if (localActivity.length) setActivity(localActivity);
-    setReady(true);
 
-    fetchRemoteExpenses()
-      .then(async (remote) => {
-        if (shouldUploadLocalCache(savedExpenses, remote)) {
-          await Promise.all(savedExpenses.map((expense) => upsertRemoteExpense(expense)));
-          setSyncState("已同步");
-          return;
+    async function initializeLedger() {
+      let localRowsPrepared = false;
+      try {
+        const initialExpenses = savedExpenses ?? seedExpenses;
+        const tabId = mutationTabIdRef.current ?? createMutationTabId();
+        mutationTabIdRef.current = tabId;
+        const prepared = await preparePersistedBootstrapExpenses(initialExpenses, {
+          storage: localStorage,
+          tabId,
+        });
+        if (cancelled) return;
+
+        mutationStateRef.current = prepared.state;
+        setExpenses(prepared.expenses);
+        if (savedExpenses) localStorage.setItem(storageKey, JSON.stringify(prepared.expenses));
+        localRowsPrepared = true;
+
+        try {
+          const remote = await fetchRemoteExpenses();
+          if (cancelled) return;
+
+          if (shouldUploadLocalCache(savedExpenses, remote)) {
+            await Promise.all(prepared.expenses.map((expense) => upsertRemoteExpense(expense)));
+            if (cancelled) return;
+            setSyncState("已同步");
+            return;
+          }
+          if (remote?.length) {
+            const preparedRemote = await preparePersistedBootstrapExpenses(remote, {
+              storage: localStorage,
+              tabId,
+            });
+            if (cancelled) return;
+            mutationStateRef.current = preparedRemote.state;
+            setExpenses(preparedRemote.expenses);
+            localStorage.setItem(storageKey, JSON.stringify(preparedRemote.expenses));
+            setSyncState("已同步");
+          } else if (supabaseConfigured) {
+            setSyncState("已同步");
+          }
+        } catch {
+          if (!cancelled) setSyncState("同步失败，可重试");
         }
-        if (remote?.length) {
-          const nextMutationState = observeExpenseMutationVersions(mutationStateRef.current, remote);
-          mutationStateRef.current = nextMutationState;
-          saveMutationState(localStorage, nextMutationState);
-          setExpenses(remote);
-          localStorage.setItem(storageKey, JSON.stringify(remote));
-          setSyncState("已同步");
-        } else if (supabaseConfigured) {
-          setSyncState("已同步");
-        }
-      })
-      .catch(() => setSyncState("同步失败，可重试"));
+      } catch {
+        if (!cancelled) setSyncState("保存失败");
+      } finally {
+        if (!cancelled && localRowsPrepared) setReady(true);
+      }
+    }
+
+    initializeLedger();
 
     fetchRemoteActivity()
       .then((remote) => {
-        if (!remote?.length) return;
+        if (cancelled || !remote?.length) return;
         const nextActivity = recentActivity(remote);
         setActivity(nextActivity);
         localStorage.setItem(activityStorageKey, JSON.stringify(nextActivity));
       })
       .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -235,7 +260,7 @@ export default function TripLedgerApp({ view }) {
 
   async function addExpense(expense) {
     try {
-      const versionedExpense = allocateLocalMutation(expense);
+      const versionedExpense = await allocateLocalMutation(expense);
       const nextExpenses = [versionedExpense, ...expenses];
       const result = await persist(nextExpenses, () => upsertRemoteExpense(versionedExpense), () => showRemoteFallbackNotice(versionedExpense, "expense-form"));
       showPersistNotice("add", versionedExpense, result);
@@ -251,7 +276,7 @@ export default function TripLedgerApp({ view }) {
   async function updateExpense(expense) {
     try {
       const previousExpense = expenses.find((item) => item.id === expense.id);
-      const versionedExpense = allocateLocalMutation(expense);
+      const versionedExpense = await allocateLocalMutation(expense);
       const nextExpenses = expenses.map((item) => (item.id === expense.id ? versionedExpense : item));
       const feedbackAction = previousExpense && Boolean(previousExpense.splitSettled) !== Boolean(versionedExpense.splitSettled) ? "split" : "edit";
       const result = await persist(nextExpenses, () => upsertRemoteExpense(versionedExpense), () => showRemoteFallbackNotice(versionedExpense));
@@ -266,7 +291,7 @@ export default function TripLedgerApp({ view }) {
 
   async function confirmExpense(expense) {
     try {
-      const confirmed = allocateLocalMutation({ ...expense, status: "confirmed" });
+      const confirmed = await allocateLocalMutation({ ...expense, status: "confirmed" });
       const nextExpenses = expenses.map((item) => (item.id === expense.id ? confirmed : item));
       const result = await persist(nextExpenses, () => upsertRemoteExpense(confirmed), () => showRemoteFallbackNotice(confirmed));
       showPersistNotice("confirm", confirmed, result);
@@ -286,7 +311,7 @@ export default function TripLedgerApp({ view }) {
     flushPendingDelete();
 
     try {
-      const tombstone = allocateLocalMutation(removed, { deleted: true });
+      const tombstone = await allocateLocalMutation(removed, { deleted: true });
       const nextExpenses = expenses.filter((item) => item.id !== id);
       await persist(nextExpenses);
       const timer = window.setTimeout(() => finalizePendingDelete(id), undoDeleteMs);
@@ -350,11 +375,12 @@ export default function TripLedgerApp({ view }) {
     recordActivity(createActivityEntry("delete", pending.expense));
   }
 
-  function allocateLocalMutation(expense, options) {
-    const currentState = mutationStateRef.current ?? loadMutationState(localStorage);
-    const allocated = allocateExpenseMutation(expense, currentState, options);
+  async function allocateLocalMutation(expense, options = {}) {
+    const allocated = await allocatePersistedExpenseMutation(expense, mutationStateRef.current, {
+      storage: localStorage,
+      ...options,
+    });
     mutationStateRef.current = allocated.state;
-    saveMutationState(localStorage, allocated.state);
     return allocated.expense;
   }
 
