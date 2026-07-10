@@ -17,13 +17,102 @@ export function shouldUploadLocalCache(localExpenses, remoteExpenses) {
 }
 
 export function createSerialMutationLockRunner() {
+  return createSerialQueue();
+}
+
+export function createSerialLedgerActionQueue() {
+  return createSerialQueue();
+}
+
+function createSerialQueue() {
   let tail = Promise.resolve();
 
   return function runSerially(task) {
-    const result = tail.then(task, task);
+    const result = tail.then(() => task());
     tail = result.then(() => undefined, () => undefined);
     return result;
   };
+}
+
+export function createSyncRequestCoordinator() {
+  let generation = 0;
+
+  return {
+    begin() {
+      generation += 1;
+      return generation;
+    },
+    invalidate() {
+      generation += 1;
+      return generation;
+    },
+    settle(requestGeneration, value) {
+      return requestGeneration === generation ? value : null;
+    },
+  };
+}
+
+export function parseStoredArray(serialized, fallback = []) {
+  if (!serialized) return fallback;
+  try {
+    const parsed = JSON.parse(serialized);
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+export function withTimeout(promise, options = {}) {
+  const timeoutMs = options.timeoutMs ?? 7000;
+  const setTimer = options.setTimer ?? globalThis.setTimeout;
+  const clearTimer = options.clearTimer ?? globalThis.clearTimeout;
+
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const timerId = setTimer(() => {
+      if (settled) return;
+      settled = true;
+      reject(new InitialExpenseReadTimeoutError());
+    }, timeoutMs);
+
+    Promise.resolve(promise).then(
+      (value) => {
+        if (settled) return;
+        settled = true;
+        clearTimer(timerId);
+        resolve(value);
+      },
+      (error) => {
+        if (settled) return;
+        settled = true;
+        clearTimer(timerId);
+        reject(error);
+      }
+    );
+  });
+}
+
+export function prependExpenseToList(expenses, expense) {
+  return [expense, ...(Array.isArray(expenses) ? expenses : [])];
+}
+
+export function replaceExpenseInList(expenses, expense) {
+  const input = Array.isArray(expenses) ? expenses : [];
+  if (!input.some((item) => item.id === expense.id)) return input;
+  return input.map((item) => (item.id === expense.id ? expense : item));
+}
+
+export function removeExpenseFromList(expenses, id) {
+  const input = Array.isArray(expenses) ? expenses : [];
+  return input.filter((expense) => expense.id !== id);
+}
+
+export function restoreExpenseInList(expenses, expense, index) {
+  const input = Array.isArray(expenses) ? expenses : [];
+  if (input.some((item) => item.id === expense.id)) return input;
+  const restored = [...input];
+  restored.splice(Math.min(Math.max(index, 0), restored.length), 0, expense);
+  return restored;
 }
 
 export function runWithMutationClockLock(task) {
@@ -219,5 +308,13 @@ function isMutationVersion(value) {
     return true;
   } catch {
     return false;
+  }
+}
+
+class InitialExpenseReadTimeoutError extends Error {
+  constructor() {
+    super("Initial expense read timed out");
+    this.name = "InitialExpenseReadTimeoutError";
+    this.code = "initial_expense_read_timeout";
   }
 }

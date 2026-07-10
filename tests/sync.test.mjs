@@ -6,14 +6,22 @@ import { seedExpenses } from "../src/lib/ledger.js";
 import {
   allocateExpenseMutation,
   allocatePersistedExpenseMutation,
+  createSerialLedgerActionQueue,
   createSerialMutationLockRunner,
+  createSyncRequestCoordinator,
   loadMutationState,
   mutationClockLockName,
   observeExpenseMutationVersions,
+  parseStoredArray,
+  prependExpenseToList,
   prepareBootstrapExpenses,
+  removeExpenseFromList,
+  replaceExpenseInList,
+  restoreExpenseInList,
   saveMutationState,
   shouldUploadLocalCache,
   runWithMutationClockLock,
+  withTimeout,
 } from "../src/lib/sync.js";
 import { compareMutationVersions, parseMutationVersion } from "../src/lib/mutationVersion.js";
 
@@ -219,31 +227,187 @@ describe("expense sync bootstrap", () => {
     assert.equal(prepared.expenses.every((expense) => expense.mutationVersion), true);
     assert.equal(shouldUploadLocalCache(savedExpenses, []), false);
   });
+
+  it("keeps separate fallback runners distinct without regressing shared storage", async () => {
+    const storage = memoryStorage({
+      "aussie-chill-mutation-client-id-v1": "browser-stable",
+      "aussie-chill-mutation-high-water-v1": compatibleVersion,
+    });
+    const state = { clientId: "browser-stable", highWater: compatibleVersion };
+    const [fromTabA, fromTabB] = await Promise.all([
+      allocatePersistedExpenseMutation(
+        { id: "expense-a", item: "早餐" },
+        { ...state, tabId: "tab-a" },
+        { storage, lockRunner: createSerialMutationLockRunner(), now: 1780000000000 }
+      ),
+      allocatePersistedExpenseMutation(
+        { id: "expense-b", item: "午餐" },
+        { ...state, tabId: "tab-b" },
+        { storage, lockRunner: createSerialMutationLockRunner(), now: 1780000000000 }
+      ),
+    ]);
+
+    const versions = [fromTabA.expense.mutationVersion, fromTabB.expense.mutationVersion];
+    assert.notEqual(versions[0], versions[1]);
+    const greatest = compareMutationVersions(versions[0], versions[1]) > 0 ? versions[0] : versions[1];
+    assert.equal(storage.getItem("aussie-chill-mutation-high-water-v1"), greatest);
+    saveMutationState(storage, { ...state, tabId: "tab-stale" });
+    assert.equal(storage.getItem("aussie-chill-mutation-high-water-v1"), greatest);
+  });
+});
+
+describe("serialized visible ledger transitions", () => {
+  it("preserves two overlapping independent edits", async () => {
+    const queue = createSerialLedgerActionQueue();
+    const firstStarted = deferred();
+    const releaseFirst = deferred();
+    let visible = [
+      { id: "expense-a", item: "早餐" },
+      { id: "expense-b", item: "午餐" },
+    ];
+
+    const first = queue(async () => {
+      firstStarted.resolve();
+      await releaseFirst.promise;
+      visible = replaceExpenseInList(visible, { id: "expense-a", item: "早餐已改" });
+    });
+    await firstStarted.promise;
+    const second = queue(async () => {
+      visible = replaceExpenseInList(visible, { id: "expense-b", item: "午餐已改" });
+    });
+    releaseFirst.resolve();
+    await Promise.all([first, second]);
+
+    assert.deepEqual(visible.map((expense) => expense.item), ["早餐已改", "午餐已改"]);
+  });
+
+  it("does not let an overlapping edit resurrect a deleted expense", async () => {
+    const queue = createSerialLedgerActionQueue();
+    const deleteStarted = deferred();
+    const releaseDelete = deferred();
+    let visible = [
+      { id: "expense-a", item: "早餐" },
+      { id: "expense-b", item: "午餐" },
+    ];
+
+    const deletion = queue(async () => {
+      deleteStarted.resolve();
+      await releaseDelete.promise;
+      visible = removeExpenseFromList(visible, "expense-a");
+    });
+    await deleteStarted.promise;
+    const staleEdit = queue(async () => {
+      visible = replaceExpenseInList(visible, { id: "expense-a", item: "不应恢复" });
+    });
+    releaseDelete.resolve();
+    await Promise.all([deletion, staleEdit]);
+
+    assert.deepEqual(visible.map((expense) => expense.id), ["expense-b"]);
+  });
+
+  it("supports add, remove, and indexed Undo as pure transitions", () => {
+    const original = [{ id: "expense-a", item: "早餐" }];
+    const added = prependExpenseToList(original, { id: "expense-b", item: "午餐" });
+    const removed = removeExpenseFromList(added, "expense-b");
+    const restored = restoreExpenseInList(removed, { id: "expense-b", item: "午餐" }, 0);
+
+    assert.deepEqual(added.map((expense) => expense.id), ["expense-b", "expense-a"]);
+    assert.deepEqual(removed.map((expense) => expense.id), ["expense-a"]);
+    assert.deepEqual(restored.map((expense) => expense.id), ["expense-b", "expense-a"]);
+  });
+});
+
+describe("initial ledger read safety", () => {
+  it("falls back when cached expense or activity JSON is corrupt", () => {
+    assert.deepEqual(parseStoredArray("{not-json", seedExpenses), seedExpenses);
+    assert.deepEqual(parseStoredArray('{"unexpected":true}', []), []);
+    assert.deepEqual(parseStoredArray('[{"id":"expense-1"}]', []), [{ id: "expense-1" }]);
+  });
+
+  it("times out deterministically and ignores a late remote resolution", async () => {
+    const remote = deferred();
+    let fireTimeout;
+    let cleared = 0;
+    const bounded = withTimeout(remote.promise, {
+      timeoutMs: 7000,
+      setTimer(callback, delay) {
+        assert.equal(delay, 7000);
+        fireTimeout = callback;
+        return "timer-1";
+      },
+      clearTimer(id) {
+        assert.equal(id, "timer-1");
+        cleared += 1;
+      },
+    });
+
+    fireTimeout();
+    await assert.rejects(bounded, (error) => error?.code === "initial_expense_read_timeout");
+    remote.resolve([{ id: "late-expense" }]);
+    await Promise.resolve();
+    assert.equal(cleared, 0);
+  });
+});
+
+describe("sync request ordering", () => {
+  it("ignores an older success after a newer failure", () => {
+    const coordinator = createSyncRequestCoordinator();
+    const older = coordinator.begin();
+    const newer = coordinator.begin();
+
+    assert.equal(coordinator.settle(newer, "failed"), "failed");
+    assert.equal(coordinator.settle(older, "synced"), null);
+  });
+
+  it("ignores an older failure after a newer success", () => {
+    const coordinator = createSyncRequestCoordinator();
+    const older = coordinator.begin();
+    const newer = coordinator.begin();
+
+    assert.equal(coordinator.settle(newer, "synced"), "synced");
+    assert.equal(coordinator.settle(older, "failed"), null);
+  });
 });
 
 describe("TripLedger bridge action contract", () => {
-  it("awaits allocation for add, edit, confirm, and split update paths", () => {
-    for (const name of ["addExpense", "updateExpense", "confirmExpense"]) {
-      assert.match(functionSource(tripLedgerSource, name), /await allocateLocalMutation\(/);
+  it("routes add, edit, confirm, and delete through the serialized local commit", () => {
+    for (const name of ["addExpense", "updateExpense", "confirmExpense", "removeExpense"]) {
+      assert.match(functionSource(tripLedgerSource, name), /await commitLedgerMutation\(/);
     }
-    assert.match(functionSource(tripLedgerSource, "toggleSplitSettled"), /await onUpdate\(setExpenseSplitSettled/);
+    const splitSource = functionSource(tripLedgerSource, "toggleSplitSettled");
+    assert.match(splitSource, /await onUpdate\(expense, "toggle-split"\)/);
+    const updateSource = functionSource(tripLedgerSource, "updateExpense");
+    assert.match(updateSource, /action === "toggle-split"/);
+    assert.match(updateSource, /setExpenseSplitSettled\(latestExpense/);
+  });
+
+  it("keeps allocation, latest-list derivation, cache write, ref, and state update in one queue unit", () => {
+    const commitSource = functionSource(tripLedgerSource, "commitLedgerMutation");
+    assert.match(commitSource, /ledgerActionQueueRef\.current/);
+    assert.match(commitSource, /expensesRef\.current/);
+    assert.match(commitSource, /await allocatePersistedExpenseMutation/);
+    assert.match(commitSource, /localStorage\.setItem/);
+    assert.match(commitSource, /setExpenses/);
   });
 
   it("preallocates one tombstone and reuses it for final and unmount deletion", () => {
     const removeSource = functionSource(tripLedgerSource, "removeExpense");
-    assert.equal((removeSource.match(/await allocateLocalMutation\(/g) || []).length, 1);
+    assert.equal((removeSource.match(/await commitLedgerMutation\(/g) || []).length, 1);
     assert.match(removeSource, /\{ deleted: true \}/);
     assert.equal((tripLedgerSource.match(/deleteRemoteExpense\(pending\.tombstone\)/g) || []).length, 2);
   });
 
   it("keeps pre-sync Undo free of remote deletion", () => {
-    assert.doesNotMatch(functionSource(tripLedgerSource, "undoDelete"), /deleteRemoteExpense/);
+    const undoSource = functionSource(tripLedgerSource, "undoDelete");
+    assert.match(undoSource, /ledgerActionQueueRef\.current/);
+    assert.doesNotMatch(undoSource, /deleteRemoteExpense/);
   });
 
   it("versions seed fallback and settles the initial remote read before enabling actions", () => {
     const bootstrapSource = functionSource(tripLedgerSource, "initializeLedger");
     assert.match(bootstrapSource, /savedExpenses \?\? seedExpenses/);
-    assert.ok(bootstrapSource.indexOf("await fetchRemoteExpenses()") < bootstrapSource.indexOf("setReady(true)"));
+    assert.match(bootstrapSource, /withTimeout\(fetchRemoteExpenses\(\)/);
+    assert.ok(bootstrapSource.indexOf("await withTimeout") < bootstrapSource.indexOf("setReady(true)"));
     assert.equal((tripLedgerSource.match(/setReady\(true\)/g) || []).length, 1);
   });
 });
@@ -266,6 +430,17 @@ describe("Supabase REST compatibility bridge", () => {
       }),
       jsonResponse(200, []),
     ]);
+  });
+
+  it("expires legacy detection after a short TTL while compatible mode remains cached", async () => {
+    await withSupabaseModule("legacyTtl", async ({ module, calls }) => {
+      assert.equal(await module.detectExpenseCompatibility({ now: 1000 }), "legacy");
+      assert.equal(await module.detectExpenseCompatibility({ now: 15_999 }), "legacy");
+      assert.equal(calls.length, 1);
+      assert.equal(await module.detectExpenseCompatibility({ now: 16_000 }), "compatible");
+      assert.equal(await module.detectExpenseCompatibility({ now: 999_999 }), "compatible");
+      assert.equal(calls.length, 2);
+    }, [missingCompatibilityColumnResponse(), jsonResponse(200, [])]);
   });
 
   it("uses the tombstone filter and maps compatibility fields", async () => {
@@ -343,6 +518,32 @@ describe("Supabase REST compatibility bridge", () => {
     }, [missingCompatibilityColumnResponse(), emptyResponse()]);
   });
 
+  it("re-probes and retries one legacy upsert after a migration structural error", async () => {
+    await withSupabaseModule("legacyUpsertMigration", async ({ module, calls }) => {
+      await module.upsertRemoteExpense(expenseModel({ mutationVersion: compatibleVersion }));
+
+      assert.equal(calls.length, 4);
+      assert.equal("mutation_version" in JSON.parse(calls[1].options.body), false);
+      assert.match(calls[2].url, /select=mutation_version,deleted_at/);
+      assert.equal(JSON.parse(calls[3].options.body).mutation_version, compatibleVersion);
+    }, [
+      missingCompatibilityColumnResponse(),
+      jsonResponse(400, { code: "22023", message: "invalid_mutation_version" }),
+      jsonResponse(200, []),
+      emptyResponse(),
+    ]);
+  });
+
+  it("does not retry unrelated legacy write failures", async () => {
+    await withSupabaseModule("legacyNoRetry", async ({ module, calls }) => {
+      await assert.rejects(
+        () => module.upsertRemoteExpense(expenseModel({ mutationVersion: compatibleVersion })),
+        (error) => error?.code === "remote_write_failed"
+      );
+      assert.equal(calls.length, 2);
+    }, [missingCompatibilityColumnResponse(), jsonResponse(401, { message: "unauthorized" })]);
+  });
+
   it("includes version fields in compatible upserts and rejects missing or malformed versions", async () => {
     await withSupabaseModule("compatibleUpsert", async ({ module, calls }) => {
       await assert.rejects(
@@ -391,6 +592,30 @@ describe("Supabase REST compatibility bridge", () => {
         deleted_at: "2026-07-10T00:00:03.000Z",
       });
     }, [jsonResponse(200, []), emptyResponse()]);
+  });
+
+  it("re-probes and retries one legacy delete as a compatible tombstone", async () => {
+    await withSupabaseModule("legacyDeleteMigration", async ({ module, calls }) => {
+      await module.deleteRemoteExpense({
+        id: "expense-1",
+        mutationVersion: compatibleVersion,
+        deletedAt: "2026-07-10T00:00:03.000Z",
+      });
+
+      assert.equal(calls.length, 4);
+      assert.equal(calls[1].options.method, "DELETE");
+      assert.match(calls[2].url, /select=mutation_version,deleted_at/);
+      assert.equal(calls[3].options.method, "PATCH");
+      assert.deepEqual(JSON.parse(calls[3].options.body), {
+        mutation_version: compatibleVersion,
+        deleted_at: "2026-07-10T00:00:03.000Z",
+      });
+    }, [
+      missingCompatibilityColumnResponse(),
+      jsonResponse(409, { code: "55000", message: "physical_delete_disabled" }),
+      jsonResponse(200, []),
+      emptyResponse(),
+    ]);
   });
 
   it("surfaces stale writes as a safe typed error", async () => {
@@ -594,6 +819,16 @@ function memoryStorage(initialValues = {}) {
       values.set(key, String(value));
     },
   };
+}
+
+function deferred() {
+  let resolve;
+  let reject;
+  const promise = new Promise((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise;
+    reject = rejectPromise;
+  });
+  return { promise, resolve, reject };
 }
 
 function functionSource(source, name) {

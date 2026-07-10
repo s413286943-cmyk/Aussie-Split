@@ -3,8 +3,11 @@ import { parseMutationVersion } from "./mutationVersion.js";
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const compatibilityColumns = ["mutation_version", "deleted_at"];
+const legacyCompatibilityTtlMs = 15_000;
 
+let expenseCompatibilityCache = null;
 let expenseCompatibilityPromise = null;
+let expenseCompatibilityGeneration = 0;
 
 export const supabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_KEY);
 
@@ -17,15 +20,37 @@ export class RemoteExpenseWriteError extends Error {
   }
 }
 
-export async function detectExpenseCompatibility() {
+export async function detectExpenseCompatibility(options = {}) {
   if (!supabaseConfigured) return "local";
-  if (!expenseCompatibilityPromise) {
-    expenseCompatibilityPromise = probeExpenseCompatibility().catch((error) => {
-      expenseCompatibilityPromise = null;
-      throw error;
-    });
+  const now = options.now ?? Date.now();
+  if (options.force) invalidateExpenseCompatibility();
+  if (
+    expenseCompatibilityCache
+    && (
+      expenseCompatibilityCache.mode === "compatible"
+      || now < expenseCompatibilityCache.expiresAt
+    )
+  ) {
+    return expenseCompatibilityCache.mode;
   }
-  return expenseCompatibilityPromise;
+  if (expenseCompatibilityPromise) return expenseCompatibilityPromise;
+
+  const generation = expenseCompatibilityGeneration;
+  const probePromise = probeExpenseCompatibility()
+    .then((mode) => {
+      if (generation === expenseCompatibilityGeneration) {
+        expenseCompatibilityCache = {
+          mode,
+          expiresAt: mode === "legacy" ? now + legacyCompatibilityTtlMs : Number.POSITIVE_INFINITY,
+        };
+      }
+      return mode;
+    })
+    .finally(() => {
+      if (expenseCompatibilityPromise === probePromise) expenseCompatibilityPromise = null;
+    });
+  expenseCompatibilityPromise = probePromise;
+  return probePromise;
 }
 
 export async function fetchRemoteExpenses() {
@@ -62,21 +87,29 @@ export async function fetchRemoteActivity() {
 }
 
 export async function upsertRemoteExpense(expense) {
-  const mode = await detectExpenseCompatibility();
+  let mode = await detectExpenseCompatibility();
   if (mode === "local") return;
 
-  const row = mode === "compatible" ? toCompatibleRow(expense) : toLegacyRow(expense);
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/expenses`, {
-    method: "POST",
-    headers: {
-      ...authHeaders(),
-      "Content-Type": "application/json",
-      Prefer: "resolution=merge-duplicates,return=minimal",
-    },
-    body: JSON.stringify(row),
-  });
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const row = mode === "compatible" ? toCompatibleRow(expense) : toLegacyRow(expense);
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/expenses`, {
+      method: "POST",
+      headers: {
+        ...authHeaders(),
+        "Content-Type": "application/json",
+        Prefer: "resolution=merge-duplicates,return=minimal",
+      },
+      body: JSON.stringify(row),
+    });
 
-  if (!response.ok) throw await remoteWriteError(response, "save");
+    if (response.ok) return;
+    const error = await remoteWriteError(response, "save");
+    if (attempt === 0 && mode === "legacy" && isStructuralMigrationError(error)) {
+      mode = await detectExpenseCompatibility({ force: true });
+      continue;
+    }
+    throw error;
+  }
 }
 
 export async function insertRemoteActivity(entry) {
@@ -96,37 +129,45 @@ export async function insertRemoteActivity(entry) {
 }
 
 export async function deleteRemoteExpense(expense) {
-  const mode = await detectExpenseCompatibility();
+  let mode = await detectExpenseCompatibility();
   if (mode === "local") return;
 
   const id = typeof expense === "string" ? expense : expense?.id;
   if (!id) throw new RemoteExpenseWriteError("Expense id is required", "invalid_expense_id");
 
   const url = `${SUPABASE_URL}/rest/v1/expenses?id=eq.${encodeURIComponent(id)}`;
-  let response;
-  if (mode === "compatible") {
-    assertMutationVersion(expense?.mutationVersion);
-    assertDeletedAt(expense?.deletedAt);
-    response = await fetch(url, {
-      method: "PATCH",
-      headers: {
-        ...authHeaders(),
-        "Content-Type": "application/json",
-        Prefer: "return=minimal",
-      },
-      body: JSON.stringify({
-        mutation_version: expense.mutationVersion,
-        deleted_at: expense.deletedAt,
-      }),
-    });
-  } else {
-    response = await fetch(url, {
-      method: "DELETE",
-      headers: authHeaders(),
-    });
-  }
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    let response;
+    if (mode === "compatible") {
+      assertMutationVersion(expense?.mutationVersion);
+      assertDeletedAt(expense?.deletedAt);
+      response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+          ...authHeaders(),
+          "Content-Type": "application/json",
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify({
+          mutation_version: expense.mutationVersion,
+          deleted_at: expense.deletedAt,
+        }),
+      });
+    } else {
+      response = await fetch(url, {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
+    }
 
-  if (!response.ok) throw await remoteWriteError(response, "delete");
+    if (response.ok) return;
+    const error = await remoteWriteError(response, "delete");
+    if (attempt === 0 && mode === "legacy" && isStructuralMigrationError(error)) {
+      mode = await detectExpenseCompatibility({ force: true });
+      continue;
+    }
+    throw error;
+  }
 }
 
 export async function uploadRemoteReceipt(file) {
@@ -281,6 +322,9 @@ async function remoteWriteError(response, operation) {
   if (signature.includes("invalid_mutation_version")) {
     return new RemoteExpenseWriteError("Expense mutation version was rejected", "invalid_mutation_version", response.status);
   }
+  if (signature.includes("mutation_version") && /null value|not-null|missing|required/.test(signature)) {
+    return new RemoteExpenseWriteError("Expense mutation version is required", "missing_mutation_version", response.status);
+  }
   if (signature.includes("physical_delete_disabled")) {
     return new RemoteExpenseWriteError("Physical expense deletion is disabled", "physical_delete_disabled", response.status);
   }
@@ -289,6 +333,20 @@ async function remoteWriteError(response, operation) {
     "remote_write_failed",
     response.status
   );
+}
+
+function invalidateExpenseCompatibility() {
+  expenseCompatibilityGeneration += 1;
+  expenseCompatibilityCache = null;
+  expenseCompatibilityPromise = null;
+}
+
+function isStructuralMigrationError(error) {
+  return [
+    "invalid_mutation_version",
+    "missing_mutation_version",
+    "physical_delete_disabled",
+  ].includes(error?.code);
 }
 
 async function readErrorPayload(response) {
