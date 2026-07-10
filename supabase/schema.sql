@@ -159,6 +159,8 @@ create table app_private.expense_operations (
   operation_type text not null check (operation_type in ('upsert', 'delete')),
   expense_id text not null,
   mutation_version text not null,
+  operation jsonb not null,
+  result_status text check (result_status in ('applied', 'stale')),
   created_at timestamptz not null default now()
 );
 
@@ -177,7 +179,7 @@ alter table app_private.access_attempts enable row level security;
 
 revoke all on table app_private.expense_operations from public, anon, authenticated;
 revoke all on table app_private.access_attempts from public, anon, authenticated;
-grant select, insert on table app_private.expense_operations to service_role;
+grant select, insert, update on table app_private.expense_operations to service_role;
 grant select, insert, update, delete on table app_private.access_attempts to service_role;
 
 create or replace function app_private.enforce_expense_mutation()
@@ -197,8 +199,10 @@ begin
     raise exception 'mutation_version_in_future' using errcode = '22023';
   end if;
 
-  if tg_op = 'UPDATE' then
-    if new.mutation_version <= old.mutation_version then
+  if tg_op = 'INSERT' then
+    perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(new.id, 0));
+  elsif tg_op = 'UPDATE' then
+    if (new.mutation_version collate "C") <= (old.mutation_version collate "C") then
       raise exception 'stale_mutation_version' using errcode = '40001';
     end if;
     new.attachment_name := old.attachment_name;
@@ -244,18 +248,24 @@ security invoker
 set search_path = pg_catalog, pg_temp
 as $function$
 declare
+  request_payload jsonb := operation;
   requested_op_id text;
   op_type text;
   incoming_version text;
   expense_payload jsonb;
   activity_payload jsonb;
   requested_expense_id text;
+  existing_operation jsonb;
+  existing_result_status text;
   existing_version text;
+  existing_item text;
+  existing_amount numeric(12, 2);
+  existing_currency text;
   expense_exists boolean := false;
   inserted_operations integer;
   expense_date date;
-  expense_amount numeric;
-  activity_amount numeric;
+  expense_amount numeric(12, 2);
+  activity_amount numeric(12, 2);
   activity_created_at timestamptz;
 begin
   if operation is null or pg_catalog.jsonb_typeof(operation) is distinct from 'object' then
@@ -267,6 +277,7 @@ begin
   incoming_version := operation ->> 'mutationVersion';
   expense_payload := operation -> 'expense';
   activity_payload := operation -> 'activity';
+  requested_expense_id := operation ->> 'expenseId';
 
   if requested_op_id is null or requested_op_id !~ '^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$' then
     raise exception 'invalid_op_id' using errcode = '22023';
@@ -282,21 +293,15 @@ begin
        > floor(extract(epoch from (pg_catalog.now() + interval '5 minutes')) * 1000)::bigint then
     raise exception 'mutation_version_in_future' using errcode = '22023';
   end if;
-  if pg_catalog.jsonb_typeof(expense_payload) is distinct from 'object' then
+  if requested_expense_id is null or requested_expense_id !~ '^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$' then
     raise exception 'invalid_expense_payload' using errcode = '22023';
   end if;
   if pg_catalog.jsonb_typeof(activity_payload) is distinct from 'object' then
     raise exception 'invalid_activity_payload' using errcode = '22023';
   end if;
 
-  requested_expense_id := expense_payload ->> 'id';
-  if requested_expense_id is null or requested_expense_id !~ '^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$' then
-    raise exception 'invalid_expense_payload' using errcode = '22023';
-  end if;
-
   if coalesce(activity_payload ->> 'id', '') = ''
      or activity_payload ->> 'expenseId' is distinct from requested_expense_id
-     or coalesce(activity_payload ->> 'action', '') not in ('add', 'edit', 'confirm', 'delete')
      or coalesce(activity_payload ->> 'item', '') = ''
      or pg_catalog.jsonb_typeof(activity_payload -> 'amount') is distinct from 'number'
      or coalesce(activity_payload ->> 'currency', '') not in ('CNY', 'AUD')
@@ -314,7 +319,9 @@ begin
   end;
 
   if op_type = 'upsert' then
-    if coalesce(expense_payload ->> 'category', '') = ''
+    if pg_catalog.jsonb_typeof(expense_payload) is distinct from 'object'
+       or expense_payload ->> 'id' is distinct from requested_expense_id
+       or coalesce(expense_payload ->> 'category', '') = ''
        or coalesce(expense_payload ->> 'item', '') = ''
        or coalesce(expense_payload ->> 'currency', '') not in ('CNY', 'AUD')
        or pg_catalog.jsonb_typeof(expense_payload -> 'amount') is distinct from 'number'
@@ -336,38 +343,106 @@ begin
       when others then
         raise exception 'invalid_expense_payload' using errcode = '22023';
     end;
+
+    if coalesce(activity_payload ->> 'action', '') not in ('add', 'edit', 'confirm') then
+      raise exception 'invalid_activity_payload' using errcode = '22023';
+    end if;
+
+    if activity_payload ->> 'item' is distinct from expense_payload ->> 'item'
+       or activity_amount is distinct from expense_amount
+       or activity_payload ->> 'currency' is distinct from expense_payload ->> 'currency' then
+      raise exception 'invalid_activity_payload' using errcode = '22023';
+    end if;
+  elsif op_type = 'delete' then
+    if not (
+      pg_catalog.jsonb_typeof(expense_payload) = 'null'
+      or (
+        pg_catalog.jsonb_typeof(expense_payload) = 'object'
+        and expense_payload ->> 'id' is not distinct from requested_expense_id
+      )
+    ) then
+      raise exception 'invalid_expense_payload' using errcode = '22023';
+    end if;
+
+    if activity_payload ->> 'action' is distinct from 'delete' then
+      raise exception 'invalid_activity_payload' using errcode = '22023';
+    end if;
   end if;
 
   insert into app_private.expense_operations (
     op_id,
     operation_type,
     expense_id,
-    mutation_version
+    mutation_version,
+    operation,
+    result_status
   )
   values (
     requested_op_id,
     op_type,
     requested_expense_id,
-    incoming_version
+    incoming_version,
+    request_payload,
+    null
   )
   on conflict (op_id) do nothing;
 
   get diagnostics inserted_operations = row_count;
   if inserted_operations = 0 then
-    return pg_catalog.jsonb_build_object('opId', requested_op_id, 'status', 'duplicate');
+    select logged.operation, logged.result_status
+    into existing_operation, existing_result_status
+    from app_private.expense_operations as logged
+    where logged.op_id = requested_op_id;
+
+    if existing_operation is distinct from request_payload then
+      raise exception 'operation_id_conflict' using errcode = '23505';
+    end if;
+    if existing_result_status is null then
+      raise exception 'operation_result_unavailable' using errcode = '40001';
+    end if;
+
+    return pg_catalog.jsonb_build_object(
+      'opId', requested_op_id,
+      'status', existing_result_status
+    );
   end if;
 
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(requested_expense_id, 0));
 
-  select true, current_expense.mutation_version
-  into expense_exists, existing_version
+  select
+    true,
+    current_expense.mutation_version,
+    current_expense.item,
+    current_expense.amount,
+    current_expense.currency
+  into
+    expense_exists,
+    existing_version,
+    existing_item,
+    existing_amount,
+    existing_currency
   from public.expenses as current_expense
   where current_expense.id = requested_expense_id
   for update;
 
   expense_exists := coalesce(expense_exists, false);
-  if expense_exists and incoming_version <= existing_version then
+  if expense_exists
+     and (incoming_version collate "C") <= (existing_version collate "C") then
+    update app_private.expense_operations
+    set result_status = 'stale'
+    where op_id = requested_op_id;
+
     return pg_catalog.jsonb_build_object('opId', requested_op_id, 'status', 'stale');
+  end if;
+
+  if op_type = 'delete'
+     and expense_exists
+     and (
+       activity_payload ->> 'item' is distinct from existing_item
+       or activity_amount is distinct from existing_amount
+       or activity_payload ->> 'currency' is distinct from existing_currency
+     ) then
+    raise exception 'invalid_activity_payload' using errcode = '22023';
   end if;
 
   if op_type = 'upsert' and expense_exists then
@@ -447,6 +522,10 @@ begin
     when unique_violation then
       raise exception 'activity_id_conflict' using errcode = '23505';
   end;
+
+  update app_private.expense_operations
+  set result_status = 'applied'
+  where op_id = requested_op_id;
 
   return pg_catalog.jsonb_build_object('opId', requested_op_id, 'status', 'applied');
 end

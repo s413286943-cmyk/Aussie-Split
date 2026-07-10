@@ -56,12 +56,14 @@ describe("shared-ledger compatibility migration contract", () => {
       /revoke all on schema app_private from public, anon, authenticated/i,
       /grant usage on schema app_private to service_role/i,
       /create table app_private\.expense_operations/i,
+      /operation jsonb not null/i,
+      /result_status text[\s\S]*result_status in \('applied', 'stale'\)/i,
       /create table app_private\.access_attempts/i,
       /alter table app_private\.expense_operations enable row level security/i,
       /alter table app_private\.access_attempts enable row level security/i,
       /revoke all on (?:table )?app_private\.expense_operations from public, anon, authenticated/i,
       /revoke all on (?:table )?app_private\.access_attempts from public, anon, authenticated/i,
-      /grant select, insert on table app_private\.expense_operations to service_role/i,
+      /grant select, insert, update on table app_private\.expense_operations to service_role/i,
       /grant select, insert, update, delete on table app_private\.access_attempts to service_role/i,
     ]);
   });
@@ -71,7 +73,7 @@ describe("shared-ledger compatibility migration contract", () => {
       /create or replace function app_private\.enforce_expense_mutation\(\)/i,
       /security invoker/i,
       /set search_path = pg_catalog, pg_temp/i,
-      /new\.mutation_version <= old\.mutation_version/i,
+      /\(new\.mutation_version collate "C"\) <= \(old\.mutation_version collate "C"\)/i,
       /interval '5 minutes'/i,
       /new\.updated_at := pg_catalog\.now\(\)/i,
       /new\.attachment_name := old\.attachment_name/i,
@@ -82,6 +84,9 @@ describe("shared-ledger compatibility migration contract", () => {
       /alter function app_private\.enforce_expense_mutation\(\) owner to postgres/i,
       /revoke execute on function app_private\.enforce_expense_mutation\(\) from public, anon, authenticated/i,
     ]);
+    const body = functionBody(migration, "app_private.enforce_expense_mutation");
+    assert.match(body, /if tg_op = 'INSERT' then[\s\S]*pg_catalog\.pg_advisory_xact_lock\(pg_catalog\.hashtextextended\(new\.id, 0\)\)/i);
+    assert.equal(countOccurrences(body, "pg_catalog.pg_advisory_xact_lock"), 1);
   });
 
   it("exposes only the service-role atomic operation RPC", () => {
@@ -90,8 +95,10 @@ describe("shared-ledger compatibility migration contract", () => {
       /security invoker/i,
       /insert into app_private\.expense_operations/i,
       /on conflict \(op_id\) do nothing/i,
-      /status', 'duplicate'/i,
+      /operation_id_conflict/i,
+      /result_status/i,
       /for update/i,
+      /\(incoming_version collate "C"\) <= \(existing_version collate "C"\)/i,
       /status', 'stale'/i,
       /deleted_at = pg_catalog\.now\(\)/i,
       /insert into public\.expense_activity/i,
@@ -103,6 +110,15 @@ describe("shared-ledger compatibility migration contract", () => {
     const body = functionBody(migration, "public.apply_expense_operation");
     assert.doesNotMatch(body, /attachment_name\s*=/i);
     assert.doesNotMatch(body, /on conflict \(id\) do nothing/i);
+    assert.doesNotMatch(body, /status', 'duplicate'/i);
+    expectAll(body, [
+      /requested_expense_id := operation ->> 'expenseId'/i,
+      /expense_payload ->> 'id' is distinct from requested_expense_id/i,
+      /activity_payload ->> 'expenseId' is distinct from requested_expense_id/i,
+      /op_type = 'delete'[\s\S]*pg_catalog\.jsonb_typeof\(expense_payload\)[\s\S]*'null'/i,
+      /op_type = 'delete'[\s\S]*activity_payload ->> 'action'[\s\S]*'delete'/i,
+      /op_type = 'upsert'[\s\S]*activity_payload ->> 'action'[\s\S]*'add', 'edit', 'confirm'/i,
+    ]);
   });
 
   it("implements durable service-only access throttling", () => {

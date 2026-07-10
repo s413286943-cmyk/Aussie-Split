@@ -67,6 +67,16 @@ async function assertMigrationMetadata(database) {
   assert.equal(
     await scalar(database, `
       select count(*)
+      from information_schema.columns
+      where table_schema = 'app_private'
+        and table_name = 'expense_operations'
+        and column_name in ('operation', 'result_status')
+    `),
+    "2",
+  );
+  assert.equal(
+    await scalar(database, `
+      select count(*)
       from pg_catalog.pg_indexes
       where schemaname = 'public'
         and indexname in (
@@ -132,6 +142,7 @@ async function assertCoreBehavior(database, phase) {
   const deleteVersion = version(11, "service");
 
   await assertMutationVersionGrammar(database, phase, physical);
+  await assertCollatedMutationOrdering(database, phase, physical);
 
   await sql(database, `
     set role anon;
@@ -215,8 +226,16 @@ async function assertCoreBehavior(database, phase) {
 
   assert.deepEqual(await applyOperation(database, upsertOperation), {
     opId: `op-${phase}-upsert`,
-    status: "duplicate",
+    status: "applied",
   });
+  assert.equal(
+    await scalar(database, `
+      select result_status || '|' || (operation = ${literal(JSON.stringify(upsertOperation))}::jsonb)::text
+      from app_private.expense_operations
+      where op_id = 'op-${phase}-upsert'
+    `),
+    "applied|true",
+  );
   assert.equal(
     await scalar(database, `select item from public.expenses where id = ${literal(expenseId)}`),
     "Service dinner",
@@ -227,6 +246,15 @@ async function assertCoreBehavior(database, phase) {
       where id = 'activity-${phase}-upsert'
     `),
     "1",
+  );
+
+  const conflictingOperation = cloneOperation(upsertOperation);
+  conflictingOperation.expense.item = "Conflicting retry";
+  conflictingOperation.activity.item = "Conflicting retry";
+  await expectOperationFailure(database, conflictingOperation, /operation_id_conflict/);
+  assert.equal(
+    await scalar(database, `select item from public.expenses where id = ${literal(expenseId)}`),
+    "Service dinner",
   );
 
   const staleOperation = operationPayload({
@@ -242,6 +270,18 @@ async function assertCoreBehavior(database, phase) {
     opId: `op-${phase}-stale`,
     status: "stale",
   });
+  assert.deepEqual(await applyOperation(database, staleOperation), {
+    opId: `op-${phase}-stale`,
+    status: "stale",
+  });
+  assert.equal(
+    await scalar(database, `
+      select result_status || '|' || (operation = ${literal(JSON.stringify(staleOperation))}::jsonb)::text
+      from app_private.expense_operations
+      where op_id = 'op-${phase}-stale'
+    `),
+    "stale|true",
+  );
   assert.equal(
     await scalar(database, `select count(*) from public.expense_activity where id = 'activity-${phase}-stale'`),
     "0",
@@ -257,6 +297,7 @@ async function assertCoreBehavior(database, phase) {
     action: "delete",
     type: "delete",
   });
+  assert.equal(deleteOperation.expense, null);
   assert.deepEqual(await applyOperation(database, deleteOperation), {
     opId: `op-${phase}-delete`,
     status: "applied",
@@ -271,8 +312,10 @@ async function assertCoreBehavior(database, phase) {
   );
 
   await assertInvalidPayloadsRejected(database, phase, physical);
+  await assertOperationShapeAndActivityValidation(database, phase, physical);
   await assertActivityConflictRollsBack(database, phase, physical);
   await assertConcurrentOperationDeduplication(database, phase, physical);
+  await assertDirectUpsertRpcRace(database, phase, physical);
   await assertThrottling(database, phase);
 }
 
@@ -312,6 +355,44 @@ async function assertMutationVersionGrammar(database, phase, physical) {
   await expectOperationFailure(database, invalidRpcVersion, /invalid_mutation_version/);
 }
 
+async function assertCollatedMutationOrdering(database, phase, physical) {
+  const higherClientVersion = `${physical}-000060-device0`;
+  const lowerClientVersion = `${physical}-000060-device-a`;
+
+  await sql(database, `
+    set role anon;
+    insert into public.expenses (
+      id, category, item, currency, amount, payer, status, mutation_version
+    ) values (
+      'collation-high-${phase}', 'dining', 'Higher client id', 'AUD', 1, 'us', 'confirmed',
+      ${literal(higherClientVersion)}
+    )
+  `);
+  await expectSqlFailure(database, `
+    set role anon;
+    update public.expenses
+    set item = 'Must stay stale', mutation_version = ${literal(lowerClientVersion)}
+    where id = 'collation-high-${phase}'
+  `, /stale_mutation_version/);
+
+  await sql(database, `
+    set role anon;
+    insert into public.expenses (
+      id, category, item, currency, amount, payer, status, mutation_version
+    ) values (
+      'collation-low-${phase}', 'dining', 'Lower client id', 'AUD', 1, 'us', 'confirmed',
+      ${literal(lowerClientVersion)}
+    );
+    update public.expenses
+    set item = 'Higher client wins', mutation_version = ${literal(higherClientVersion)}
+    where id = 'collation-low-${phase}'
+  `);
+  assert.equal(
+    await scalar(database, `select mutation_version from public.expenses where id = 'collation-low-${phase}'`),
+    higherClientVersion,
+  );
+}
+
 async function assertInvalidPayloadsRejected(database, phase, physical) {
   const invalidActivity = operationPayload({
     phase,
@@ -336,6 +417,103 @@ async function assertInvalidPayloadsRejected(database, phase, physical) {
   });
   delete invalidExpense.expense.currency;
   await expectOperationFailure(database, invalidExpense, /invalid_expense_payload/);
+}
+
+async function assertOperationShapeAndActivityValidation(database, phase, physical) {
+  const invalidUpserts = [
+    {
+      label: "expense-id",
+      expected: /invalid_expense_payload/,
+      mutate: (operation) => { operation.expense.id = `${operation.expenseId}-other`; },
+    },
+    {
+      label: "activity-expense-id",
+      expected: /invalid_activity_payload/,
+      mutate: (operation) => { operation.activity.expenseId = `${operation.expenseId}-other`; },
+    },
+    {
+      label: "action",
+      expected: /invalid_activity_payload/,
+      mutate: (operation) => { operation.activity.action = "delete"; },
+    },
+    {
+      label: "item",
+      expected: /invalid_activity_payload/,
+      mutate: (operation) => { operation.activity.item = "Wrong item"; },
+    },
+    {
+      label: "amount",
+      expected: /invalid_activity_payload/,
+      mutate: (operation) => { operation.activity.amount = 999; },
+    },
+    {
+      label: "currency",
+      expected: /invalid_activity_payload/,
+      mutate: (operation) => { operation.activity.currency = "CNY"; },
+    },
+  ];
+
+  for (const [index, testCase] of invalidUpserts.entries()) {
+    const expenseId = `shape-${phase}-${testCase.label}`;
+    const opId = `op-${phase}-shape-${testCase.label}`;
+    const operation = operationPayload({
+      phase,
+      expenseId,
+      opId,
+      mutationVersion: `${physical}-${String(140 + index).padStart(6, "0")}-service`,
+      activityId: `activity-${phase}-shape-${testCase.label}`,
+      item: "Shape validation",
+      action: "add",
+    });
+    testCase.mutate(operation);
+    await expectOperationFailure(database, operation, testCase.expected);
+    assert.equal(await scalar(database, `select count(*) from public.expenses where id = ${literal(expenseId)}`), "0");
+    assert.equal(await scalar(database, `select count(*) from app_private.expense_operations where op_id = ${literal(opId)}`), "0");
+  }
+
+  const deleteExpenseId = `delete-validation-${phase}`;
+  const deleteVersion = `${physical}-000150-device-a`;
+  await sql(database, `
+    set role anon;
+    insert into public.expenses (
+      id, category, item, currency, amount, payer, status, mutation_version
+    ) values (
+      ${literal(deleteExpenseId)}, 'dining', 'Delete target', 'AUD', 22.50, 'us', 'confirmed',
+      ${literal(deleteVersion)}
+    )
+  `);
+
+  const invalidDeletes = [
+    ["action", (operation) => { operation.activity.action = "edit"; }],
+    ["item", (operation) => { operation.activity.item = "Wrong item"; }],
+    ["amount", (operation) => { operation.activity.amount = 23; }],
+    ["currency", (operation) => { operation.activity.currency = "CNY"; }],
+  ];
+  for (const [index, [label, mutate]] of invalidDeletes.entries()) {
+    const opId = `op-${phase}-delete-${label}`;
+    const operation = operationPayload({
+      phase,
+      expenseId: deleteExpenseId,
+      opId,
+      mutationVersion: `${physical}-${String(151 + index).padStart(6, "0")}-service`,
+      activityId: `activity-${phase}-delete-${label}`,
+      item: "Delete target",
+      action: "delete",
+      type: "delete",
+    });
+    operation.activity.amount = 22.5;
+    mutate(operation);
+    await expectOperationFailure(database, operation, /invalid_activity_payload/);
+    assert.equal(await scalar(database, `select count(*) from app_private.expense_operations where op_id = ${literal(opId)}`), "0");
+  }
+  assert.equal(
+    await scalar(database, `
+      select item || '|' || amount || '|' || currency || '|' || mutation_version || '|' || (deleted_at is null)
+      from public.expenses
+      where id = ${literal(deleteExpenseId)}
+    `),
+    `Delete target|22.50|AUD|${deleteVersion}|true`,
+  );
 }
 
 async function assertActivityConflictRollsBack(database, phase, physical) {
@@ -407,9 +585,89 @@ async function assertConcurrentOperationDeduplication(database, phase, physical)
     applyOperation(database, operation),
     applyOperation(database, operation),
   ]);
-  assert.deepEqual(results.map(({ status }) => status).sort(), ["applied", "duplicate"]);
+  assert.deepEqual(results.map(({ status }) => status), ["applied", "applied"]);
   assert.equal(
     await scalar(database, `select count(*) from public.expense_activity where id = 'activity-${phase}-concurrent'`),
+    "1",
+  );
+  assert.equal(
+    await scalar(database, `
+      select count(*)
+      from app_private.expense_operations
+      where op_id = 'op-${phase}-concurrent'
+        and result_status = 'applied'
+    `),
+    "1",
+  );
+}
+
+async function assertDirectUpsertRpcRace(database, phase, physical) {
+  const expenseId = `direct-rpc-race-${phase}`;
+  const directVersion = `${physical}-000160-direct-client`;
+  const rpcVersion = `${physical}-000161-service`;
+  const operation = operationPayload({
+    phase,
+    expenseId,
+    opId: `op-${phase}-direct-rpc-race`,
+    mutationVersion: rpcVersion,
+    activityId: `activity-${phase}-direct-rpc-race`,
+    item: "RPC winner",
+    action: "edit",
+  });
+
+  const directWrite = sql(database, `
+    begin;
+    set role anon;
+    insert into public.expenses (
+      id, category, item, currency, amount, payer, status, note, split_settled, mutation_version
+    ) values (
+      ${literal(expenseId)}, 'dining', 'Direct insert', 'AUD', 12, 'us', 'confirmed',
+      'Direct writer', false, ${literal(directVersion)}
+    )
+    on conflict (id) do update
+    set
+      category = excluded.category,
+      item = excluded.item,
+      currency = excluded.currency,
+      amount = excluded.amount,
+      payer = excluded.payer,
+      status = excluded.status,
+      note = excluded.note,
+      split_settled = excluded.split_settled,
+      mutation_version = excluded.mutation_version;
+    select pg_catalog.pg_sleep(0.4);
+    commit;
+  `);
+  await delay(75);
+  const rpcWrite = applyOperation(database, operation);
+  const [directResult, rpcResult] = await Promise.allSettled([directWrite, rpcWrite]);
+
+  for (const result of [directResult, rpcResult]) {
+    if (result.status === "rejected") {
+      assert.doesNotMatch(databaseError(result.reason), /23505|duplicate key/i);
+    }
+  }
+  assert.equal(directResult.status, "fulfilled", databaseError(directResult.reason));
+  assert.equal(rpcResult.status, "fulfilled", databaseError(rpcResult.reason));
+  assert.deepEqual(rpcResult.value, {
+    opId: `op-${phase}-direct-rpc-race`,
+    status: "applied",
+  });
+  assert.equal(
+    await scalar(database, `select item || '|' || mutation_version from public.expenses where id = ${literal(expenseId)}`),
+    `RPC winner|${rpcVersion}`,
+  );
+  assert.equal(
+    await scalar(database, `select count(*) from public.expense_activity where id = 'activity-${phase}-direct-rpc-race'`),
+    "1",
+  );
+  assert.equal(
+    await scalar(database, `
+      select count(*)
+      from app_private.expense_operations
+      where op_id = 'op-${phase}-direct-rpc-race'
+        and result_status = 'applied'
+    `),
     "1",
   );
 }
@@ -465,8 +723,9 @@ function operationPayload({
   return {
     opId,
     type,
+    expenseId,
     mutationVersion,
-    expense: {
+    expense: type === "delete" ? null : {
       id: expenseId,
       category: "dining",
       item,
@@ -590,4 +849,16 @@ function literal(value) {
 
 function quoteIdentifier(value) {
   return `"${String(value).replaceAll('"', '""')}"`;
+}
+
+function cloneOperation(operation) {
+  return JSON.parse(JSON.stringify(operation));
+}
+
+function delay(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+function databaseError(error) {
+  return `${error?.stderr || ""}\n${error?.stdout || ""}\n${error?.message || ""}`;
 }
