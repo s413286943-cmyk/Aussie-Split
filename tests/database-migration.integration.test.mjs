@@ -54,7 +54,7 @@ async function assertMigrationMetadata(database) {
     await scalar(database, `
       select count(*)
       from public.expenses
-      where mutation_version !~ '^[0-9]{13}-[0-9]{6}-[a-z0-9][a-z0-9_-]*$'
+      where mutation_version !~ '^[0-9]{13}-[0-9]{6}-[a-z0-9]+(?:-[a-z0-9]+)*$'
          or updated_at is null
     `),
     "0",
@@ -130,6 +130,8 @@ async function assertCoreBehavior(database, phase) {
   const anonUpdateVersion = version(2, "anon");
   const serviceVersion = version(10, "service");
   const deleteVersion = version(11, "service");
+
+  await assertMutationVersionGrammar(database, phase, physical);
 
   await sql(database, `
     set role anon;
@@ -211,16 +213,7 @@ async function assertCoreBehavior(database, phase) {
     status: "applied",
   });
 
-  const duplicateOperation = operationPayload({
-    phase,
-    expenseId,
-    opId: `op-${phase}-upsert`,
-    mutationVersion: version(20, "service"),
-    activityId: `activity-${phase}-duplicate`,
-    item: "Duplicate must not win",
-    action: "edit",
-  });
-  assert.deepEqual(await applyOperation(database, duplicateOperation), {
+  assert.deepEqual(await applyOperation(database, upsertOperation), {
     opId: `op-${phase}-upsert`,
     status: "duplicate",
   });
@@ -231,7 +224,7 @@ async function assertCoreBehavior(database, phase) {
   assert.equal(
     await scalar(database, `
       select count(*) from public.expense_activity
-      where id in ('activity-${phase}-upsert', 'activity-${phase}-duplicate')
+      where id = 'activity-${phase}-upsert'
     `),
     "1",
   );
@@ -278,8 +271,45 @@ async function assertCoreBehavior(database, phase) {
   );
 
   await assertInvalidPayloadsRejected(database, phase, physical);
+  await assertActivityConflictRollsBack(database, phase, physical);
   await assertConcurrentOperationDeduplication(database, phase, physical);
   await assertThrottling(database, phase);
+}
+
+async function assertMutationVersionGrammar(database, phase, physical) {
+  const validVersion = `${physical}-000050-device-a`;
+  await sql(database, `
+    set role anon;
+    insert into public.expenses (
+      id, category, item, currency, amount, payer, status, mutation_version
+    ) values (
+      'version-valid-${phase}', 'dining', 'Valid device version', 'AUD', 1, 'us', 'confirmed',
+      ${literal(validVersion)}
+    )
+  `);
+
+  for (const [index, clientId] of ["device_a", "device--a", "device-"].entries()) {
+    await expectSqlFailure(database, `
+      set role anon;
+      insert into public.expenses (
+        id, category, item, currency, amount, payer, status, mutation_version
+      ) values (
+        'version-invalid-${phase}-${index}', 'dining', 'Invalid device version',
+        'AUD', 1, 'us', 'confirmed', ${literal(`${physical}-00005${index + 1}-${clientId}`)}
+      )
+    `, /invalid_mutation_version/);
+  }
+
+  const invalidRpcVersion = operationPayload({
+    phase,
+    expenseId: `version-rpc-invalid-${phase}`,
+    opId: `op-${phase}-version-invalid`,
+    mutationVersion: `${physical}-000059-device_a`,
+    activityId: `activity-${phase}-version-invalid`,
+    item: "Invalid RPC version",
+    action: "add",
+  });
+  await expectOperationFailure(database, invalidRpcVersion, /invalid_mutation_version/);
 }
 
 async function assertInvalidPayloadsRejected(database, phase, physical) {
@@ -308,6 +338,60 @@ async function assertInvalidPayloadsRejected(database, phase, physical) {
   await expectOperationFailure(database, invalidExpense, /invalid_expense_payload/);
 }
 
+async function assertActivityConflictRollsBack(database, phase, physical) {
+  const expenseId = `activity-conflict-${phase}`;
+  const activityId = `activity-${phase}-occupied`;
+  const opId = `op-${phase}-activity-conflict`;
+  const originalVersion = `${physical}-000070-device-a`;
+
+  await sql(database, `
+    set role anon;
+    insert into public.expenses (
+      id, category, item, currency, amount, payer, status, mutation_version
+    ) values (
+      ${literal(expenseId)}, 'dining', 'Original item', 'AUD', 10, 'us', 'confirmed',
+      ${literal(originalVersion)}
+    )
+  `);
+  await sql(database, `
+    set role service_role;
+    insert into public.expense_activity (
+      id, expense_id, action, item, amount, currency, summary
+    ) values (
+      ${literal(activityId)}, ${literal(expenseId)}, 'add', 'Occupied activity',
+      10, 'AUD', 'Pre-existing activity'
+    )
+  `);
+
+  const operation = operationPayload({
+    phase,
+    expenseId,
+    opId,
+    mutationVersion: `${physical}-000071-service`,
+    activityId,
+    item: "Must roll back",
+    action: "edit",
+  });
+  await expectOperationFailure(database, operation, /activity_id_conflict/);
+
+  assert.equal(
+    await scalar(database, `
+      select item || '|' || mutation_version
+      from public.expenses
+      where id = ${literal(expenseId)}
+    `),
+    `Original item|${originalVersion}`,
+  );
+  assert.equal(
+    await scalar(database, `select count(*) from app_private.expense_operations where op_id = ${literal(opId)}`),
+    "0",
+  );
+  assert.equal(
+    await scalar(database, `select count(*) from public.expense_activity where id = ${literal(activityId)}`),
+    "1",
+  );
+}
+
 async function assertConcurrentOperationDeduplication(database, phase, physical) {
   const expenseId = `concurrent-${phase}`;
   const operation = operationPayload({
@@ -333,12 +417,13 @@ async function assertConcurrentOperationDeduplication(database, phase, physical)
 async function assertThrottling(database, phase) {
   const sequentialHash = phase === "initial" ? "a".repeat(64) : "b".repeat(64);
   const attempts = [];
-  for (let index = 0; index < 5; index += 1) {
+  for (let index = 0; index < 6; index += 1) {
     attempts.push(await serviceJson(database, `public.consume_access_attempt(${literal(sequentialHash)})`));
   }
-  assert.deepEqual(attempts.map(({ allowed }) => allowed), [true, true, true, true, false]);
-  assert.deepEqual(attempts.map(({ remaining }) => remaining), [4, 3, 2, 1, 0]);
-  assert.ok(attempts[4].blockedUntil);
+  assert.deepEqual(attempts.map(({ allowed }) => allowed), [true, true, true, true, true, false]);
+  assert.deepEqual(attempts.map(({ remaining }) => remaining), [4, 3, 2, 1, 0, 0]);
+  assert.deepEqual(attempts.slice(0, 5).map(({ blockedUntil }) => blockedUntil), [null, null, null, null, null]);
+  assert.ok(attempts[5].blockedUntil);
 
   assert.deepEqual(await serviceJson(database, `public.reset_access_attempt(${literal(sequentialHash)})`), {
     allowed: true,
@@ -352,12 +437,18 @@ async function assertThrottling(database, phase) {
 
   const concurrentHash = phase === "initial" ? "c".repeat(64) : "d".repeat(64);
   const concurrentAttempts = await Promise.all(
-    Array.from({ length: 5 }, () => serviceJson(database, `public.consume_access_attempt(${literal(concurrentHash)})`)),
+    Array.from({ length: 6 }, () => serviceJson(database, `public.consume_access_attempt(${literal(concurrentHash)})`)),
   );
-  assert.deepEqual(concurrentAttempts.map(({ remaining }) => remaining).sort((left, right) => left - right), [0, 1, 2, 3, 4]);
+  assert.deepEqual(concurrentAttempts.map(({ remaining }) => remaining).sort((left, right) => left - right), [0, 0, 1, 2, 3, 4]);
+  assert.equal(concurrentAttempts.filter(({ allowed }) => allowed).length, 5);
+  assert.equal(concurrentAttempts.filter(({ allowed }) => !allowed).length, 1);
+  assert.equal(
+    (await serviceJson(database, `public.consume_access_attempt(${literal(concurrentHash)})`)).allowed,
+    false,
+  );
   assert.equal(
     await scalar(database, `select attempt_count from app_private.access_attempts where address_hash = ${literal(concurrentHash)}`),
-    "5",
+    "6",
   );
 }
 

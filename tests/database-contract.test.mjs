@@ -10,7 +10,7 @@ const migration = readSql("supabase/migrations/20260710035744_shared_ledger_comp
 const rollback = readSql("supabase/rollback/remove_shared_ledger_compatibility.sql");
 const schema = readSql("supabase/schema.sql");
 
-const mutationVersionPattern = "^[0-9]{13}-[0-9]{6}-[a-z0-9][a-z0-9_-]*$";
+const mutationVersionPattern = "^[0-9]{13}-[0-9]{6}-[a-z0-9]+(?:-[a-z0-9]+)*$";
 
 describe("shared-ledger compatibility migration contract", () => {
   it("adds and deterministically backfills versioned expense columns", () => {
@@ -22,6 +22,16 @@ describe("shared-ledger compatibility migration contract", () => {
       /alter column mutation_version set not null/i,
       new RegExp(escapeRegExp(mutationVersionPattern), "i"),
     ]);
+  });
+
+  it("uses the client mutation-version grammar in the constraint, trigger, and RPC", () => {
+    const exactPattern = new RegExp(escapeRegExp(mutationVersionPattern));
+
+    assert.match(migration, new RegExp(escapeRegExp(`check (mutation_version ~ '${mutationVersionPattern}')`), "i"));
+    assert.match(functionBody(migration, "app_private.enforce_expense_mutation"), exactPattern);
+    assert.match(functionBody(migration, "public.apply_expense_operation"), exactPattern);
+    assert.equal(countOccurrences(migration, mutationVersionPattern), 3);
+    assert.equal(countOccurrences(schema, mutationVersionPattern), 3);
   });
 
   it("keeps attachments canonical and adds required indexes", () => {
@@ -85,12 +95,14 @@ describe("shared-ledger compatibility migration contract", () => {
       /status', 'stale'/i,
       /deleted_at = pg_catalog\.now\(\)/i,
       /insert into public\.expense_activity/i,
-      /on conflict \(id\) do nothing/i,
+      /activity_id_conflict/i,
       /status', 'applied'/i,
       /revoke execute on function public\.apply_expense_operation\(jsonb\) from public, anon, authenticated/i,
       /grant execute on function public\.apply_expense_operation\(jsonb\) to service_role/i,
     ]);
-    assert.doesNotMatch(rpcBody(migration, "apply_expense_operation"), /attachment_name\s*=/i);
+    const body = functionBody(migration, "public.apply_expense_operation");
+    assert.doesNotMatch(body, /attachment_name\s*=/i);
+    assert.doesNotMatch(body, /on conflict \(id\) do nothing/i);
   });
 
   it("implements durable service-only access throttling", () => {
@@ -101,6 +113,7 @@ describe("shared-ledger compatibility migration contract", () => {
       /interval '15 minutes'/i,
       /on conflict (?:\(address_hash\)|on constraint access_attempts_pkey) do update/i,
       /attempt_count[^;]*\+ 1/i,
+      /attempts\.attempt_count \+ 1 >= 6/i,
       /delete from app_private\.access_attempts/i,
       /'allowed'/i,
       /'remaining'/i,
@@ -156,8 +169,12 @@ function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function rpcBody(source, functionName) {
-  const match = source.match(new RegExp(`create or replace function public\\.${functionName}[^$]*\\$function\\$([\\s\\S]*?)\\$function\\$`, "i"));
-  assert.ok(match, `missing ${functionName} function body`);
+function functionBody(source, qualifiedName) {
+  const match = source.match(new RegExp(`create or replace function ${escapeRegExp(qualifiedName)}[^$]*\\$function\\$([\\s\\S]*?)\\$function\\$`, "i"));
+  assert.ok(match, `missing ${qualifiedName} function body`);
   return match[1];
+}
+
+function countOccurrences(source, value) {
+  return source.split(value).length - 1;
 }

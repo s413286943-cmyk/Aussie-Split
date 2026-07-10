@@ -33,7 +33,7 @@ begin
   ) then
     alter table public.expenses
       add constraint expenses_mutation_version_format_check
-      check (mutation_version ~ '^[0-9]{13}-[0-9]{6}-[a-z0-9][a-z0-9_-]*$');
+      check (mutation_version ~ '^[0-9]{13}-[0-9]{6}-[a-z0-9]+(?:-[a-z0-9]+)*$');
   end if;
 end
 $constraint$;
@@ -110,7 +110,7 @@ set search_path = pg_catalog, pg_temp
 as $function$
 begin
   if new.mutation_version is null
-     or new.mutation_version !~ '^[0-9]{13}-[0-9]{6}-[a-z0-9][a-z0-9_-]*$' then
+     or new.mutation_version !~ '^[0-9]{13}-[0-9]{6}-[a-z0-9]+(?:-[a-z0-9]+)*$' then
     raise exception 'invalid_mutation_version' using errcode = '22023';
   end if;
 
@@ -197,7 +197,7 @@ begin
     raise exception 'invalid_operation_type' using errcode = '22023';
   end if;
   if incoming_version is null
-     or incoming_version !~ '^[0-9]{13}-[0-9]{6}-[a-z0-9][a-z0-9_-]*$' then
+     or incoming_version !~ '^[0-9]{13}-[0-9]{6}-[a-z0-9]+(?:-[a-z0-9]+)*$' then
     raise exception 'invalid_mutation_version' using errcode = '22023';
   end if;
   if substring(incoming_version from 1 for 13)::bigint
@@ -344,27 +344,31 @@ begin
     raise exception 'expense_not_found' using errcode = 'P0002';
   end if;
 
-  insert into public.expense_activity (
-    id,
-    expense_id,
-    action,
-    item,
-    amount,
-    currency,
-    summary,
-    created_at
-  )
-  values (
-    activity_payload ->> 'id',
-    requested_expense_id,
-    activity_payload ->> 'action',
-    activity_payload ->> 'item',
-    activity_amount,
-    activity_payload ->> 'currency',
-    activity_payload ->> 'summary',
-    activity_created_at
-  )
-  on conflict (id) do nothing;
+  begin
+    insert into public.expense_activity (
+      id,
+      expense_id,
+      action,
+      item,
+      amount,
+      currency,
+      summary,
+      created_at
+    )
+    values (
+      activity_payload ->> 'id',
+      requested_expense_id,
+      activity_payload ->> 'action',
+      activity_payload ->> 'item',
+      activity_amount,
+      activity_payload ->> 'currency',
+      activity_payload ->> 'summary',
+      activity_created_at
+    );
+  exception
+    when unique_violation then
+      raise exception 'activity_id_conflict' using errcode = '23505';
+  end;
 
   return pg_catalog.jsonb_build_object('opId', requested_op_id, 'status', 'applied');
 end
@@ -422,7 +426,7 @@ begin
       when attempts.blocked_until > excluded.updated_at then attempts.blocked_until
       when attempts.blocked_until is not null then null
       when attempts.window_started_at <= excluded.updated_at - interval '15 minutes' then null
-      when attempts.attempt_count + 1 >= 5 then excluded.updated_at + interval '15 minutes'
+      when attempts.attempt_count + 1 >= 6 then excluded.updated_at + interval '15 minutes'
       else null
     end,
     updated_at = excluded.updated_at
