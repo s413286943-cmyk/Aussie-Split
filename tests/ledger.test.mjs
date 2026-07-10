@@ -65,7 +65,7 @@ describe("travel split ledger", () => {
     assert.equal(ledger.currencies.AUD.netOtherOwesUs, -40);
   });
 
-  it("marks an expense as split-settled without changing the ledger math", () => {
+  it("keeps historical totals but removes split-settled expenses from the current balance", () => {
     const expense = {
       id: "dinner",
       category: "dining",
@@ -83,7 +83,65 @@ describe("travel split ledger", () => {
     const after = calculateLedger([settledExpense]);
 
     assert.equal(settledExpense.splitSettled, true);
-    assert.deepEqual(after, before);
+    assert.equal(before.currencies.CNY.total, 100);
+    assert.equal(before.currencies.CNY.netOtherOwesUs, 50);
+    assert.equal(after.currencies.CNY.total, 100);
+    assert.equal(after.currencies.CNY.eachCoupleShare, 50);
+    assert.equal(after.currencies.CNY.pendingTotal, 0);
+    assert.equal(after.currencies.CNY.netOtherOwesUs, 0);
+    assert.equal(after.categoriesByCurrency.CNY.dining, 100);
+    assert.deepEqual(after.pendingCategoriesByCurrency.CNY, {});
+  });
+
+  it("calculates settlement totals and category subtotals from pending expenses only", () => {
+    const ledger = calculateLedger([
+      {
+        id: "settled-dinner",
+        category: "dining",
+        item: "Dinner",
+        date: "2026-08-01",
+        currency: "CNY",
+        amount: 100,
+        payer: "us",
+        status: "confirmed",
+        note: "",
+        splitSettled: true,
+      },
+      {
+        id: "pending-dinner",
+        category: "dining",
+        item: "Dinner 2",
+        date: "2026-08-02",
+        currency: "CNY",
+        amount: 60,
+        payer: "us",
+        status: "confirmed",
+        note: "",
+        splitSettled: false,
+      },
+      {
+        id: "pending-taxi",
+        category: "交通",
+        item: "Taxi",
+        date: "2026-08-03",
+        currency: "CNY",
+        amount: 20,
+        payer: "them",
+        status: "confirmed",
+        note: "",
+        splitSettled: false,
+      },
+    ]);
+
+    assert.equal(ledger.currencies.CNY.total, 180);
+    assert.equal(ledger.currencies.CNY.eachCoupleShare, 90);
+    assert.equal(ledger.currencies.CNY.pendingTotal, 80);
+    assert.equal(ledger.currencies.CNY.pendingEachCoupleShare, 40);
+    assert.equal(ledger.currencies.CNY.netOtherOwesUs, 20);
+    assert.deepEqual(ledger.pendingCategoriesByCurrency.CNY, {
+      dining: 60,
+      交通: 20,
+    });
   });
 
   it("labels split-settled state as pending before it is settled", () => {

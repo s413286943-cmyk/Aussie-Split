@@ -68,6 +68,7 @@ function expense(id, category, item, date, currency, amount, note) {
 export function calculateLedger(expenses) {
   const currencies = {};
   const categoriesByCurrency = {};
+  const pendingCategoriesByCurrency = {};
 
   for (const expenseItem of expenses.filter((item) => item.status === "confirmed")) {
     const currency = expenseItem.currency;
@@ -77,9 +78,14 @@ export function calculateLedger(expenses) {
       paidByUs: 0,
       paidByThem: 0,
       eachCoupleShare: 0,
+      pendingTotal: 0,
+      pendingPaidByUs: 0,
+      pendingPaidByThem: 0,
+      pendingEachCoupleShare: 0,
       netOtherOwesUs: 0,
     };
     const categoryBucket = categoriesByCurrency[currency] ?? {};
+    const pendingCategoryBucket = pendingCategoriesByCurrency[currency] ?? {};
 
     bucket.total = roundMoney(bucket.total + amount);
     if (expenseItem.payer === "them") {
@@ -88,17 +94,30 @@ export function calculateLedger(expenses) {
       bucket.paidByUs = roundMoney(bucket.paidByUs + amount);
     }
     categoryBucket[expenseItem.category] = roundMoney((categoryBucket[expenseItem.category] ?? 0) + amount);
+    if (!expenseItem.splitSettled) {
+      bucket.pendingTotal = roundMoney(bucket.pendingTotal + amount);
+      if (expenseItem.payer === "them") {
+        bucket.pendingPaidByThem = roundMoney(bucket.pendingPaidByThem + amount);
+      } else {
+        bucket.pendingPaidByUs = roundMoney(bucket.pendingPaidByUs + amount);
+      }
+      pendingCategoryBucket[expenseItem.category] = roundMoney(
+        (pendingCategoryBucket[expenseItem.category] ?? 0) + amount
+      );
+    }
 
     currencies[currency] = bucket;
     categoriesByCurrency[currency] = categoryBucket;
+    pendingCategoriesByCurrency[currency] = pendingCategoryBucket;
   }
 
   for (const bucket of Object.values(currencies)) {
     bucket.eachCoupleShare = roundMoney(bucket.total / 2);
-    bucket.netOtherOwesUs = roundMoney(bucket.paidByUs / 2 - bucket.paidByThem / 2);
+    bucket.pendingEachCoupleShare = roundMoney(bucket.pendingTotal / 2);
+    bucket.netOtherOwesUs = roundMoney(bucket.pendingPaidByUs / 2 - bucket.pendingPaidByThem / 2);
   }
 
-  return { currencies, categoriesByCurrency };
+  return { currencies, categoriesByCurrency, pendingCategoriesByCurrency };
 }
 
 export function parseBankMessage(message) {

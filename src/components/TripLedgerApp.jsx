@@ -1082,12 +1082,12 @@ function Settlement({ ledger }) {
       </section>
       <section className="section ledger-section">
         <div className="section-head" data-motion="section">
-          <h2>分类小计</h2>
-          <span className="muted">只统计已确认费用</span>
+          <h2>待分摊分类小计</h2>
+          <span className="muted">当前待结算</span>
         </div>
         <div className="expense-list">
           {entries.flatMap(([currency]) =>
-            Object.entries(ledger.categoriesByCurrency[currency] || {}).map(([category, amount]) => (
+            Object.entries(ledger.pendingCategoriesByCurrency[currency] || {}).map(([category, amount]) => (
               <article className="expense-row" key={`${currency}-${category}`} data-motion="row">
                 <div>
                   <h3>{category}</h3>
@@ -1096,6 +1096,14 @@ function Settlement({ ledger }) {
                 <strong className="amount">{formatMoney(currency, amount)}</strong>
               </article>
             )),
+          )}
+          {entries.every(([currency]) => !Object.keys(ledger.pendingCategoriesByCurrency[currency] || {}).length) && (
+            <article className="expense-row empty-state" data-motion="row">
+              <div>
+                <h3>当前没有待分摊费用</h3>
+                <p className="muted">两边已结清</p>
+              </div>
+            </article>
           )}
         </div>
       </section>
