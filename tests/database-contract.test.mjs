@@ -1,0 +1,163 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { describe, it } from "node:test";
+
+const testsDirectory = dirname(fileURLToPath(import.meta.url));
+const projectRoot = join(testsDirectory, "..");
+const migration = readSql("supabase/migrations/20260710035744_shared_ledger_compatibility.sql");
+const rollback = readSql("supabase/rollback/remove_shared_ledger_compatibility.sql");
+const schema = readSql("supabase/schema.sql");
+
+const mutationVersionPattern = "^[0-9]{13}-[0-9]{6}-[a-z0-9][a-z0-9_-]*$";
+
+describe("shared-ledger compatibility migration contract", () => {
+  it("adds and deterministically backfills versioned expense columns", () => {
+    expectAll(migration, [
+      /alter table public\.expenses\s+add column if not exists updated_at timestamptz/i,
+      /add column if not exists deleted_at timestamptz/i,
+      /add column if not exists mutation_version text/i,
+      /update public\.expenses[\s\S]*mutation_version[\s\S]*created_at[\s\S]*000000-server/i,
+      /alter column mutation_version set not null/i,
+      new RegExp(escapeRegExp(mutationVersionPattern), "i"),
+    ]);
+  });
+
+  it("keeps attachments canonical and adds required indexes", () => {
+    expectAll(migration, [
+      /alter table public\.attachments[\s\S]*add column if not exists receipt_id text/i,
+      /add column if not exists original_name text not null default ''/i,
+      /add column if not exists mime_type text not null default ''/i,
+      /add column if not exists size_bytes bigint not null default 0/i,
+      /add column if not exists finalized_at timestamptz/i,
+      /add column if not exists deleted_at timestamptz/i,
+      /size_bytes between 0 and 10485760/i,
+      /create unique index if not exists attachments_receipt_id_unique[\s\S]*where receipt_id is not null/i,
+      /create unique index if not exists attachments_storage_path_unique[\s\S]*where storage_path is not null/i,
+      /create index if not exists attachments_expense_id_idx on public\.attachments \(expense_id\)/i,
+      /create index if not exists members_trip_id_idx on public\.members \(trip_id\)/i,
+    ]);
+  });
+
+  it("isolates private operation and throttling state", () => {
+    expectAll(migration, [
+      /create schema if not exists app_private/i,
+      /revoke all on schema app_private from public, anon, authenticated/i,
+      /grant usage on schema app_private to service_role/i,
+      /create table app_private\.expense_operations/i,
+      /create table app_private\.access_attempts/i,
+      /alter table app_private\.expense_operations enable row level security/i,
+      /alter table app_private\.access_attempts enable row level security/i,
+      /revoke all on (?:table )?app_private\.expense_operations from public, anon, authenticated/i,
+      /revoke all on (?:table )?app_private\.access_attempts from public, anon, authenticated/i,
+      /grant select, insert on table app_private\.expense_operations to service_role/i,
+      /grant select, insert, update, delete on table app_private\.access_attempts to service_role/i,
+    ]);
+  });
+
+  it("enforces monotonic expense mutations without changing legacy attachment metadata", () => {
+    expectAll(migration, [
+      /create or replace function app_private\.enforce_expense_mutation\(\)/i,
+      /security invoker/i,
+      /set search_path = pg_catalog, pg_temp/i,
+      /new\.mutation_version <= old\.mutation_version/i,
+      /interval '5 minutes'/i,
+      /new\.updated_at := pg_catalog\.now\(\)/i,
+      /new\.attachment_name := old\.attachment_name/i,
+      /create or replace function app_private\.reject_physical_expense_delete\(\)/i,
+      /physical_delete_disabled/i,
+      /create trigger enforce_expense_mutation/i,
+      /create trigger reject_physical_expense_delete/i,
+      /alter function app_private\.enforce_expense_mutation\(\) owner to postgres/i,
+      /revoke execute on function app_private\.enforce_expense_mutation\(\) from public, anon, authenticated/i,
+    ]);
+  });
+
+  it("exposes only the service-role atomic operation RPC", () => {
+    expectAll(migration, [
+      /create or replace function public\.apply_expense_operation\(operation jsonb\)\s+returns jsonb/i,
+      /security invoker/i,
+      /insert into app_private\.expense_operations/i,
+      /on conflict \(op_id\) do nothing/i,
+      /status', 'duplicate'/i,
+      /for update/i,
+      /status', 'stale'/i,
+      /deleted_at = pg_catalog\.now\(\)/i,
+      /insert into public\.expense_activity/i,
+      /on conflict \(id\) do nothing/i,
+      /status', 'applied'/i,
+      /revoke execute on function public\.apply_expense_operation\(jsonb\) from public, anon, authenticated/i,
+      /grant execute on function public\.apply_expense_operation\(jsonb\) to service_role/i,
+    ]);
+    assert.doesNotMatch(rpcBody(migration, "apply_expense_operation"), /attachment_name\s*=/i);
+  });
+
+  it("implements durable service-only access throttling", () => {
+    expectAll(migration, [
+      /create or replace function public\.consume_access_attempt\(address_hash text\)\s+returns jsonb/i,
+      /create or replace function public\.reset_access_attempt\(address_hash text\)\s+returns jsonb/i,
+      /\^\[0-9a-f\]\{64\}\$/i,
+      /interval '15 minutes'/i,
+      /on conflict (?:\(address_hash\)|on constraint access_attempts_pkey) do update/i,
+      /attempt_count[^;]*\+ 1/i,
+      /delete from app_private\.access_attempts/i,
+      /'allowed'/i,
+      /'remaining'/i,
+      /'blockedUntil'/i,
+      /revoke execute on function public\.consume_access_attempt\(text\) from public, anon, authenticated/i,
+      /grant execute on function public\.consume_access_attempt\(text\) to service_role/i,
+      /revoke execute on function public\.reset_access_attempt\(text\) from public, anon, authenticated/i,
+      /grant execute on function public\.reset_access_attempt\(text\) to service_role/i,
+    ]);
+  });
+
+  it("does not tighten or destroy existing public application tables", () => {
+    const publicTables = "trips|members|expenses|attachments|expense_activity";
+    assert.doesNotMatch(migration, new RegExp(`alter table public\\.(${publicTables})\\s+enable row level security`, "i"));
+    assert.doesNotMatch(migration, new RegExp(`revoke[^;]*on (?:table )?public\\.(${publicTables})`, "i"));
+    assert.doesNotMatch(migration, new RegExp(`(?:drop table|truncate|delete from)\\s+public\\.(${publicTables})`, "i"));
+  });
+
+  it("rolls back compatibility objects while retaining public data and columns", () => {
+    expectAll(rollback, [
+      /drop trigger if exists enforce_expense_mutation on public\.expenses/i,
+      /drop trigger if exists reject_physical_expense_delete on public\.expenses/i,
+      /drop function if exists public\.apply_expense_operation\(jsonb\)/i,
+      /drop function if exists public\.consume_access_attempt\(text\)/i,
+      /drop function if exists public\.reset_access_attempt\(text\)/i,
+      /drop schema if exists app_private cascade/i,
+    ]);
+    assert.doesNotMatch(rollback, /(?:drop table|truncate|delete from)\s+public\./i);
+    assert.doesNotMatch(rollback, /drop column/i);
+  });
+
+  it("keeps the schema snapshot compatible with the migration contract", () => {
+    expectAll(schema, [
+      /mutation_version text/i,
+      new RegExp(escapeRegExp(mutationVersionPattern), "i"),
+      /receipt_id text/i,
+      /create schema if not exists app_private/i,
+      /create or replace function public\.apply_expense_operation/i,
+      /create or replace function public\.consume_access_attempt/i,
+    ]);
+  });
+});
+
+function readSql(relativePath) {
+  return readFileSync(join(projectRoot, relativePath), "utf8");
+}
+
+function expectAll(source, patterns) {
+  for (const pattern of patterns) assert.match(source, pattern);
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function rpcBody(source, functionName) {
+  const match = source.match(new RegExp(`create or replace function public\\.${functionName}[^$]*\\$function\\$([\\s\\S]*?)\\$function\\$`, "i"));
+  assert.ok(match, `missing ${functionName} function body`);
+  return match[1];
+}
