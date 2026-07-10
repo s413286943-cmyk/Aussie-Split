@@ -1,5 +1,5 @@
 const VERSION_PATTERN = /^(\d{13})-(\d{6})-([a-z0-9]+(?:-[a-z0-9]+)*)$/;
-const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?(?:Z|[+-](\d{2}):(\d{2})))?$/;
+const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{1,3}))?)?(?:Z|[+-](\d{2}):(\d{2})))?$/;
 const MAX_MILLIS = 9_999_999_999_999;
 const MAX_COUNTER = 999_999;
 
@@ -72,7 +72,11 @@ function legacyMillis(createdAt) {
 function parseIsoMillis(value) {
   const match = ISO_DATE_PATTERN.exec(value);
   if (!match || !hasValidIsoFields(match)) return Number.NaN;
-  return Date.parse(value);
+  const fraction = match[7];
+  const parseableValue = fraction?.length < 3
+    ? value.replace(`.${fraction}`, `.${fraction.padEnd(3, "0")}`)
+    : value;
+  return Date.parse(parseableValue);
 }
 
 function hasValidIsoFields(match) {
@@ -106,6 +110,7 @@ function normalizeClientId(clientId) {
 
   const normalized = clientId
     .trim()
+    .normalize("NFKD")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");

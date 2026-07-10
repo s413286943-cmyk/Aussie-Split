@@ -58,6 +58,14 @@ describe("nextMutationVersion", () => {
     );
   });
 
+  it("normalizes canonically equivalent Unicode client ids identically", () => {
+    const composed = nextMutationVersion({ now: 1780000000000, clientId: "Caf\u00e9" });
+    const decomposed = nextMutationVersion({ now: 1780000000000, clientId: "Cafe\u0301" });
+
+    assert.equal(composed, "1780000000000-000000-cafe");
+    assert.equal(decomposed, composed);
+  });
+
   it("advances beyond local and observed versions when the clock moves backward", () => {
     const previous = "1780000000100-000004-client-a";
     const observed = "1780000000100-000009-client-z";
@@ -93,6 +101,17 @@ describe("nextMutationVersion", () => {
         clientId: "client-a",
       }),
       "1780000000001-000000-client-a",
+    );
+  });
+
+  it("throws when the terminal mutation version cannot advance", () => {
+    assert.throws(
+      () => nextMutationVersion({
+        previous: "9999999999999-999999-client-a",
+        now: 0,
+        clientId: "client-b",
+      }),
+      RangeError,
     );
   });
 
@@ -139,6 +158,13 @@ describe("legacyMutationVersion", () => {
     assert.equal(
       legacyMutationVersion({ createdAt: "2026-02-30T01:02:03.004Z", index: 8 }),
       "0000000000000-000008-legacy",
+    );
+  });
+
+  it("uses the fallback for ISO fractions longer than three digits", () => {
+    assert.equal(
+      legacyMutationVersion({ createdAt: "2026-07-10T01:02:03.0049Z", index: 9 }),
+      "0000000000000-000009-legacy",
     );
   });
 
