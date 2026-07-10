@@ -49,7 +49,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
   if (url.pathname === "/_next/image" || url.pathname.startsWith("/itinerary/")) {
-    event.respondWith(staleWhileRevalidate(request, ITINERARY_CACHE));
+    event.respondWith(staleWhileRevalidate(request, ITINERARY_CACHE, event));
   }
 });
 
@@ -109,7 +109,7 @@ async function cacheFirst(request, cacheName) {
   return response;
 }
 
-async function staleWhileRevalidate(request, cacheName) {
+async function staleWhileRevalidate(request, cacheName, event) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
   const network = fetch(request)
@@ -118,7 +118,10 @@ async function staleWhileRevalidate(request, cacheName) {
       return response;
     })
     .catch(() => null);
-  if (cached) return cached;
+  if (cached) {
+    event.waitUntil(network);
+    return cached;
+  }
   const response = await network;
   if (response) return response;
   throw new Error("Offline asset is not cached");
