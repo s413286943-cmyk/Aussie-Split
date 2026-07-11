@@ -1,4 +1,8 @@
 const forecastDays = 16;
+const forecastCacheTtlMs = 6 * 60 * 60 * 1000;
+const forecastCacheStoragePrefix = "aussie-chill-weather-v1:";
+const forecastCache = new Map();
+const forecastRequests = new Map();
 
 export function buildWeatherUrl(day) {
   if (!hasCoordinates(day)) return "";
@@ -34,14 +38,44 @@ export function fallbackWeather(day) {
   };
 }
 
-export async function fetchDayWeather(day, now = new Date(), fetcher = fetch) {
+export async function fetchDayWeather(day, nowOrOptions, legacyFetcher) {
+  const { now, fetcher, online, storage } = normalizeFetchOptions(nowOrOptions, legacyFetcher);
   if (getWeatherStatus(day.date, now) === "fallback" || !hasCoordinates(day)) return fallbackWeather(day);
 
+  const key = coordinateKey(day);
+  const { entry: cached, storedCachedAt } = readCachedForecast(key, storage);
+  const cacheAge = cached ? now.getTime() - cached.cachedAt : null;
+  if (
+    cached
+    && cacheAge >= 0
+    && cacheAge < forecastCacheTtlMs
+    && hasDailyForecast(cached.data, day.date)
+  ) {
+    return summarizeWeather(day, cached.data, now);
+  }
+  if (!online) return fallbackWeather(day);
+
   try {
-    const response = await fetcher(buildWeatherUrl(day));
-    if (!response.ok) return fallbackWeather(day);
-    const data = await response.json();
-    return summarizeWeather(day, data, now);
+    let request = forecastRequests.get(key);
+    if (!request) {
+      request = Promise.resolve(fetcher(buildWeatherUrl(day)))
+        .then(async (response) => {
+          if (!response.ok) return null;
+          const data = await response.json();
+          const cachedEntry = writeCachedForecast(
+            key,
+            { data, cachedAt: now.getTime() },
+            storage,
+            storedCachedAt
+          );
+          return cachedEntry.data;
+        })
+        .finally(() => forecastRequests.delete(key));
+      forecastRequests.set(key, request);
+    }
+
+    const data = await request;
+    return data ? summarizeWeather(day, data, now) : fallbackWeather(day);
   } catch {
     return fallbackWeather(day);
   }
@@ -51,7 +85,8 @@ export function summarizeWeather(day, data, now = new Date()) {
   const status = getWeatherStatus(day.date, now);
   const current = data.current || {};
   const daily = data.daily || {};
-  const index = Math.max(0, (daily.time || []).indexOf(day.date));
+  const index = Array.isArray(daily.time) ? daily.time.indexOf(day.date) : -1;
+  if (index < 0) return fallbackWeather(day);
   const max = readArray(daily.temperature_2m_max, index);
   const min = readArray(daily.temperature_2m_min, index);
   const rain = readArray(daily.precipitation_probability_max, index);
@@ -82,6 +117,91 @@ export function buildWeatherAdvice({ rain, uv, wind, feelsText, fallback }) {
 
 function hasCoordinates(day) {
   return Number.isFinite(Number(day.lat)) && Number.isFinite(Number(day.lon));
+}
+
+function coordinateKey(day) {
+  return `${Number(day.lat)},${Number(day.lon)}`;
+}
+
+function hasDailyForecast(data, date) {
+  return Array.isArray(data?.daily?.time) && data.daily.time.includes(date);
+}
+
+function normalizeFetchOptions(nowOrOptions, legacyFetcher) {
+  if (nowOrOptions instanceof Date || nowOrOptions === undefined) {
+    return {
+      now: nowOrOptions || new Date(),
+      fetcher: legacyFetcher || globalThis.fetch,
+      online: isOnline(),
+      storage: getWeatherStorage(),
+    };
+  }
+
+  const options = nowOrOptions || {};
+  return {
+    now: options.now || new Date(),
+    fetcher: options.fetcher || globalThis.fetch,
+    online: options.online ?? isOnline(),
+    storage: Object.prototype.hasOwnProperty.call(options, "storage")
+      ? options.storage
+      : getWeatherStorage(),
+  };
+}
+
+function isOnline() {
+  return typeof navigator === "undefined" || navigator.onLine !== false;
+}
+
+function getWeatherStorage() {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage || null;
+  } catch {
+    return null;
+  }
+}
+
+function readCachedForecast(key, storage) {
+  const memoryEntry = forecastCache.get(key);
+  const storedEntry = readStoredForecast(key, storage);
+  const entry = storedEntry && (!memoryEntry || storedEntry.cachedAt >= memoryEntry.cachedAt)
+    ? storedEntry
+    : memoryEntry;
+  if (entry) forecastCache.set(key, entry);
+  return {
+    entry: entry || null,
+    storedCachedAt: storedEntry?.cachedAt ?? null,
+  };
+}
+
+function readStoredForecast(key, storage) {
+  if (!storage) return null;
+
+  try {
+    const entry = JSON.parse(storage.getItem(`${forecastCacheStoragePrefix}${key}`));
+    if (!entry || !Number.isFinite(entry.cachedAt) || !entry.data || typeof entry.data !== "object") {
+      return null;
+    }
+    return entry;
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedForecast(key, entry, storage, observedStoredCachedAt) {
+  const storedEntry = readStoredForecast(key, storage);
+  const latestEntry = storedEntry && storedEntry.cachedAt !== observedStoredCachedAt
+    ? storedEntry
+    : entry;
+  forecastCache.set(key, latestEntry);
+  if (!storage || latestEntry === storedEntry) return latestEntry;
+
+  try {
+    storage.setItem(`${forecastCacheStoragePrefix}${key}`, JSON.stringify(entry));
+  } catch {
+    // The in-memory cache and current response remain usable when storage is unavailable.
+  }
+  return latestEntry;
 }
 
 function parseDate(value) {
