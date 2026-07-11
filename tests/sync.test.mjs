@@ -27,6 +27,7 @@ import { compareMutationVersions, parseMutationVersion } from "../src/lib/mutati
 
 const compatibleVersion = "1780000000000-000001-browser-a";
 const tripLedgerSource = readFileSync(new URL("../src/components/TripLedgerApp.jsx", import.meta.url), "utf8");
+const expenseListSource = readFileSync(new URL("../src/components/ledger/ExpenseList.jsx", import.meta.url), "utf8");
 
 describe("expense sync bootstrap", () => {
   it("uploads local cache when the remote ledger is empty", () => {
@@ -403,8 +404,7 @@ describe("TripLedger durable outbox contract", () => {
     for (const name of ["addExpense", "updateExpense", "confirmExpense", "removeExpense"]) {
       assert.match(functionSource(tripLedgerSource, name), /await commitLedgerMutation\(/);
     }
-    const splitSource = functionSource(tripLedgerSource, "toggleSplitSettled");
-    assert.match(splitSource, /await onUpdate\(expense, "toggle-split"\)/);
+    assert.match(expenseListSource, /onUpdate\(expense, "toggle-split"\)/);
     const updateSource = functionSource(tripLedgerSource, "updateExpense");
     assert.match(updateSource, /action === "toggle-split"/);
     assert.match(updateSource, /setExpenseSplitSettled\(latestExpense/);

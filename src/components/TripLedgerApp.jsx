@@ -1,32 +1,20 @@
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
-  applyExpenseEdit,
-  applyExpenseTemplate,
   calculateLedger,
-  categories,
-  createCapturedExpense,
-  expenseToEditableForm,
-  expenseTemplates,
   formatMoney,
-  parseBankMessage,
   seedExpenses,
   setExpenseSplitSettled,
-  splitSettledLabel,
 } from "@/lib/ledger";
 import {
   actionFeedbackMessage,
-  activityDisplaySummary,
   createActivityEntry,
-  dashboardActivityPreview,
 } from "@/lib/activity";
-import { coupleName, formatPayerLabel, formatSettlementDirection } from "@/lib/couples";
+import { formatSettlementDirection } from "@/lib/couples";
+import { createLedgerBackup } from "@/lib/backup";
 import { pulseElement, revealPage, shakeElement } from "@/lib/motion";
 import { applyLedgerOperations, fetchReceipt } from "@/lib/apiClient";
 import {
@@ -37,13 +25,16 @@ import {
   syncOfflineReceipts,
   undoOfflineDelete,
 } from "@/lib/offlineLedger";
-import { createReceiptBlobRecord } from "@/lib/receipt";
 import { uploadReceiptRecord } from "@/lib/receiptUpload";
 import { createSerialLedgerActionQueue } from "@/lib/sync";
 import { syncStateLabel } from "@/lib/syncEngine";
 import UnlockGate from "@/components/UnlockGate";
+import ActivityFeed from "@/components/ledger/ActivityFeed";
+import BackupPanel from "@/components/ledger/BackupPanel";
+import ExpenseForm from "@/components/ledger/ExpenseForm";
+import ExpenseList, { ExpenseListPage } from "@/components/ledger/ExpenseList";
+import LedgerShell from "@/components/ledger/LedgerShell";
 
-const addDefaultsStorageKey = "aussie-chill-add-defaults-v1";
 const undoDeleteMs = 5000;
 
 export default function TripLedgerApp({ view }) {
@@ -357,6 +348,38 @@ function TripLedgerContent({ view }) {
     }
   }
 
+  async function exportBackup() {
+    const context = offlineContextRef.current;
+    if (!context) throw new Error("Offline ledger is unavailable");
+    const state = await context.load();
+    const backup = createLedgerBackup({
+      expenses: state.expenses,
+      activity: state.activity,
+    });
+    showActionNotice(`已导出 ${backup.expenses.length} 条费用`, "success");
+    return backup;
+  }
+
+  async function mergeBackup(acceptedExpenses) {
+    if (!Array.isArray(acceptedExpenses) || !acceptedExpenses.length) return;
+    try {
+      for (const expense of acceptedExpenses) {
+        const exists = expensesRef.current.some((item) => item.id === expense.id);
+        await commitLedgerMutation(
+          () => expense,
+          { activityAction: exists ? "edit" : "add" },
+        );
+      }
+      showActionNotice(`已合并 ${acceptedExpenses.length} 条备份记录`, "success");
+      playFeedback("backup-panel", "success");
+      requestLedgerSync();
+    } catch {
+      showActionNotice("备份合并失败，现有账本未被清空", "danger");
+      playFeedback("backup-panel", "danger");
+      throw new Error("backup-merge-failed");
+    }
+  }
+
   async function viewReceipt(expense) {
     const popup = window.open("", "_blank");
     if (popup) popup.opener = null;
@@ -494,84 +517,41 @@ function TripLedgerContent({ view }) {
   }
 
   return (
-    <div className="app-shell docket-shell" ref={shellRef}>
-        <header className="hero ledger-hero" data-motion="hero">
-          <div className="hero-copy">
-            <span className="hero-kicker">Travel docket · Australia 2026</span>
-            <h1>Aussie Chill</h1>
-            <p>
-              2026.07.28-08.13，好友澳洲旅行账本。机票已单独 split，本账本只记录旅行中共同费用，按币种分别结算。
-            </p>
-          </div>
-          <aside className="hero-ticket" aria-label="旅行摘要">
-            <span>共享票夹</span>
-            <strong>墨尔本进 · 悉尼出</strong>
-            <p>{syncState}</p>
-          </aside>
-          <div className="hero-actions">
-            <Link className="button primary" href="/add">记一笔</Link>
-            <Link className="button" href="/settlement">看结算</Link>
-            <Link className="button" href="/itinerary">看行程</Link>
-            <button
-              className="button"
-              type="button"
-              onClick={requestLedgerSync}
-              disabled={syncState === "正在同步"}
-              aria-label={syncState === "同步失败，可重试" ? "重试同步" : "立即同步账本"}
-            >
-              {syncState}
-            </button>
-          </div>
-        </header>
-
-        <ActionNotice notice={actionNotice} />
-
-        {view === "dashboard" && (
-          <Dashboard
-            expenses={expenses}
-            ledger={ledger}
-            activity={activity}
-            onUpdate={updateExpense}
-            onConfirm={confirmExpense}
-            onViewReceipt={viewReceipt}
-            onInvalid={showFormWarning}
-          />
-        )}
-        {view === "expenses" && (
-          <Expenses expenses={expenses} onUpdate={updateExpense} onConfirm={confirmExpense} onDelete={removeExpense} onViewReceipt={viewReceipt} onInvalid={showFormWarning} />
-        )}
-        {view === "add" && <AddExpense onAdd={addExpense} onInvalid={showFormWarning} />}
-        {view === "settlement" && <Settlement ledger={ledger} />}
-        {view === "activity" && <ActivityPage activity={activity} />}
-
-        <nav className="nav" aria-label="主导航" data-motion="nav">
-          <Link className={view === "dashboard" ? "active" : ""} href="/">总览</Link>
-          <Link className={view === "expenses" ? "active" : ""} href="/expenses">明细</Link>
-          <Link className={view === "add" ? "active" : ""} href="/add">新增</Link>
-          <Link className={view === "activity" ? "active" : ""} href="/activity">操作</Link>
-          <Link className={view === "settlement" ? "active" : ""} href="/settlement">结算</Link>
-          <Link href="/itinerary">行程</Link>
-        </nav>
-    </div>
-  );
-}
-
-function ActionNotice({ notice }) {
-  if (!notice) return null;
-
-  return (
-    <div className={`action-toast ${notice.tone}`} role={notice.tone === "danger" ? "alert" : "status"} aria-live="polite" aria-atomic="true">
-      <span>{notice.message}</span>
-      {notice.actionLabel && (
-        <button className="toast-action" type="button" onClick={notice.onAction}>
-          {notice.actionLabel}
-        </button>
+    <LedgerShell
+      view={view}
+      syncState={syncState}
+      onSync={requestLedgerSync}
+      notice={actionNotice}
+      shellRef={shellRef}
+    >
+      {view === "dashboard" && (
+        <Dashboard
+          expenses={expenses}
+          ledger={ledger}
+          activity={activity}
+          syncState={syncState}
+          onUpdate={updateExpense}
+          onConfirm={confirmExpense}
+          onViewReceipt={viewReceipt}
+          onInvalid={showFormWarning}
+        />
       )}
-    </div>
+      {view === "expenses" && (
+        <ExpenseListPage expenses={expenses} onUpdate={updateExpense} onConfirm={confirmExpense} onDelete={removeExpense} onViewReceipt={viewReceipt} onInvalid={showFormWarning} />
+      )}
+      {view === "add" && <ExpenseForm onAdd={addExpense} onInvalid={showFormWarning} expenses={expenses} />}
+      {view === "settlement" && <Settlement ledger={ledger} />}
+      {view === "activity" && (
+        <>
+          <ActivityFeed activity={activity} fullPage syncState={syncState} />
+          <BackupPanel expenses={expenses} onExport={exportBackup} onMerge={mergeBackup} />
+        </>
+      )}
+    </LedgerShell>
   );
 }
 
-function Dashboard({ expenses, ledger, activity, onUpdate, onConfirm, onViewReceipt, onInvalid }) {
+function Dashboard({ expenses, ledger, activity, syncState, onUpdate, onConfirm, onViewReceipt, onInvalid }) {
   const recent = expenses.slice(0, 5);
   const stats = dashboardStats(expenses, activity);
 
@@ -579,13 +559,13 @@ function Dashboard({ expenses, ledger, activity, onUpdate, onConfirm, onViewRece
     <>
       <DashboardDocket stats={stats} />
       <SummaryCards ledger={ledger} />
-      <RecentActivity activity={dashboardActivityPreview(activity)} action={<Link href="/activity" className="button small">全部</Link>} />
+      <ActivityFeed activity={activity} syncState={syncState} />
       <section className="section ledger-section">
         <div className="section-head" data-motion="section">
           <h2>最近记录</h2>
           <Link href="/expenses" className="button small">全部</Link>
         </div>
-        <ExpenseList expenses={recent} onUpdate={onUpdate} onConfirm={onConfirm} onViewReceipt={onViewReceipt} onInvalid={onInvalid} />
+        <ExpenseList expenses={recent} allExpenses={expenses} onUpdate={onUpdate} onConfirm={onConfirm} onViewReceipt={onViewReceipt} onInvalid={onInvalid} />
       </section>
     </>
   );
@@ -621,40 +601,6 @@ function DocketMetric({ label, value, detail, href }) {
   return <Link className="docket-metric-link" href={href}>{body}</Link>;
 }
 
-function ActivityPage({ activity }) {
-  return <RecentActivity activity={activity} fullPage />;
-}
-
-function RecentActivity({ activity, action, fullPage = false }) {
-  return (
-    <section className={fullPage ? "section activity-section activity-page" : "section activity-section"} data-motion="activity-panel">
-      <div className="section-head" data-motion="section">
-        <h2>最近操作</h2>
-        {action || <span className="muted">{activity.length ? `${activity.length} 条` : "暂无操作"}</span>}
-      </div>
-      <div className="activity-list">
-        {!activity.length && (
-          <article className="activity-row empty-state" data-motion="row">
-            <div>
-              <h3>还没有最近操作</h3>
-              <p className="muted">新增、编辑、确认、删除费用后会显示在这里。</p>
-            </div>
-          </article>
-        )}
-        {activity.map((entry) => (
-          <article className="activity-row" key={entry.id} data-motion="row">
-            <div>
-              <h3>{activityDisplaySummary(entry)}</h3>
-              <p className="muted">{formatActivityTime(entry.createdAt)}</p>
-            </div>
-            <span className="tag">{activityActionLabel(entry.action)}</span>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function SummaryCards({ ledger }) {
   const entries = Object.entries(ledger.currencies);
 
@@ -680,422 +626,9 @@ function SummaryCards({ ledger }) {
   );
 }
 
-function Expenses({ expenses, onUpdate, onConfirm, onDelete, onViewReceipt, onInvalid }) {
-  const [urlFilters, setUrlFilters] = useState({ split: "全部", highlightId: "" });
-  const [category, setCategory] = useState("全部");
-  const [currency, setCurrency] = useState("全部");
-  const [payer, setPayer] = useState("全部");
-  const [splitFilter, setSplitFilter] = useState("全部");
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const split = params.get("split") === "pending" ? "待分摊" : params.get("split") === "settled" ? "已分摊" : "全部";
-    setUrlFilters({ split, highlightId: params.get("highlight") || "" });
-    setSplitFilter(split);
-  }, []);
-
-  const filtered = expenses.filter((expense) => {
-    return (
-      (category === "全部" || expense.category === category) &&
-      (currency === "全部" || expense.currency === currency) &&
-      (payer === "全部" || expense.payer === payer) &&
-      (splitFilter === "全部" ||
-        (splitFilter === "待分摊" && expense.status === "confirmed" && !expense.splitSettled) ||
-        (splitFilter === "已分摊" && expense.splitSettled))
-    );
-  });
-
-  return (
-    <section className="section ledger-section expenses-section">
-      <div className="section-head" data-motion="section">
-        <div>
-          <span className="section-kicker">Receipt stream</span>
-          <h2>费用明细</h2>
-        </div>
-        <span className="muted">{filtered.length} 条</span>
-      </div>
-      <div className="filters">
-        <Select value={category} onChange={setCategory} options={["全部", ...categories]} />
-        <Select value={currency} onChange={setCurrency} options={["全部", "CNY", "AUD"]} />
-        <Select value={splitFilter} onChange={setSplitFilter} options={["全部", "待分摊", "已分摊"]} />
-        <select value={payer} onChange={(event) => setPayer(event.target.value)}>
-          <option value="全部">全部付款方</option>
-          <option value="us">{coupleName("us")}</option>
-          <option value="them">{coupleName("them")}</option>
-        </select>
-      </div>
-      <ExpenseList expenses={filtered} onUpdate={onUpdate} onConfirm={onConfirm} onDelete={onDelete} onViewReceipt={onViewReceipt} onInvalid={onInvalid} highlightId={urlFilters.highlightId} />
-    </section>
-  );
-}
-
-function ExpenseList({ expenses, onUpdate, onConfirm, onDelete, onViewReceipt, onInvalid, highlightId = "" }) {
-  const [editingId, setEditingId] = useState("");
-  const [editForm, setEditForm] = useState(null);
-  const [busyId, setBusyId] = useState("");
-
-  function startEdit(expense) {
-    setEditingId(expense.id);
-    setEditForm(expenseToEditableForm(expense));
-  }
-
-  function cancelEdit() {
-    setEditingId("");
-    setEditForm(null);
-  }
-
-  async function saveEdit(expense) {
-    if (!editForm?.item.trim() || !editForm.amount) {
-      onInvalid?.("请先填写项目和金额");
-      return;
-    }
-
-    setBusyId(expense.id);
-    try {
-      await onUpdate(applyExpenseEdit(expense, editForm));
-      cancelEdit();
-    } catch {
-      // Parent action handlers already surface failure feedback.
-    } finally {
-      setBusyId("");
-    }
-  }
-
-  async function toggleSplitSettled(expense) {
-    setBusyId(expense.id);
-    try {
-      await onUpdate(expense, "toggle-split");
-    } catch {
-      // Parent action handlers already surface failure feedback.
-    } finally {
-      setBusyId("");
-    }
-  }
-
-  async function confirmRow(expense) {
-    setBusyId(expense.id);
-    try {
-      await onConfirm(expense);
-    } catch {
-      // Parent action handlers already surface failure feedback.
-    } finally {
-      setBusyId("");
-    }
-  }
-
-  async function deleteRow(expense) {
-    setBusyId(expense.id);
-    try {
-      await onDelete(expense.id);
-    } catch {
-      // Parent action handlers already surface failure feedback.
-    } finally {
-      setBusyId("");
-    }
-  }
-
-  return (
-    <div className="expense-list" data-feedback-target="expense-list">
-      {expenses.map((expense) => {
-        const isEditing = editingId === expense.id && editForm;
-        const isBusy = busyId === expense.id;
-        const receiptPending = expense.attachmentStatus === "pending";
-        const receiptUploaded = expense.attachmentStatus === "uploaded" || Boolean(expense.attachmentPath);
-
-        if (isEditing) {
-          return (
-            <article className={rowClassName("expense-row editing", expense, isBusy, highlightId)} key={expense.id} data-motion="row" data-feedback-id={expense.id} aria-busy={isBusy}>
-              <div className="form-grid">
-                <label className="full">
-                  项目
-                  <input value={editForm.item} onChange={(event) => setEditForm({ ...editForm, item: event.target.value })} />
-                </label>
-                <label>
-                  类别
-                  <select value={editForm.category} onChange={(event) => setEditForm({ ...editForm, category: event.target.value })}>
-                    {categories.map((item) => <option key={item}>{item}</option>)}
-                  </select>
-                </label>
-                <label>
-                  日期
-                  <input type="date" value={editForm.date} onChange={(event) => setEditForm({ ...editForm, date: event.target.value })} />
-                </label>
-                <label>
-                  币种
-                  <select value={editForm.currency} onChange={(event) => setEditForm({ ...editForm, currency: event.target.value })}>
-                    <option value="CNY">CNY</option>
-                    <option value="AUD">AUD</option>
-                  </select>
-                </label>
-                <label>
-                  金额
-                  <input type="number" step="0.01" value={editForm.amount} onChange={(event) => setEditForm({ ...editForm, amount: event.target.value })} />
-                </label>
-                <label>
-                  付款方
-                  <select value={editForm.payer} onChange={(event) => setEditForm({ ...editForm, payer: event.target.value })}>
-                    <option value="us">{formatPayerLabel("us")}</option>
-                    <option value="them">{formatPayerLabel("them")}</option>
-                  </select>
-                </label>
-                <label>
-                  状态
-                  <select value={editForm.status} onChange={(event) => setEditForm({ ...editForm, status: event.target.value })}>
-                    <option value="confirmed">已确认</option>
-                    <option value="draft">待确认</option>
-                  </select>
-                </label>
-                <label className="full">
-                  备注
-                  <textarea value={editForm.note} onChange={(event) => setEditForm({ ...editForm, note: event.target.value })} />
-                </label>
-              </div>
-              <div className="row">
-                <button className="button small primary" type="button" onClick={() => saveEdit(expense)} disabled={isBusy}>
-                  {isBusy ? "保存中" : "保存"}
-                </button>
-                <button className="button small" type="button" onClick={cancelEdit} disabled={isBusy}>取消</button>
-              </div>
-            </article>
-          );
-        }
-
-        return (
-          <article className={rowClassName("expense-row receipt-row", expense, isBusy, highlightId)} key={expense.id} data-motion="row" data-feedback-id={expense.id} aria-busy={isBusy}>
-            <div>
-              <h3>{expense.item}</h3>
-              <p className="muted">{expense.date || "日期待补"} · {expense.note || "无备注"}</p>
-              <div className="tags">
-                <span className="tag">{expense.category}</span>
-                <span className={expense.status === "draft" ? "tag draft" : "tag"}>{expense.status === "draft" ? "待确认" : "已确认"}</span>
-                <span className={expense.payer === "them" ? "tag other" : "tag"}>{formatPayerLabel(expense.payer)}</span>
-                {expense.splitSettled && <span className="tag settled">已分摊</span>}
-                {receiptPending && <span className="tag draft">小票待上传</span>}
-                {receiptUploaded && <span className="tag">有小票</span>}
-              </div>
-            </div>
-            <div className="stack row-actions">
-              <strong className="amount">{formatMoney(expense.currency, expense.amount)}</strong>
-              {onUpdate && (
-                <button
-                  className={expense.splitSettled ? "button small primary" : "button small"}
-                  type="button"
-                  aria-pressed={Boolean(expense.splitSettled)}
-                  disabled={isBusy}
-                  onClick={() => toggleSplitSettled(expense)}
-                >
-                  {splitSettledLabel(expense.splitSettled)}
-                </button>
-              )}
-              {onUpdate && <button className="button small" onClick={() => startEdit(expense)} disabled={isBusy}>编辑</button>}
-              {onViewReceipt && receiptUploaded && (
-                <button className="button small" type="button" onClick={() => onViewReceipt(expense)} disabled={isBusy}>
-                  查看小票
-                </button>
-              )}
-              {onConfirm && expense.status === "draft" && (
-                <button className="button small primary" onClick={() => confirmRow(expense)} disabled={isBusy}>确认</button>
-              )}
-              {onDelete && (
-                <button className="button small danger" onClick={() => deleteRow(expense)} disabled={isBusy}>删除</button>
-              )}
-            </div>
-          </article>
-        );
-      })}
-    </div>
-  );
-}
-
-function activityActionLabel(action) {
-  if (action === "add") return "新增";
-  if (action === "edit") return "编辑";
-  if (action === "confirm") return "确认";
-  if (action === "delete") return "删除";
-  return "更新";
-}
-
-function formatActivityTime(value) {
-  return new Date(value).toLocaleString("zh-CN", {
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function AddExpense({ onAdd, onInvalid }) {
-  const router = useRouter();
-  const [message, setMessage] = useState("");
-  const [form, setForm] = useState(emptyForm());
-  const [receipt, setReceipt] = useState(null);
-  const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    let savedDefaults = {};
-    try {
-      savedDefaults = JSON.parse(localStorage.getItem(addDefaultsStorageKey) || "{}");
-    } catch {
-      savedDefaults = {};
-    }
-
-    const params = new URLSearchParams(window.location.search);
-    const queryDefaults = {
-      date: params.get("date") || "",
-      category: params.get("category") || "",
-      item: params.get("item") || "",
-      currency: params.get("currency") || "",
-      payer: params.get("payer") || "",
-    };
-
-    setForm(emptyForm({ ...savedDefaults, ...removeEmptyValues(queryDefaults) }));
-  }, []);
-
-  function useMessage() {
-    if (!message.trim()) return;
-    setForm({ ...emptyForm(), ...parseBankMessage(message) });
-  }
-
-  async function submit() {
-    if (!form.item.trim() || !form.amount) {
-      onInvalid?.("请先填写项目和金额");
-      return;
-    }
-
-    setSaving(true);
-    try {
-      const expenseId = form.id || `expense-${Date.now()}`;
-      let receiptRecord;
-      if (receipt) {
-        try {
-          receiptRecord = createReceiptBlobRecord({
-            expenseId,
-            receiptId: `receipt-${globalThis.crypto.randomUUID()}`,
-            file: receipt,
-            createdAt: new Date().toISOString(),
-          });
-        } catch {
-          onInvalid?.("小票仅支持 JPG、PNG、HEIC、HEIF、WebP，且不能超过 10 MB");
-          return;
-        }
-      }
-      const nextExpense = createCapturedExpense(form, {
-        id: expenseId,
-        attachmentName: receiptRecord?.originalName || form.attachmentName || "",
-      });
-      await onAdd(nextExpense, receiptRecord);
-
-      const nextDefaults = {
-        category: form.category,
-        date: form.date,
-        currency: form.currency,
-        payer: form.payer,
-      };
-      localStorage.setItem(addDefaultsStorageKey, JSON.stringify(nextDefaults));
-      setForm(emptyForm(nextDefaults));
-      setMessage("");
-      setReceipt(null);
-      router.push(`/expenses?highlight=${encodeURIComponent(nextExpense.id)}`);
-    } catch {
-      // The parent surfaces the failure toast and animation.
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  return (
-    <section className={saving ? "section form-card expense-form-card capture-card is-busy" : "section form-card expense-form-card capture-card"} data-motion="section" data-feedback-target="expense-form" aria-busy={saving}>
-      <div className="section-head">
-        <div>
-          <span className="section-kicker">Quick capture</span>
-          <h2>记一笔</h2>
-        </div>
-        <span className="muted">默认 50/50 split</span>
-      </div>
-      <div className="stack">
-        <label>
-          粘贴银行短信
-          <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="例如：08/11 Captain Cook Whale Watching card purchase A$340.20" />
-        </label>
-        <button className="button" type="button" onClick={useMessage}>从短信生成待确认草稿</button>
-        <div className="quick-templates" aria-label="常用模板">
-          {expenseTemplates.map((template) => (
-            <button
-              className="button small"
-              key={template.id}
-              type="button"
-              onClick={() => setForm(applyExpenseTemplate(form, template.id))}
-            >
-              {template.label}
-            </button>
-          ))}
-        </div>
-        <div>
-          <div className="form-grid">
-            <label className="full">
-              项目
-              <input value={form.item} onChange={(event) => setForm({ ...form, item: event.target.value })} required />
-            </label>
-            <label>
-              类别
-              <select value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })}>
-                {categories.map((item) => <option key={item}>{item}</option>)}
-              </select>
-            </label>
-            <label>
-              日期
-              <input type="date" value={form.date} onChange={(event) => setForm({ ...form, date: event.target.value })} />
-            </label>
-            <label>
-              币种
-              <select value={form.currency} onChange={(event) => setForm({ ...form, currency: event.target.value })}>
-                <option value="CNY">CNY</option>
-                <option value="AUD">AUD</option>
-              </select>
-            </label>
-            <label>
-              金额
-              <input type="number" step="0.01" value={form.amount} onChange={(event) => setForm({ ...form, amount: event.target.value })} required />
-            </label>
-            <label>
-              付款方
-              <select value={form.payer} onChange={(event) => setForm({ ...form, payer: event.target.value })}>
-                <option value="us">{formatPayerLabel("us")}</option>
-                <option value="them">{formatPayerLabel("them")}</option>
-              </select>
-            </label>
-            <label>
-              状态
-              <select value={form.status} onChange={(event) => setForm({ ...form, status: event.target.value })}>
-                <option value="confirmed">已确认</option>
-                <option value="draft">待确认</option>
-              </select>
-            </label>
-            <label className="full">
-              小票图片
-              <input
-                type="file"
-                accept=".jpg,.jpeg,.png,.heic,.heif,.webp,image/jpeg,image/png,image/heic,image/heif,image/webp"
-                onChange={(event) => setReceipt(event.target.files?.[0] || null)}
-              />
-            </label>
-            <label className="full">
-              备注
-              <textarea value={form.note} onChange={(event) => setForm({ ...form, note: event.target.value })} />
-            </label>
-          </div>
-          <button className="button primary" type="button" onClick={submit} disabled={saving}>
-            {saving ? "保存中" : "保存"}
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function findFeedbackTarget(root, targetId) {
   if (!root) return null;
-  if (targetId === "expense-form" || targetId === "expense-list") {
+  if (["expense-form", "expense-list", "backup-panel"].includes(targetId)) {
     return root.querySelector(`[data-feedback-target='${targetId}']`);
   }
   return root.querySelector(`[data-feedback-id='${escapeFeedbackSelector(targetId)}']`) || root.querySelector("[data-motion='activity-panel']");
@@ -1103,14 +636,6 @@ function findFeedbackTarget(root, targetId) {
 
 function escapeFeedbackSelector(value) {
   return String(value || "").replaceAll("\\", "\\\\").replaceAll("'", "\\'");
-}
-
-function rowClassName(baseClassName, expense, isBusy, highlightId) {
-  return [
-    baseClassName,
-    isBusy ? "is-busy" : "",
-    highlightId && expense.id === highlightId ? "is-highlighted" : "",
-  ].filter(Boolean).join(" ");
 }
 
 function Settlement({ ledger }) {
@@ -1160,14 +685,6 @@ function Settlement({ ledger }) {
   );
 }
 
-function Select({ value, onChange, options }) {
-  return (
-    <select value={value} onChange={(event) => onChange(event.target.value)}>
-      {options.map((option) => <option key={option} value={option}>{option}</option>)}
-    </select>
-  );
-}
-
 function dashboardStats(expenses, activity) {
   const pendingSplitCount = expenses.filter((expense) => expense.status === "confirmed" && !expense.splitSettled).length;
   const draftCount = expenses.filter((expense) => expense.status === "draft").length;
@@ -1210,27 +727,6 @@ function tripStatus(now = new Date()) {
     tripValue: "收尾",
     tripDetail: "核对待分摊和待确认项目，完成最终结算。",
   };
-}
-
-function emptyForm(defaults = {}) {
-  return {
-    id: "",
-    category: "dining",
-    item: "",
-    date: "",
-    currency: "CNY",
-    amount: "",
-    payer: "us",
-    status: "confirmed",
-    note: "",
-    attachmentName: "",
-    splitSettled: false,
-    ...defaults,
-  };
-}
-
-function removeEmptyValues(values) {
-  return Object.fromEntries(Object.entries(values).filter(([, value]) => value));
 }
 
 function newOperationId() {

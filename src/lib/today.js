@@ -26,6 +26,22 @@ export function findTodayDay(days, now = new Date()) {
   return days.find((day) => dayTime(day) === today) || days.find((day) => dayTime(day) > today) || days.at(-1);
 }
 
+export function travelMode(days, stages, now = new Date()) {
+  if (!Array.isArray(days) || !days.length) {
+    return { phase: "before", currentDay: null, currentStage: null, nextDay: null };
+  }
+  const today = startOfLocalDay(now).getTime();
+  const first = dayTime(days[0]);
+  const last = dayTime(days.at(-1));
+  const phase = today < first ? "before" : today > last ? "after" : "during";
+  const currentDay = findTodayDay(days, now);
+  const currentIndex = days.findIndex((day) => day.id === currentDay?.id);
+  const currentStage = (stages || []).find((stage) => stage.dayIds.includes(currentDay?.id)) || null;
+  const nextDay = phase === "after" ? null : days[currentIndex + (phase === "during" ? 1 : 0)] || null;
+
+  return { phase, currentDay, currentStage, nextDay };
+}
+
 export function collectTodayResources(day) {
   const seen = new Set();
   const resources = [];

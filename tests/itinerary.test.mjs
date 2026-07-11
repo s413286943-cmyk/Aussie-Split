@@ -10,6 +10,7 @@ import {
   collectTodayResources,
   findTodayDay,
   parseMealPlan,
+  travelMode,
 } from "../src/lib/today.js";
 import { readWorkbook } from "../scripts/import-itinerary.mjs";
 
@@ -113,6 +114,22 @@ describe("itinerary data", () => {
     assert.equal(findTodayDay(itinerary.days, new Date("2026-06-25T10:00:00+08:00")).id, "d0");
     assert.equal(findTodayDay(itinerary.days, new Date("2026-07-31T10:00:00+10:00")).id, "d3");
     assert.equal(findTodayDay(itinerary.days, new Date("2026-08-20T10:00:00+10:00")).id, "d16");
+  });
+
+  it("selects the date-aware route mode and current stage", () => {
+    const before = travelMode(itinerary.days, itinerary.stages, new Date("2026-07-20T10:00:00+08:00"));
+    const during = travelMode(itinerary.days, itinerary.stages, new Date("2026-07-31T10:00:00+10:00"));
+    const after = travelMode(itinerary.days, itinerary.stages, new Date("2026-08-20T10:00:00+10:00"));
+
+    assert.equal(before.phase, "before");
+    assert.equal(before.currentDay.id, "d0");
+    assert.equal(during.phase, "during");
+    assert.equal(during.currentDay.id, "d3");
+    assert.equal(during.currentStage.id, "melbourne-road");
+    assert.equal(during.nextDay.id, "d4");
+    assert.equal(after.phase, "after");
+    assert.equal(after.currentDay.id, "d16");
+    assert.equal(after.nextDay, null);
   });
 
   it("collects useful quick links for the selected travel day", () => {

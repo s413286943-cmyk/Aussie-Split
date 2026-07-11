@@ -167,6 +167,8 @@ describe("protected browser integration contract", () => {
   const unlockSource = readFileSync(new URL("../src/components/UnlockGate.jsx", import.meta.url), "utf8");
   const ledgerSource = readFileSync(new URL("../src/components/TripLedgerApp.jsx", import.meta.url), "utf8");
   const itinerarySource = readFileSync(new URL("../src/components/ItineraryApp.jsx", import.meta.url), "utf8");
+  const todayConsoleSource = readFileSync(new URL("../src/components/itinerary/TodayConsole.jsx", import.meta.url), "utf8");
+  const itineraryUiSource = `${itinerarySource}\n${todayConsoleSource}`;
 
   it("keeps only an offline reopening marker in browser access state", () => {
     assert.match(accessSource, /aussie-chill-offline-access-v1/);
@@ -216,10 +218,10 @@ describe("protected browser integration contract", () => {
   it("shows whether itinerary ledger figures are current or locally cached", () => {
     assert.match(itinerarySource, /synced\.result\.completed \? "current" : "cached"/);
     assert.match(itinerarySource, /setLedgerFreshness\("cached"\)/);
-    assert.match(itinerarySource, /账本已同步 · 当前数据/);
-    assert.match(itinerarySource, /本机缓存 · 可能不是最新/);
-    assert.match(itinerarySource, /role="status"/);
-    assert.match(itinerarySource, /aria-live="polite"/);
+    assert.match(itineraryUiSource, /账本已同步 · 当前数据/);
+    assert.match(itineraryUiSource, /本机缓存 · 可能不是最新/);
+    assert.match(itineraryUiSource, /role="status"/);
+    assert.match(itineraryUiSource, /aria-live="polite"/);
   });
 
   it("does not present seed expenses as a real cache when IndexedDB is unavailable", () => {
@@ -227,7 +229,7 @@ describe("protected browser integration contract", () => {
     assert.match(itinerarySource, /useState\(\[\]\)/);
     assert.match(itinerarySource, /setLedgerExpenses\(\[\]\)/);
     assert.match(itinerarySource, /setLedgerFreshness\("unavailable"\)/);
-    assert.match(itinerarySource, /账本暂不可用 · 未显示缓存金额/);
+    assert.match(itineraryUiSource, /账本暂不可用 · 未显示缓存金额/);
   });
 
   it("leaves no direct data-service reference in browser entry modules", () => {
