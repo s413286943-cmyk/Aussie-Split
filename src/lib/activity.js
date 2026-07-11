@@ -1,5 +1,6 @@
 import { formatMoney } from "./ledger.js";
 import { formatPayerLabel } from "./couples.js";
+import { createRecordId } from "./recordId.js";
 
 const actionLabels = {
   add: "新增了",
@@ -8,7 +9,7 @@ const actionLabels = {
   delete: "删除了",
 };
 
-export function createActivityEntry(action, expense, now = new Date(), previousExpense = null) {
+export function createActivityEntry(action, expense, now = new Date(), previousExpense = null, options = {}) {
   const createdAt = now.toISOString();
   const item = expense.item || "未命名费用";
   const amount = Number(expense.amount || 0);
@@ -16,7 +17,7 @@ export function createActivityEntry(action, expense, now = new Date(), previousE
   const verb = actionLabels[action] || "更新了";
 
   return {
-    id: `activity-${createdAt}-${action}-${expense.id}`,
+    id: createRecordId("activity", options.randomUUID),
     expenseId: expense.id,
     action,
     item,

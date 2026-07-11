@@ -15,6 +15,7 @@ import {
 import { findDuplicateExpense, validateExpense } from "@/lib/expenseValidation";
 import { formatPayerLabel } from "@/lib/couples";
 import { createReceiptBlobRecord } from "@/lib/receipt";
+import { createRecordId } from "@/lib/recordId";
 
 const addDefaultsStorageKey = "aussie-chill-add-defaults-v1";
 
@@ -63,13 +64,13 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
 
     setSaving(true);
     try {
-      const expenseId = form.id || `expense-${Date.now()}`;
+      const expenseId = form.id || createRecordId("expense");
       let receiptRecord;
       if (receipt) {
         try {
           receiptRecord = createReceiptBlobRecord({
             expenseId,
-            receiptId: `receipt-${globalThis.crypto.randomUUID()}`,
+            receiptId: createRecordId("receipt"),
             file: receipt,
             createdAt: new Date().toISOString(),
           });
@@ -119,7 +120,7 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
       <div className="stack">
         <label>
           粘贴银行短信
-          <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="例如：08/11 Captain Cook Whale Watching card purchase A$340.20" />
+          <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="例如：08/11 Harbour dinner card purchase A$86.50" />
         </label>
         <button className="button" type="button" onClick={useMessage}>从短信生成待确认草稿</button>
         <div className="quick-templates" aria-label="常用模板">

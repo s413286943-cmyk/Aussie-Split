@@ -1,6 +1,7 @@
 import {
   acquireSyncLease,
   clearLegacyStorageAfterSync,
+  cleanupDeletedReceiptBlobs,
   closeOfflineDb,
   commitDeleteUndo,
   commitLocalMutation,
@@ -20,6 +21,10 @@ import {
 import { createMutationTabId, loadMutationState } from "./sync.js";
 import { flushPendingOperations, visibleExpenses } from "./syncEngine.js";
 
+export const DELETE_UNDO_MS = 5000;
+
+const activeReceiptSyncs = new Map();
+
 export async function initializeOfflineLedger(options) {
   const storage = options?.storage;
   if (!storage) throw new TypeError("Offline ledger storage is required");
@@ -27,14 +32,16 @@ export async function initializeOfflineLedger(options) {
   const tabId = createMutationTabId(randomUUID);
   const identity = loadMutationState(storage, { randomUUID, tabId });
   const db = await openOfflineDb({ indexedDB: options.indexedDB });
+  const now = typeof options.now === "function" ? options.now() : options.now ?? Date.now();
 
   try {
     await migrateLegacyLocalStorage(db, {
       storage,
       clientId: identity.clientId,
       highWater: identity.highWater,
-      now: options.now ?? Date.now(),
+      now,
     });
+    await cleanupDeletedReceiptBlobs(db, { deletedBefore: Math.max(0, now - DELETE_UNDO_MS) });
     const context = {
       db,
       storage,
@@ -49,6 +56,11 @@ export async function initializeOfflineLedger(options) {
     closeOfflineDb(db);
     throw error;
   }
+}
+
+export async function discardDeletedExpenseReceipt(context, expenseId) {
+  assertContext(context);
+  return cleanupDeletedReceiptBlobs(context.db, { expenseId });
 }
 
 export function closeOfflineLedger(context) {
@@ -112,6 +124,26 @@ export async function syncOfflineReceipts(context, options) {
   const now = options.now ?? Date.now;
   if (typeof now !== "function") throw new TypeError("Invalid receipt sync clock");
 
+  const active = activeReceiptSyncs.get(context.clientId);
+  if (active) {
+    await active;
+    context.state = await context.load();
+    return { uploaded: 0, failed: 0, skipped: 0, joined: true, state: context.state };
+  }
+
+  const sync = performReceiptSync(context, { ...options, now });
+  activeReceiptSyncs.set(context.clientId, sync);
+  try {
+    return await sync;
+  } finally {
+    if (activeReceiptSyncs.get(context.clientId) === sync) {
+      activeReceiptSyncs.delete(context.clientId);
+    }
+  }
+}
+
+async function performReceiptSync(context, options) {
+  const now = options.now;
   const claimOwner = `receipt-${context.tabId}`;
   const claimTtlMs = options.claimTtlMs ?? 10 * 60 * 1000;
   const ready = await claimReadyReceiptBlobs(context.db, {

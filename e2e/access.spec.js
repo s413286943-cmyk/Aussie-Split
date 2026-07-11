@@ -19,3 +19,20 @@ test("shared access gate rejects a bad code and unlocks with the shared code", a
   await page.goto("/expenses");
   await expect(page.getByRole("heading", { name: "费用明细", level: 1 })).toBeVisible();
 });
+
+test("public application scripts contain no private itinerary or seeded expense data", async ({ page, mockApi }) => {
+  mockApi.authenticated = false;
+
+  for (const path of ["/", "/itinerary"]) {
+    await page.goto(path);
+    const scriptBodies = await page.evaluate(async () => Promise.all(
+      [...document.scripts]
+        .map((script) => script.src)
+        .filter(Boolean)
+        .map((source) => fetch(source).then((response) => response.text())),
+    ));
+    const publicScripts = scriptBodies.join("\n");
+    expect(publicScripts).not.toContain("Oaks Melbourne on Market Hotel");
+    expect(publicScripts).not.toContain("Billy Tea Daintree Rainforest & Cape Tribulation Tour");
+  }
+});

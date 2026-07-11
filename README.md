@@ -31,7 +31,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 npm run dev
 ```
 
-账本通过受保护的同源 API 访问 Supabase。本机 IndexedDB 会保存账本、待同步操作和待上传小票；断网时可继续记账，恢复网络后自动重试。
+账本和完整行程都通过受保护的同源 API 读取。验证访问码后，行程会在本机缓存；IndexedDB 会保存账本、待同步操作和待上传小票。断网时仍可看行程和继续记账，恢复网络后自动重试。
 
 ## 行程快捷更新
 

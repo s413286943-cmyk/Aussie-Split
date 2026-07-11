@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 
-import { seedExpenses } from "../src/lib/ledger.js";
+import { seedExpenses } from "./fixtures/seed-expenses.mjs";
 import {
   allocateExpenseMutation,
   allocatePersistedExpenseMutation,

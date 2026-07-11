@@ -5,10 +5,14 @@ import { useEffect, useRef, useState } from "react";
 import {
   ACCESS_REQUIRED_EVENT,
   checkAccessSession,
+  fetchItinerary,
   shouldReopenCachedAccess,
   unlockAccessSession,
 } from "@/lib/apiClient";
 import { offlineAccessKey } from "@/lib/access";
+import { readCachedItinerary, writeCachedItinerary } from "@/lib/itineraryCache";
+
+let itineraryPrimePromise = null;
 
 export default function UnlockGate({ children, intro = "输入旅行访问码后进入 Aussie Chill。" }) {
   const [ready, setReady] = useState(false);
@@ -30,8 +34,11 @@ export default function UnlockGate({ children, intro = "输入旅行访问码后
         const session = await checkAccessSession();
         if (!cancelled) {
           const authenticated = session.authenticated === true;
-          if (authenticated) localStorage.setItem(offlineAccessKey, "yes");
-          setUnlocked(authenticated);
+          if (authenticated) {
+            localStorage.setItem(offlineAccessKey, "yes");
+            await primeProtectedItinerary();
+          }
+          if (!cancelled) setUnlocked(authenticated);
         }
       } catch (error) {
         if (!cancelled) {
@@ -84,6 +91,7 @@ function Unlock({ intro, onUnlock }) {
       const session = await unlockAccessSession(code.trim());
       if (session.authenticated !== true) throw new Error("access-denied");
       localStorage.setItem(offlineAccessKey, "yes");
+      await primeProtectedItinerary();
       onUnlock();
     } catch {
       setError("访问码不对或暂时无法验证");
@@ -118,4 +126,19 @@ function Unlock({ intro, onUnlock }) {
       </section>
     </main>
   );
+}
+
+async function primeProtectedItinerary() {
+  if (!navigator.onLine || readCachedItinerary(localStorage)) return;
+  if (!itineraryPrimePromise) {
+    itineraryPrimePromise = fetchItinerary()
+      .then((response) => {
+        if (response?.itinerary) writeCachedItinerary(localStorage, response.itinerary);
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        itineraryPrimePromise = null;
+      });
+  }
+  await itineraryPrimePromise;
 }

@@ -4,8 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import itinerary from "@/data/itinerary.generated.json";
-import { applyLedgerOperations } from "@/lib/apiClient";
+import { applyLedgerOperations, fetchItinerary } from "@/lib/apiClient";
+import { readCachedItinerary, writeCachedItinerary } from "@/lib/itineraryCache";
 import { pulseElement, revealOnScroll, revealPage } from "@/lib/motion";
 import {
   closeOfflineLedger,
@@ -39,6 +39,79 @@ export default function ItineraryApp() {
 }
 
 function ItineraryContent() {
+  const [itinerary, setItinerary] = useState(null);
+  const [loadState, setLoadState] = useState("loading");
+
+  useEffect(() => {
+    let cancelled = false;
+    let cached = null;
+
+    async function loadProtectedItinerary() {
+      if (!navigator.onLine) {
+        if (!cancelled && !cached) setLoadState("offline-unavailable");
+        return;
+      }
+
+      try {
+        const response = await fetchItinerary();
+        if (!response?.itinerary) throw new Error("Invalid itinerary response");
+        cached = response.itinerary;
+        if (!cancelled) {
+          setItinerary(response.itinerary);
+          setLoadState("current");
+        }
+        try {
+          writeCachedItinerary(localStorage, response.itinerary);
+        } catch {
+          // The authenticated online itinerary remains usable when browser storage is full.
+        }
+      } catch {
+        if (!cancelled && !cached) setLoadState("unavailable");
+      }
+    }
+
+    async function initializeItinerary() {
+      await Promise.resolve();
+      cached = readCachedItinerary(localStorage);
+      if (cancelled) return;
+      if (cached) {
+        setItinerary(cached);
+        setLoadState("cached");
+      }
+      await loadProtectedItinerary();
+    }
+
+    initializeItinerary();
+    window.addEventListener("online", loadProtectedItinerary);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("online", loadProtectedItinerary);
+    };
+  }, []);
+
+  if (!itinerary) return <ItineraryLoadState state={loadState} />;
+  return <ItineraryExperience itinerary={itinerary} />;
+}
+
+function ItineraryLoadState({ state }) {
+  const unavailable = state === "offline-unavailable" || state === "unavailable";
+  return (
+    <main className="unlock-wrap">
+      <section className="unlock-card stack" role="status" aria-live="polite">
+        <h1>{unavailable ? "行程暂时无法载入" : "正在载入行程"}</h1>
+        <p className="muted">
+          {state === "offline-unavailable"
+            ? "请先联网打开一次行程，之后即可离线查看。"
+            : unavailable
+              ? "网络恢复后会自动重试。"
+              : "正在读取受保护的旅行资料。"}
+        </p>
+      </section>
+    </main>
+  );
+}
+
+function ItineraryExperience({ itinerary }) {
   const shellRef = useRef(null);
   const [weatherByDay, setWeatherByDay] = useState(() => Object.fromEntries(
     itinerary.days.map((day) => [day.id, fallbackWeather(day)])
@@ -46,7 +119,7 @@ function ItineraryContent() {
   const [ledgerExpenses, setLedgerExpenses] = useState([]);
   const [ledgerFreshness, setLedgerFreshness] = useState("checking");
   const [checkedKitByDay, setCheckedKitByDay] = useState(readLocalChecklist);
-  const mode = useMemo(() => travelMode(itinerary.days, itinerary.stages), []);
+  const mode = useMemo(() => travelMode(itinerary.days, itinerary.stages), [itinerary]);
   const todayDay = mode.currentDay;
   const [selectedStageId, setSelectedStageId] = useState(mode.currentStage?.id || itinerary.stages[0].id);
   const [showAllStages, setShowAllStages] = useState(mode.phase !== "during");
@@ -140,7 +213,7 @@ function ItineraryContent() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [itinerary]);
 
   useEffect(() => {
     const pageCleanup = revealPage(shellRef, [
@@ -189,7 +262,7 @@ function ItineraryContent() {
 
   return (
     <main className={`itinerary-shell route-atlas travel-mode-${mode.phase}`} ref={shellRef}>
-      <Hero nextDay={heroDay} weather={weatherByDay[heroDay.id]} compact={mode.phase !== "before"} />
+      <Hero itinerary={itinerary} nextDay={heroDay} weather={weatherByDay[heroDay.id]} compact={mode.phase !== "before"} />
       {mode.phase === "before" && <RouteManifest days={itinerary.days} stages={itinerary.stages} />}
       {mode.phase === "after" && <PostTripSummary expenses={ledgerExpenses} />}
       <TodayConsole
@@ -244,7 +317,7 @@ function ItineraryContent() {
   );
 }
 
-function Hero({ nextDay, weather, compact = false }) {
+function Hero({ itinerary, nextDay, weather, compact = false }) {
   return (
     <header className={compact ? "itinerary-hero route-hero is-compact" : "itinerary-hero route-hero"} data-motion="itinerary-hero">
       <Image

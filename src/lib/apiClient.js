@@ -42,6 +42,10 @@ export function fetchLedgerSnapshot() {
   return requestJson("/api/sync");
 }
 
+export function fetchItinerary() {
+  return requestJson("/api/itinerary");
+}
+
 export async function applyLedgerOperations(operations) {
   const response = await requestJson("/api/sync", {
     method: "POST",

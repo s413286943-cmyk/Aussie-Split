@@ -611,6 +611,41 @@ export async function deleteReceiptBlob(db, receiptId) {
   return true;
 }
 
+export async function cleanupDeletedReceiptBlobs(db, options = {}) {
+  if (options.expenseId !== undefined) assertNonemptyString(options.expenseId, "expense id");
+  if (options.deletedBefore !== undefined && (
+    !Number.isSafeInteger(options.deletedBefore) || options.deletedBefore < 0
+  )) {
+    throw new RangeError("Invalid deleted receipt cutoff");
+  }
+
+  const transaction = db.transaction(["receiptBlobs", "expenses"], "readwrite");
+  const completed = transactionComplete(transaction);
+  try {
+    const receiptStore = transaction.objectStore("receiptBlobs");
+    const [receipts, expenses] = await Promise.all([
+      requestResult(receiptStore.getAll()),
+      requestResult(transaction.objectStore("expenses").getAll()),
+    ]);
+    const expenseById = new Map(expenses.map((expense) => [expense.id, expense]));
+    const removable = receipts.filter((receipt) => {
+      if (options.expenseId && receipt.expenseId !== options.expenseId) return false;
+      const deletedAt = expenseById.get(receipt.expenseId)?.deletedAt;
+      if (!deletedAt) return false;
+      const deletedMillis = Date.parse(deletedAt);
+      return Number.isFinite(deletedMillis)
+        && (options.deletedBefore === undefined || deletedMillis <= options.deletedBefore);
+    });
+    for (const receipt of removable) receiptStore.delete(receipt.receiptId);
+    await completed;
+    return removable.length;
+  } catch (error) {
+    abortTransaction(transaction);
+    await completed.then(() => undefined, () => undefined);
+    throw error;
+  }
+}
+
 export async function getReadyReceiptBlobs(db) {
   const transaction = db.transaction(["receiptBlobs", "expenses", "outbox"], "readonly");
   const completed = transactionComplete(transaction);

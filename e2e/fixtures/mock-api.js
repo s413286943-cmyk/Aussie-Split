@@ -1,4 +1,5 @@
 import { defaultSnapshot } from "./data.js";
+import itinerary from "../../src/data/itinerary.generated.json" with { type: "json" };
 
 export class MockApi {
   constructor(options = {}) {
@@ -48,6 +49,7 @@ export class MockApi {
 
     if (url.pathname === "/api/access") return this.#handleAccess(route);
     if (!this.authenticated) return json(route, { error: "access_required" }, 401);
+    if (url.pathname === "/api/itinerary") return json(route, { itinerary: structuredClone(itinerary) });
     if (url.pathname === "/api/sync") return this.#handleSync(route);
     if (url.pathname === "/api/activity") return json(route, { activity: structuredClone(this.activity) });
     if (url.pathname === "/api/receipts/upload-url") return this.#createUpload(route);

@@ -8,10 +8,10 @@ import {
   expenseToEditableForm,
   expenseTemplates,
   parseBankMessage,
-  seedExpenses,
   setExpenseSplitSettled,
   splitSettledLabel,
 } from "../src/lib/ledger.js";
+import { seedExpenses } from "./fixtures/seed-expenses.mjs";
 import {
   coupleName,
   formatPayerLabel,

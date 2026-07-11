@@ -5,6 +5,12 @@ import { GET as getActivity } from "../src/app/api/activity/route.ts";
 import { GET as getSync, POST as postSync } from "../src/app/api/sync/route.ts";
 import { createSessionToken } from "../src/lib/server/session.js";
 
+let itineraryRouteImportError;
+const itineraryRoute = await import("../src/app/api/itinerary/route.ts").catch((error) => {
+  itineraryRouteImportError = error;
+  return {};
+});
+
 const originalFetch = globalThis.fetch;
 const originalEnv = {};
 const envKeys = ["TRIP_CODE", "SESSION_SECRET", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"];
@@ -124,6 +130,21 @@ describe("authenticated ledger routes", () => {
 
     assert.equal(response.status, 200);
     assert.equal(requestedUrls.some((url) => url.includes("expense_activity") && url.includes("limit=100")), true);
+    assert.equal(response.headers.get("Cache-Control"), "private, no-store");
+  });
+
+  it("keeps itinerary content behind the same authenticated private API boundary", async () => {
+    assert.equal(typeof itineraryRoute.GET, "function", itineraryRouteImportError?.message);
+
+    const rejected = await itineraryRoute.GET(new Request("https://aussie.example/api/itinerary"));
+    assert.equal(rejected.status, 401);
+    assert.deepEqual(await rejected.json(), { error: "access_required" });
+
+    const response = await itineraryRoute.GET(authenticatedRequest("https://aussie.example/api/itinerary"));
+    const payload = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(payload.itinerary.trip.title, "Aussie Chill");
+    assert.equal(payload.itinerary.days.length, 17);
     assert.equal(response.headers.get("Cache-Control"), "private, no-store");
   });
 });

@@ -11,6 +11,7 @@ import {
   syncOfflineReceipts,
   undoOfflineDelete,
 } from "../src/lib/offlineLedger.js";
+import { getReceiptBlobByExpenseId } from "../src/lib/offlineDb.js";
 import { compareMutationVersions } from "../src/lib/mutationVersion.js";
 
 const baseNow = 1_780_000_000_000;
@@ -271,6 +272,51 @@ describe("offline ledger lifecycle", () => {
     closeOfflineLedger(context);
   });
 
+  it("preserves a deleted expense receipt during Undo then removes it after expiry and reopen", async () => {
+    const indexedDB = new IDBFactory();
+    const storage = memoryStorage();
+    let context = await initializeOfflineLedger({
+      indexedDB,
+      storage,
+      now: baseNow,
+      randomUUID: uuidSequence(),
+    });
+    await commitOfflineMutation(context, {
+      type: "upsert",
+      expense: expenseFixture(),
+      activity: activityFixture(),
+      opId: "op-receipt-add",
+      now: baseNow + 1_000,
+      receipt: receiptFixture(),
+    });
+    await commitOfflineMutation(context, {
+      type: "delete",
+      expense: context.state.expenses[0],
+      activity: activityFixture({ id: "activity-receipt-delete", action: "delete" }),
+      opId: "op-receipt-delete",
+      now: baseNow + 2_000,
+    });
+    closeOfflineLedger(context);
+
+    context = await initializeOfflineLedger({
+      indexedDB,
+      storage,
+      now: baseNow + 6_000,
+      randomUUID: uuidSequence(),
+    });
+    assert.ok(await getReceiptBlobByExpenseId(context.db, "expense-one"));
+    closeOfflineLedger(context);
+
+    context = await initializeOfflineLedger({
+      indexedDB,
+      storage,
+      now: baseNow + 8_000,
+      randomUUID: uuidSequence(),
+    });
+    assert.equal(await getReceiptBlobByExpenseId(context.db, "expense-one"), undefined);
+    closeOfflineLedger(context);
+  });
+
   it("lets only one tab upload the same acknowledged receipt", async () => {
     const indexedDB = new IDBFactory();
     const storage = memoryStorage();
@@ -320,6 +366,7 @@ describe("offline ledger lifecycle", () => {
 
     assert.equal(uploadCalls, 1);
     assert.equal(results.reduce((sum, result) => sum + result.uploaded, 0), 1);
+    assert.equal(results.every((result) => result.state.expenses[0].attachmentStatus === "uploaded"), true);
     closeOfflineLedger(first);
     closeOfflineLedger(second);
   });

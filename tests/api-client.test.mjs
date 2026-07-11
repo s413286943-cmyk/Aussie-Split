@@ -37,6 +37,7 @@ describe("browser protected API client", () => {
       if (url === "/api/sync") {
         return Response.json({ expenses: [], activity: [], serverTime: "2026-07-10T00:00:00.000Z" });
       }
+      if (url === "/api/itinerary") return Response.json({ itinerary: { trip: {}, stages: [], days: [] } });
       if (String(url).startsWith("/api/activity")) return Response.json({ activity: [] });
       if (url === "/api/receipts/upload-url") return Response.json({ mode: "signed-put" });
       if (url === "/api/receipts/finalize") return Response.json({ receipt: { receiptId: "receipt-one" } });
@@ -49,6 +50,8 @@ describe("browser protected API client", () => {
     await clearAccessSession();
     await fetchLedgerSnapshot();
     await applyLedgerOperations([]);
+    assert.equal(typeof protectedApi.fetchItinerary, "function");
+    await protectedApi.fetchItinerary();
     await fetchActivity(50);
     await createReceiptUploadContract({ expenseId: "expense-one" });
     await finalizeReceipt({ expenseId: "expense-one", receiptId: "receipt-one" });
@@ -237,6 +240,25 @@ describe("protected browser integration contract", () => {
     assert.doesNotMatch(
       browserSources,
       /NEXT_PUBLIC_SUPABASE|SUPABASE_SERVICE_ROLE_KEY|\/rest\/v1|\/storage\/v1/,
+    );
+  });
+
+  it("loads private itinerary and ledger data only after protected API access", () => {
+    assert.doesNotMatch(itinerarySource, /itinerary\.generated\.json/);
+    assert.match(itinerarySource, /fetchItinerary/);
+    assert.doesNotMatch(ledgerSource, /seedExpenses/);
+  });
+
+  it("keeps real trip and expense literals out of browser-eligible source files", () => {
+    const srcRoot = fileURLToPath(new URL("../src", import.meta.url));
+    const browserFiles = collectSourceFiles(srcRoot).filter((file) =>
+      !file.includes("/src/lib/server/") && !file.includes("/src/app/api/"),
+    );
+    const browserSource = browserFiles.map((file) => readFileSync(file, "utf8")).join("\n");
+
+    assert.doesNotMatch(
+      browserSource,
+      /Oaks Melbourne on Market Hotel|Billy Tea Daintree Rainforest|Captain Cook Whale Watching/,
     );
   });
 

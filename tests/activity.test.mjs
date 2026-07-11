@@ -27,6 +27,19 @@ describe("expense activity", () => {
     assert.equal(createActivityEntry("delete", expense).summary, "删除了 晚餐");
   });
 
+  it("uses collision-resistant activity ids even at the same fixed clock time", () => {
+    const ids = ["uuid-one", "uuid-two"];
+    const randomUUID = () => ids.shift();
+    const now = new Date("2026-07-30T10:00:00.000Z");
+
+    const first = createActivityEntry("add", expense, now, null, { randomUUID });
+    const second = createActivityEntry("add", expense, now, null, { randomUUID });
+
+    assert.equal(first.id, "activity-uuid-one");
+    assert.equal(second.id, "activity-uuid-two");
+    assert.notEqual(first.id, second.id);
+  });
+
   it("describes changed fields for edited expenses", () => {
     const original = {
       ...expense,

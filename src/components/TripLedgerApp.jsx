@@ -6,7 +6,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   calculateLedger,
   formatMoney,
-  seedExpenses,
   setExpenseSplitSettled,
 } from "@/lib/ledger";
 import {
@@ -20,6 +19,8 @@ import { applyLedgerOperations, fetchReceipt } from "@/lib/apiClient";
 import {
   closeOfflineLedger,
   commitOfflineMutation,
+  DELETE_UNDO_MS,
+  discardDeletedExpenseReceipt,
   initializeOfflineLedger,
   syncOfflineLedger,
   syncOfflineReceipts,
@@ -35,7 +36,7 @@ import ExpenseForm from "@/components/ledger/ExpenseForm";
 import ExpenseList, { ExpenseListPage } from "@/components/ledger/ExpenseList";
 import LedgerShell from "@/components/ledger/LedgerShell";
 
-const undoDeleteMs = 5000;
+const undoDeleteMs = DELETE_UNDO_MS;
 
 export default function TripLedgerApp({ view }) {
   return (
@@ -52,13 +53,13 @@ function TripLedgerContent({ view }) {
   const deferredReceiptFailureRef = useRef(false);
   const mountedRef = useRef(false);
   const offlineContextRef = useRef(null);
-  const expensesRef = useRef(seedExpenses);
+  const expensesRef = useRef([]);
   const ledgerActionQueueRef = useRef(null);
   const syncPromiseRef = useRef(null);
   const syncRequestedRef = useRef(false);
   const syncRetryTimerRef = useRef(null);
   const [ready, setReady] = useState(false);
-  const [expenses, setExpenses] = useState(seedExpenses);
+  const [expenses, setExpenses] = useState([]);
   const [activity, setActivity] = useState([]);
   const [activityPulseKey, setActivityPulseKey] = useState(0);
   const [actionNotice, setActionNotice] = useState(null);
@@ -505,6 +506,8 @@ function TripLedgerContent({ view }) {
     const pending = pendingDeleteRef.current;
     if (!pending || pending.id !== id) return;
     pendingDeleteRef.current = null;
+    const context = offlineContextRef.current;
+    if (context) discardDeletedExpenseReceipt(context, id).catch(() => undefined);
     requestLedgerSync();
     if (deferredReceiptFailureRef.current) {
       deferredReceiptFailureRef.current = false;
