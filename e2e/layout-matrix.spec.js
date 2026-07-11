@@ -23,3 +23,15 @@ test("primary routes remain bounded across the responsive matrix", async ({ page
     }
   }
 });
+
+test("desktop shells do not render a decorative guide rail", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+
+  for (const [route, selector] of [["/", ".docket-shell"], ["/itinerary", ".route-atlas"]]) {
+    await page.goto(route);
+    const guideContent = await page.locator(selector).evaluate((element) => (
+      getComputedStyle(element, "::before").content
+    ));
+    expect(guideContent, `${route} still renders its left guide rail`).toBe("none");
+  }
+});

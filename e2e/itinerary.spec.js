@@ -45,6 +45,22 @@ test("desktop itinerary has no page overflow or clipped operational text", async
   expect(await findClippedText(page)).toEqual([]);
 });
 
+test("an expanded desktop day owns the full row without stretching its sibling", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.clock.setFixedTime(new Date("2026-07-11T10:00:00+08:00"));
+  await page.goto("/itinerary");
+
+  const d1 = page.locator("#d1");
+  await d1.getByText("查看当天安排", { exact: true }).click();
+  const widthRatio = await d1.evaluate((element) => (
+    element.getBoundingClientRect().width / element.parentElement.getBoundingClientRect().width
+  ));
+
+  expect(widthRatio).toBeGreaterThan(0.95);
+  await expect(page.locator("#d2 details")).not.toHaveAttribute("open", "");
+});
+
 test("mobile itinerary keeps controls and day text inside the viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/itinerary");

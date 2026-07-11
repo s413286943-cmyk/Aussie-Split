@@ -1,8 +1,4 @@
 /* Travel Docket UI */
-:root {
-  --route-line: rgba(16, 33, 31, 0.16);
-}
-
 body {
   color: var(--foreground);
   background: var(--background);
@@ -20,23 +16,6 @@ textarea {
 .itinerary-shell {
   width: min(1160px, 100%);
   padding: 18px 16px 112px;
-}
-
-.docket-shell,
-.route-atlas {
-  position: relative;
-}
-
-.docket-shell::before,
-.route-atlas::before {
-  content: "";
-  position: fixed;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: max(18px, calc((100vw - 1160px) / 2 - 42px));
-  width: 2px;
-  background: repeating-linear-gradient(180deg, rgba(0, 107, 100, 0.24) 0 18px, transparent 18px 30px);
 }
 
 .hero,
@@ -1073,11 +1052,6 @@ label {
   .app-shell,
   .itinerary-shell {
     padding: 10px 10px 100px;
-  }
-
-  .docket-shell::before,
-  .route-atlas::before {
-    display: none;
   }
 
   .hero {
