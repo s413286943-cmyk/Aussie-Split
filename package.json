@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "node node_modules/next/dist/bin/next dev --webpack",
     "build": "node node_modules/next/dist/bin/next build --webpack",
@@ -17,19 +20,19 @@
   },
   "dependencies": {
     "gsap": "^3.15.0",
-    "next": "16.2.9",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "next": "16.2.10",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
     "server-only": "0.0.1",
     "tus-js-client": "4.3.1"
   },
   "devDependencies": {
     "@eslint-community/eslint-utils": "^4.9.1",
-    "@types/node": "^20",
+    "@types/node": "24.13.3",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.9",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.2.10",
     "fake-indexeddb": "6.2.5",
     "playwright": "^1.61.1",
     "typescript": "^5"

@@ -9,7 +9,14 @@
 
 ## 本地运行
 
-先配置仅服务端可见的环境变量：
+使用 Node.js 24 LTS，并先安装锁定版本的依赖：
+
+```bash
+nvm use
+npm ci
+```
+
+再配置仅服务端可见的环境变量：
 
 ```bash
 TRIP_CODE=your-shared-code
@@ -58,10 +65,17 @@ npm run itinerary:seed
 上线共享时：
 
 1. 新建 Supabase project。
-2. 在 SQL editor 执行 `supabase/schema.sql`。
+2. 全新项目在 SQL editor 执行 `supabase/schema.sql`。
 3. 后续升级按时间顺序执行 `supabase/migrations/` 中未应用的迁移。
 4. `schema.sql` / 私密小票迁移会创建并锁定 `receipts` bucket；不要改成 public。
 5. 在 Vercel 的 Preview 和 Production 环境设置 `TRIP_CODE`、`SESSION_SECRET`、`SUPABASE_URL`、`SUPABASE_SERVICE_ROLE_KEY`。
+
+现有项目从兼容 bridge 升级时，必须先部署并验证受保护 API，再依次执行：
+
+1. `20260710140534_private_receipts.sql`
+2. `20260711065642_lock_down_shared_ledger.sql`
+
+不要先锁数据库。完整上线、快照和紧急回退顺序见 `docs/operations/deploy-and-rollback.md`。
 
 浏览器不会持有 Supabase key。小票先写入本机队列，账单同步确认后通过短期签名凭证直传私密 Storage；查看时使用 5 分钟有效的签名链接。
 
@@ -71,6 +85,13 @@ npm run itinerary:seed
 npm test
 npm run lint
 npm run build
+npm run test:e2e
 ```
 
-核心测试覆盖：多币种结算、已分摊排除、服务端访问控制、幂等同步、离线新增/编辑/删除/撤销、私密小票上传与清理、D0-D16 行程导入、资源链接和天气 fallback。
+`npm run test:e2e` 会构建本地生产版本，使用本机 Chrome 和隔离的同源 API 模拟运行，不会接触线上 Supabase。只读线上冒烟测试需显式运行：
+
+```bash
+npm run test:e2e:production
+```
+
+核心测试覆盖：多币种结算、已分摊排除、服务端访问控制、RLS 迁移和回退、幂等同步、离线新增/编辑/删除/撤销、私密小票上传与清理、备份导入、D0-D16 行程导入、桌面/手机裁切、资源链接和天气 fallback。
