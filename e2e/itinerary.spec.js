@@ -50,3 +50,22 @@ test("mobile itinerary keeps controls and day text inside the viewport", async (
   expect(await documentOverflowsHorizontally(page)).toBe(false);
   expect(await findClippedText(page)).toEqual([]);
 });
+
+test("mobile direct D15 link keeps the offscreen stage inside the viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.clock.setFixedTime(new Date("2026-07-11T10:00:00+08:00"));
+  await page.goto("/itinerary#d15");
+
+  const d15 = page.locator("#d15");
+  await expect(d15).toBeAttached();
+  await expect(d15.locator("h3")).toHaveText("Taronga Zoo + 最后采购 + Cafe Sydney");
+  const bounds = await d15.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return { left: rect.left, right: rect.right, viewport: window.innerWidth };
+  });
+
+  expect(bounds.left).toBeGreaterThanOrEqual(0);
+  expect(bounds.right).toBeLessThanOrEqual(bounds.viewport);
+  expect(await documentOverflowsHorizontally(page)).toBe(false);
+  expect(await findClippedText(page)).toEqual([]);
+});

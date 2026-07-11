@@ -166,11 +166,11 @@
 }
 
 .stage-section {
-  contain-intrinsic-size: auto 980px;
+  contain-intrinsic-block-size: auto 980px;
 }
 
 .route-day-card {
-  contain-intrinsic-size: auto 820px;
+  contain-intrinsic-block-size: auto 820px;
 }
 
 .route-day-card.is-current {

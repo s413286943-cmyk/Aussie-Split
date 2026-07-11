@@ -87,6 +87,23 @@ describe("itinerary data", () => {
     assert.match(d3.coverImageAlt, /Lorne|Apollo Bay|灯塔|大洋路早段/);
   });
 
+  it("uses the Taronga Zoo plan and cover on D15 without Manly leftovers", () => {
+    const d15 = itinerary.days.find((day) => day.id === "d15");
+    const d15Text = [
+      d15.title,
+      d15.focus,
+      ...d15.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`),
+    ].join(" ");
+
+    assert.equal(d15.coverImageUrl, "/itinerary/d15-taronga-zoo-harbour.png");
+    assert.match(d15.coverImageAlt, /Taronga|长颈鹿|悉尼港/);
+    assert.match(d15.primaryResource.title, /Taronga Zoo/);
+    assert.match(d15.ticketResource.title, /Taronga Zoo/);
+    assert.match(d15Text, /Taronga Zoo/);
+    assert.match(d15Text, /Cafe Sydney/);
+    assert.doesNotMatch(d15Text, /Manly|Hugos|Felons/i);
+  });
+
   it("keeps Totti's on D14 and Cafe Sydney on D15 in the meal plan", () => {
     const d14Text = itinerary.days.find((day) => day.id === "d14").blocks
       .map((block) => `${block.place} ${block.activity} ${block.tip}`)

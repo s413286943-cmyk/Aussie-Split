@@ -3678,15 +3678,15 @@
       "city": "悉尼",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "Manly Ferry + 最后采购 + Cafe Sydney",
-      "focus": "Manly Ferry + Manly Beach + QVB / Chemist Warehouse 最后采购 + Cafe Sydney 17:30 Outdoor Terrace Dining 告别晚餐已订",
+      "title": "Taronga Zoo + 最后采购 + Cafe Sydney",
+      "focus": "Taronga Zoo + Sydney Harbour Ferry + QVB / Chemist Warehouse 最后采购 + Cafe Sydney 17:30 Outdoor Terrace Dining 告别晚餐已订",
       "lodging": "Oaks Sydney Goldsbrough Suites",
-      "climateNote": "悉尼早晚凉，渡轮上海风明显。",
-      "clothingNote": "薄外套随身；晚餐注意 smart dress code。",
-      "coverImageUrl": "/itinerary/sydney-harbor-evening.png",
-      "coverImageAlt": "悉尼海港黄昏",
-      "transport": "Ferry + 步行 / 市内交通",
-      "leaveBy": "上午按渡轮班次出发；16:40 左右前往 Circular Quay",
+      "climateNote": "悉尼早晚凉，渡轮甲板和动物园高处有风。",
+      "clothingNote": "薄外套随身；动物园步行较多，穿舒适鞋；晚餐注意 smart casual。",
+      "coverImageUrl": "/itinerary/d15-taronga-zoo-harbour.png",
+      "coverImageAlt": "Taronga Zoo 长颈鹿与悉尼港景观",
+      "transport": "F2 Ferry + 步行 / 市内交通",
+      "leaveBy": "08:30 左右出门前往 Circular Quay；16:40 前往 Cafe Sydney",
       "lodgingResource": {
         "id": "oaks-sydney-map",
         "title": "Oaks Sydney Goldsbrough Suites",
@@ -3697,32 +3697,70 @@
         "sourceNote": "Google Maps"
       },
       "primaryResource": {
-        "id": "manly-ferry-map",
-        "title": "Manly Ferry",
+        "id": "taronga-zoo-map",
+        "title": "Taronga Zoo Sydney",
         "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Manly+Ferry+Sydney",
+        "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
         "imageUrl": "",
         "imageAlt": "",
         "sourceNote": "Google Maps"
       },
       "ticketResource": {
-        "id": "no-fixed-ticket",
-        "title": "当天无固定票券",
-        "type": "note",
-        "url": "",
+        "id": "taronga-zoo-official",
+        "title": "Taronga Zoo Sydney",
+        "type": "official",
+        "url": "https://www.taronga.org.au/sydney-zoo",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "每日明确票券状态"
+        "sourceNote": "Taronga Zoo 官网"
       },
       "blocks": [
         {
           "dayId": "d15",
           "sortOrder": 10,
-          "period": "上午",
-          "place": "Circular Quay → Manly",
-          "activity": "坐公共 Manly Ferry 去 Manly",
-          "highlight": "渡轮本身就是海港巡游",
-          "tip": "不需要额外订 Captain Cook 观光船；公共 F1 Manly Ferry 已经很经典",
+          "period": "08:30–09:00",
+          "place": "酒店 → Circular Quay",
+          "activity": "前往 Taronga Zoo Ferry 码头",
+          "highlight": "悉尼最后一天慢启动",
+          "tip": "提前查看 F2 渡轮班次，建议到 Circular Quay Wharf 4",
+          "resources": [
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "taronga-ferry-official",
+              "title": "F2 Taronga Zoo Ferry",
+              "type": "official",
+              "url": "https://transportnsw.info/routes/details/sydney-ferries/f2/090f2",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Transport for NSW"
+            }
+          ]
+        },
+        {
+          "dayId": "d15",
+          "sortOrder": 20,
+          "period": "09:15–10:00",
+          "place": "Circular Quay → Taronga Zoo Wharf",
+          "activity": "搭乘 F2 Ferry 前往 Taronga Zoo",
+          "highlight": "Opera House + Harbour Bridge + Skyline",
+          "tip": "建议坐上层甲板；渡轮是今天的重要体验，不只是交通",
           "resources": [
             {
               "id": "circular-quay-map",
@@ -3734,48 +3772,19 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "manly-ferry-map",
-              "title": "Manly Ferry",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Ferry+Sydney",
+              "id": "taronga-ferry-official",
+              "title": "F2 Taronga Zoo Ferry",
+              "type": "official",
+              "url": "https://transportnsw.info/routes/details/sydney-ferries/f2/090f2",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d15",
-          "sortOrder": 20,
-          "period": "中午",
-          "place": "Manly Beach",
-          "activity": "海边午餐、散步",
-          "highlight": "比 Bondi 更松弛",
-          "tip": "可吃 fish & chips / beach brunch，不要吃太撑",
-          "resources": [
-            {
-              "id": "manly-beach-map",
-              "title": "Manly Beach",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Beach+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "Transport for NSW"
             },
             {
-              "id": "hugos-manly-map",
-              "title": "Hugos Manly",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Hugos+Manly",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "felons-manly-map",
-              "title": "Felons Manly",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Felons+Manly",
+              "id": "taronga-zoo-map",
+              "title": "Taronga Zoo Sydney",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -3785,11 +3794,78 @@
         {
           "dayId": "d15",
           "sortOrder": 30,
-          "period": "14:30–15:30",
-          "place": "QVB / Chemist Warehouse / 超市",
+          "period": "10:00–13:30",
+          "place": "Taronga Zoo",
+          "activity": "游览动物园，优先 Australian Wildlife 区域",
+          "highlight": "Koala / Kangaroo / Wallaby / Wombat + 悉尼港景观",
+          "tip": "不追求全部动物；当天 keeper talk 以官网和现场时间为准",
+          "resources": [
+            {
+              "id": "taronga-zoo-map",
+              "title": "Taronga Zoo Sydney",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "taronga-zoo-official",
+              "title": "Taronga Zoo Sydney",
+              "type": "official",
+              "url": "https://www.taronga.org.au/sydney-zoo",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Taronga Zoo 官网"
+            }
+          ]
+        },
+        {
+          "dayId": "d15",
+          "sortOrder": 40,
+          "period": "13:30–14:00",
+          "place": "Taronga Zoo Wharf → Circular Quay",
+          "activity": "搭乘 F2 Ferry 返回市区",
+          "highlight": "再看一次悉尼港",
+          "tip": "回程可休息，给下午采购和晚餐留体力",
+          "resources": [
+            {
+              "id": "taronga-zoo-map",
+              "title": "Taronga Zoo Sydney",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "taronga-ferry-official",
+              "title": "F2 Taronga Zoo Ferry",
+              "type": "official",
+              "url": "https://transportnsw.info/routes/details/sydney-ferries/f2/090f2",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Transport for NSW"
+            },
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d15",
+          "sortOrder": 50,
+          "period": "14:00–15:30",
+          "place": "QVB / Chemist Warehouse / CBD",
           "activity": "最后采购",
           "highlight": "药妆、保健品、伴手礼",
-          "tip": "今天必须买完；注意同店 A$300 以上 TRS 退税条件",
+          "tip": "今天完成所有购物；保留 tax invoice 并核对 TRS 条件",
           "resources": [
             {
               "id": "qvb-map",
@@ -3813,12 +3889,12 @@
         },
         {
           "dayId": "d15",
-          "sortOrder": 40,
-          "period": "15:30–16:30",
+          "sortOrder": 60,
+          "period": "15:30–16:20",
           "place": "酒店",
-          "activity": "整理购物袋和退税物品",
-          "highlight": "为 D16 机场退税做准备",
-          "tip": "把 tax invoice、商品、护照、支付卡放好；行李别乱",
+          "activity": "整理 TRS 和返程行李",
+          "highlight": "为 D16 返程准备",
+          "tip": "发票、商品、护照和支付卡集中整理",
           "resources": [
             {
               "id": "oaks-sydney-map",
@@ -3842,12 +3918,12 @@
         },
         {
           "dayId": "d15",
-          "sortOrder": 50,
+          "sortOrder": 70,
           "period": "16:40",
           "place": "酒店 → Circular Quay",
-          "activity": "出发去 Cafe Sydney",
+          "activity": "前往 Cafe Sydney",
           "highlight": "避免迟到",
-          "tip": "穿得稍正式，但带外套，Outdoor Terrace 晚上可能冷",
+          "tip": "换 smart casual；Outdoor Terrace 注意带外套",
           "resources": [
             {
               "id": "oaks-sydney-map",
@@ -3880,12 +3956,12 @@
         },
         {
           "dayId": "d15",
-          "sortOrder": 60,
-          "period": "17:00–17:20",
-          "place": "Circular Quay 外部",
-          "activity": "外面拍日落 / 蓝调光线",
-          "highlight": "歌剧院、海港桥、夕光",
-          "tip": "不要 17:30 才从酒店出发",
+          "sortOrder": 80,
+          "period": "17:00–17:15",
+          "place": "Circular Quay",
+          "activity": "日落前拍摄",
+          "highlight": "Opera House + Harbour Bridge + 蓝调前光线",
+          "tip": "不要拖到 17:30 才到附近",
           "resources": [
             {
               "id": "circular-quay-map",
@@ -3909,12 +3985,12 @@
         },
         {
           "dayId": "d15",
-          "sortOrder": 70,
+          "sortOrder": 90,
           "period": "17:30",
           "place": "Cafe Sydney",
           "activity": "Outdoor Terrace Dining 告别晚餐已订",
-          "highlight": "海港景观 + seafood / modern Australian",
-          "tip": "香槟 add-on 不需要，到店后再点酒更灵活；注意 1.5% card surcharge",
+          "highlight": "最后一晚海港晚餐",
+          "tip": "按预订时间入座；到店后再灵活点酒",
           "resources": [
             {
               "id": "cafe-sydney-map",
@@ -3938,22 +4014,13 @@
         },
         {
           "dayId": "d15",
-          "sortOrder": 80,
+          "sortOrder": 100,
           "period": "晚上",
-          "place": "Circular Quay / 酒店",
-          "activity": "晚餐后回酒店",
-          "highlight": "全程收尾",
-          "tip": "回去后最终整理 D16 返程行李",
+          "place": "酒店",
+          "activity": "最终整理",
+          "highlight": "返程准备",
+          "tip": "回酒店后完成 D16 行李和退税物品检查",
           "resources": [
-            {
-              "id": "circular-quay-map",
-              "title": "Circular Quay",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
             {
               "id": "oaks-sydney-map",
               "title": "Oaks Sydney Goldsbrough Suites",
@@ -3962,6 +4029,15 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "trs-official",
+              "title": "TRS 退税",
+              "type": "official",
+              "url": "https://www.abf.gov.au/entering-and-leaving-australia/tourist-refund-scheme",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "澳洲边防官网"
             }
           ]
         },
@@ -3970,9 +4046,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：café / Single O / Toby’s Estate；午餐：Manly fish & chips / Hugos / Felons Manly；晚餐：Cafe Sydney 17:30 Outdoor Terrace Dining（已订）",
+          "activity": "早餐：café / Single O / Toby’s Estate；午餐：Taronga Zoo Café / 自带轻食 / Circular Quay casual lunch；晚餐：Cafe Sydney 17:30 Outdoor Terrace Dining（已订）",
           "highlight": "每日餐食参考",
-          "tip": "16:40 左右出发去 Circular Quay；17:00–17:20 外面拍日落光线；17:30 入座；注意带外套",
+          "tip": "动物园午餐保持轻量；16:40 出发去 Circular Quay；17:00–17:15 拍日落；17:30 入座",
           "resources": [
             {
               "id": "single-o-map",
@@ -3993,28 +4069,19 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "manly-beach-map",
-              "title": "Manly Beach",
+              "id": "taronga-zoo-map",
+              "title": "Taronga Zoo Sydney",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Beach+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
             },
             {
-              "id": "hugos-manly-map",
-              "title": "Hugos Manly",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Hugos+Manly",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "felons-manly-map",
-              "title": "Felons Manly",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Felons+Manly",
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -4679,10 +4746,10 @@
       "sourceNote": "Google Maps"
     },
     {
-      "id": "manly-ferry-map",
-      "title": "Manly Ferry",
+      "id": "taronga-zoo-map",
+      "title": "Taronga Zoo Sydney",
       "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Manly+Ferry+Sydney",
+      "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
@@ -4940,31 +5007,22 @@
       "sourceNote": "Google Maps"
     },
     {
-      "id": "manly-beach-map",
-      "title": "Manly Beach",
-      "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Manly+Beach+Sydney",
+      "id": "taronga-zoo-official",
+      "title": "Taronga Zoo Sydney",
+      "type": "official",
+      "url": "https://www.taronga.org.au/sydney-zoo",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "Google Maps"
+      "sourceNote": "Taronga Zoo 官网"
     },
     {
-      "id": "hugos-manly-map",
-      "title": "Hugos Manly",
-      "type": "restaurant",
-      "url": "https://www.google.com/maps/search/?api=1&query=Hugos+Manly",
+      "id": "taronga-ferry-official",
+      "title": "F2 Taronga Zoo Ferry",
+      "type": "official",
+      "url": "https://transportnsw.info/routes/details/sydney-ferries/f2/090f2",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "Google Maps"
-    },
-    {
-      "id": "felons-manly-map",
-      "title": "Felons Manly",
-      "type": "restaurant",
-      "url": "https://www.google.com/maps/search/?api=1&query=Felons+Manly",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "Google Maps"
+      "sourceNote": "Transport for NSW"
     },
     {
       "id": "chemist-warehouse-map",
