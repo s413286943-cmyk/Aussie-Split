@@ -110,6 +110,9 @@ describe("private receipt server transport", () => {
 
   it("does not finalize when uploaded bytes do not match the pending intent", async () => {
     let finalized = false;
+    const errors = [];
+    const originalConsoleError = console.error;
+    console.error = (...args) => errors.push(args);
     globalThis.fetch = async (url) => {
       if (String(url).includes("/rest/v1/attachments?")) return Response.json([attachmentRow()]);
       if (String(url).includes("/storage/v1/object/info/receipts/")) {
@@ -119,11 +122,23 @@ describe("private receipt server transport", () => {
       return Response.json({});
     };
 
-    await assert.rejects(
-      () => finalizeReceiptUpload({ expenseId: "expense-one", receiptId: "receipt-one" }),
-      (error) => error instanceof ReceiptVerificationError && error.code === "receipt_verification_failed",
-    );
-    assert.equal(finalized, false);
+    try {
+      await assert.rejects(
+        () => finalizeReceiptUpload({ expenseId: "expense-one", receiptId: "receipt-one" }),
+        (error) => error instanceof ReceiptVerificationError && error.code === "receipt_verification_failed",
+      );
+      assert.equal(finalized, false);
+      assert.deepEqual(errors, [["receipt_verification_mismatch", {
+        expectedSize: 1024,
+        actualSize: 1023,
+        expectedMimeType: "image/jpeg",
+        actualMimeType: "image/jpeg",
+        objectKeys: ["metadata"],
+        metadataKeys: ["mimetype", "size"],
+      }]]);
+    } finally {
+      console.error = originalConsoleError;
+    }
   });
 
   it("distinguishes a missing Storage object from a mismatched upload", async () => {

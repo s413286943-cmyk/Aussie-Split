@@ -97,10 +97,21 @@ export async function finalizeReceiptUpload({ expenseId, receiptId }) {
     }
     throw error;
   }
-  if (
-    readObjectSize(objectInfo) !== Number(pending.size_bytes)
-    || readObjectMimeType(objectInfo) !== pending.mime_type
-  ) {
+  const expectedSize = Number(pending.size_bytes);
+  const actualSize = readObjectSize(objectInfo);
+  const expectedMimeType = pending.mime_type;
+  const actualMimeType = readObjectMimeType(objectInfo);
+  if (actualSize !== expectedSize || actualMimeType !== expectedMimeType) {
+    console.error("receipt_verification_mismatch", {
+      expectedSize,
+      actualSize,
+      expectedMimeType,
+      actualMimeType,
+      objectKeys: Object.keys(objectInfo && typeof objectInfo === "object" ? objectInfo : {}).sort(),
+      metadataKeys: Object.keys(
+        objectInfo?.metadata && typeof objectInfo.metadata === "object" ? objectInfo.metadata : {},
+      ).sort(),
+    });
     throw new ReceiptVerificationError();
   }
 
