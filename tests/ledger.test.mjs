@@ -7,6 +7,7 @@ import {
   calculateLedger,
   expenseToEditableForm,
   expenseTemplates,
+  formatCategoryLabel,
   parseBankMessage,
   setExpenseSplitSettled,
   splitSettledLabel,
@@ -158,6 +159,11 @@ describe("travel split ledger", () => {
       "门票 / tour",
       "购物 / 超市",
     ]);
+  });
+
+  it("presents stored categories with traveler-facing Chinese labels", () => {
+    assert.equal(formatCategoryLabel("dining"), "餐饮");
+    assert.equal(formatCategoryLabel("酒店"), "酒店");
   });
 
   it("applies an expense template without clearing amount or note", () => {

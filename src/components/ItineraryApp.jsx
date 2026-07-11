@@ -18,6 +18,7 @@ import UnlockGate from "@/components/UnlockGate";
 import LazyDayDetails from "@/components/itinerary/LazyDayDetails";
 import StageNavigator from "@/components/itinerary/StageNavigator";
 import TodayConsole from "@/components/itinerary/TodayConsole";
+import AppNav from "@/components/AppNav";
 
 const checklistStorageKey = "aussie-chill-day-kit-v1";
 
@@ -308,11 +309,7 @@ function ItineraryExperience({ itinerary }) {
           <DayCard day={itinerary.days.find((day) => day.id === "d16")} weather={weatherByDay.d16} ledgerExpenses={ledgerExpenses} compact />
         </section>
       )}
-      <nav className="nav" aria-label="主导航" data-motion="nav">
-        <Link className="active" href="/itinerary">行程</Link>
-        <Link href="/">账本</Link>
-        <Link href="/add">记一笔</Link>
-      </nav>
+      <AppNav activeView="itinerary" />
     </main>
   );
 }
@@ -434,6 +431,7 @@ function DayJump({ days }) {
 
 function StageSection({ stage, days, weatherByDay, ledgerExpenses, eagerImage, currentDayId = "" }) {
   const stageStops = days.map((day) => day.city).join(" / ");
+  const includesCurrentDay = days.some((day) => day.id === currentDayId);
 
   return (
     <section className="stage-section route-stage">
@@ -456,7 +454,7 @@ function StageSection({ stage, days, weatherByDay, ledgerExpenses, eagerImage, c
           />
         </div>
       </div>
-      <div className="day-grid">
+      <div className={["day-grid", includesCurrentDay ? "has-current-day" : ""].filter(Boolean).join(" ")}>
         {days.map((day) => (
           <DayCard key={day.id} day={day} weather={weatherByDay[day.id]} ledgerExpenses={ledgerExpenses} current={day.id === currentDayId} />
         ))}
@@ -547,27 +545,29 @@ function DayCard({ day, weather, ledgerExpenses = [], compact = false, current =
             {foodBlock.tip && <small>{foodBlock.tip}</small>}
           </div>
         )}
-        <DayExecutionGrid timeline={timeline} />
-        <DayDocket docket={docket} />
-        <DayMapActions actions={mapActions} meals={meals} />
         <LazyDayDetails defaultOpen={current} onOpen={handleDetailsOpen}>
-          <div className="timeline">
-            {day.blocks.map((block) => (
-              <div
-                className="time-block"
-                key={`${day.id}-${block.sortOrder}`}
-                data-food-block={block.period === "饮食" ? "true" : undefined}
-              >
-                <span>{block.period}</span>
-                <div>
-                  <h4>{block.place}</h4>
-                  <p>{block.activity}</p>
-                  <small>{block.highlight}</small>
-                  {block.tip && <em>{block.tip}</em>}
-                  <ResourceLinks resources={block.resources} />
+          <div className="day-operational-details">
+            <DayExecutionGrid timeline={timeline} />
+            <DayDocket docket={docket} />
+            <DayMapActions actions={mapActions} meals={meals} />
+            <div className="timeline">
+              {day.blocks.map((block) => (
+                <div
+                  className="time-block"
+                  key={`${day.id}-${block.sortOrder}`}
+                  data-food-block={block.period === "饮食" ? "true" : undefined}
+                >
+                  <span>{block.period}</span>
+                  <div>
+                    <h4>{block.place}</h4>
+                    <p>{block.activity}</p>
+                    <small>{block.highlight}</small>
+                    {block.tip && <em>{block.tip}</em>}
+                    <ResourceLinks resources={block.resources} />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </LazyDayDetails>
       </div>

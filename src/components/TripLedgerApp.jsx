@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   calculateLedger,
+  formatCategoryLabel,
   formatMoney,
   setExpenseSplitSettled,
 } from "@/lib/ledger";
@@ -646,7 +647,7 @@ function Settlement({ ledger }) {
 
   return (
     <>
-      <section className="section settlement-grid ledger-summary">
+      <section className="section settlement-grid ledger-summary settlement-instructions">
         {entries.map(([currency, bucket]) => (
           <article className={`card summary-card settlement-card currency-${currency.toLowerCase()}`} key={currency} data-motion="summary-card">
             <span className="muted">{currency} 结算</span>
@@ -662,12 +663,12 @@ function Settlement({ ledger }) {
           <h2>待分摊分类小计</h2>
           <span className="muted">当前待结算</span>
         </div>
-        <div className="expense-list">
+        <div className="expense-list settlement-breakdown">
           {entries.flatMap(([currency]) =>
             Object.entries(ledger.pendingCategoriesByCurrency[currency] || {}).map(([category, amount]) => (
-              <article className="expense-row" key={`${currency}-${category}`} data-motion="row">
+              <article className="expense-row settlement-category-row" key={`${currency}-${category}`} data-motion="row">
                 <div>
-                  <h3>{category}</h3>
+                  <h3>{formatCategoryLabel(category)}</h3>
                   <p className="muted">{currency}</p>
                 </div>
                 <strong className="amount">{formatMoney(currency, amount)}</strong>

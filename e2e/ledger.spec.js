@@ -62,7 +62,7 @@ test("settlement excludes expenses already marked split-settled", async ({ page 
   const audSettlement = page.locator(".settlement-card.currency-aud");
   await expect(audSettlement.getByText("A$60.00", { exact: true })).toBeVisible();
   const pendingCategories = page.locator(".ledger-section .expense-row");
-  await expect(pendingCategories).toContainText(["dining"]);
+  await expect(pendingCategories).toContainText(["餐饮"]);
   await expect(page.locator(".ledger-section")).not.toContainText("交通");
 
   await page.goto("/expenses");
@@ -73,6 +73,60 @@ test("settlement excludes expenses already marked split-settled", async ({ page 
   await page.goto("/settlement");
   await expect(page.locator(".settlement-card.currency-aud").getByText("A$0.00", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "当前没有待分摊费用" })).toBeVisible();
+});
+
+test("mobile ledger exposes work before advanced controls", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  await expect(page.locator(".docket-status")).toBeInViewport();
+  await expect(page.locator(".docket-metrics")).toBeInViewport();
+
+  await page.goto("/expenses");
+  await expect(page.getByLabel("搜索项目或备注")).toBeVisible();
+  await expect(page.locator(".advanced-filters")).toBeHidden();
+  const disclosure = page.getByRole("button", { name: /更多筛选/ });
+  await expect(disclosure).toBeVisible();
+  await disclosure.click();
+  await expect(page.locator(".advanced-filters")).toBeVisible();
+
+  const row = expenseRow(page, "Harbour dinner");
+  await row.scrollIntoViewIfNeeded();
+  const actionLayout = await row.evaluate((element) => {
+    const actions = element.querySelector(".row-actions");
+    const rowRect = element.getBoundingClientRect();
+    const actionRect = actions.getBoundingClientRect();
+    return {
+      columns: getComputedStyle(actions).gridTemplateColumns.split(" ").filter(Boolean).length,
+      widthRatio: actionRect.width / rowRect.width,
+    };
+  });
+  expect(actionLayout.columns).toBe(2);
+  expect(actionLayout.widthRatio).toBeGreaterThan(0.8);
+});
+
+test("mobile add keeps message recognition and templates compact", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/add");
+
+  await expect(page.locator(".message-capture")).toHaveCount(1);
+  await expect(page.locator(".message-capture[open]")).toHaveCount(0);
+  const templateHeight = await page.locator(".quick-templates").evaluate((element) => element.getBoundingClientRect().height);
+  expect(templateHeight).toBeLessThan(64);
+});
+
+test("ledger and itinerary share the same primary navigation", async ({ page }) => {
+  const expectedLabels = ["总览", "明细", "新增", "操作", "结算", "行程"];
+
+  for (const path of ["/", "/itinerary"]) {
+    await page.goto(path);
+    await expect(page.getByRole("navigation", { name: "主导航" })).toBeVisible();
+    const labels = await page
+      .getByRole("navigation", { name: "主导航" })
+      .getByRole("link")
+      .allTextContents();
+    expect(labels).toEqual(expectedLabels);
+  }
 });
 
 function expenseRow(page, item) {

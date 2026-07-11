@@ -1,29 +1,11 @@
 /* Travel Docket UI */
 :root {
-  --background: #f7e9d0;
-  --foreground: #10211f;
-  --muted: #5f706b;
-  --line: #d7c8ac;
-  --panel: #fff8e9;
-  --panel-strong: #fffdf5;
-  --mist: #dde7df;
-  --accent: #006b64;
-  --accent-strong: #004f4a;
-  --ocean: #145c75;
-  --sun: #d9822b;
-  --danger: #8f3b2f;
-  --teal: #2c8590;
   --route-line: rgba(16, 33, 31, 0.16);
-  --shadow: 0 20px 54px rgba(37, 30, 20, 0.14);
-  --receipt-shadow: 0 10px 26px rgba(37, 30, 20, 0.08);
-  --radius: 8px;
 }
 
 body {
   color: var(--foreground);
-  background:
-    linear-gradient(180deg, rgba(247, 233, 208, 0.96) 0%, rgba(221, 231, 223, 0.78) 52%, rgba(247, 233, 208, 0.96) 100%),
-    repeating-linear-gradient(90deg, rgba(16, 33, 31, 0.035) 0 1px, transparent 1px 56px);
+  background: var(--background);
 }
 
 body,
@@ -72,9 +54,7 @@ textarea {
   padding: 24px;
   border-color: rgba(16, 33, 31, 0.16);
   border-radius: var(--radius);
-  background:
-    linear-gradient(135deg, rgba(255, 253, 245, 0.98), rgba(221, 231, 223, 0.86)),
-    repeating-linear-gradient(0deg, rgba(16, 33, 31, 0.032) 0 1px, transparent 1px 28px);
+  background: var(--panel);
   box-shadow: var(--shadow);
 }
 
@@ -102,6 +82,7 @@ textarea {
   font-size: 3.65rem;
   line-height: 0.95;
   letter-spacing: 0;
+  font-family: var(--font-display);
 }
 
 .hero p {
@@ -293,6 +274,7 @@ textarea {
   font-size: 3.1rem;
   line-height: 0.9;
   font-variant-numeric: tabular-nums;
+  font-family: var(--font-display);
 }
 
 .docket-status p,
@@ -355,6 +337,7 @@ textarea {
   font-size: 2.6rem;
   line-height: 0.92;
   font-variant-numeric: tabular-nums;
+  font-family: var(--font-utility);
 }
 
 .summary-grid,
@@ -399,6 +382,7 @@ textarea {
   font-size: 1.75rem;
   line-height: 1.05;
   font-variant-numeric: tabular-nums;
+  font-family: var(--font-utility);
 }
 
 .summary-card p {
@@ -471,8 +455,7 @@ textarea:focus,
     repeating-linear-gradient(0deg, rgba(16, 33, 31, 0.04) 0 1px, transparent 1px 30px);
 }
 
-.receipt-row::after,
-.activity-row::after {
+.receipt-row::after {
   content: "";
   position: absolute;
   right: 12px;
@@ -483,6 +466,18 @@ textarea:focus,
   opacity: 0.45;
 }
 
+.receipt-row.is-draft::before {
+  background: var(--sun);
+}
+
+.receipt-row.is-settled::before {
+  background: var(--ocean);
+}
+
+.receipt-row.is-pending::before {
+  background: var(--accent);
+}
+
 .expense-row h3,
 .activity-row h3 {
   max-width: 100%;
@@ -491,12 +486,16 @@ textarea:focus,
 }
 
 .row-actions {
-  min-width: 122px;
+  min-width: 260px;
+  grid-template-columns: repeat(2, minmax(108px, 1fr));
+  align-content: start;
   align-self: stretch;
-  justify-content: start;
+  gap: 8px;
 }
 
 .row-actions .amount {
+  grid-column: 1 / -1;
+  margin: 0 0 4px;
   text-align: right;
 }
 
@@ -543,6 +542,10 @@ textarea:focus,
   background: var(--sun);
 }
 
+.activity-row::after {
+  display: none;
+}
+
 .activity-page .activity-row {
   padding-left: 20px;
 }
@@ -553,6 +556,42 @@ textarea:focus,
   left: 0;
   width: 5px;
   border-radius: 0;
+}
+
+.activity-page .activity-list {
+  position: relative;
+  gap: 0;
+  padding-left: 18px;
+}
+
+.activity-page .activity-list::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  background: rgba(8, 118, 111, 0.22);
+}
+
+.activity-page .activity-row {
+  min-height: 68px;
+  padding: 12px 10px 12px 16px;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.activity-page .activity-row::before {
+  left: -18px;
+  top: 26px;
+  bottom: auto;
+  width: 10px;
+  height: 10px;
+  border: 3px solid var(--background);
+  border-radius: 50%;
+  background: var(--accent);
 }
 
 .action-toast {
@@ -627,6 +666,40 @@ textarea:focus,
     rgba(255, 253, 245, 0.92);
 }
 
+.settlement-instructions .summary-card {
+  min-height: 132px;
+  background: var(--panel-strong);
+}
+
+.settlement-breakdown {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid rgba(16, 33, 31, 0.12);
+  border-radius: var(--radius);
+  background: var(--panel-strong);
+  box-shadow: var(--receipt-shadow);
+}
+
+.settlement-breakdown .settlement-category-row {
+  min-height: 68px;
+  align-items: center;
+  padding: 10px 14px;
+  border: 0;
+  border-bottom: 1px solid rgba(16, 33, 31, 0.1);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.settlement-breakdown .settlement-category-row:last-child {
+  border-bottom: 0;
+}
+
+.settlement-breakdown .amount {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
 .capture-card::before {
   background: var(--danger);
 }
@@ -644,6 +717,63 @@ label {
 .quick-templates .button {
   background: rgba(221, 231, 223, 0.75);
   color: var(--accent-strong);
+}
+
+.message-capture {
+  overflow: hidden;
+  border: 1px solid rgba(16, 33, 31, 0.14);
+  border-radius: var(--radius);
+  background: rgba(252, 251, 245, 0.76);
+}
+
+.message-capture > summary {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px;
+  color: var(--accent-strong);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.message-capture > summary small {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.message-capture-body {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-top: 1px solid rgba(16, 33, 31, 0.1);
+}
+
+.receipt-upload {
+  padding: 12px;
+  border: 1px dashed rgba(27, 96, 117, 0.28);
+  border-radius: var(--radius);
+  background: rgba(27, 96, 117, 0.05);
+}
+
+.receipt-upload input[type="file"] {
+  min-height: 42px;
+  padding: 6px;
+  border-style: solid;
+}
+
+.receipt-upload input[type="file"]::file-selector-button {
+  min-height: 30px;
+  margin-right: 10px;
+  padding: 0 10px;
+  border: 1px solid rgba(27, 96, 117, 0.2);
+  border-radius: 6px;
+  background: var(--panel-strong);
+  color: var(--ocean);
+  font: inherit;
+  font-weight: 850;
 }
 
 .unlock-wrap {
@@ -700,6 +830,7 @@ label {
   font-size: 4.35rem;
   line-height: 0.98;
   letter-spacing: 0;
+  font-family: var(--font-display);
 }
 
 .hero-meta span {
@@ -735,6 +866,7 @@ label {
   font-size: 2.35rem;
   line-height: 1.05;
   letter-spacing: 0;
+  font-family: var(--font-display);
 }
 
 .today-summary p {
@@ -800,6 +932,7 @@ label {
   font-size: 3.5rem;
   line-height: 0.98;
   letter-spacing: 0;
+  font-family: var(--font-display);
 }
 
 .stage-image {
@@ -836,6 +969,7 @@ label {
 .day-cover span {
   font-size: 2.5rem;
   letter-spacing: 0;
+  font-family: var(--font-display);
 }
 
 .day-title-row h3 {
@@ -948,20 +1082,25 @@ label {
 
   .hero {
     gap: 14px;
-    padding: 20px 16px 16px;
+    padding: 18px 16px 14px;
   }
 
   .hero h1 {
-    font-size: 2.75rem;
+    font-size: 2.5rem;
   }
 
   .hero-ticket {
-    min-height: 116px;
+    min-height: 0;
+    padding: 12px;
   }
 
   .hero-actions {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions .button:not(.primary) {
+    display: none;
   }
 
   .command-deck {
@@ -995,7 +1134,10 @@ label {
     font-size: 0.78rem;
   }
 
-  .summary-grid,
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .settlement-grid,
   .filters,
   .form-grid,
@@ -1009,8 +1151,47 @@ label {
     width: 100%;
   }
 
+  .row-actions {
+    min-width: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .row-actions .amount {
     text-align: left;
+  }
+
+  .filter-disclosure {
+    display: inline-flex;
+  }
+
+  .advanced-filters {
+    display: none;
+  }
+
+  .advanced-filters.is-open {
+    display: grid;
+  }
+
+  .quick-templates {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+
+  .quick-templates .button {
+    flex: 0 0 auto;
+    width: auto;
+    white-space: nowrap;
+  }
+
+  .summary-card {
+    min-height: 122px;
+    padding: 14px 12px 14px 18px;
+  }
+
+  .summary-card strong {
+    font-size: 1.42rem;
   }
 
   .nav {
@@ -1059,6 +1240,11 @@ label {
 
   .button {
     width: 100%;
+  }
+
+  .filter-toolbar .filter-disclosure,
+  .quick-templates .button {
+    width: auto;
   }
 
   .section-head {

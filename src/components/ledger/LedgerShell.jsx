@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 
+import AppNav from "@/components/AppNav";
+
 const viewTitles = {
   expenses: "费用明细",
   add: "记一笔",
@@ -49,14 +51,7 @@ export default function LedgerShell({ view, syncState, onSync, notice, children,
       <ActionNotice notice={notice} />
       {children}
 
-      <nav className="nav" aria-label="主导航" data-motion="nav">
-        <Link className={view === "dashboard" ? "active" : ""} href="/">总览</Link>
-        <Link className={view === "expenses" ? "active" : ""} href="/expenses">明细</Link>
-        <Link className={view === "add" ? "active" : ""} href="/add">新增</Link>
-        <Link className={view === "activity" ? "active" : ""} href="/activity">操作</Link>
-        <Link className={view === "settlement" ? "active" : ""} href="/settlement">结算</Link>
-        <Link href="/itinerary">行程</Link>
-      </nav>
+      <AppNav activeView={view} />
     </div>
   );
 }

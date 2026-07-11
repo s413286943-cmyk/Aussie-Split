@@ -32,6 +32,13 @@ test("itinerary exposes deterministic current-day and stage controls", async ({ 
 test("desktop itinerary has no page overflow or clipped operational text", async ({ page }) => {
   await page.setViewportSize({ width: 1366, height: 820 });
   await page.goto("/itinerary");
+
+  await expect(page.locator(".day-grid.has-current-day")).toHaveCSS("grid-template-columns", /\d+px/);
+  const currentStageColumns = await page.locator(".day-grid.has-current-day").evaluate((element) => (
+    getComputedStyle(element).gridTemplateColumns.split(" ").filter(Boolean).length
+  ));
+  expect(currentStageColumns).toBe(1);
+
   await page.getByRole("region", { name: "当前行程阶段" }).getByRole("button", { name: "查看全部路书" }).click();
 
   expect(await documentOverflowsHorizontally(page)).toBe(false);
@@ -68,4 +75,22 @@ test("mobile direct D15 link keeps the offscreen stage inside the viewport", asy
   expect(bounds.right).toBeLessThanOrEqual(bounds.viewport);
   expect(await documentOverflowsHorizontally(page)).toBe(false);
   expect(await findClippedText(page)).toEqual([]);
+});
+
+test("mobile itinerary aligns the field kit and lazily opens non-current day tools", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/itinerary");
+
+  const checkbox = page.locator(".carry-check-item input").first();
+  await checkbox.scrollIntoViewIfNeeded();
+  const checkboxWidth = await checkbox.evaluate((element) => element.getBoundingClientRect().width);
+  expect(checkboxWidth).toBeLessThanOrEqual(28);
+
+  const d1 = page.locator("#d1");
+  await expect(d1).toBeAttached();
+  await expect(d1.locator(".day-execution-grid")).toHaveCount(0);
+  await d1.scrollIntoViewIfNeeded();
+  await d1.getByText("查看当天安排", { exact: true }).click();
+  await expect(d1.locator(".day-execution-grid")).toBeVisible();
 });

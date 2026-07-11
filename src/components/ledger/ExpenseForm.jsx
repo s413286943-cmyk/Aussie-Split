@@ -10,6 +10,7 @@ import {
   categories,
   createCapturedExpense,
   expenseTemplates,
+  formatCategoryLabel,
   parseBankMessage,
 } from "@/lib/ledger";
 import { findDuplicateExpense, validateExpense } from "@/lib/expenseValidation";
@@ -118,11 +119,6 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
         <span className="muted">默认 50/50 split</span>
       </div>
       <div className="stack">
-        <label>
-          粘贴银行短信
-          <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="例如：08/11 Harbour dinner card purchase A$86.50" />
-        </label>
-        <button className="button" type="button" onClick={useMessage}>从短信生成待确认草稿</button>
         <div className="quick-templates" aria-label="常用模板">
           {expenseTemplates.map((template) => (
             <button
@@ -138,6 +134,19 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
             </button>
           ))}
         </div>
+        <details className="message-capture">
+          <summary>
+            <span>短信识别</span>
+            <small>粘贴银行短信生成草稿</small>
+          </summary>
+          <div className="message-capture-body">
+            <label>
+              银行短信
+              <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="例如：08/11 Harbour dinner card purchase A$86.50" />
+            </label>
+            <button className="button" type="button" onClick={useMessage}>生成待确认草稿</button>
+          </div>
+        </details>
         <div className="form-grid">
           <label className="full">
             项目
@@ -147,7 +156,7 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
           <label>
             类别
             <select value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })}>
-              {categories.map((item) => <option key={item}>{item}</option>)}
+              {categories.map((item) => <option key={item} value={item}>{formatCategoryLabel(item)}</option>)}
             </select>
           </label>
           <label>
@@ -180,8 +189,8 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
               <option value="draft">待确认</option>
             </select>
           </label>
-          <label className="full">
-            小票图片
+          <label className="full receipt-upload">
+            <span>小票图片</span>
             <input
               type="file"
               accept=".jpg,.jpeg,.png,.heic,.heif,.webp,image/jpeg,image/png,image/heic,image/heif,image/webp"

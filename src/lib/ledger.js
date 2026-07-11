@@ -16,6 +16,10 @@ export const categories = [
   "其他",
 ];
 
+export function formatCategoryLabel(category) {
+  return category === "dining" ? "餐饮" : category;
+}
+
 export const expenseTemplates = [
   { id: "dining", label: "餐饮", category: "dining", item: "餐饮" },
   { id: "taxi", label: "打车 / Uber", category: "交通", item: "打车 / Uber" },

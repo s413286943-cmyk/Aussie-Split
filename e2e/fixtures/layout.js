@@ -21,6 +21,14 @@ export async function findClippedText(page) {
       ".today-summary p",
       ".today-summary small",
       ".today-status-grid strong",
+      ".field-kit-head",
+      ".carry-check-item strong",
+      ".carry-check-item small",
+      ".ledger-dock-metrics strong",
+      ".ledger-dock-actions a",
+      ".filter-toolbar",
+      ".settlement-category-row",
+      ".message-capture summary",
       ".stage-tabs button",
     ].join(",");
 

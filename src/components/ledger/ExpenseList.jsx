@@ -8,6 +8,7 @@ import {
   applyExpenseEdit,
   categories,
   expenseToEditableForm,
+  formatCategoryLabel,
   formatMoney,
   splitSettledLabel,
 } from "@/lib/ledger";
@@ -23,6 +24,7 @@ export function ExpenseListPage({ expenses, onUpdate, onConfirm, onDelete, onVie
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -48,13 +50,21 @@ export function ExpenseListPage({ expenses, onUpdate, onConfirm, onDelete, onVie
 
   const activeFilters = [
     search && `搜索“${search}”`,
-    category !== "全部" && `类别：${category}`,
+    category !== "全部" && `类别：${formatCategoryLabel(category)}`,
     currency !== "全部" && `币种：${currency}`,
     payer !== "全部" && `付款方：${coupleName(payer)}`,
     splitFilter !== "全部" && `分摊：${splitFilter}`,
     startDate && `从 ${startDate}`,
     endDate && `到 ${endDate}`,
   ].filter(Boolean);
+  const advancedFilterCount = [
+    category !== "全部",
+    currency !== "全部",
+    payer !== "全部",
+    splitFilter !== "全部",
+    Boolean(startDate),
+    Boolean(endDate),
+  ].filter(Boolean).length;
 
   function clearFilters() {
     setCategory("全部");
@@ -75,12 +85,22 @@ export function ExpenseListPage({ expenses, onUpdate, onConfirm, onDelete, onVie
         </div>
         <span className="muted">{filtered.length} 条</span>
       </div>
-      <div className="filters ledger-filters">
+      <div className="filter-toolbar">
         <label className="filter-search">
           <span>搜索项目或备注</span>
           <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="酒店、晚餐、Uber…" />
         </label>
-        <SelectField label="类别" value={category} onChange={setCategory} options={["全部", ...categories]} />
+        <button
+          className="button filter-disclosure"
+          type="button"
+          aria-expanded={filtersOpen}
+          onClick={() => setFiltersOpen((current) => !current)}
+        >
+          {filtersOpen ? "收起筛选" : `更多筛选${advancedFilterCount ? ` · ${advancedFilterCount}` : ""}`}
+        </button>
+      </div>
+      <div className={filtersOpen ? "filters ledger-filters advanced-filters is-open" : "filters ledger-filters advanced-filters"}>
+        <SelectField label="类别" value={category} onChange={setCategory} options={["全部", ...categories]} formatOption={formatCategoryLabel} />
         <SelectField label="币种" value={currency} onChange={setCurrency} options={["全部", "CNY", "AUD"]} />
         <SelectField label="分摊状态" value={splitFilter} onChange={setSplitFilter} options={["全部", "待分摊", "已分摊"]} />
         <label>
@@ -190,7 +210,7 @@ export default function ExpenseList({ expenses, allExpenses = expenses, onUpdate
                   <input value={editForm.item} onChange={(event) => setEditForm({ ...editForm, item: event.target.value })} aria-invalid={submitted && Boolean(validation.errors.item)} />
                   {submitted && validation.errors.item && <span className="field-error">{validation.errors.item}</span>}
                 </label>
-                <SelectInput label="类别" value={editForm.category} onChange={(value) => setEditForm({ ...editForm, category: value })} options={categories} />
+                <SelectInput label="类别" value={editForm.category} onChange={(value) => setEditForm({ ...editForm, category: value })} options={categories} formatOption={formatCategoryLabel} />
                 <label>
                   日期
                   <input type="date" value={editForm.date} onChange={(event) => setEditForm({ ...editForm, date: event.target.value })} />
@@ -235,7 +255,7 @@ export default function ExpenseList({ expenses, allExpenses = expenses, onUpdate
               <h3>{expense.item}</h3>
               <p className="muted">{expense.date || "日期待补"} · {expense.note || "无备注"}</p>
               <div className="tags">
-                <span className="tag">{expense.category}</span>
+                <span className="tag">{formatCategoryLabel(expense.category)}</span>
                 <span className={expense.status === "draft" ? "tag draft" : "tag"}>{expense.status === "draft" ? "待确认" : "已确认"}</span>
                 <span className={expense.payer === "them" ? "tag other" : "tag"}>{formatPayerLabel(expense.payer)}</span>
                 {expense.splitSettled && <span className="tag settled">已分摊</span>}
@@ -262,23 +282,23 @@ export default function ExpenseList({ expenses, allExpenses = expenses, onUpdate
   );
 }
 
-function SelectField({ label, value, onChange, options }) {
+function SelectField({ label, value, onChange, options, formatOption = (option) => option }) {
   return (
     <label>
       <span>{label}</span>
       <select value={value} onChange={(event) => onChange(event.target.value)}>
-        {options.map((option) => <option key={option} value={option}>{option}</option>)}
+        {options.map((option) => <option key={option} value={option}>{formatOption(option)}</option>)}
       </select>
     </label>
   );
 }
 
-function SelectInput({ label, value, onChange, options }) {
+function SelectInput({ label, value, onChange, options, formatOption = (option) => option }) {
   return (
     <label>
       {label}
       <select value={value} onChange={(event) => onChange(event.target.value)}>
-        {options.map((option) => <option key={option}>{option}</option>)}
+        {options.map((option) => <option key={option} value={option}>{formatOption(option)}</option>)}
       </select>
     </label>
   );
@@ -287,6 +307,7 @@ function SelectInput({ label, value, onChange, options }) {
 function rowClassName(baseClassName, expense, isBusy, highlightId) {
   return [
     baseClassName,
+    expense.status === "draft" ? "is-draft" : expense.splitSettled ? "is-settled" : "is-pending",
     isBusy ? "is-busy" : "",
     highlightId && expense.id === highlightId ? "is-highlighted" : "",
   ].filter(Boolean).join(" ");

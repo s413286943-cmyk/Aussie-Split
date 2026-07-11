@@ -1,7 +1,3 @@
-[data-motion] {
-  will-change: transform, opacity;
-}
-
 @media (prefers-reduced-motion: reduce) {
   [data-motion],
   .day-cover-image {

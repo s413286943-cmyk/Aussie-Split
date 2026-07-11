@@ -792,6 +792,168 @@
   margin-top: 2px;
 }
 
+.day-operational-details {
+  display: grid;
+  gap: 14px;
+  padding-top: 8px;
+}
+
+.today-field-kit {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  border-top: 1px solid rgba(16, 33, 31, 0.12);
+  border-bottom: 1px solid rgba(16, 33, 31, 0.12);
+}
+
+.carry-checklist,
+.today-ledger-dock {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 14px;
+}
+
+.carry-checklist {
+  border-right: 1px solid rgba(16, 33, 31, 0.12);
+}
+
+.field-kit-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.field-kit-head span,
+.ledger-dock-metrics span {
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 950;
+}
+
+.field-kit-head strong {
+  font-family: var(--font-utility);
+  font-size: 0.9rem;
+}
+
+.carry-checklist-items {
+  display: grid;
+}
+
+.carry-check-item {
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  padding: 9px 0;
+  border-top: 1px solid rgba(16, 33, 31, 0.08);
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.carry-check-item input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  min-height: 22px;
+  margin-top: 1px;
+  padding: 0;
+  accent-color: var(--accent);
+}
+
+.carry-check-item > span,
+.carry-check-item strong,
+.carry-check-item small {
+  min-width: 0;
+  display: block;
+}
+
+.carry-check-item strong {
+  color: var(--foreground);
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.carry-check-item small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.carry-check-item.is-checked strong {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.ledger-dock-metrics {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.8fr) minmax(0, 0.8fr);
+  border-block: 1px solid rgba(16, 33, 31, 0.09);
+}
+
+.ledger-dock-metrics article {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+}
+
+.ledger-dock-metrics article + article {
+  border-left: 1px solid rgba(16, 33, 31, 0.09);
+}
+
+.ledger-dock-metrics strong {
+  white-space: nowrap;
+  font-family: var(--font-utility);
+  font-size: 1rem;
+}
+
+.ledger-dock-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.ledger-dock-actions a {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  border: 1px solid rgba(27, 96, 117, 0.18);
+  border-radius: 7px;
+  background: rgba(27, 96, 117, 0.06);
+  color: var(--ocean);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.ledger-dock-recent {
+  display: grid;
+  gap: 5px;
+}
+
+.ledger-dock-recent div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(16, 33, 31, 0.08);
+  font-size: 0.8rem;
+}
+
+.ledger-dock-recent strong {
+  flex: 0 0 auto;
+  font-family: var(--font-utility);
+}
+
+.ledger-dock-recent p {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
 @media (min-width: 1100px) {
   .route-atlas {
     width: min(1180px, calc(100% - 156px));
@@ -800,6 +962,10 @@
   .day-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .day-grid.has-current-day {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 960px) {
@@ -807,13 +973,20 @@
   .today-command-head,
   .stage-head,
   .day-brief-grid,
-  .today-status-grid,
   .today-meal-board,
   .today-docket-strip,
   .day-execution-grid,
   .day-docket,
   .day-map-actions {
     grid-template-columns: 1fr;
+  }
+
+  .today-status-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .today-status-grid article:last-child {
+    grid-column: 1 / -1;
   }
 
   .manifest-stages {
@@ -835,12 +1008,43 @@
   }
 
   .route-hero {
-    min-height: 590px;
+    min-height: 530px;
   }
 
   .hero-route-strip {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 3px;
+    scrollbar-width: thin;
+  }
+
+  .hero-route-strip span {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .hero-meta {
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero-meta span:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .today-field-kit {
     grid-template-columns: 1fr;
+  }
+
+  .carry-checklist {
+    border-right: 0;
+    border-bottom: 1px solid rgba(16, 33, 31, 0.12);
+  }
+
+  .today-status-grid article {
+    min-height: 92px;
+    padding: 11px;
   }
 
   .route-manifest {
@@ -884,6 +1088,14 @@
 
   .itinerary-hero-copy h1 {
     font-size: 2.48rem;
+  }
+
+  .hero-meta span {
+    width: auto;
+  }
+
+  .ledger-dock-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .stage-head h2 {

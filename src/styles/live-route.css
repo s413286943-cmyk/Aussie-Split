@@ -207,6 +207,12 @@
 }
 
 @media (max-width: 720px) {
+  .stage-section,
+  .route-day-card {
+    content-visibility: visible;
+    contain-intrinsic-block-size: none;
+  }
+
   .ledger-compact-header {
     min-height: 124px;
     align-items: flex-end;
