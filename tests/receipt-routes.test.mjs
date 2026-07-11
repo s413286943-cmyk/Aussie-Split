@@ -161,15 +161,23 @@ describe("authenticated private receipt routes", () => {
   });
 
   it("does not claim success when the uploaded object fails verification", async () => {
+    const errors = [];
+    const originalConsoleError = console.error;
+    console.error = (...args) => errors.push(args);
     globalThis.fetch = createFinalizationFetch({ objectSize: 1000 });
 
-    const response = await finalizeReceipt(authenticatedMutation(
-      "https://aussie.example/api/receipts/finalize",
-      { expenseId: "expense-one", receiptId: "receipt-one" },
-    ));
+    try {
+      const response = await finalizeReceipt(authenticatedMutation(
+        "https://aussie.example/api/receipts/finalize",
+        { expenseId: "expense-one", receiptId: "receipt-one" },
+      ));
 
-    assert.equal(response.status, 409);
-    assert.deepEqual(await response.json(), { error: "receipt_verification_failed" });
+      assert.equal(response.status, 409);
+      assert.deepEqual(await response.json(), { error: "receipt_verification_failed" });
+      assert.equal(errors[0]?.[0], "receipt_verification_mismatch");
+    } finally {
+      console.error = originalConsoleError;
+    }
   });
 
   it("returns a recoverable code when the pending Storage object is absent", async () => {
