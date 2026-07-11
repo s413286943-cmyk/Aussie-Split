@@ -1,0 +1,72 @@
+[data-motion] {
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-motion],
+  .day-cover-image {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+}
+
+@keyframes action-toast-enter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes action-toast-nudge {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+  22% {
+    transform: translate(-50%, 0) translateX(-4px);
+  }
+  46% {
+    transform: translate(-50%, 0) translateX(4px);
+  }
+  68% {
+    transform: translate(-50%, 0) translateX(-2px);
+  }
+}
+
+@keyframes action-toast-shake {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+  18% {
+    transform: translate(-50%, 0) translateX(-8px);
+  }
+  38% {
+    transform: translate(-50%, 0) translateX(8px);
+  }
+  58% {
+    transform: translate(-50%, 0) translateX(-5px);
+  }
+  76% {
+    transform: translate(-50%, 0) translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .action-toast {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-day-card.is-current {
+    scroll-behavior: auto;
+  }
+}

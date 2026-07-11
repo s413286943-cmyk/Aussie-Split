@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
-import "./globals.css";
+import "@/styles/tokens.css";
+import "@/styles/ledger.css";
+import "@/styles/itinerary.css";
+import "@/styles/docket.css";
+import "@/styles/route-atlas.css";
+import "@/styles/ledger-focus.css";
+import "@/styles/live-route.css";
+import "@/styles/motion.css";
 
 export const metadata: Metadata = {
   title: "Aussie Chill",

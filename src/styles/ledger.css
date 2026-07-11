@@ -1,0 +1,442 @@
+.app-shell {
+  width: min(1080px, 100%);
+  margin: 0 auto;
+  padding: 20px 16px 96px;
+}
+
+.hero {
+  position: relative;
+  display: grid;
+  gap: 16px;
+  overflow: hidden;
+  padding: 22px 20px 20px;
+  border: 1px solid rgba(20, 33, 31, 0.12);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(255, 253, 247, 0.96), rgba(231, 236, 230, 0.92));
+  box-shadow: var(--shadow);
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 6px;
+  background: linear-gradient(90deg, var(--accent) 0 34%, var(--sun) 34% 58%, var(--ocean) 58% 100%);
+}
+
+.hero-kicker {
+  display: inline-flex;
+  margin-bottom: 10px;
+  color: var(--accent-strong);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  max-width: 760px;
+  font-size: clamp(2.05rem, 6vw, 3.9rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.hero p {
+  max-width: 680px;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.hero-actions,
+.row,
+.filters,
+.quick-templates,
+.nav,
+.summary-grid,
+.settlement-grid,
+.form-grid {
+  display: flex;
+  gap: 10px;
+}
+
+.hero-actions,
+.filters,
+.quick-templates,
+.form-grid {
+  flex-wrap: wrap;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(20, 33, 31, 0.14);
+  border-radius: var(--radius);
+  background: var(--panel-strong);
+  color: var(--foreground);
+  font-weight: 700;
+  box-shadow: 0 1px 0 rgba(20, 33, 31, 0.04);
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(14, 124, 114, 0.32);
+}
+
+.button.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: white;
+}
+
+.button.danger {
+  border-color: rgba(180, 71, 55, 0.28);
+  color: var(--danger);
+}
+
+.button.small {
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 0.85rem;
+}
+
+.nav {
+  position: fixed;
+  z-index: 20;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  width: auto;
+  max-width: 620px;
+  margin-inline: auto;
+  padding: 8px;
+  border: 1px solid rgba(20, 33, 31, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 253, 247, 0.92);
+  box-shadow: 0 14px 40px rgba(26, 35, 32, 0.18);
+  backdrop-filter: blur(16px);
+}
+
+.nav a {
+  flex: 1;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.nav a.active {
+  background: var(--accent);
+  color: white;
+}
+
+.section {
+  margin-top: 20px;
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-top: 2px;
+}
+
+.section h2 {
+  font-size: 1.1rem;
+  letter-spacing: 0;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.summary-grid,
+.settlement-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.card,
+.expense-row,
+.form-card,
+.unlock-card {
+  border: 1px solid rgba(20, 33, 31, 0.1);
+  border-radius: var(--radius);
+  background: rgba(255, 253, 247, 0.92);
+  box-shadow: var(--receipt-shadow);
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+}
+
+.summary-card::before,
+.form-card::before {
+  content: "";
+  display: block;
+  width: 54px;
+  height: 5px;
+  margin: -16px 0 12px -16px;
+  background: var(--accent);
+}
+
+.summary-card.is-net::before,
+.settlement-card::before {
+  background: var(--sun);
+}
+
+.card strong,
+.amount {
+  display: block;
+  margin-top: 8px;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.55rem;
+  line-height: 1.1;
+}
+
+.expense-list {
+  display: grid;
+  gap: 10px;
+}
+
+.activity-list {
+  display: grid;
+  gap: 8px;
+}
+
+.expense-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  padding: 14px;
+}
+
+.activity-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid rgba(20, 33, 31, 0.09);
+  border-radius: var(--radius);
+  background: rgba(255, 253, 247, 0.82);
+}
+
+.activity-page .activity-row {
+  position: relative;
+  padding-left: 18px;
+}
+
+.activity-page .activity-row::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 14px;
+  bottom: 14px;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.receipt-row {
+  align-items: start;
+  background:
+    linear-gradient(90deg, rgba(14, 124, 114, 0.08), transparent 5px),
+    rgba(255, 253, 247, 0.94);
+}
+
+.expense-row.editing {
+  grid-template-columns: 1fr;
+}
+
+.expense-row h3,
+.activity-row h3 {
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.receipt-row h3,
+.activity-row h3 {
+  letter-spacing: 0;
+}
+
+.row-actions {
+  min-width: 118px;
+  justify-items: end;
+}
+
+.row-actions .button {
+  width: 100%;
+}
+
+.filters select {
+  flex: 1 1 160px;
+  background-color: rgba(255, 253, 247, 0.96);
+}
+
+.quick-templates .button {
+  background: rgba(231, 236, 230, 0.78);
+  color: var(--accent-strong);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 9px;
+  border: 1px solid rgba(14, 124, 114, 0.08);
+  border-radius: 7px;
+  background: rgba(20, 125, 114, 0.1);
+  color: var(--accent-strong);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.tag.draft {
+  background: rgba(231, 165, 58, 0.18);
+  color: #8b5b08;
+}
+
+.tag.other {
+  background: rgba(180, 71, 55, 0.1);
+  color: var(--danger);
+}
+
+.tag.settled {
+  background: rgba(20, 125, 114, 0.18);
+  color: var(--accent-strong);
+}
+
+.form-card,
+.unlock-card {
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+}
+
+.form-card form,
+.stack {
+  display: grid;
+  gap: 12px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: white;
+  color: var(--foreground);
+  padding: 10px 12px;
+}
+
+textarea {
+  min-height: 104px;
+  resize: vertical;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.backlog {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.backlog span {
+  flex: 0 0 auto;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.unlock-wrap {
+  width: min(460px, 100%);
+  margin: 12vh auto 0;
+  padding: 0 16px;
+}
+
+.unlock-card h1 {
+  margin-bottom: 10px;
+  font-size: 2.3rem;
+  line-height: 1;
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    padding: 12px 12px 92px;
+  }
+
+  .hero {
+    border-radius: var(--radius);
+    padding: 20px 16px;
+  }
+
+  .summary-grid,
+  .settlement-grid,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .expense-row {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-row {
+    grid-template-columns: 1fr;
+  }
+
+  .nav a {
+    min-height: 40px;
+    font-size: 0.78rem;
+  }
+
+  .row-actions {
+    min-width: 0;
+    justify-items: stretch;
+  }
+
+  .row-actions .amount {
+    text-align: left;
+  }
+}

@@ -1,0 +1,892 @@
+/* Route Atlas itinerary upgrade */
+.route-atlas {
+  --atlas-paper: #fff9ec;
+  --atlas-ink: #10211f;
+  --atlas-coast: #0d6c73;
+  --atlas-road: #d9822b;
+  --atlas-earth: #8f3b2f;
+  --atlas-night: #1f3f55;
+  --atlas-note: #f3dca8;
+  --atlas-reef-soft: rgba(13, 108, 115, 0.1);
+  --atlas-road-soft: rgba(217, 130, 43, 0.14);
+  --atlas-earth-soft: rgba(143, 59, 47, 0.12);
+}
+
+.route-atlas::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  right: max(18px, calc((100vw - 1160px) / 2 - 52px));
+  width: 96px;
+  background:
+    repeating-linear-gradient(180deg, rgba(16, 33, 31, 0.07) 0 1px, transparent 1px 34px),
+    linear-gradient(90deg, transparent, rgba(255, 253, 245, 0.32));
+}
+
+.route-hero {
+  min-height: 560px;
+}
+
+.route-hero::before {
+  width: 10px;
+}
+
+.itinerary-hero-copy {
+  display: grid;
+  gap: 16px;
+}
+
+.itinerary-hero-copy p {
+  margin-bottom: 0;
+}
+
+.hero-route-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 760px;
+}
+
+.hero-route-strip span {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--radius);
+  background: rgba(255, 253, 245, 0.13);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 900;
+  backdrop-filter: blur(14px);
+}
+
+.route-manifest {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.36fr) minmax(0, 1fr);
+  gap: 14px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid rgba(16, 33, 31, 0.13);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(255, 253, 245, 0.96), rgba(221, 231, 223, 0.86)),
+    repeating-linear-gradient(90deg, rgba(16, 33, 31, 0.035) 0 1px, transparent 1px 28px);
+  box-shadow: var(--receipt-shadow);
+}
+
+.route-manifest::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 7px;
+  background: linear-gradient(90deg, var(--atlas-coast), var(--atlas-road), var(--atlas-earth));
+}
+
+.manifest-lead {
+  display: grid;
+  align-content: end;
+  gap: 8px;
+  min-height: 170px;
+  padding: 14px 4px 2px;
+}
+
+.manifest-lead span,
+.manifest-stage > span,
+.today-route-note span,
+.day-brief-card span,
+.food-brief span {
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 950;
+}
+
+.manifest-lead h2 {
+  font-size: clamp(1.9rem, 4vw, 3.2rem);
+  line-height: 0.98;
+}
+
+.manifest-lead p {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.manifest-stages {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.manifest-stage {
+  position: relative;
+  display: grid;
+  align-content: space-between;
+  gap: 12px;
+  min-height: 210px;
+  padding: 14px 14px 14px 18px;
+  overflow: hidden;
+  border: 1px solid rgba(16, 33, 31, 0.12);
+  border-radius: var(--radius);
+  background: rgba(255, 253, 245, 0.78);
+}
+
+.manifest-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: var(--atlas-coast);
+}
+
+.manifest-stage.stage-tone-2::before {
+  background: var(--atlas-road);
+}
+
+.manifest-stage.stage-tone-3::before {
+  background: var(--atlas-earth);
+}
+
+.manifest-bookends::before {
+  background: var(--foreground);
+}
+
+.manifest-stage h3 {
+  font-size: 1.25rem;
+  line-height: 1.12;
+}
+
+.manifest-stage p {
+  color: #546662;
+  line-height: 1.4;
+  font-size: 0.9rem;
+}
+
+.manifest-days {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(42px, 1fr));
+  gap: 5px;
+}
+
+.manifest-days a {
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  min-height: 48px;
+  padding: 7px 4px;
+  border: 1px solid rgba(16, 33, 31, 0.1);
+  border-radius: 7px;
+  background: rgba(221, 231, 223, 0.46);
+}
+
+.manifest-days strong {
+  font-size: 0.82rem;
+}
+
+.manifest-days small {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.today-command-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 30%);
+  gap: 14px;
+  align-items: end;
+}
+
+.today-route-note {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid rgba(16, 33, 31, 0.1);
+  border-radius: var(--radius);
+  background: rgba(255, 253, 245, 0.74);
+}
+
+.today-route-note strong {
+  padding-left: 12px;
+  border-left: 3px solid var(--sun);
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+.route-jump {
+  border-block: 1px solid rgba(16, 33, 31, 0.1);
+}
+
+.route-jump a {
+  position: relative;
+}
+
+.route-jump a::after {
+  content: "";
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  width: 8px;
+  height: 2px;
+  background: rgba(16, 33, 31, 0.16);
+}
+
+.route-jump a:last-child::after {
+  display: none;
+}
+
+.stage-head {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 36%);
+}
+
+.stage-head p {
+  max-width: 640px;
+  margin-top: 12px;
+  color: #546662;
+  line-height: 1.5;
+  font-weight: 800;
+}
+
+.stage-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 18px;
+}
+
+.stage-days a {
+  min-width: 44px;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(16, 33, 31, 0.12);
+  border-radius: 7px;
+  background: rgba(255, 253, 245, 0.72);
+  color: var(--accent-strong);
+  font-size: 0.82rem;
+  font-weight: 950;
+}
+
+.route-day-card {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.route-day-card .day-body,
+.route-day-card .day-title-row > div,
+.route-day-card .weather-strip,
+.route-day-card .day-brief-card,
+.route-day-card .food-brief,
+.route-day-card .day-execution-grid article,
+.route-day-card .day-docket a,
+.route-day-card .day-map-actions div,
+.route-day-card .time-block > div {
+  min-width: 0;
+}
+
+.route-day-card h3,
+.route-day-card .focus,
+.route-day-card .day-title-row > span,
+.route-day-card .route-stop-list span,
+.route-day-card .food-brief p,
+.route-day-card .food-brief small,
+.route-day-card .day-execution-grid strong,
+.route-day-card .day-execution-grid p,
+.route-day-card .day-docket strong,
+.route-day-card .day-docket small,
+.route-day-card .day-map-actions strong,
+.route-day-card .resource-links a {
+  overflow-wrap: anywhere;
+}
+
+.route-day-card .day-cover {
+  min-height: 240px;
+}
+
+.day-body {
+  gap: 14px;
+}
+
+.day-brief-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.45fr);
+  gap: 10px;
+}
+
+.day-brief-card,
+.food-brief {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid rgba(16, 33, 31, 0.1);
+  border-radius: var(--radius);
+  background: rgba(221, 231, 223, 0.42);
+}
+
+.day-brief-card strong {
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.day-brief-card small,
+.food-brief small {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.route-stop-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.route-stop-list span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 9px;
+  border: 1px solid rgba(16, 33, 31, 0.1);
+  border-radius: 7px;
+  background: rgba(255, 253, 245, 0.78);
+  color: #384b48;
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.food-brief {
+  border-left: 5px solid var(--sun);
+  background: rgba(217, 130, 43, 0.1);
+}
+
+.food-brief p {
+  color: var(--foreground);
+  line-height: 1.5;
+  font-weight: 850;
+}
+
+.today-meal-board,
+.today-docket-strip,
+.day-execution-grid,
+.day-docket,
+.day-map-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.today-meal-board {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 12px;
+  border: 1px solid rgba(16, 33, 31, 0.1);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(90deg, rgba(217, 130, 43, 0.12), transparent 34%),
+    rgba(255, 253, 245, 0.72);
+}
+
+.today-meal-board article,
+.today-docket-strip article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.today-meal-board span,
+.today-docket-strip span,
+.day-execution-grid span,
+.day-docket span,
+.day-map-actions span {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 950;
+}
+
+.today-meal-board strong,
+.today-docket-strip strong {
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.today-meal-board p {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.today-docket-strip {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.today-docket-strip article {
+  min-height: 104px;
+  padding: 12px;
+  border: 1px solid rgba(16, 33, 31, 0.1);
+  border-radius: var(--radius);
+  background: rgba(255, 253, 245, 0.72);
+}
+
+.today-docket-strip p,
+.today-note-list span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.today-docket-strip small {
+  align-self: end;
+  color: var(--danger);
+  font-weight: 950;
+}
+
+.today-note-list {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.today-note-list span {
+  padding-left: 10px;
+  border-left: 3px solid var(--sun);
+  font-weight: 850;
+}
+
+.day-execution-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.day-execution-grid article {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 132px;
+  padding: 11px;
+  border: 1px solid rgba(16, 33, 31, 0.1);
+  border-radius: var(--radius);
+  background: rgba(255, 253, 245, 0.74);
+}
+
+.day-execution-grid strong {
+  display: block;
+  font-size: 0.92rem;
+  line-height: 1.25;
+}
+
+.day-execution-grid p {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.day-docket {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.day-docket a {
+  display: grid;
+  gap: 5px;
+  min-height: 104px;
+  padding: 11px;
+  border: 1px solid rgba(16, 33, 31, 0.1);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(221, 231, 223, 0.36), rgba(255, 253, 245, 0.78));
+}
+
+.day-docket a.is-disabled {
+  pointer-events: none;
+  opacity: 0.72;
+}
+
+.day-docket strong {
+  font-size: 0.92rem;
+  line-height: 1.25;
+}
+
+.day-docket small {
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.day-map-actions {
+  grid-template-columns: minmax(0, 1fr) repeat(4, auto);
+  align-items: center;
+  padding: 10px;
+  border: 1px solid rgba(20, 92, 117, 0.14);
+  border-radius: var(--radius);
+  background: rgba(20, 92, 117, 0.08);
+}
+
+.day-map-actions div {
+  min-width: 0;
+}
+
+.day-map-actions strong {
+  display: block;
+  overflow: hidden;
+  color: var(--ocean);
+  font-size: 0.86rem;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.day-map-actions a {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 9px;
+  border: 1px solid rgba(20, 92, 117, 0.16);
+  border-radius: 7px;
+  background: rgba(255, 253, 245, 0.82);
+  color: var(--ocean);
+  font-size: 0.78rem;
+  font-weight: 950;
+}
+
+/* Field docket polish for newly added travel tools */
+.today-console.docket-panel {
+  gap: 16px;
+  border-color: rgba(16, 33, 31, 0.16);
+  background:
+    linear-gradient(135deg, rgba(255, 253, 245, 0.96), rgba(231, 238, 231, 0.9)),
+    repeating-linear-gradient(90deg, rgba(16, 33, 31, 0.035) 0 1px, transparent 1px 42px);
+}
+
+.today-console.docket-panel::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  bottom: 16px;
+  width: 9px;
+  border-radius: 999px;
+  background: repeating-linear-gradient(180deg, rgba(16, 33, 31, 0.2) 0 6px, transparent 6px 12px);
+  opacity: 0.45;
+}
+
+.today-status-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.today-status-grid article {
+  min-height: 116px;
+  align-content: start;
+  border-color: rgba(16, 33, 31, 0.11);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 245, 0.86), rgba(255, 248, 233, 0.7)),
+    repeating-linear-gradient(0deg, rgba(16, 33, 31, 0.035) 0 1px, transparent 1px 26px);
+}
+
+.today-status-grid article:nth-child(1) {
+  border-left: 5px solid var(--atlas-coast);
+}
+
+.today-status-grid article:nth-child(2) {
+  border-left: 5px solid var(--atlas-road);
+}
+
+.today-status-grid article:nth-child(3) {
+  border-left: 5px solid var(--atlas-earth);
+}
+
+.today-status-grid article:nth-child(4) {
+  border-left: 5px solid var(--atlas-night);
+}
+
+.today-status-grid article:nth-child(5) {
+  border-left: 5px solid var(--sun);
+}
+
+.today-status-grid strong {
+  font-size: 0.98rem;
+  line-height: 1.34;
+}
+
+.today-meal-board {
+  position: relative;
+  grid-template-columns: 0.92fr 1fr 1.1fr;
+  padding: 14px 14px 36px;
+  overflow: hidden;
+  border-color: rgba(217, 130, 43, 0.24);
+  background:
+    linear-gradient(90deg, rgba(217, 130, 43, 0.16), transparent 48%),
+    rgba(255, 253, 245, 0.84);
+}
+
+.today-meal-board::before {
+  content: "meal map";
+  position: absolute;
+  left: 14px;
+  bottom: 10px;
+  color: rgba(143, 59, 47, 0.62);
+  font-size: 0.68rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.today-meal-board article {
+  position: relative;
+  min-height: 98px;
+  padding: 0 12px 0 14px;
+}
+
+.today-meal-board article::before {
+  content: "";
+  position: absolute;
+  inset: 3px auto 3px 0;
+  width: 4px;
+  border-radius: 999px;
+  background: var(--atlas-road);
+}
+
+.today-meal-board .meal-breakfast::before {
+  background: var(--sun);
+}
+
+.today-meal-board .meal-lunch::before {
+  background: var(--atlas-coast);
+}
+
+.today-meal-board .meal-dinner::before {
+  background: var(--atlas-earth);
+}
+
+.today-meal-board strong {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.today-docket-strip {
+  grid-template-columns: 1.15fr 1fr 1fr;
+}
+
+.today-docket-strip article,
+.day-docket a {
+  position: relative;
+  overflow: hidden;
+}
+
+.today-docket-strip article::after,
+.day-docket a::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 0;
+  bottom: 10px;
+  width: 5px;
+  border-radius: 6px 0 0 6px;
+  background: repeating-linear-gradient(180deg, rgba(16, 33, 31, 0.18) 0 4px, transparent 4px 9px);
+}
+
+.today-docket-strip .docket-lodging,
+.day-docket .docket-lodging {
+  border-left: 5px solid var(--atlas-earth);
+}
+
+.today-docket-strip .docket-transport,
+.day-docket .docket-transport {
+  border-left: 5px solid var(--atlas-coast);
+}
+
+.today-docket-strip .docket-ticket,
+.day-docket .docket-ticket {
+  border-left: 5px solid var(--atlas-road);
+}
+
+.day-execution-grid {
+  position: relative;
+  grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+  gap: 0;
+  overflow: visible;
+  padding: 10px;
+  border: 1px solid rgba(16, 33, 31, 0.1);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 245, 0.72), rgba(221, 231, 223, 0.34)),
+    repeating-linear-gradient(90deg, rgba(16, 33, 31, 0.08) 0 1px, transparent 1px 96px);
+}
+
+.day-execution-grid article {
+  min-height: 150px;
+  border-width: 0 0 0 4px;
+  border-radius: 0;
+  background: transparent;
+}
+
+.day-execution-grid article + article {
+  border-left-color: rgba(16, 33, 31, 0.12);
+}
+
+.day-execution-grid .slot-morning {
+  border-left-color: var(--sun);
+}
+
+.day-execution-grid .slot-noon {
+  border-left-color: var(--atlas-road);
+}
+
+.day-execution-grid .slot-afternoon {
+  border-left-color: var(--atlas-coast);
+}
+
+.day-execution-grid .slot-night {
+  border-left-color: var(--atlas-night);
+}
+
+.day-execution-grid .slot-flex {
+  border-left-color: var(--atlas-earth);
+}
+
+.day-execution-grid span {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 24px;
+  align-items: center;
+  padding: 0 7px;
+  border-radius: 6px;
+  background: rgba(255, 253, 245, 0.76);
+}
+
+.day-docket {
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+}
+
+.day-docket a {
+  min-height: 98px;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.day-docket a:not(.is-disabled):hover {
+  border-color: rgba(0, 107, 100, 0.28);
+  transform: translateY(-1px);
+}
+
+.day-map-actions {
+  grid-template-columns: repeat(auto-fit, minmax(116px, 1fr));
+  border-color: rgba(13, 108, 115, 0.2);
+  background:
+    linear-gradient(90deg, var(--atlas-reef-soft), rgba(255, 253, 245, 0.78)),
+    repeating-linear-gradient(90deg, rgba(13, 108, 115, 0.08) 0 1px, transparent 1px 22px);
+}
+
+.day-map-actions div {
+  grid-column: 1 / -1;
+}
+
+.day-map-actions strong {
+  white-space: normal;
+}
+
+.day-map-actions a {
+  background: rgba(255, 253, 245, 0.9);
+}
+
+.route-day-card details {
+  margin-top: 2px;
+}
+
+@media (min-width: 1100px) {
+  .route-atlas {
+    width: min(1180px, calc(100% - 156px));
+  }
+
+  .day-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .route-manifest,
+  .today-command-head,
+  .stage-head,
+  .day-brief-grid,
+  .today-status-grid,
+  .today-meal-board,
+  .today-docket-strip,
+  .day-execution-grid,
+  .day-docket,
+  .day-map-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .manifest-stages {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .manifest-stage {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .route-atlas::after {
+    display: none;
+  }
+
+  .today-console.docket-panel::after {
+    display: none;
+  }
+
+  .route-hero {
+    min-height: 590px;
+  }
+
+  .hero-route-strip {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .route-manifest {
+    padding: 14px;
+  }
+
+  .manifest-stages {
+    grid-template-columns: 1fr;
+  }
+
+  .day-map-actions a {
+    width: 100%;
+  }
+
+  .manifest-lead {
+    min-height: 0;
+    padding-top: 12px;
+  }
+
+  .manifest-days {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .today-route-note {
+    padding: 12px;
+  }
+
+  .route-day-card .day-cover {
+    min-height: 210px;
+  }
+}
+
+@media (max-width: 480px) {
+  .manifest-days {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .today-summary h2 {
+    font-size: 1.82rem;
+  }
+
+  .itinerary-hero-copy h1 {
+    font-size: 2.48rem;
+  }
+
+  .stage-head h2 {
+    font-size: 2.24rem;
+  }
+}
