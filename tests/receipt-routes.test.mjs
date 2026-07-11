@@ -115,6 +115,37 @@ describe("authenticated private receipt routes", () => {
     assert.deepEqual(await response.json(), { error: "receipt_conflict" });
   });
 
+  it("logs sanitized upstream details when a signed upload contract fails", async () => {
+    const errors = [];
+    const originalConsoleError = console.error;
+    console.error = (...args) => errors.push(args);
+    globalThis.fetch = async (url, options = {}) => {
+      if (String(url).endsWith("/rest/v1/rpc/create_receipt_upload_intent")) {
+        const { receipt } = JSON.parse(options.body);
+        return Response.json(attachmentRow(receipt));
+      }
+      return Response.json({ code: "storage_code", message: "storage_message" }, { status: 400 });
+    };
+
+    try {
+      const response = await createUploadUrl(authenticatedMutation(
+        "https://aussie.example/api/receipts/upload-url",
+        uploadBody(),
+      ));
+
+      assert.equal(response.status, 502);
+      assert.deepEqual(errors, [["receipt_upload_failed", {
+        name: "SupabaseUpstreamError",
+        code: "supabase_upstream_error",
+        status: 400,
+        upstreamCode: "storage_code",
+        upstreamMessage: "storage_message",
+      }]]);
+    } finally {
+      console.error = originalConsoleError;
+    }
+  });
+
   it("verifies and finalizes a receipt through same-origin POST", async () => {
     globalThis.fetch = createFinalizationFetch();
 

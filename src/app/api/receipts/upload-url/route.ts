@@ -14,6 +14,7 @@ import {
   ReceiptNotFoundError,
   createReceiptUpload,
 } from "../../../../lib/server/receipts.js";
+import { SupabaseUpstreamError } from "../../../../lib/server/supabase.js";
 import { isRequestAuthenticated } from "../../../../lib/server/session.js";
 
 export const runtime = "nodejs";
@@ -44,6 +45,15 @@ export async function POST(request: Request) {
     if (error instanceof ReceiptNotFoundError) {
       return privateJsonResponse({ error: error.code }, { status: 404 });
     }
+    console.error("receipt_upload_failed", error instanceof SupabaseUpstreamError ? {
+      name: error.name,
+      code: error.code,
+      status: error.status,
+      upstreamCode: error.upstreamCode,
+      upstreamMessage: error.upstreamMessage,
+    } : {
+      name: error instanceof Error ? error.name : "UnknownError",
+    });
     return upstreamUnavailableResponse();
   }
 }
