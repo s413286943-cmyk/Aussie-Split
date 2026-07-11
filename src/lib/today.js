@@ -47,8 +47,8 @@ export function buildTodayCommand(day) {
   const bookedItems = buildBookedItems(day);
 
   return {
-    transport: inferTransport(day),
-    leaveBy: inferLeaveBy(day),
+    transport: day.transport,
+    leaveBy: day.leaveBy,
     lodging: day?.lodging && day.lodging !== "-" ? day.lodging : "飞机上 / 返程",
     bookedItems,
     meals,
@@ -79,8 +79,9 @@ export function buildDayDocket(day, expenses = []) {
   const lodgingExpense = findMatchingExpense(dayExpenses, ["酒店"], day?.lodging);
   const transportExpense = findMatchingExpense(dayExpenses, ["租车", "交通"], day?.title);
   const activityExpense = findMatchingExpense(dayExpenses, ["活动"], day?.title);
-  const lodgingMap = findResource(day, "map", day?.lodging);
-  const bookingResource = findResource(day, "booking", day?.lodging) || findResource(day, "booking");
+  const lodgingResource = day?.lodgingResource;
+  const primaryResource = day?.primaryResource;
+  const ticketResource = day?.ticketResource;
 
   return [
     {
@@ -88,24 +89,24 @@ export function buildDayDocket(day, expenses = []) {
       label: "住宿",
       title: day?.lodging && day.lodging !== "-" ? day.lodging : "无住宿",
       detail: lodgingExpense ? `账本已记 ${moneyLabel(lodgingExpense)}` : "看当天入住 / 返程安排",
-      status: bookingResource ? "已订" : "核对",
-      href: lodgingMap?.url || bookingResource?.url || "",
+      status: lodgingResource?.type === "map" ? "已订" : "核对",
+      href: lodgingResource?.url || "",
     },
     {
       id: "transport",
       label: "交通",
-      title: inferTransport(day),
-      detail: transportExpense ? `账本已记 ${moneyLabel(transportExpense)}` : inferLeaveBy(day),
-      status: /自驾|租车/.test(inferTransport(day)) ? "看车况" : "看时间",
-      href: collectMapActions(day)[0]?.url || "",
+      title: day?.transport || "",
+      detail: transportExpense ? `账本已记 ${moneyLabel(transportExpense)}` : day?.leaveBy || "",
+      status: /自驾|租车/.test(day?.transport || "") ? "看车况" : "看时间",
+      href: primaryResource?.url || "",
     },
     {
       id: "ticket",
       label: "门票 / Tour",
-      title: activityExpense?.item || firstBookedActivity(day)?.title || "当天无固定票券",
+      title: activityExpense?.item || ticketResource?.title || "当天无固定票券",
       detail: activityExpense ? `账本已记 ${moneyLabel(activityExpense)}` : "有预订就提前截图",
-      status: activityExpense || firstBookedActivity(day) ? "已付款/待核" : "机动",
-      href: firstBookedActivity(day)?.url || "",
+      status: activityExpense || (ticketResource && ticketResource.type !== "note") ? "已付款/待核" : "机动",
+      href: ticketResource?.url || "",
     },
   ];
 }
@@ -113,13 +114,17 @@ export function buildDayDocket(day, expenses = []) {
 export function collectMapActions(day) {
   const resources = collectTodayResources(day);
   const actions = [];
-  const lodging = findResource(day, "map", day?.lodging);
-  const firstMap = resources.find((resource) => resource.type === "map");
-  const dinner = findDinnerResource(day) || resources.find((resource) => resource.type === "restaurant");
+  const lodging = day?.lodgingResource;
+  const primary = day?.primaryResource;
+  const dinner = findDinnerResource(day);
   const transit = resources.find((resource) => /airport|wharf|ferry|parking|station|机场|码头|停车|车站/i.test(resource.title));
 
-  if (lodging) actions.push({ id: `lodging-${lodging.id}`, label: "打开酒店地图", title: lodging.title, url: lodging.url });
-  if (firstMap && firstMap.id !== lodging?.id) actions.push({ id: `first-${firstMap.id}`, label: "打开第一站", title: firstMap.title, url: firstMap.url });
+  if (lodging?.type === "map" && day?.lodging && day.lodging !== "-") {
+    actions.push({ id: `lodging-${lodging.id}`, label: "打开酒店地图", title: lodging.title, url: lodging.url });
+  }
+  if (primary?.url && !actions.some((action) => action.url === primary.url)) {
+    actions.push({ id: `first-${primary.id}`, label: "打开第一站", title: primary.title, url: primary.url });
+  }
   if (dinner) actions.push({ id: `dinner-${dinner.id}`, label: "打开晚餐", title: dinner.title, url: dinner.url });
   if (transit && !actions.some((action) => action.url === transit.url)) {
     actions.push({ id: `transit-${transit.id}`, label: "打开交通点", title: transit.title, url: transit.url });
@@ -269,25 +274,6 @@ function classifyTimelineSlot(block) {
   return "flex";
 }
 
-function inferTransport(day) {
-  const text = daySearchText(day);
-  if (/飞机|机场|转机|返程|航班/i.test(text)) return "航班 / 机场转场";
-  if (/自驾|租车|大洋路|阿瑟顿|南海岸|蓝山|road|drive|car/i.test(text)) return "自驾";
-  if (/大堡礁|外礁|reef|船|观鲸|whale|ferry|游船|码头/i.test(text)) return "船 / 码头集合";
-  if (/SkyBus|Uber|打车|taxi/i.test(text)) return "Uber / 打车";
-  return "步行 + 市内交通";
-}
-
-function inferLeaveBy(day) {
-  const text = daySearchText(day);
-  if (/返程|国际航班|机场早餐/i.test(text)) return "按航班时间提前 3 小时到机场";
-  if (/飞机|机场|转机|航班/i.test(text)) return "按航班时间倒推，提前 2-3 小时到机场";
-  if (/大堡礁|外礁|reef|船|观鲸|whale|tour|团/i.test(text)) return "按集合时间提前 30-45 分钟到达";
-  if (/自驾|租车|大洋路|阿瑟顿|南海岸|蓝山/i.test(text)) return "09:00 前出发更稳";
-  if (/市场|QVM|Rusty/i.test(text)) return "10:00 前出门，避开午后拥挤";
-  return "按体力出门，保留晚间回酒店余量";
-}
-
 function buildBookedItems(day) {
   const resources = collectTodayResources(day).filter((resource) => ["booking", "official"].includes(resource.type));
   return resources.slice(0, 3).map((resource) => resource.title);
@@ -309,22 +295,21 @@ function findMatchingExpense(expenses, categories, text = "") {
     expenses.find((expense) => categories.includes(expense.category));
 }
 
-function firstBookedActivity(day) {
+function findDinnerResource(day) {
+  const dinner = parseMealPlan(day).dinner;
   return (day?.blocks || [])
     .flatMap((block) => block.resources || [])
-    .find((resource) => ["booking", "official"].includes(resource.type) && !normalizeText(resource.title).includes(normalizeText(day?.lodging)));
+    .find((resource) => resource.type === "restaurant" && resourceTitleMatchesText(resource.title, dinner));
 }
 
-function findDinnerResource(day) {
-  const dinnerBlocks = (day?.blocks || []).filter((block) => /晚|饮食/.test(block.period));
-  return dinnerBlocks.flatMap((block) => block.resources || []).find((resource) => resource.type === "restaurant");
-}
-
-function findResource(day, type, title = "") {
-  const normalizedTitle = normalizeText(title);
-  const resources = (day?.blocks || []).flatMap((block) => block.resources || []);
-  return resources.find((resource) => resource.type === type && normalizedTitle && normalizeText(resource.title).includes(normalizedTitle.slice(0, 8))) ||
-    resources.find((resource) => resource.type === type);
+function resourceTitleMatchesText(title, text) {
+  const normalizedText = normalizeText(text).replace(/[^\p{L}\p{N}]+/gu, "");
+  const ignoredWords = new Set(["sydney", "melbourne", "cairns"]);
+  const words = String(title || "")
+    .toLowerCase()
+    .split(/[^\p{L}\p{N}]+/gu)
+    .filter((word) => word.length >= 4 && !ignoredWords.has(word));
+  return words.length > 0 && words.slice(0, 2).every((word) => normalizedText.includes(word));
 }
 
 function moneyLabel(expense) {

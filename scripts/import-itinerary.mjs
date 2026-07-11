@@ -21,6 +21,11 @@ const requiredDayColumns = [
   "clothing_note",
   "cover_image_url",
   "cover_image_alt",
+  "transport",
+  "leave_by",
+  "lodging_resource_id",
+  "primary_resource_id",
+  "ticket_resource_id",
 ];
 const requiredBlockColumns = ["day_id", "sort_order", "period", "place", "activity", "highlight", "tip", "resource_ids"];
 const requiredResourceColumns = ["resource_id", "title", "type", "url", "image_url", "image_alt", "source_note"];
@@ -48,10 +53,22 @@ export function buildItinerary(days, blocks, resources) {
     blockGroups.get(block.dayId).push(next);
   }
 
-  const itineraryDays = days.map((day) => ({
-    ...day,
-    blocks: (blockGroups.get(day.id) || []).sort((left, right) => left.sortOrder - right.sortOrder),
-  }));
+  const itineraryDays = days.map((day) => {
+    const lodgingResource = resourceMap.get(day.lodgingResourceId);
+    const primaryResource = resourceMap.get(day.primaryResourceId);
+    const ticketResource = resourceMap.get(day.ticketResourceId);
+    const normalized = {
+      ...day,
+      lodgingResource,
+      primaryResource,
+      ticketResource,
+      blocks: (blockGroups.get(day.id) || []).sort((left, right) => left.sortOrder - right.sortOrder),
+    };
+    delete normalized.lodgingResourceId;
+    delete normalized.primaryResourceId;
+    delete normalized.ticketResourceId;
+    return normalized;
+  });
 
   return {
     trip: {
@@ -104,6 +121,11 @@ function normalizeDay(row) {
     clothingNote: text(row.clothing_note),
     coverImageUrl: text(row.cover_image_url),
     coverImageAlt: text(row.cover_image_alt),
+    transport: text(row.transport),
+    leaveBy: text(row.leave_by),
+    lodgingResourceId: text(row.lodging_resource_id),
+    primaryResourceId: text(row.primary_resource_id),
+    ticketResourceId: text(row.ticket_resource_id),
   };
 }
 
@@ -144,10 +166,35 @@ function validateRows(days, blocks, resources) {
   const resourceIds = new Set(resources.map((resource) => resource.id));
 
   for (const day of days) {
-    for (const field of ["id", "label", "date", "weekday", "city", "title", "focus", "climateNote", "clothingNote", "coverImageUrl"]) {
+    for (const field of [
+      "id",
+      "label",
+      "date",
+      "weekday",
+      "city",
+      "title",
+      "focus",
+      "climateNote",
+      "clothingNote",
+      "coverImageUrl",
+      "transport",
+      "leaveBy",
+      "lodgingResourceId",
+      "primaryResourceId",
+      "ticketResourceId",
+    ]) {
       if (!day[field]) throw new Error(`Missing day field ${day.id}.${field}`);
     }
     if (!Number.isFinite(day.lat) || !Number.isFinite(day.lon)) throw new Error(`Missing coordinates for ${day.id}`);
+    for (const resourceId of [day.lodgingResourceId, day.primaryResourceId, day.ticketResourceId]) {
+      if (!resourceIds.has(resourceId)) throw new Error(`Unknown day resource ${resourceId} in ${day.id}`);
+    }
+    if (day.lodging !== "-" && !/飞机上/.test(day.lodging)) {
+      const lodgingResource = resources.find((resource) => resource.id === day.lodgingResourceId);
+      if (lodgingResource?.type !== "map" || lodgingResource.title !== day.lodging) {
+        throw new Error(`Lodging resource mismatch for ${day.id}`);
+      }
+    }
   }
 
   for (const resource of resources) {

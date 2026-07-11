@@ -41,11 +41,51 @@ def read_workbook(workbook_path):
     print(json.dumps(result, ensure_ascii=False))
 
 
+def read_finance(workbook_path):
+    workbook = load_workbook(workbook_path, data_only=True)
+    snapshot = workbook["LedgerSnapshot"]
+    exported_at = snapshot["B2"].value
+    if hasattr(exported_at, "isoformat"):
+        exported_at = exported_at.isoformat(timespec="milliseconds") + "Z"
+
+    result = {
+        "snapshot": {
+            "exportedAt": exported_at,
+            "activityCount": snapshot["J2"].value,
+            "totalsByCurrency": {
+                "AUD": {
+                    "confirmed": snapshot["C6"].value,
+                    "pendingSettlement": snapshot["C7"].value,
+                    "splitSettled": snapshot["C8"].value,
+                },
+                "CNY": {
+                    "confirmed": snapshot["B6"].value,
+                    "pendingSettlement": snapshot["B7"].value,
+                    "splitSettled": snapshot["B8"].value,
+                },
+            },
+        },
+        "lodging": [
+            {"name": row[2], "price": row[4]}
+            for row in workbook["Lodging"].iter_rows(min_row=2, max_col=8, values_only=True)
+            if row[2]
+        ],
+        "activityCosts": [
+            {"item": row[1], "price": row[3], "cny": row[4]}
+            for row in workbook["ActivityCosts"].iter_rows(min_row=2, max_col=6, values_only=True)
+            if row[1]
+        ],
+    }
+    print(json.dumps(result, ensure_ascii=False))
+
+
 if __name__ == "__main__":
     command = sys.argv[1]
     if command == "write":
         write_workbook(sys.argv[2], sys.argv[3])
     elif command == "read":
         read_workbook(sys.argv[2])
+    elif command == "read_finance":
+        read_finance(sys.argv[2])
     else:
         raise SystemExit(f"Unknown command: {command}")

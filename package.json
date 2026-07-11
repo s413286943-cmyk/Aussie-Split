@@ -9,6 +9,7 @@
     "start": "node node_modules/next/dist/bin/next start",
     "itinerary:seed": "node scripts/create-itinerary-workbook.mjs",
     "itinerary:import": "node scripts/import-itinerary.mjs",
+    "ledger:snapshot": "node scripts/export-ledger-snapshot.mjs",
     "lint": "node node_modules/eslint/bin/eslint.js",
     "test": "node --conditions=react-server --test --test-concurrency=1 tests/*.test.mjs"
   },

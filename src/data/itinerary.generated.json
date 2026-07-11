@@ -61,6 +61,35 @@
       "clothingNote": "随身带薄外套、颈枕、充电线和第一天入境资料。",
       "coverImageUrl": "/itinerary/d0-shanghai-departure.png",
       "coverImageAlt": "上海机场夜间出发",
+      "transport": "航班 / 机场转场",
+      "leaveBy": "按国际航班时间倒推，提前 3 小时到机场",
+      "lodgingResource": {
+        "id": "flight-cathay",
+        "title": "国泰航空",
+        "type": "official",
+        "url": "https://www.cathaypacific.com/",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "航司官网"
+      },
+      "primaryResource": {
+        "id": "shanghai-pudong-airport-map",
+        "title": "上海浦东国际机场",
+        "type": "map",
+        "url": "https://www.google.com/maps?q=Shanghai+Pudong+International+Airport",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "flight-cathay",
+        "title": "国泰航空",
+        "type": "official",
+        "url": "https://www.cathaypacific.com/",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "航司官网"
+      },
       "blocks": [
         {
           "dayId": "d0",
@@ -99,6 +128,35 @@
       "clothingNote": "羽绒服或防风外套、毛衣、长裤、防水鞋。",
       "coverImageUrl": "/itinerary/melbourne-city-morning.png",
       "coverImageAlt": "墨尔本清晨城市街景",
+      "transport": "机场接送 + 步行 / 市内交通",
+      "leaveBy": "05:55 抵达；入境后直接前往 CBD",
+      "lodgingResource": {
+        "id": "oaks-market-map",
+        "title": "Oaks Melbourne on Market Hotel",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Melbourne+on+Market+Hotel",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "mel-airport-map",
+        "title": "墨尔本机场",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Melbourne+Airport",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "no-fixed-ticket",
+        "title": "当天无固定票券",
+        "type": "note",
+        "url": "",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "每日明确票券状态"
+      },
       "blocks": [
         {
           "dayId": "d1",
@@ -387,6 +445,35 @@
       "clothingNote": "防风外套比单纯厚毛衣更实用，雨天鞋子尽量防水。",
       "coverImageUrl": "/itinerary/d2-puffing-billy-railway.png",
       "coverImageAlt": "Puffing Billy 蒸汽小火车穿过 Dandenong Ranges 森林",
+      "transport": "半日团接驳车 + Puffing Billy 蒸汽火车",
+      "leaveBy": "按通知的集合时间，提前 15 分钟到 343 Russell Street",
+      "lodgingResource": {
+        "id": "oaks-market-map",
+        "title": "Oaks Melbourne on Market Hotel",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Melbourne+on+Market+Hotel",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "russell-343-map",
+        "title": "343 Russell Street",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=343+Russell+Street+Melbourne",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "puffing-billy-official",
+        "title": "Puffing Billy Railway",
+        "type": "official",
+        "url": "https://puffingbilly.com.au/",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Puffing Billy official site"
+      },
       "blocks": [
         {
           "dayId": "d2",
@@ -740,6 +827,35 @@
       "clothingNote": "防风外套、长裤、防滑鞋；车上备水和零食。",
       "coverImageUrl": "/itinerary/d3-great-ocean-road-lorne.png",
       "coverImageAlt": "大洋路早段海岸公路与灯塔",
+      "transport": "自驾 · 墨尔本机场取车",
+      "leaveBy": "08:00 前退房出发，预留机场取车时间",
+      "lodgingResource": {
+        "id": "seaview-motel-map",
+        "title": "Seaview Motel & Apartments",
+        "type": "map",
+        "url": "https://www.google.com/maps?q=Seaview+Motel+Apollo+Bay",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "mel-airport-map",
+        "title": "墨尔本机场",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Melbourne+Airport",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "no-fixed-ticket",
+        "title": "当天无固定票券",
+        "type": "note",
+        "url": "",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "每日明确票券状态"
+      },
       "blocks": [
         {
           "dayId": "d3",
@@ -1101,6 +1217,35 @@
       "clothingNote": "防风外套、防水鞋；拍照时不要太靠近海浪。",
       "coverImageUrl": "/itinerary/d4-twelve-apostles-gorge.png",
       "coverImageAlt": "十二使徒岩与峡谷海岸",
+      "transport": "自驾 · 大洋路海岸段",
+      "leaveBy": "08:30 前离开 Apollo Bay",
+      "lodgingResource": {
+        "id": "southern-ocean-villas-map",
+        "title": "Southern Ocean Villas",
+        "type": "map",
+        "url": "https://www.google.com/maps?q=Southern+Ocean+Villas+Port+Campbell",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "maits-rest-map",
+        "title": "Maits Rest Rainforest Walk",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Maits+Rest+Rainforest+Walk",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "no-fixed-ticket",
+        "title": "当天无固定票券",
+        "type": "note",
+        "url": "",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "每日明确票券状态"
+      },
       "blocks": [
         {
           "dayId": "d4",
@@ -1317,6 +1462,35 @@
       "clothingNote": "早上防风保暖，下午回机场前预留加油和还车时间。",
       "coverImageUrl": "/itinerary/d5-port-campbell-morning.png",
       "coverImageAlt": "Port Campbell 清晨海岸",
+      "transport": "自驾 · 内陆回墨尔本机场",
+      "leaveBy": "08:00 前离开 Port Campbell，17:00 前还车更稳",
+      "lodgingResource": {
+        "id": "holiday-inn-airport-map",
+        "title": "Holiday Inn Melbourne Airport",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Holiday+Inn+Melbourne+Airport",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "twelve-apostles-map",
+        "title": "Twelve Apostles",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Twelve+Apostles+Victoria",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "no-fixed-ticket",
+        "title": "当天无固定票券",
+        "type": "note",
+        "url": "",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "每日明确票券状态"
+      },
       "blocks": [
         {
           "dayId": "d5",
@@ -1569,6 +1743,35 @@
       "clothingNote": "短袖、防晒衣、墨镜、帽子；机舱和室内空调可能冷。",
       "coverImageUrl": "/itinerary/cairns-reef-lagoon.png",
       "coverImageAlt": "凯恩斯热带海岸",
+      "transport": "航班 / 机场转场",
+      "leaveBy": "04:00 前从机场酒店步行或接驳至航站楼",
+      "lodgingResource": {
+        "id": "southern-cross-map",
+        "title": "Southern Cross Atrium Apartments",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Southern+Cross+Atrium+Apartments+Cairns",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "mel-airport-map",
+        "title": "墨尔本机场",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Melbourne+Airport",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "virgin-australia-official",
+        "title": "Virgin Australia VA1291",
+        "type": "official",
+        "url": "https://www.virginaustralia.com/",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "航司官网"
+      },
       "blocks": [
         {
           "dayId": "d6",
@@ -1667,6 +1870,35 @@
       "clothingNote": "防晒衣比防晒霜更重要，带薄外套并提前吃晕船药。",
       "coverImageUrl": "/itinerary/d7-great-barrier-reef-pontoon.png",
       "coverImageAlt": "大堡礁外礁平台",
+      "transport": "步行 / 打车至码头 + Reef Magic 游船",
+      "leaveBy": "按船票集合时间，提前 45 分钟到 Reef Fleet Terminal",
+      "lodgingResource": {
+        "id": "southern-cross-map",
+        "title": "Southern Cross Atrium Apartments",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Southern+Cross+Atrium+Apartments+Cairns",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "reef-fleet-terminal-map",
+        "title": "Reef Fleet Terminal",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Reef+Fleet+Terminal+Cairns",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "reef-magic-official",
+        "title": "Reef Magic",
+        "type": "official",
+        "url": "https://www.reefmagic.com.au/",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "官网"
+      },
       "blocks": [
         {
           "dayId": "d7",
@@ -1870,6 +2102,35 @@
       "clothingNote": "短袖、防晒、防蚊、帽子、薄外套；不建议下海游泳。",
       "coverImageUrl": "/itinerary/daintree-rainforest.png",
       "coverImageAlt": "丹翠雨林",
+      "transport": "Billy Tea 小团接驳车",
+      "leaveBy": "06:40 前到酒店门口，06:55 集合",
+      "lodgingResource": {
+        "id": "southern-cross-map",
+        "title": "Southern Cross Atrium Apartments",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Southern+Cross+Atrium+Apartments+Cairns",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "southern-cross-map",
+        "title": "Southern Cross Atrium Apartments",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Southern+Cross+Atrium+Apartments+Cairns",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "billy-tea-official",
+        "title": "Billy Tea Safaris",
+        "type": "official",
+        "url": "https://www.billytea.com.au/",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "官网"
+      },
       "blocks": [
         {
           "dayId": "d8",
@@ -1998,6 +2259,35 @@
       "clothingNote": "短袖加薄外套，瀑布和雨林步道注意防滑。",
       "coverImageUrl": "/itinerary/d9-atherton-tablelands-waterfall.png",
       "coverImageAlt": "阿瑟顿高原瀑布",
+      "transport": "自驾 · 阿瑟顿高原",
+      "leaveBy": "08:30 前取车出发",
+      "lodgingResource": {
+        "id": "southern-cross-map",
+        "title": "Southern Cross Atrium Apartments",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Southern+Cross+Atrium+Apartments+Cairns",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "lake-eacham-map",
+        "title": "Lake Eacham",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Lake+Eacham",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "no-fixed-ticket",
+        "title": "当天无固定票券",
+        "type": "note",
+        "url": "",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "每日明确票券状态"
+      },
       "blocks": [
         {
           "dayId": "d9",
@@ -2183,6 +2473,35 @@
       "clothingNote": "轻便夏装，随身带薄外套；今天不要再临时加长线。",
       "coverImageUrl": "/itinerary/d10-cairns-rustys-market.png",
       "coverImageAlt": "凯恩斯市场与海滨",
+      "transport": "步行 / 市内短途交通",
+      "leaveBy": "09:00 前出门逛 Rusty's Market",
+      "lodgingResource": {
+        "id": "southern-cross-map",
+        "title": "Southern Cross Atrium Apartments",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Southern+Cross+Atrium+Apartments+Cairns",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "rustys-map",
+        "title": "Rusty's Market",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Rusty%27s+Market+Cairns",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "no-fixed-ticket",
+        "title": "当天无固定票券",
+        "type": "note",
+        "url": "",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "每日明确票券状态"
+      },
       "blocks": [
         {
           "dayId": "d10",
@@ -2338,6 +2657,35 @@
       "clothingNote": "薄羽绒、风衣或卫衣；从凯恩斯上飞机随身带外套。",
       "coverImageUrl": "/itinerary/d11-sydney-arrival-rocks.png",
       "coverImageAlt": "悉尼 The Rocks 夜景",
+      "transport": "航班 / 机场转场 + 步行",
+      "leaveBy": "按 JQ953 起飞时间，提前 2 小时到凯恩斯机场 T2",
+      "lodgingResource": {
+        "id": "oaks-sydney-map",
+        "title": "Oaks Sydney Goldsbrough Suites",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "cairns-airport-map",
+        "title": "凯恩斯机场",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Cairns+Airport",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "jetstar-official",
+        "title": "Jetstar JQ953",
+        "type": "official",
+        "url": "https://www.jetstar.com/",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "航司官网"
+      },
       "blocks": [
         {
           "dayId": "d11",
@@ -2486,6 +2834,35 @@
       "clothingNote": "薄羽绒或风衣，海港边风大时注意保暖。",
       "coverImageUrl": "/itinerary/d12-sydney-opera-garden.png",
       "coverImageAlt": "悉尼歌剧院与植物园",
+      "transport": "步行 + 市内交通",
+      "leaveBy": "08:45 前出门，09:15 前到 Sydney Opera House",
+      "lodgingResource": {
+        "id": "oaks-sydney-map",
+        "title": "Oaks Sydney Goldsbrough Suites",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "opera-house-map",
+        "title": "Sydney Opera House",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "opera-house-official",
+        "title": "Sydney Opera House Tour",
+        "type": "official",
+        "url": "https://www.sydneyoperahouse.com/tours-and-experiences",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "官网"
+      },
       "blocks": [
         {
           "dayId": "d12",
@@ -2758,6 +3135,35 @@
       "clothingNote": "看天气定路线；海边防风，蓝山加厚外套。",
       "coverImageUrl": "/itinerary/d13-blue-mountains-seacliff-choice.png",
       "coverImageAlt": "蓝山与南海岸弹性路线",
+      "transport": "自驾（南海岸）或一日团 / 火车（蓝山）",
+      "leaveBy": "路线确定后按首站导航；自驾建议 08:00 前出发",
+      "lodgingResource": {
+        "id": "oaks-sydney-map",
+        "title": "Oaks Sydney Goldsbrough Suites",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "blue-mountains-map",
+        "title": "Blue Mountains",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Blue+Mountains+Echo+Point",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "no-fixed-ticket",
+        "title": "当天无固定票券",
+        "type": "note",
+        "url": "",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "每日明确票券状态"
+      },
       "blocks": [
         {
           "dayId": "d13",
@@ -3021,6 +3427,35 @@
       "clothingNote": "提前吃晕船药，穿防风外套；Bondi 步道不必全程走完。",
       "coverImageUrl": "/itinerary/d14-whale-bondi-coast.png",
       "coverImageAlt": "悉尼观鲸与 Bondi 海岸",
+      "transport": "步行 / 市内交通 + 观鲸游船",
+      "leaveBy": "按观鲸船票集合时间，提前 45 分钟到码头",
+      "lodgingResource": {
+        "id": "oaks-sydney-map",
+        "title": "Oaks Sydney Goldsbrough Suites",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "circular-quay-map",
+        "title": "Circular Quay",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "whale-watch-official",
+        "title": "Whale Watching Sydney",
+        "type": "booking",
+        "url": "https://www.whalewatchingsydney.com.au/",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "预订参考"
+      },
       "blocks": [
         {
           "dayId": "d14",
@@ -3250,6 +3685,35 @@
       "clothingNote": "薄外套随身；晚餐注意 smart dress code。",
       "coverImageUrl": "/itinerary/sydney-harbor-evening.png",
       "coverImageAlt": "悉尼海港黄昏",
+      "transport": "Ferry + 步行 / 市内交通",
+      "leaveBy": "上午按渡轮班次出发；16:40 左右前往 Circular Quay",
+      "lodgingResource": {
+        "id": "oaks-sydney-map",
+        "title": "Oaks Sydney Goldsbrough Suites",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "manly-ferry-map",
+        "title": "Manly Ferry",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Manly+Ferry+Sydney",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "no-fixed-ticket",
+        "title": "当天无固定票券",
+        "type": "note",
+        "url": "",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "每日明确票券状态"
+      },
       "blocks": [
         {
           "dayId": "d15",
@@ -3592,6 +4056,35 @@
       "clothingNote": "提前整理退税物品和购物小票，随身带薄外套。",
       "coverImageUrl": "/itinerary/d16-return-flight.png",
       "coverImageAlt": "澳洲旅行返程",
+      "transport": "航班 / 机场转场",
+      "leaveBy": "按国际航班时间倒推，提前 3 小时到悉尼机场",
+      "lodgingResource": {
+        "id": "sydney-airport-map",
+        "title": "悉尼机场",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Airport",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "sydney-airport-map",
+        "title": "悉尼机场",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Airport",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "ticketResource": {
+        "id": "trs-official",
+        "title": "TRS 退税",
+        "type": "official",
+        "url": "https://www.abf.gov.au/entering-and-leaving-australia/tourist-refund-scheme",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "澳洲边防官网"
+      },
       "blocks": [
         {
           "dayId": "d16",
@@ -4724,6 +5217,60 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
+    },
+    {
+      "id": "seaview-motel-map",
+      "title": "Seaview Motel & Apartments",
+      "type": "map",
+      "url": "https://www.google.com/maps?q=Seaview+Motel+Apollo+Bay",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "southern-ocean-villas-map",
+      "title": "Southern Ocean Villas",
+      "type": "map",
+      "url": "https://www.google.com/maps?q=Southern+Ocean+Villas+Port+Campbell",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "shanghai-pudong-airport-map",
+      "title": "上海浦东国际机场",
+      "type": "map",
+      "url": "https://www.google.com/maps?q=Shanghai+Pudong+International+Airport",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "virgin-australia-official",
+      "title": "Virgin Australia VA1291",
+      "type": "official",
+      "url": "https://www.virginaustralia.com/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "航司官网"
+    },
+    {
+      "id": "jetstar-official",
+      "title": "Jetstar JQ953",
+      "type": "official",
+      "url": "https://www.jetstar.com/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "航司官网"
+    },
+    {
+      "id": "no-fixed-ticket",
+      "title": "当天无固定票券",
+      "type": "note",
+      "url": "",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "每日明确票券状态"
     }
   ]
 }

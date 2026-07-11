@@ -24,6 +24,34 @@ describe("itinerary data", () => {
     assert.equal(imported.days[16].date, "2026-08-13");
   });
 
+  it("uses explicit daily transport, departure, lodging, primary, and ticket controls", () => {
+    for (const day of itinerary.days) {
+      assert.ok(day.transport, `${day.id} is missing transport`);
+      assert.ok(day.leaveBy, `${day.id} is missing leaveBy`);
+      assert.ok(day.lodgingResource?.id, `${day.id} is missing lodgingResource`);
+      assert.ok(day.primaryResource?.id, `${day.id} is missing primaryResource`);
+      assert.ok(day.ticketResource?.id, `${day.id} is missing ticketResource`);
+    }
+
+    const d2 = itinerary.days.find((day) => day.id === "d2");
+    const d3 = itinerary.days.find((day) => day.id === "d3");
+    const d4 = itinerary.days.find((day) => day.id === "d4");
+    const d13 = itinerary.days.find((day) => day.id === "d13");
+    assert.match(d2.transport, /接驳|团车/);
+    assert.match(d2.ticketResource.title, /Puffing Billy/);
+    assert.match(d3.transport, /自驾/);
+    assert.doesNotMatch(d3.transport, /机场转场/);
+    assert.doesNotMatch(d4.leaveBy, /集合/);
+    assert.doesNotMatch(d13.leaveBy, /集合/);
+  });
+
+  it("links each non-flight lodging to its exact hotel resource", () => {
+    for (const day of itinerary.days.filter((item) => !["d0", "d16"].includes(item.id))) {
+      assert.equal(day.lodgingResource.title, day.lodging, `${day.id} lodging resource mismatch`);
+      assert.equal(day.lodgingResource.type, "map", `${day.id} lodging resource is not a map`);
+    }
+  });
+
   it("keeps generated itinerary blocks linked to known resources", () => {
     const resourceIds = new Set(itinerary.resources.map((resource) => resource.id));
 
@@ -106,6 +134,26 @@ describe("itinerary data", () => {
     assert.ok(command.leaveBy.length > 0);
     assert.ok(command.meals.dinner.length > 0);
     assert.ok(command.notes.length > 0);
+  });
+
+  it("uses explicit controls instead of unrelated first-resource fallbacks", () => {
+    const d3 = itinerary.days.find((item) => item.id === "d3");
+    const command = buildTodayCommand(d3);
+    const docket = buildDayDocket(d3);
+    const actions = collectMapActions(d3);
+
+    assert.equal(command.transport, d3.transport);
+    assert.equal(command.leaveBy, d3.leaveBy);
+    assert.equal(docket.find((item) => item.id === "lodging").href, d3.lodgingResource.url);
+    assert.equal(actions.find((item) => item.label === "打开第一站").url, d3.primaryResource.url);
+  });
+
+  it("links dinner actions to the dinner plan instead of breakfast or lunch resources", () => {
+    const actionsFor = (dayId) => collectMapActions(itinerary.days.find((day) => day.id === dayId));
+    assert.equal(actionsFor("d5").some((action) => action.label === "打开晚餐"), false);
+    assert.match(actionsFor("d14").find((action) => action.label === "打开晚餐").title, /Totti/);
+    assert.match(actionsFor("d15").find((action) => action.label === "打开晚餐").title, /Cafe Sydney/);
+    assert.equal(actionsFor("d16").find((action) => action.label === "打开第一站").title, "悉尼机场");
   });
 
   it("turns each day into timeline, docket, and map actions", () => {
