@@ -108,6 +108,23 @@ describe("private receipt server transport", () => {
       < calls.findIndex((url) => url.endsWith("/rpc/finalize_receipt_upload")));
   });
 
+  it("accepts the current Storage info content_type response field", async () => {
+    globalThis.fetch = async (url) => {
+      if (String(url).includes("/rest/v1/attachments?")) return Response.json([attachmentRow()]);
+      if (String(url).includes("/storage/v1/object/info/receipts/")) {
+        return Response.json({ size: 1024, content_type: "image/jpeg" });
+      }
+      if (String(url).endsWith("/rest/v1/rpc/finalize_receipt_upload")) {
+        return Response.json(attachmentRow({ finalized_at: "2026-07-10T01:00:00.000Z" }));
+      }
+      return Response.json({ message: "unexpected request" }, { status: 500 });
+    };
+
+    const result = await finalizeReceiptUpload({ expenseId: "expense-one", receiptId: "receipt-one" });
+
+    assert.equal(result.finalizedAt, "2026-07-10T01:00:00.000Z");
+  });
+
   it("does not finalize when uploaded bytes do not match the pending intent", async () => {
     let finalized = false;
     const errors = [];

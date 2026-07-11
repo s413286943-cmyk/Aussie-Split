@@ -298,6 +298,7 @@ function readObjectMimeType(info) {
   const value = info?.mimetype
     ?? info?.mime_type
     ?? info?.contentType
+    ?? info?.content_type
     ?? info?.metadata?.mimetype
     ?? info?.metadata?.mime_type
     ?? info?.metadata?.contentType;
