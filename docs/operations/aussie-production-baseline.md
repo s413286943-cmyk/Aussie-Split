@@ -90,3 +90,48 @@ The compatibility migration is expected to remove the two index notices while le
 Production-role checks covered a versioned add, newer edit, stale-write rejection, soft-delete visibility, Undo restoration, physical-delete rejection, unversioned legacy-write rejection, activity insertion, duplicate-activity rejection, and test-row cleanup. Safari then reloaded the production alias from the compatible schema, showed `已同步`, and retained the original ledger totals. No QA rows remain.
 
 After the migration, Supabase Advisor no longer reports missing foreign-key indexes. It reports the five intentionally deferred public-table RLS errors, two expected private-table `RLS enabled, no policy` informational notices, and two new-index `unused` informational notices. Final public-table RLS remains gated on the protected server API and offline release.
+
+## Protected Production Release
+
+Completed on 2026-07-11 after a fresh pre-lockdown export.
+
+- Production deployment: `dpl_BHD14rhFKmAFH9eP1qcExEm1nXv9`
+- Production URL: `https://aussie-split.vercel.app`
+- Deployed runtime commit: `fb078015a61ed118b1db1b406481b08b677ff72e` (`fix: accept current storage receipt metadata`)
+- Final implementation branch: `codex/aussie-reliability-implementation`
+- Pre-lockdown backup: `.backups/20260711T113140Z/`
+- Receipt migration: `20260711134547_private_receipts`
+- Lockdown migration: `20260711134644_lock_down_shared_ledger`
+- Emergency bridge deployment: `dpl_J6g3jtS15zY7ACkcJGBKaouW4FyC`
+
+The final production data matches the backup after removing all release-check rows and Storage objects:
+
+| Source | Final value |
+| --- | ---: |
+| `trips` | 1 |
+| `members` | 2 |
+| `expenses` | 13 active / 13 total |
+| `expense_activity` | 19 |
+| `attachments` | 0 |
+| `receipts` objects | 0 |
+| AUD active total | `A$4,908.95` |
+| CNY active total | `¥20,377.63` |
+| AUD pending-split total | `A$1,384.87` |
+| CNY pending-split total | `¥12,765.63` |
+
+Production regression covered add, edit, split-settle, five-second Undo, final delete, and cleanup before and after lockdown. The AUD settlement returned to `A$692.44` after the temporary expense was marked split-settled. A real 68-byte PNG was uploaded, finalized, downloaded byte-for-byte through a five-minute signed URL, aged through the seven-day cleanup path, removed from Storage, and then removed from test metadata.
+
+The Storage verification exposed the current Supabase `content_type` response field; runtime commit `fb078015a61ed118b1db1b406481b08b677ff72e` accepts it and retains sanitized server-only diagnostics. Direct anon REST access now returns `401` / PostgreSQL `42501`, all five public application tables have RLS enabled, and the service role retains only the protected API access matrix.
+
+Final verification evidence:
+
+```text
+Node 24 + PostgreSQL tests  292 passed, 0 failed, 0 skipped
+ESLint                      passed
+Next.js production build   passed
+Local Chromium E2E         14 passed
+Production read-only smoke 1 passed
+npm audit                   0 vulnerabilities
+```
+
+Supabase Security Advisor has no errors; its seven remaining notices are expected `RLS enabled, no policy` informational entries for closed service-only tables. Performance Advisor has two informational unused-index notices for the new receipt cleanup index and the members foreign-key index.
