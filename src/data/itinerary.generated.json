@@ -3125,18 +3125,18 @@
       "label": "D13",
       "date": "2026-08-10",
       "weekday": "周一",
-      "city": "悉尼弹性一日游",
-      "lat": -33.8688,
-      "lon": 151.2093,
-      "title": "南海岸或蓝山二选一",
-      "focus": "南海岸 Sea Cliff Bridge / 蓝山 Blue Mountains 二选一；若回城较早，晚餐可放 Bar Totti’s CBD",
+      "city": "悉尼南海岸",
+      "lat": -34.6713,
+      "lon": 150.8565,
+      "title": "南海岸：Kiama、Gerringong 与袋鼠谷",
+      "focus": "Grand Pacific Drive + Bald Hill + Sea Cliff Bridge + Kiama + Gerringong；时间、天气和体力允许时再延伸 Kangaroo Valley。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
-      "climateNote": "南海岸看晴天，蓝山雾雨会影响景观且更冷。",
-      "clothingNote": "看天气定路线；海边防风，蓝山加厚外套。",
-      "coverImageUrl": "/itinerary/d13-blue-mountains-seacliff-choice.png",
-      "coverImageAlt": "蓝山与南海岸弹性路线",
-      "transport": "自驾（南海岸）或一日团 / 火车（蓝山）",
-      "leaveBy": "路线确定后按首站导航；自驾建议 08:00 前出发",
+      "climateNote": "南海岸晴天最出片；沿海有风，袋鼠谷山区傍晚更凉。",
+      "clothingNote": "海边防风，穿舒适步行鞋；出发前检查 Royal National Park 道路警报。",
+      "coverImageUrl": "/itinerary/d13-south-coast-kiama-gerringong.png",
+      "coverImageAlt": "Kiama 与 Gerringong 南海岸公路",
+      "transport": "自驾（南海岸）",
+      "leaveBy": "08:00 出发；14:40 在 Gerringong 决定是否延伸袋鼠谷",
       "lodgingResource": {
         "id": "oaks-sydney-map",
         "title": "Oaks Sydney Goldsbrough Suites",
@@ -3147,10 +3147,10 @@
         "sourceNote": "Google Maps"
       },
       "primaryResource": {
-        "id": "blue-mountains-map",
-        "title": "Blue Mountains",
+        "id": "sea-cliff-map",
+        "title": "Sea Cliff Bridge",
         "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Blue+Mountains+Echo+Point",
+        "url": "https://www.google.com/maps/search/?api=1&query=Sea+Cliff+Bridge",
         "imageUrl": "",
         "imageAlt": "",
         "sourceNote": "Google Maps"
@@ -3168,81 +3168,11 @@
         {
           "dayId": "d13",
           "sortOrder": 10,
-          "period": "早上",
-          "place": "悉尼 → Katoomba",
-          "activity": "火车 / 一日团 / 自驾前往蓝山",
-          "highlight": "进入冬季山地小镇",
-          "tip": "蓝山比悉尼市区冷 5°C 左右",
-          "resources": []
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 20,
-          "period": "上午",
-          "place": "Echo Point",
-          "activity": "看 Three Sisters 三姐妹峰",
-          "highlight": "蓝山最经典景观",
-          "tip": "早到人少，拍照更舒服",
-          "resources": []
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 30,
-          "period": "中午",
-          "place": "Katoomba / Leura",
-          "activity": "小镇午餐",
-          "highlight": "冬季小镇氛围",
-          "tip": "Leura 更精致，适合咖啡和甜点",
-          "resources": [
-            {
-              "id": "leura-map",
-              "title": "Leura",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Leura+Blue+Mountains",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 40,
-          "period": "下午",
-          "place": "Scenic World",
-          "activity": "缆车、小火车、雨林步道",
-          "highlight": "蓝山核心体验",
-          "tip": "建议预留 2–3 小时",
-          "resources": [
-            {
-              "id": "scenic-world-official",
-              "title": "Scenic World",
-              "type": "official",
-              "url": "https://www.scenicworld.com.au/",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "官网"
-            }
-          ]
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 50,
-          "period": "傍晚",
-          "place": "蓝山 → 悉尼",
-          "activity": "返回市区",
-          "highlight": "完成一日自然线",
-          "tip": "晚上不要安排正式大餐",
-          "resources": []
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 60,
-          "period": "早上",
-          "place": "悉尼 → Royal National Park",
-          "activity": "租车南下，进入 Grand Pacific Drive",
-          "highlight": "城市切换到海岸",
-          "tip": "尽量避开早高峰",
+          "period": "08:00",
+          "place": "悉尼 → Royal National Park / Bald Hill",
+          "activity": "自驾南下，进入 Grand Pacific Drive",
+          "highlight": "城市切换到南海岸",
+          "tip": "路线已确定为南海岸；出发前查看 Royal National Park alerts，遇关闭按导航绕行",
           "resources": [
             {
               "id": "royal-national-park-map",
@@ -3252,17 +3182,26 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "bald-hill-map",
+              "title": "Bald Hill Lookout",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Bald+Hill+Lookout+Stanwell+Tops",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
             }
           ]
         },
         {
           "dayId": "d13",
-          "sortOrder": 70,
-          "period": "上午",
+          "sortOrder": 20,
+          "period": "09:15",
           "place": "Bald Hill Lookout",
           "activity": "俯瞰海岸线和 Sea Cliff Bridge",
-          "highlight": "开阔海景",
-          "tip": "风大，注意保暖",
+          "highlight": "南海岸第一处全景",
+          "tip": "风大时缩短停留，优先保证后续 Kiama 与 Gerringong 时间",
           "resources": [
             {
               "id": "bald-hill-map",
@@ -3286,12 +3225,12 @@
         },
         {
           "dayId": "d13",
-          "sortOrder": 80,
-          "period": "中午",
+          "sortOrder": 30,
+          "period": "10:00",
           "place": "Sea Cliff Bridge",
-          "activity": "驶上海崖桥，停车拍照",
-          "highlight": "最核心的海边公路画面",
-          "tip": "不要危险停车",
+          "activity": "驶过海崖桥并在合法位置短停拍照",
+          "highlight": "贴着太平洋的公路画面",
+          "tip": "不要在桥上或路肩危险停车",
           "resources": [
             {
               "id": "sea-cliff-map",
@@ -3306,12 +3245,12 @@
         },
         {
           "dayId": "d13",
-          "sortOrder": 90,
-          "period": "下午",
-          "place": "Wollongong / Kiama",
-          "activity": "午餐、海边散步、Kiama Blowhole",
-          "highlight": "海边小镇 + 喷潮洞",
-          "tip": "Kiama 很适合慢走",
+          "sortOrder": 40,
+          "period": "11:15",
+          "place": "Wollongong / 南海岸补给",
+          "activity": "短停咖啡或直接通过",
+          "highlight": "为 Kiama 留出完整窗口",
+          "tip": "不把 Wollongong 做成长停；进度慢就直接去 Kiama",
           "resources": [
             {
               "id": "wollongong-map",
@@ -3321,12 +3260,130 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            },
+            }
+          ]
+        },
+        {
+          "dayId": "d13",
+          "sortOrder": 50,
+          "period": "12:00",
+          "place": "Kiama Blowhole",
+          "activity": "看喷潮洞、灯塔与海边",
+          "highlight": "Kiama 代表性海岸地貌",
+          "tip": "海况决定喷潮效果；没有大浪也不必等待太久",
+          "resources": [
             {
               "id": "kiama-map",
               "title": "Kiama Blowhole",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Kiama+Blowhole",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d13",
+          "sortOrder": 60,
+          "period": "12:30–13:30",
+          "place": "Kiama",
+          "activity": "午餐与短暂休息",
+          "highlight": "海边小镇节奏",
+          "tip": "午餐控制在一小时左右，下午还要去 Gerringong",
+          "resources": [
+            {
+              "id": "kiama-map",
+              "title": "Kiama Blowhole",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Kiama+Blowhole",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "kiama-hungry-monkey-map",
+              "title": "Hungry Monkey Kiama",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hungry+Monkey+Kiama",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d13",
+          "sortOrder": 70,
+          "period": "13:30",
+          "place": "Kiama → Gerringong",
+          "activity": "沿海继续南下",
+          "highlight": "海岸逐渐转为农场与小镇",
+          "tip": "Gerringong 距 Kiama 很近，是今天的确定停靠",
+          "resources": [
+            {
+              "id": "kiama-map",
+              "title": "Kiama Blowhole",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Kiama+Blowhole",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "gerringong-map",
+              "title": "Gerringong / Werri Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Gerringong+Werri+Beach+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d13",
+          "sortOrder": 80,
+          "period": "13:45–14:40",
+          "place": "Gerringong / Werri Beach",
+          "activity": "看海岸、草坡与小镇，短停咖啡或散步",
+          "highlight": "南海岸与乡村景观同框",
+          "tip": "不要在这里拖成完整下午；14:40 左右做袋鼠谷判断",
+          "resources": [
+            {
+              "id": "gerringong-map",
+              "title": "Gerringong / Werri Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Gerringong+Werri+Beach+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d13",
+          "sortOrder": 90,
+          "period": "14:40",
+          "place": "Gerringong",
+          "activity": "判断是否延伸 Kangaroo Valley",
+          "highlight": "时间、天气与体力闸门",
+          "tip": "若已晚于 14:45、天气转差或驾驶疲劳，直接返回悉尼",
+          "resources": [
+            {
+              "id": "gerringong-map",
+              "title": "Gerringong / Werri Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Gerringong+Werri+Beach+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "kangaroo-valley-map",
+              "title": "Kangaroo Valley",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Kangaroo+Valley+NSW",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -3336,17 +3393,26 @@
         {
           "dayId": "d13",
           "sortOrder": 100,
-          "period": "傍晚",
-          "place": "Kiama → 悉尼",
-          "activity": "返回悉尼",
-          "highlight": "完成一日海岸线",
-          "tip": "不建议继续往更南开",
+          "period": "可选 15:30–16:15",
+          "place": "Kangaroo Valley / Hampden Bridge",
+          "activity": "看历史桥、山谷与小镇",
+          "highlight": "海岸日的乡村加餐",
+          "tip": "只做 Hampden Bridge + 小镇短停；不再加 Fitzroy Falls",
           "resources": [
             {
-              "id": "kiama-map",
-              "title": "Kiama Blowhole",
+              "id": "kangaroo-valley-map",
+              "title": "Kangaroo Valley",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Kiama+Blowhole",
+              "url": "https://www.google.com/maps/search/?api=1&query=Kangaroo+Valley+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "hampden-bridge-map",
+              "title": "Hampden Bridge, Kangaroo Valley",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hampden+Bridge+Kangaroo+Valley+NSW",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -3356,21 +3422,49 @@
         {
           "dayId": "d13",
           "sortOrder": 110,
-          "period": "晚上",
-          "place": "悉尼",
-          "activity": "简单晚餐",
-          "highlight": "休整",
-          "tip": "还车后不要排太满",
-          "resources": []
+          "period": "16:15 前",
+          "place": "Kangaroo Valley / Gerringong → Sydney",
+          "activity": "返程；去了袋鼠谷优先走内陆 M31，未去则从 Gerringong 直接北返",
+          "highlight": "环线收束",
+          "tip": "目标 18:30 左右回城，晚餐保持简单",
+          "resources": [
+            {
+              "id": "kangaroo-valley-map",
+              "title": "Kangaroo Valley",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Kangaroo+Valley+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "gerringong-map",
+              "title": "Gerringong / Werri Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Gerringong+Werri+Beach+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
         },
         {
           "dayId": "d13",
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：café；午餐：Leura / Kiama Hungry Monkey（🔥）；晚餐：CBD 简餐 / Bar Totti’s CBD",
+          "activity": "早餐：café；午餐：Kiama Hungry Monkey / Kiama 简餐；晚餐：回城后 CBD / 酒店附近简餐",
           "highlight": "每日餐食参考",
-          "tip": "机动日；如果南海岸回城早，Bar Totti’s CBD 很合适",
+          "tip": "今天以南海岸驾驶为主；不为餐厅绕路，给 Gerringong 和可选袋鼠谷留时间",
           "resources": [
             {
               "id": "kiama-map",
@@ -3382,28 +3476,28 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "tottis-bondi-map",
-              "title": "Totti's Bondi",
+              "id": "kiama-hungry-monkey-map",
+              "title": "Hungry Monkey Kiama",
               "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Totti%27s+Bondi",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hungry+Monkey+Kiama",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
             },
             {
-              "id": "bar-tottis-cbd-map",
-              "title": "Bar Totti's CBD",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Bar+Totti%27s+Sydney+CBD",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "leura-map",
-              "title": "Leura",
+              "id": "gerringong-map",
+              "title": "Gerringong / Werri Beach",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Leura+Blue+Mountains",
+              "url": "https://www.google.com/maps/search/?api=1&query=Gerringong+Werri+Beach+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -3420,15 +3514,15 @@
       "city": "悉尼",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "出海观鲸 + Bondi + Totti’s",
-      "focus": "Captain Cook 出海观鲸已订 + Bondi Beach / Icebergs / Tamarama；Totti’s Bondi 18:30 晚餐已订",
+      "title": "Taronga Zoo + Bondi + Totti’s",
+      "focus": "Sydney Harbour 公共 F2 Ferry + Taronga Zoo + Bondi Beach / Icebergs / Tamarama；Totti’s Bondi 18:30 晚餐已订",
       "lodging": "Oaks Sydney Goldsbrough Suites",
-      "climateNote": "出海风大，海况影响体感。",
-      "clothingNote": "提前吃晕船药，穿防风外套；Bondi 步道不必全程走完。",
-      "coverImageUrl": "/itinerary/d14-whale-bondi-coast.png",
-      "coverImageAlt": "悉尼观鲸与 Bondi 海岸",
-      "transport": "步行 / 市内交通 + 观鲸游船",
-      "leaveBy": "按观鲸船票集合时间，提前 45 分钟到码头",
+      "climateNote": "悉尼冬季早晚凉，渡轮甲板、动物园高处和 Bondi 海边都有风。",
+      "clothingNote": "穿舒适步行鞋，薄外套随身；Bondi 海岸步道只走短段。",
+      "coverImageUrl": "/itinerary/d14-taronga-bondi.png",
+      "coverImageAlt": "Taronga Zoo、悉尼港与 Bondi 海岸",
+      "transport": "F2 Ferry + 打车 / 市内交通 + 步行",
+      "leaveBy": "08:30–09:00 出门前往 Circular Quay；18:15 前抵达 Totti’s",
       "lodgingResource": {
         "id": "oaks-sydney-map",
         "title": "Oaks Sydney Goldsbrough Suites",
@@ -3439,32 +3533,70 @@
         "sourceNote": "Google Maps"
       },
       "primaryResource": {
-        "id": "circular-quay-map",
-        "title": "Circular Quay",
+        "id": "taronga-zoo-map",
+        "title": "Taronga Zoo Sydney",
         "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+        "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
         "imageUrl": "",
         "imageAlt": "",
         "sourceNote": "Google Maps"
       },
       "ticketResource": {
-        "id": "whale-watch-official",
-        "title": "Whale Watching Sydney",
-        "type": "booking",
-        "url": "https://www.whalewatchingsydney.com.au/",
+        "id": "taronga-zoo-official",
+        "title": "Taronga Zoo Sydney",
+        "type": "official",
+        "url": "https://www.taronga.org.au/sydney-zoo",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "预订参考"
+        "sourceNote": "Taronga Zoo 官网"
       },
       "blocks": [
         {
           "dayId": "d14",
           "sortOrder": 10,
-          "period": "上午",
-          "place": "Circular Quay / Darling Harbour",
-          "activity": "Captain Cook 出海观鲸",
-          "highlight": "座头鲸迁徙季",
-          "tip": "提前吃晕船药，穿防风外套；重点看海况和风；可拍船尾回看悉尼天际线 + 海港桥",
+          "period": "08:30–09:00",
+          "place": "酒店 → Circular Quay",
+          "activity": "前往公共 F2 Taronga Zoo Ferry 码头",
+          "highlight": "悉尼港开启动物与海岸日",
+          "tip": "提前查看当天 Trip Planner，建议在开园前后抵达",
+          "resources": [
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "taronga-ferry-official",
+              "title": "F2 Taronga Zoo Ferry",
+              "type": "official",
+              "url": "https://transportnsw.info/routes/details/sydney-ferries/f2/090f2",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Transport for NSW"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 20,
+          "period": "09:15 左右",
+          "place": "Circular Quay → Taronga Zoo Wharf",
+          "activity": "搭乘公共 F2 Ferry 前往 Taronga Zoo",
+          "highlight": "Opera House + Harbour Bridge + Skyline",
+          "tip": "Opal / contactless 即可；建议坐上层甲板",
           "resources": [
             {
               "id": "circular-quay-map",
@@ -3476,43 +3608,100 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "darling-harbour-map",
-              "title": "Darling Harbour",
+              "id": "taronga-ferry-official",
+              "title": "F2 Taronga Zoo Ferry",
+              "type": "official",
+              "url": "https://transportnsw.info/routes/details/sydney-ferries/f2/090f2",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Transport for NSW"
+            },
+            {
+              "id": "taronga-zoo-map",
+              "title": "Taronga Zoo Sydney",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Darling+Harbour+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            },
-            {
-              "id": "whale-watch-official",
-              "title": "Whale Watching Sydney",
-              "type": "booking",
-              "url": "https://www.whalewatchingsydney.com.au/",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "预订参考"
             }
           ]
         },
         {
           "dayId": "d14",
-          "sortOrder": 20,
-          "period": "中午",
-          "place": "返回市区",
-          "activity": "简单午餐 / 回酒店短休",
-          "highlight": "出海后恢复体力",
-          "tip": "不要马上安排重体力；视晕船和疲劳程度调整",
-          "resources": []
+          "sortOrder": 30,
+          "period": "09:30–13:30",
+          "place": "Taronga Zoo",
+          "activity": "优先游览 Australian Wildlife 区域与悉尼港景观",
+          "highlight": "澳洲本土动物 + Harbour view",
+          "tip": "不追求全园；当天动物展示和 keeper talk 以官网及现场为准",
+          "resources": [
+            {
+              "id": "taronga-zoo-map",
+              "title": "Taronga Zoo Sydney",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "taronga-zoo-official",
+              "title": "Taronga Zoo Sydney",
+              "type": "official",
+              "url": "https://www.taronga.org.au/sydney-zoo",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Taronga Zoo 官网"
+            }
+          ]
         },
         {
           "dayId": "d14",
-          "sortOrder": 30,
-          "period": "下午",
-          "place": "Bondi Beach",
-          "activity": "海滩散步、Icebergs 拍照",
-          "highlight": "悉尼最有名海滩",
-          "tip": "冬天不晒，但海边风大；可拍 Icebergs 泳池与海浪同框",
+          "sortOrder": 40,
+          "period": "13:30–14:30",
+          "place": "Taronga Zoo Wharf → Circular Quay → Bondi",
+          "activity": "F2 返回市区后前往 Bondi",
+          "highlight": "动物园切换到悉尼海岸",
+          "tip": "午餐保持轻量；回到 Circular Quay 后打车去 Bondi 更省时间",
+          "resources": [
+            {
+              "id": "taronga-ferry-official",
+              "title": "F2 Taronga Zoo Ferry",
+              "type": "official",
+              "url": "https://transportnsw.info/routes/details/sydney-ferries/f2/090f2",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Transport for NSW"
+            },
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "bondi-map",
+              "title": "Bondi Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Beach",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 50,
+          "period": "14:30–17:45",
+          "place": "Bondi Beach → Icebergs → Tamarama",
+          "activity": "海滩散步并走一段 Coastal Walk",
+          "highlight": "泳池、海浪、悬崖海岸线",
+          "tip": "不走完整 Bondi–Coogee；17:45 左右结束海边，给晚餐交通留时间",
           "resources": [
             {
               "id": "bondi-map",
@@ -3531,26 +3720,6 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d14",
-          "sortOrder": 40,
-          "period": "下午后段",
-          "place": "Tamarama / Bondi to Coogee Coastal Walk",
-          "activity": "走一段即可",
-          "highlight": "悬崖步道、海岸线",
-          "tip": "不必全程走完，体力够走到 Tamarama 就很好；可拍 Tamarama 海湾俯拍点",
-          "resources": [
-            {
-              "id": "bondi-map",
-              "title": "Bondi Beach",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Beach",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
             },
             {
               "id": "tamarama-map",
@@ -3565,12 +3734,12 @@
         },
         {
           "dayId": "d14",
-          "sortOrder": 50,
+          "sortOrder": 60,
           "period": "18:30",
           "place": "Totti’s Bondi",
-          "activity": "晚餐已订",
-          "highlight": "分享型 Italian，适合 4 人",
-          "tip": "观鲸 + Bondi 后比正式海景餐更轻松；可拍餐桌、puffy bread、shared plates",
+          "activity": "分享式 Italian 晚餐（已订）",
+          "highlight": "puffy bread + shared plates",
+          "tip": "餐厅在 Bondi Road，不在沙滩第一排；建议 18:15 前抵达",
           "resources": [
             {
               "id": "tottis-bondi-map",
@@ -3594,56 +3763,36 @@
         },
         {
           "dayId": "d14",
-          "sortOrder": 60,
-          "period": "晚上",
-          "place": "Bondi → 酒店",
-          "activity": "回酒店休息",
-          "highlight": "完成海洋体验日",
-          "tip": "不要再加夜间项目",
-          "resources": [
-            {
-              "id": "bondi-map",
-              "title": "Bondi Beach",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Beach",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d14",
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：CBD café；午餐：Bondi casual / Chickorea（备选）；晚餐：Totti’s Bondi 18:30（已订）",
+          "activity": "早餐：CBD café；午餐：Taronga Zoo 轻食 / Circular Quay 简餐；晚餐：Totti’s Bondi 18:30（已订）",
           "highlight": "每日餐食参考",
-          "tip": "观鲸后不要安排太重；下午 Bondi 拍 Icebergs / Tamarama，18:30 坐下吃分享型 Italian",
+          "tip": "动物园午餐不要拖；下午只走 Bondi–Tamarama 短段，按时到 Totti’s",
           "resources": [
             {
-              "id": "whale-watch-official",
-              "title": "Whale Watching Sydney",
-              "type": "booking",
-              "url": "https://www.whalewatchingsydney.com.au/",
+              "id": "taronga-zoo-map",
+              "title": "Taronga Zoo Sydney",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "预订参考"
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
             },
             {
               "id": "bondi-map",
               "title": "Bondi Beach",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Beach",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "chickorea-map",
-              "title": "Chickorea Bondi",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Chickorea+Bondi",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -3678,15 +3827,15 @@
       "city": "悉尼",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "Taronga Zoo + 最后采购 + Cafe Sydney",
-      "focus": "Taronga Zoo + Sydney Harbour Ferry + QVB / Chemist Warehouse 最后采购 + Cafe Sydney 17:30 Outdoor Terrace Dining 告别晚餐已订",
+      "title": "Manly 弹性早晨 + 最后采购 + Cafe Sydney",
+      "focus": "早上看状态决定是否搭 F1 Ferry 去 Manly；随后 QVB / Chemist Warehouse 最后采购、TRS / 行李整理；Cafe Sydney 17:30 Outdoor Terrace Dining 告别晚餐已订",
       "lodging": "Oaks Sydney Goldsbrough Suites",
-      "climateNote": "悉尼早晚凉，渡轮甲板和动物园高处有风。",
-      "clothingNote": "薄外套随身；动物园步行较多，穿舒适鞋；晚餐注意 smart casual。",
-      "coverImageUrl": "/itinerary/d15-taronga-zoo-harbour.png",
-      "coverImageAlt": "Taronga Zoo 长颈鹿与悉尼港景观",
-      "transport": "F2 Ferry + 步行 / 市内交通",
-      "leaveBy": "08:30 左右出门前往 Circular Quay；16:40 前往 Cafe Sydney",
+      "climateNote": "悉尼早晚凉，若去 Manly，渡轮甲板和海边风更明显。",
+      "clothingNote": "薄外套随身；晚餐换 smart casual，并给回酒店整理行李留足时间。",
+      "coverImageUrl": "/itinerary/d15-manly-flex-farewell.png",
+      "coverImageAlt": "Manly 渡轮与悉尼港告别黄昏",
+      "transport": "F1 Ferry（可选） + 步行 / 市内交通",
+      "leaveBy": "上午按状态决定；去 Manly 则 13:00–13:30 返程；16:40 前往 Cafe Sydney",
       "lodgingResource": {
         "id": "oaks-sydney-map",
         "title": "Oaks Sydney Goldsbrough Suites",
@@ -3697,32 +3846,32 @@
         "sourceNote": "Google Maps"
       },
       "primaryResource": {
-        "id": "taronga-zoo-map",
-        "title": "Taronga Zoo Sydney",
+        "id": "qvb-map",
+        "title": "QVB",
         "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
+        "url": "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Building+Sydney",
         "imageUrl": "",
         "imageAlt": "",
         "sourceNote": "Google Maps"
       },
       "ticketResource": {
-        "id": "taronga-zoo-official",
-        "title": "Taronga Zoo Sydney",
-        "type": "official",
-        "url": "https://www.taronga.org.au/sydney-zoo",
+        "id": "no-fixed-ticket",
+        "title": "当天无固定票券",
+        "type": "note",
+        "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "Taronga Zoo 官网"
+        "sourceNote": "每日明确票券状态"
       },
       "blocks": [
         {
           "dayId": "d15",
           "sortOrder": 10,
-          "period": "08:30–09:00",
-          "place": "酒店 → Circular Quay",
-          "activity": "前往 Taronga Zoo Ferry 码头",
-          "highlight": "悉尼最后一天慢启动",
-          "tip": "提前查看 F2 渡轮班次，建议到 Circular Quay Wharf 4",
+          "period": "上午",
+          "place": "酒店 / 悉尼市区",
+          "activity": "慢早餐，按睡眠、天气和体力决定是否去 Manly",
+          "highlight": "最后一天保留弹性",
+          "tip": "状态好才启动 Manly；否则留在 CBD，直接进入轻松采购与整理",
           "resources": [
             {
               "id": "oaks-sydney-map",
@@ -3734,33 +3883,24 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "circular-quay-map",
-              "title": "Circular Quay",
+              "id": "qvb-map",
+              "title": "QVB",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Building+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            },
-            {
-              "id": "taronga-ferry-official",
-              "title": "F2 Taronga Zoo Ferry",
-              "type": "official",
-              "url": "https://transportnsw.info/routes/details/sydney-ferries/f2/090f2",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Transport for NSW"
             }
           ]
         },
         {
           "dayId": "d15",
           "sortOrder": 20,
-          "period": "09:15–10:00",
-          "place": "Circular Quay → Taronga Zoo Wharf",
-          "activity": "搭乘 F2 Ferry 前往 Taronga Zoo",
-          "highlight": "Opera House + Harbour Bridge + Skyline",
-          "tip": "建议坐上层甲板；渡轮是今天的重要体验，不只是交通",
+          "period": "可选 09:30 左右",
+          "place": "Circular Quay → Manly",
+          "activity": "搭乘公共 F1 Manly Ferry",
+          "highlight": "悉尼港经典渡轮体验",
+          "tip": "仅在状态好且能于 13:00–13:30 返程时执行；当天查看班次",
           "resources": [
             {
               "id": "circular-quay-map",
@@ -3772,19 +3912,10 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "taronga-ferry-official",
-              "title": "F2 Taronga Zoo Ferry",
-              "type": "official",
-              "url": "https://transportnsw.info/routes/details/sydney-ferries/f2/090f2",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Transport for NSW"
-            },
-            {
-              "id": "taronga-zoo-map",
-              "title": "Taronga Zoo Sydney",
+              "id": "manly-ferry-map",
+              "title": "Manly Ferry",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Ferry+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -3794,64 +3925,73 @@
         {
           "dayId": "d15",
           "sortOrder": 30,
-          "period": "10:00–13:30",
-          "place": "Taronga Zoo",
-          "activity": "游览动物园，优先 Australian Wildlife 区域",
-          "highlight": "Koala / Kangaroo / Wallaby / Wombat + 悉尼港景观",
-          "tip": "不追求全部动物；当天 keeper talk 以官网和现场时间为准",
+          "period": "可选 10:00–12:45",
+          "place": "Manly Beach / The Corso",
+          "activity": "海边散步、咖啡或早午餐",
+          "highlight": "比 Bondi 更松弛",
+          "tip": "不追求打卡；午餐不要拖太久",
           "resources": [
             {
-              "id": "taronga-zoo-map",
-              "title": "Taronga Zoo Sydney",
+              "id": "manly-beach-map",
+              "title": "Manly Beach",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Beach+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
             },
             {
-              "id": "taronga-zoo-official",
-              "title": "Taronga Zoo Sydney",
-              "type": "official",
-              "url": "https://www.taronga.org.au/sydney-zoo",
+              "id": "hugos-manly-map",
+              "title": "Hugos Manly",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hugos+Manly",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Taronga Zoo 官网"
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "felons-manly-map",
+              "title": "Felons Manly",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Felons+Manly",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
             }
           ]
         },
         {
           "dayId": "d15",
           "sortOrder": 40,
-          "period": "13:30–14:00",
-          "place": "Taronga Zoo Wharf → Circular Quay",
-          "activity": "搭乘 F2 Ferry 返回市区",
-          "highlight": "再看一次悉尼港",
-          "tip": "回程可休息，给下午采购和晚餐留体力",
+          "period": "13:00–13:30",
+          "place": "Manly → Circular Quay / CBD",
+          "activity": "最晚搭船回市区",
+          "highlight": "给采购、TRS 和晚餐留余量",
+          "tip": "若早上没有去 Manly，这一时段可在 CBD 咖啡或提前购物",
           "resources": [
             {
-              "id": "taronga-zoo-map",
-              "title": "Taronga Zoo Sydney",
+              "id": "manly-ferry-map",
+              "title": "Manly Ferry",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Ferry+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            },
-            {
-              "id": "taronga-ferry-official",
-              "title": "F2 Taronga Zoo Ferry",
-              "type": "official",
-              "url": "https://transportnsw.info/routes/details/sydney-ferries/f2/090f2",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Transport for NSW"
             },
             {
               "id": "circular-quay-map",
               "title": "Circular Quay",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "qvb-map",
+              "title": "QVB",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Building+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -3865,7 +4005,7 @@
           "place": "QVB / Chemist Warehouse / CBD",
           "activity": "最后采购",
           "highlight": "药妆、保健品、伴手礼",
-          "tip": "今天完成所有购物；保留 tax invoice 并核对 TRS 条件",
+          "tip": "只补漏买；保留 tax invoice 并核对 TRS 条件",
           "resources": [
             {
               "id": "qvb-map",
@@ -3892,9 +4032,9 @@
           "sortOrder": 60,
           "period": "15:30–16:20",
           "place": "酒店",
-          "activity": "整理 TRS 和返程行李",
-          "highlight": "为 D16 返程准备",
-          "tip": "发票、商品、护照和支付卡集中整理",
+          "activity": "整理 TRS 物品和返程行李",
+          "highlight": "为 D16 机场退税做准备",
+          "tip": "发票、商品、护照和支付卡集中整理；完成换装",
           "resources": [
             {
               "id": "oaks-sydney-map",
@@ -3923,7 +4063,7 @@
           "place": "酒店 → Circular Quay",
           "activity": "前往 Cafe Sydney",
           "highlight": "避免迟到",
-          "tip": "换 smart casual；Outdoor Terrace 注意带外套",
+          "tip": "Outdoor Terrace 晚上有风，带外套；17:15 左右开始餐厅签到",
           "resources": [
             {
               "id": "oaks-sydney-map",
@@ -3957,40 +4097,11 @@
         {
           "dayId": "d15",
           "sortOrder": 80,
-          "period": "17:00–17:15",
-          "place": "Circular Quay",
-          "activity": "日落前拍摄",
-          "highlight": "Opera House + Harbour Bridge + 蓝调前光线",
-          "tip": "不要拖到 17:30 才到附近",
-          "resources": [
-            {
-              "id": "circular-quay-map",
-              "title": "Circular Quay",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "opera-house-map",
-              "title": "Sydney Opera House",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d15",
-          "sortOrder": 90,
           "period": "17:30",
           "place": "Cafe Sydney",
-          "activity": "Outdoor Terrace Dining 告别晚餐已订",
-          "highlight": "最后一晚海港晚餐",
-          "tip": "按预订时间入座；到店后再灵活点酒",
+          "activity": "Outdoor Terrace Dining 告别晚餐（已订）",
+          "highlight": "海港景观 + 澳洲最后一晚",
+          "tip": "按预订时间入座；晚餐后回酒店做最终检查",
           "resources": [
             {
               "id": "cafe-sydney-map",
@@ -4014,41 +4125,12 @@
         },
         {
           "dayId": "d15",
-          "sortOrder": 100,
-          "period": "晚上",
-          "place": "酒店",
-          "activity": "最终整理",
-          "highlight": "返程准备",
-          "tip": "回酒店后完成 D16 行李和退税物品检查",
-          "resources": [
-            {
-              "id": "oaks-sydney-map",
-              "title": "Oaks Sydney Goldsbrough Suites",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "trs-official",
-              "title": "TRS 退税",
-              "type": "official",
-              "url": "https://www.abf.gov.au/entering-and-leaving-australia/tourist-refund-scheme",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "澳洲边防官网"
-            }
-          ]
-        },
-        {
-          "dayId": "d15",
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：café / Single O / Toby’s Estate；午餐：Taronga Zoo Café / 自带轻食 / Circular Quay casual lunch；晚餐：Cafe Sydney 17:30 Outdoor Terrace Dining（已订）",
+          "activity": "早餐：café / Single O / Toby’s Estate；午餐：若去 Manly 则 fish & chips / café，否则 CBD 简餐；晚餐：Cafe Sydney 17:30 Outdoor Terrace Dining（已订）",
           "highlight": "每日餐食参考",
-          "tip": "动物园午餐保持轻量；16:40 出发去 Circular Quay；17:00–17:15 拍日落；17:30 入座",
+          "tip": "Manly 是状态触发项；无论去不去，14:00 后进入采购、TRS 和告别晚餐主线",
           "resources": [
             {
               "id": "single-o-map",
@@ -4069,19 +4151,19 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "taronga-zoo-map",
-              "title": "Taronga Zoo Sydney",
+              "id": "manly-beach-map",
+              "title": "Manly Beach",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Beach+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
             },
             {
-              "id": "circular-quay-map",
-              "title": "Circular Quay",
+              "id": "qvb-map",
+              "title": "QVB",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Building+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -4674,24 +4756,6 @@
       "sourceNote": "Google Maps"
     },
     {
-      "id": "blue-mountains-map",
-      "title": "Blue Mountains",
-      "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Blue+Mountains+Echo+Point",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "Google Maps"
-    },
-    {
-      "id": "scenic-world-official",
-      "title": "Scenic World",
-      "type": "official",
-      "url": "https://www.scenicworld.com.au/",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "官网"
-    },
-    {
       "id": "sea-cliff-map",
       "title": "Sea Cliff Bridge",
       "type": "map",
@@ -4708,15 +4772,6 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
-    },
-    {
-      "id": "whale-watch-official",
-      "title": "Whale Watching Sydney",
-      "type": "booking",
-      "url": "https://www.whalewatchingsydney.com.au/",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "预订参考"
     },
     {
       "id": "bondi-map",
@@ -4962,15 +5017,6 @@
       "sourceNote": "Google Maps"
     },
     {
-      "id": "leura-map",
-      "title": "Leura",
-      "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Leura+Blue+Mountains",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "Google Maps"
-    },
-    {
       "id": "royal-national-park-map",
       "title": "Royal National Park",
       "type": "map",
@@ -5169,15 +5215,6 @@
       "sourceNote": "Google Maps"
     },
     {
-      "id": "bar-tottis-cbd-map",
-      "title": "Bar Totti's CBD",
-      "type": "restaurant",
-      "url": "https://www.google.com/maps/search/?api=1&query=Bar+Totti%27s+Sydney+CBD",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "Google Maps"
-    },
-    {
       "id": "tottis-bondi-map",
       "title": "Totti's Bondi",
       "type": "restaurant",
@@ -5338,6 +5375,69 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "City of Melbourne：2026-07-29 17:00-22:00，免费，免预约；QVM 官网确认每周三 6/3-8/26。"
+    },
+    {
+      "id": "hugos-manly-map",
+      "title": "Hugos Manly",
+      "type": "restaurant",
+      "url": "https://www.google.com/maps/search/?api=1&query=Hugos+Manly",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "gerringong-map",
+      "title": "Gerringong / Werri Beach",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Gerringong+Werri+Beach+NSW",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "felons-manly-map",
+      "title": "Felons Manly",
+      "type": "restaurant",
+      "url": "https://www.google.com/maps/search/?api=1&query=Felons+Manly",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "kangaroo-valley-map",
+      "title": "Kangaroo Valley",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Kangaroo+Valley+NSW",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "manly-ferry-map",
+      "title": "Manly Ferry",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Manly+Ferry+Sydney",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "manly-beach-map",
+      "title": "Manly Beach",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Manly+Beach+Sydney",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "hampden-bridge-map",
+      "title": "Hampden Bridge, Kangaroo Valley",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Hampden+Bridge+Kangaroo+Valley+NSW",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
     }
   ]
 }

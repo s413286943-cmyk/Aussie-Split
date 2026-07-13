@@ -87,7 +87,65 @@ describe("itinerary data", () => {
     assert.match(d3.coverImageAlt, /Lorne|Apollo Bay|灯塔|大洋路早段/);
   });
 
-  it("uses the Taronga Zoo plan and cover on D15 without Manly leftovers", () => {
+  it("uses the fixed South Coast plan on D13 without Blue Mountains leftovers", () => {
+    const d13 = itinerary.days.find((day) => day.id === "d13");
+    const d13Text = [
+      d13.title,
+      d13.focus,
+      ...d13.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`),
+    ].join(" ");
+
+    assert.equal(d13.coverImageUrl, "/itinerary/d13-south-coast-kiama-gerringong.png");
+    assert.match(d13.coverImageAlt, /南海岸|Kiama|Gerringong/);
+    assert.match(d13.transport, /自驾/);
+    assert.match(d13.primaryResource.title, /Sea Cliff Bridge/);
+    assert.match(d13Text, /Kiama/);
+    assert.match(d13Text, /Gerringong/);
+    assert.match(d13Text, /Kangaroo Valley/);
+    assert.match(d13Text, /可选|允许|视时间|判断/);
+    assert.doesNotMatch(d13Text, /Blue Mountains|蓝山|Scenic World/i);
+  });
+
+  it("uses Taronga and Bondi on D14 without whale-watching leftovers", () => {
+    const d14 = itinerary.days.find((day) => day.id === "d14");
+    const d14Text = [
+      d14.title,
+      d14.focus,
+      ...d14.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`),
+    ].join(" ");
+
+    assert.equal(d14.coverImageUrl, "/itinerary/d14-taronga-bondi.png");
+    assert.match(d14.coverImageAlt, /Taronga|Bondi|悉尼港/);
+    assert.match(d14.primaryResource.title, /Taronga Zoo/);
+    assert.match(d14.ticketResource.title, /Taronga Zoo/);
+    assert.match(d14Text, /Taronga Zoo/);
+    assert.match(d14Text, /F2|公共渡轮|Ferry/);
+    assert.match(d14Text, /Bondi/);
+    assert.match(d14Text, /Tamarama/);
+    assert.match(d14Text, /Totti/);
+    assert.match(d14Text, /18:30/);
+    assert.doesNotMatch(d14Text, /Captain Cook|观鲸|whale/i);
+  });
+
+  it("does not let a cancelled same-day activity override the D14 Taronga ticket", () => {
+    const d14 = itinerary.days.find((day) => day.id === "d14");
+    const docket = buildDayDocket(d14, [{
+      id: "cancelled-whale-tour",
+      category: "活动",
+      item: "Captain Cook Whale Watching",
+      date: d14.date,
+      currency: "AUD",
+      amount: 340.2,
+      status: "confirmed",
+      note: "旧记录",
+    }]);
+    const ticket = docket.find((item) => item.id === "ticket");
+
+    assert.match(ticket.title, /Taronga Zoo/);
+    assert.doesNotMatch(`${ticket.title} ${ticket.detail}`, /Captain Cook|观鲸|whale/i);
+  });
+
+  it("keeps Manly optional on D15 before shopping and Cafe Sydney", () => {
     const d15 = itinerary.days.find((day) => day.id === "d15");
     const d15Text = [
       d15.title,
@@ -95,13 +153,19 @@ describe("itinerary data", () => {
       ...d15.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`),
     ].join(" ");
 
-    assert.equal(d15.coverImageUrl, "/itinerary/d15-taronga-zoo-harbour.png");
-    assert.match(d15.coverImageAlt, /Taronga|长颈鹿|悉尼港/);
-    assert.match(d15.primaryResource.title, /Taronga Zoo/);
-    assert.match(d15.ticketResource.title, /Taronga Zoo/);
-    assert.match(d15Text, /Taronga Zoo/);
+    assert.equal(d15.coverImageUrl, "/itinerary/d15-manly-flex-farewell.png");
+    assert.match(d15.coverImageAlt, /Manly|悉尼港|告别/);
+    assert.match(d15.transport, /可选/);
+    assert.match(d15.primaryResource.title, /QVB/);
+    assert.equal(d15.ticketResource.id, "no-fixed-ticket");
+    assert.match(d15Text, /Manly/);
+    assert.match(d15Text, /状态|体力|可选/);
+    assert.match(d15Text, /QVB/);
+    assert.match(d15Text, /Chemist Warehouse/);
+    assert.match(d15Text, /TRS/);
     assert.match(d15Text, /Cafe Sydney/);
-    assert.doesNotMatch(d15Text, /Manly|Hugos|Felons/i);
+    assert.match(d15Text, /17:30/);
+    assert.doesNotMatch(d15Text, /Taronga Zoo/);
   });
 
   it("keeps Totti's on D14 and Cafe Sydney on D15 in the meal plan", () => {

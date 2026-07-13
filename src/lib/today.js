@@ -94,7 +94,7 @@ export function buildDayDocket(day, expenses = []) {
   const dayExpenses = expenses.filter((expense) => expense.date === day?.date);
   const lodgingExpense = findMatchingExpense(dayExpenses, ["酒店"], day?.lodging);
   const transportExpense = findMatchingExpense(dayExpenses, ["租车", "交通"], day?.title);
-  const activityExpense = findMatchingExpense(dayExpenses, ["活动"], day?.title);
+  const activityExpense = findMatchingActivityExpense(dayExpenses, day);
   const lodgingResource = day?.lodgingResource;
   const primaryResource = day?.primaryResource;
   const ticketResource = day?.ticketResource;
@@ -309,6 +309,17 @@ function findMatchingExpense(expenses, categories, text = "") {
   const normalizedText = normalizeText(text);
   return expenses.find((expense) => categories.includes(expense.category) && normalizedText && normalizeText(`${expense.item} ${expense.note}`).includes(normalizedText.slice(0, 8))) ||
     expenses.find((expense) => categories.includes(expense.category));
+}
+
+function findMatchingActivityExpense(expenses, day) {
+  const normalizedDay = normalizeText(daySearchText(day));
+
+  return expenses.find((expense) => {
+    if (expense.category !== "活动") return false;
+    const normalizedItem = normalizeText(expense.item);
+    const matchKey = normalizedItem.slice(0, 8);
+    return matchKey.length >= 4 && normalizedDay.includes(matchKey);
+  });
 }
 
 function findDinnerResource(day) {
