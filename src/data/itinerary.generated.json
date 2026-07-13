@@ -122,7 +122,7 @@
       "lat": -37.8136,
       "lon": 144.9631,
       "title": "抵达墨尔本，CBD 轻量 city walk",
-      "focus": "05:55 抵达，入境、休息；CBD city walk：Degraves Lane、Flinders Street、State Library、Hosier Lane、Southbank / Yarra River 夜景，按体力缩短。",
+      "focus": "05:55 抵达，入境、休息；白天按体力安排 Degraves Lane、Flinders Street、State Library、Hosier Lane，下午优先回酒店休息；17:30-19:30 QVM Winter Night Market（2026 冬季周三限定），结束后直接回酒店。",
       "lodging": "Oaks Melbourne on Market Hotel",
       "climateNote": "墨尔本冬季约 6-14°C，早晚冷，多风，偶有阵雨。",
       "clothingNote": "羽绒服或防风外套、毛衣、长裤、防水鞋。",
@@ -309,28 +309,28 @@
           "dayId": "d1",
           "sortOrder": 70,
           "period": "傍晚",
-          "place": "Southbank / Yarra River",
-          "activity": "河边散步",
-          "highlight": "墨尔本夜景、城市氛围",
-          "tip": "轻松走 20-40 分钟即可；拍照：Yarra River 倒影、Flinders 夜灯",
+          "place": "Queen Victoria Market",
+          "activity": "17:30-19:30 QVM Winter Night Market",
+          "highlight": "冬季周三限定夜市",
+          "tip": "官方场次 17:00-22:00，免费入场、免预约；落地日建议 17:30 前到，按体力逛 30-120 分钟，穿防风保暖外套。",
           "resources": [
             {
-              "id": "southbank-map",
-              "title": "Southbank",
+              "id": "qvm-map",
+              "title": "Queen Victoria Market",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Southbank+Melbourne",
+              "url": "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Market",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
             },
             {
-              "id": "flinders-street-map",
-              "title": "Flinders Street Station",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Flinders+Street+Station+Melbourne",
+              "id": "qvm-winter-night-market-official",
+              "title": "QVM Winter Night Market 2026",
+              "type": "official",
+              "url": "https://whatson.melbourne.vic.gov.au/things-to-do/winter-night-market",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "City of Melbourne：2026-07-29 17:00-22:00，免费，免预约；QVM 官网确认每周三 6/3-8/26。"
             }
           ]
         },
@@ -338,28 +338,37 @@
           "dayId": "d1",
           "sortOrder": 80,
           "period": "晚上",
-          "place": "Southbank / CBD",
-          "activity": "简单晚餐",
+          "place": "QVM → Oaks Melbourne on Market Hotel",
+          "activity": "夜市用餐后直接回酒店休息",
           "highlight": "落地日收尾",
-          "tip": "不订正式餐厅，早点回酒店休息；拍照：雨后街灯反光 / 河岸夜景",
+          "tip": "不再另订正式餐厅；如体力不足，可只逛 30-60 分钟后返回酒店。",
           "resources": [
             {
-              "id": "southbank-map",
-              "title": "Southbank",
+              "id": "qvm-map",
+              "title": "Queen Victoria Market",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Southbank+Melbourne",
+              "url": "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Market",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
             },
             {
-              "id": "riverland-map",
-              "title": "Riverland Bar",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Riverland+Bar+Melbourne",
+              "id": "oaks-market-map",
+              "title": "Oaks Melbourne on Market Hotel",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Melbourne+on+Market+Hotel",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "qvm-winter-night-market-official",
+              "title": "QVM Winter Night Market 2026",
+              "type": "official",
+              "url": "https://whatson.melbourne.vic.gov.au/things-to-do/winter-night-market",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "City of Melbourne：2026-07-29 17:00-22:00，免费，免预约；QVM 官网确认每周三 6/3-8/26。"
             }
           ]
         },
@@ -368,36 +377,27 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：CBD café / Operator25（可选Brunch）；午餐：Degraves Lane / CBD 简餐 / Pho Tùng（可选）；晚餐：Southbank Riverland / Ponyfish Island / CBD 简餐",
+          "activity": "早餐：CBD café / Operator25（可选 Brunch）；午餐：Degraves Lane / CBD 简餐 / Pho Tùng（可选）；晚餐：QVM Winter Night Market 街头热食（主）/ CBD 简餐（体力不足）",
           "highlight": "每日餐食参考",
-          "tip": "轻恢复",
+          "tip": "夜市作为晚餐，优先选热食；不再另排 Southbank 正式晚餐。",
           "resources": [
             {
-              "id": "southbank-map",
-              "title": "Southbank",
+              "id": "qvm-map",
+              "title": "Queen Victoria Market",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Southbank+Melbourne",
+              "url": "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Market",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
             },
             {
-              "id": "riverland-map",
-              "title": "Riverland Bar",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Riverland+Bar+Melbourne",
+              "id": "qvm-winter-night-market-official",
+              "title": "QVM Winter Night Market 2026",
+              "type": "official",
+              "url": "https://whatson.melbourne.vic.gov.au/things-to-do/winter-night-market",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "ponyfish-map",
-              "title": "Ponyfish Island",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Ponyfish+Island+Melbourne",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "City of Melbourne：2026-07-29 17:00-22:00，免费，免预约；QVM 官网确认每周三 6/3-8/26。"
             },
             {
               "id": "operator25-map",
@@ -5329,6 +5329,15 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "每日明确票券状态"
+    },
+    {
+      "id": "qvm-winter-night-market-official",
+      "title": "QVM Winter Night Market 2026",
+      "type": "official",
+      "url": "https://whatson.melbourne.vic.gov.au/things-to-do/winter-night-market",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "City of Melbourne：2026-07-29 17:00-22:00，免费，免预约；QVM 官网确认每周三 6/3-8/26。"
     }
   ]
 }

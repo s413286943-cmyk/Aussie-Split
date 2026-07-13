@@ -117,6 +117,23 @@ describe("itinerary data", () => {
     assert.match(d15Text, /Cafe Sydney/);
   });
 
+  it("adds the 2026 QVM Winter Night Market to D1", () => {
+    const d1 = itinerary.days.find((day) => day.id === "d1");
+    const marketBlock = d1.blocks.find((block) => /QVM Winter Night Market/.test(block.activity));
+    const mealBlock = d1.blocks.find((block) => block.period === "饮食" && block.place === "饮食安排");
+    const officialResource = marketBlock?.resources.find((resource) => resource.type === "official");
+
+    assert.match(d1.focus, /QVM Winter Night Market/);
+    assert.ok(marketBlock);
+    assert.match(marketBlock.tip, /17:00-22:00/);
+    assert.match(marketBlock.tip, /免费.*免预约/);
+    assert.equal(
+      officialResource?.url,
+      "https://whatson.melbourne.vic.gov.au/things-to-do/winter-night-market",
+    );
+    assert.match(mealBlock.activity, /QVM Winter Night Market/);
+  });
+
   it("includes a daily meal-map block from D1 through D16", () => {
     for (const dayId of Array.from({ length: 16 }, (_, index) => `d${index + 1}`)) {
       const day = itinerary.days.find((item) => item.id === dayId);
