@@ -1,7 +1,13 @@
 import { expect, test } from "./fixtures/test.js";
 
-test("dashboard and expense ledger load the protected snapshot", async ({ page }) => {
+test("homepage opens the itinerary while the ledger overview remains available", async ({ page }) => {
   await page.goto("/");
+
+  await expect(page.locator(".itinerary-shell")).toBeVisible();
+  await expect(page.getByRole("link", { name: "行程", exact: true })).toHaveAttribute("aria-current", "page");
+
+  await page.getByRole("link", { name: "总览", exact: true }).click();
+  await expect(page).toHaveURL(/\/ledger$/);
 
   await expect(page.getByRole("heading", { name: "Aussie Chill", level: 1 })).toBeVisible();
   await expect(page.getByText("A$200.00", { exact: true })).toBeVisible();
@@ -77,7 +83,7 @@ test("settlement excludes expenses already marked split-settled", async ({ page 
 
 test("mobile ledger exposes work before advanced controls", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await page.goto("/ledger");
 
   await expect(page.locator(".docket-status")).toBeInViewport();
   await expect(page.locator(".docket-metrics")).toBeInViewport();
@@ -118,7 +124,7 @@ test("mobile add keeps message recognition and templates compact", async ({ page
 test("ledger and itinerary share the same primary navigation", async ({ page }) => {
   const expectedLabels = ["总览", "明细", "新增", "操作", "结算", "行程"];
 
-  for (const path of ["/", "/itinerary"]) {
+  for (const path of ["/ledger", "/"]) {
     await page.goto(path);
     await expect(page.getByRole("navigation", { name: "主导航" })).toBeVisible();
     const labels = await page

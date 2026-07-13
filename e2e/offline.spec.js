@@ -5,7 +5,7 @@ test.use({ serviceWorkers: "allow" });
 test("cached ledger routes reopen offline and retain a locally added expense", async ({ page, context }) => {
   test.setTimeout(60_000);
   await page.clock.setFixedTime(new Date("2026-07-20T10:00:00+08:00"));
-  await page.goto("/");
+  await page.goto("/ledger");
   await expect(page.getByRole("heading", { name: "Harbour dinner" })).toBeVisible();
 
   await page.evaluate(() => navigator.serviceWorker.ready.then(() => true));

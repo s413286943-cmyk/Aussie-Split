@@ -1,5 +1,5 @@
-import TripLedgerApp from "@/components/TripLedgerApp";
+import ItineraryApp from "@/components/ItineraryApp";
 
 export default function Home() {
-  return <TripLedgerApp view="dashboard" />;
+  return <ItineraryApp />;
 }

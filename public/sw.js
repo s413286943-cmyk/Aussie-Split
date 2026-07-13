@@ -10,6 +10,7 @@ const ITINERARY_CACHE = RELEASE_CACHE_PREFIX + "itinerary";
 const PRECACHE_URLS = [
   "/",
   "/itinerary",
+  "/ledger",
   "/expenses",
   "/add",
   "/settlement",

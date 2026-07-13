@@ -23,7 +23,7 @@ test("shared access gate rejects a bad code and unlocks with the shared code", a
 test("public application scripts contain no private itinerary or seeded expense data", async ({ page, mockApi }) => {
   mockApi.authenticated = false;
 
-  for (const path of ["/", "/itinerary"]) {
+  for (const path of ["/", "/ledger", "/itinerary"]) {
     await page.goto(path);
     const scriptBodies = await page.evaluate(async () => Promise.all(
       [...document.scripts]

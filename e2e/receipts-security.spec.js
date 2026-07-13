@@ -50,7 +50,7 @@ test("ledger browser traffic stays same-origin and never calls Supabase Data or 
     url: request.url(),
   }));
 
-  await page.goto("/");
+  await page.goto("/ledger");
   await expect(page.getByRole("heading", { name: "Harbour dinner" })).toBeVisible();
   await page.goto("/expenses");
   await page.goto("/settlement");

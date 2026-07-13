@@ -40,7 +40,7 @@ export default function LedgerShell({ view, syncState, onSync, notice, children,
           <div className="hero-actions">
             <Link className="button primary" href="/add">记一笔</Link>
             <Link className="button" href="/settlement">看结算</Link>
-            <Link className="button" href="/itinerary">看行程</Link>
+            <Link className="button" href="/">看行程</Link>
             <SyncButton syncState={syncState} onSync={onSync} disabled={isSyncing} />
           </div>
         </header>

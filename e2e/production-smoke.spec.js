@@ -14,7 +14,7 @@ test("production routes answer without issuing mutation requests", async ({ page
     await route.continue();
   });
 
-  for (const path of ["/", "/expenses", "/add", "/activity", "/settlement", "/itinerary"]) {
+  for (const path of ["/", "/ledger", "/expenses", "/add", "/activity", "/settlement", "/itinerary"]) {
     const response = await page.goto(path, { waitUntil: "domcontentloaded" });
     expect(response?.status(), `${path} should answer`).toBeLessThan(400);
     await expect(page).toHaveTitle(/Aussie Chill/);

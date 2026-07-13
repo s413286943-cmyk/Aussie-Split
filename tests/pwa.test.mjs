@@ -17,6 +17,7 @@ describe("offline application shell", () => {
     for (const route of [
       "/",
       "/itinerary",
+      "/ledger",
       "/expenses",
       "/add",
       "/settlement",

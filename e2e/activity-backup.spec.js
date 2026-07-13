@@ -1,7 +1,7 @@
 import { expect, test } from "./fixtures/test.js";
 
 test("dashboard previews three recent operations and the activity page shows the full feed", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/ledger");
 
   const preview = page.locator("section.activity-section");
   await expect(preview.locator(".activity-row")).toHaveCount(3);

@@ -2,8 +2,8 @@
 
 澳洲旅行两对夫妻共享站点：
 
-- `/itinerary`：旅行杂志感行程页，含每日安排、图片、链接和天气。
-- `/`、`/expenses`、`/add`、`/settlement`：split bill 账本。
+- `/`、`/itinerary`：旅行杂志感行程页，含每日安排、图片、链接和天气。
+- `/ledger`、`/expenses`、`/add`、`/settlement`：split bill 账本。
 
 机票不纳入账本；默认每笔费用两对夫妻 50/50，按币种分别结算。
 
