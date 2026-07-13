@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import AppNav from "@/components/AppNav";
+import LedgerNav from "@/components/ledger/LedgerNav";
 
 const viewTitles = {
   expenses: "费用明细",
@@ -48,6 +49,7 @@ export default function LedgerShell({ view, syncState, onSync, notice, children,
         <CompactLedgerHeader view={view} syncState={syncState} onSync={onSync} />
       )}
 
+      {view !== "add" && <LedgerNav activeView={view} />}
       <ActionNotice notice={notice} />
       {children}
 

@@ -27,7 +27,7 @@ The secondary navigation appears only inside the ledger shell. `记一笔` remai
 - On desktop it remains the compact left rail, now with three larger targets.
 - On mobile it remains the bottom bar with three equal-width targets.
 - The ledger secondary navigation sits below the ledger header and above page content. It uses a quiet segmented treatment so it reads as local navigation rather than a second global bar.
-- Active states use `aria-current="page"`; both navigation groups keep distinct accessible labels.
+- Active destination pages use `aria-current="page"`. On ledger child pages, the primary `账本` destination uses `aria-current="location"` while the matching ledger view uses `aria-current="page"`; both navigation groups keep distinct accessible labels.
 
 ## Compatibility
 

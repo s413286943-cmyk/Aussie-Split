@@ -1,24 +1,26 @@
 import Link from "next/link";
 
 const navigationItems = [
-  { id: "dashboard", href: "/ledger", label: "总览" },
-  { id: "expenses", href: "/expenses", label: "明细" },
-  { id: "add", href: "/add", label: "新增" },
-  { id: "activity", href: "/activity", label: "操作" },
-  { id: "settlement", href: "/settlement", label: "结算" },
   { id: "itinerary", href: "/", label: "行程" },
+  { id: "ledger", href: "/ledger", label: "账本" },
+  { id: "add", href: "/add", label: "记一笔" },
 ];
 
 export default function AppNav({ activeView }) {
+  const activeItemId = ["itinerary", "add"].includes(activeView) ? activeView : "ledger";
+
   return (
     <nav className="nav" aria-label="主导航" data-motion="nav">
       {navigationItems.map((item) => {
-        const active = item.id === activeView;
+        const active = item.id === activeItemId;
+        const current = active && item.id === "ledger" && activeView !== "dashboard"
+          ? "location"
+          : active ? "page" : undefined;
         return (
           <Link
             className={active ? "active" : ""}
             href={item.href}
-            aria-current={active ? "page" : undefined}
+            aria-current={current}
             key={item.id}
           >
             {item.label}

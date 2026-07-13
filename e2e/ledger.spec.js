@@ -6,7 +6,7 @@ test("homepage opens the itinerary while the ledger overview remains available",
   await expect(page.locator(".itinerary-shell")).toBeVisible();
   await expect(page.getByRole("link", { name: "行程", exact: true })).toHaveAttribute("aria-current", "page");
 
-  await page.getByRole("link", { name: "总览", exact: true }).click();
+  await page.getByRole("link", { name: "账本", exact: true }).click();
   await expect(page).toHaveURL(/\/ledger$/);
 
   await expect(page.getByRole("heading", { name: "Aussie Chill", level: 1 })).toBeVisible();
@@ -121,18 +121,46 @@ test("mobile add keeps message recognition and templates compact", async ({ page
   expect(templateHeight).toBeLessThan(64);
 });
 
-test("ledger and itinerary share the same primary navigation", async ({ page }) => {
-  const expectedLabels = ["总览", "明细", "新增", "操作", "结算", "行程"];
+test("primary navigation separates itinerary, ledger, and quick capture", async ({ page }) => {
+  const primaryDestinations = [
+    ["/", "行程", "/"],
+    ["/ledger", "账本", "/ledger"],
+    ["/add", "记一笔", "/add"],
+  ];
 
-  for (const path of ["/ledger", "/"]) {
+  for (const [path, activeLabel, href] of primaryDestinations) {
     await page.goto(path);
-    await expect(page.getByRole("navigation", { name: "主导航" })).toBeVisible();
-    const labels = await page
-      .getByRole("navigation", { name: "主导航" })
-      .getByRole("link")
-      .allTextContents();
-    expect(labels).toEqual(expectedLabels);
+    const primary = page.getByRole("navigation", { name: "主导航" });
+    await expect(primary.getByRole("link")).toHaveText(["行程", "账本", "记一笔"]);
+    const activeLink = primary.getByRole("link", { name: activeLabel, exact: true });
+    await expect(activeLink).toHaveAttribute("href", href);
+    await expect(activeLink).toHaveAttribute("aria-current", "page");
   }
+
+  await page.goto("/expenses");
+  await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link", { name: "账本" }))
+    .toHaveAttribute("aria-current", "location");
+});
+
+test("ledger pages expose their own overview and reporting navigation", async ({ page }) => {
+  const ledgerDestinations = [
+    ["/ledger", "总览", "/ledger"],
+    ["/expenses", "明细", "/expenses"],
+    ["/activity", "操作", "/activity"],
+    ["/settlement", "结算", "/settlement"],
+  ];
+
+  for (const [path, activeLabel, href] of ledgerDestinations) {
+    await page.goto(path);
+    const ledgerNav = page.getByRole("navigation", { name: "账本导航" });
+    await expect(ledgerNav.getByRole("link")).toHaveText(["总览", "明细", "操作", "结算"]);
+    const activeLink = ledgerNav.getByRole("link", { name: activeLabel, exact: true });
+    await expect(activeLink).toHaveAttribute("href", href);
+    await expect(activeLink).toHaveAttribute("aria-current", "page");
+  }
+
+  await page.goto("/add");
+  await expect(page.getByRole("navigation", { name: "账本导航" })).toHaveCount(0);
 });
 
 function expenseRow(page, item) {

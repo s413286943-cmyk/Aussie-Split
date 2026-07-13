@@ -80,7 +80,7 @@ const navigationItems = [
 ];
 ```
 
-Map `dashboard`, `expenses`, `activity`, and `settlement` to the `ledger` active state; preserve `itinerary` and `add` directly.
+Map `dashboard`, `expenses`, `activity`, and `settlement` to the `ledger` active state; preserve `itinerary` and `add` directly. Use `aria-current="page"` on the exact primary destination and `aria-current="location"` on the primary `账本` parent while a ledger child view is open.
 
 - [ ] **Step 2: Create `LedgerNav`**
 
