@@ -1,5 +1,34 @@
 # Offline Ledger Rollout Record
 
+## 2026-07-14 protected-runtime recovery
+
+- Protected base: `origin/main` at `940758e5505e52b2409c9e8caf69bd31857efc4d`.
+- Verified runtime commit: `a22fffe3ad29e6fa6e731473a86d4152ff835cca`.
+- Standard preview: `dpl_77Pi8k1rCCBSCXKfK2hC9rrmyBGg`.
+- Real-service QA preview: `dpl_HwVnDMK1AsM69oSv2xsQvwWndJEF` (removed after QA because it used a temporary per-deployment access code).
+- Production deployment: `dpl_An16qJirSyX2ESLWaxgcsEpDKeKx`.
+- Production alias: `https://aussie-split.vercel.app`.
+- Previous protected rollback point: `dpl_BHD14rhFKmAFH9eP1qcExEm1nXv9`.
+
+The recovery kept the protected API, offline ledger, private receipts, and Supabase boundary from `origin/main`, then forward-ported only the approved itinerary and UI changes. D1 now keeps both Carlton / Lygon Street and QVM Winter Night Market; D2 Fitzroy, D10 Palm Cove, and D11 Barangaroo Reserve are fixed itinerary stops. The root route remains the itinerary, an expanded desktop day occupies a full row, mobile remains single-column, the fixed left rail is absent, and checklist / ledger controls use the compact field-kit styling.
+
+Forward-port audit of the 12 approved commits:
+
+- `f1624c3` is represented by the equivalent protected-main itinerary commit `940758e`.
+- `ef754f4`, `65f871f`, `228803c`, and `3d8db0f` are represented by the recovery plan, fixed-stop tests, workbook source, and generated itinerary in `fc9a904`.
+- `eca06c3`, `e046b91`, `beb52ca`, `a8fc268`, `628fc81`, and `5b6228c` are represented by the focused layout / checklist / ornament contracts and CSS port in `aa0278b`.
+- `98cf861` is preserved by the protected base's itinerary root and covered by the route regression gate in `a22fffe`.
+
+Verification evidence:
+
+- Node 24 test gate: 311 tests, 305 passed, 0 failed, 6 PostgreSQL-environment skips.
+- ESLint, production build, `git diff --check`, and dependency audit: passed; audit reported 0 vulnerabilities.
+- Local Chromium E2E: 23 passed, covering desktop, `390px` mobile, full-row expansion, ledger add/edit/split/delete/Undo, offline cached reload/local queueing, and private receipt upload/download boundaries.
+- Preview real ledger baseline before and after QA: 13 active expenses; confirmed totals CNY `20,377.63` and AUD `4,908.95`.
+- Real-service QA: add, edit, split-settle, delete, Undo, final delete, signed receipt upload, finalize, byte-identical download, delayed Storage cleanup, and receipt 404 all passed. User-visible QA activity, attachment metadata, and Storage objects were removed; one hidden tombstone remains as required by the physical-delete guard.
+- Production: 17 application routes including all 7 protected API routes; `/`, deployment readiness, and alias returned 200 / Ready. Unauthenticated sync, itinerary, and receipt requests returned 401, and the public HTML contained no real hotel or tour content.
+- Production error log check after smoke requests: no errors found.
+
 ## Release status
 
 The protected offline ledger is released at `https://aussie-split.vercel.app` on deployment `dpl_BHD14rhFKmAFH9eP1qcExEm1nXv9`. `SUPABASE_SERVICE_ROLE_KEY` is configured as a server-only Vercel secret, both production migrations are applied, and direct browser access to Supabase Data and Storage is closed.
