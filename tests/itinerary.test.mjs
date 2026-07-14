@@ -77,6 +77,38 @@ describe("itinerary data", () => {
     assert.ok(itinerary.days.every((day) => day.coverImageUrl.startsWith("/itinerary/")));
   });
 
+  it("keeps the four fixed stops without replacing D1's QVM night market", () => {
+    const expectations = [
+      { dayId: "d1", place: /Carlton/, detail: /Lygon Street|Little Italy/, resourceId: "carlton-lygon-map" },
+      { dayId: "d2", place: /Fitzroy/, detail: /Brunswick Street|Gertrude Street/, resourceId: "fitzroy-map" },
+      { dayId: "d10", place: /Palm Cove/, detail: /棕榈|海滨|Esplanade/, resourceId: "palm-cove-map" },
+      { dayId: "d11", place: /Barangaroo Reserve/, detail: /Wulugul Walk|海滨步道/, resourceId: "barangaroo-reserve-map" },
+    ];
+
+    for (const expectation of expectations) {
+      const day = itinerary.days.find((item) => item.id === expectation.dayId);
+      const dayText = [
+        day.title,
+        day.focus,
+        ...day.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`),
+      ].join(" ");
+      const block = day.blocks.find((item) => expectation.place.test(item.place));
+
+      assert.match(dayText, expectation.detail);
+      assert.ok(block, `${expectation.dayId} is missing ${expectation.place}`);
+      assert.ok(block.resources.some((resource) => resource.id === expectation.resourceId));
+      assert.doesNotMatch(
+        `${block.period} ${block.activity} ${block.tip}`,
+        /可选|触发|状态好|体力好|如果.*才去/,
+      );
+    }
+
+    const d1 = itinerary.days.find((day) => day.id === "d1");
+    const d1Text = [d1.focus, ...d1.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`)].join(" ");
+    assert.match(d1Text, /Carlton/);
+    assert.match(d1Text, /QVM Winter Night Market/);
+  });
+
   it("keeps D3 visually before the Twelve Apostles route", () => {
     const d3 = itinerary.days.find((day) => day.id === "d3");
     const d4 = itinerary.days.find((day) => day.id === "d4");

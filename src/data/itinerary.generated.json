@@ -121,8 +121,8 @@
       "city": "墨尔本",
       "lat": -37.8136,
       "lon": 144.9631,
-      "title": "抵达墨尔本，CBD 轻量 city walk",
-      "focus": "05:55 抵达，入境、休息；白天按体力安排 Degraves Lane、Flinders Street、State Library、Hosier Lane，下午优先回酒店休息；17:30-19:30 QVM Winter Night Market（2026 冬季周三限定），结束后直接回酒店。",
+      "title": "抵达墨尔本，CBD + Carlton + QVM 冬季夜市",
+      "focus": "05:55 抵达，入境、休息；白天按体力安排 Degraves Lane、Flinders Street、State Library、Carlton / Lygon Street（Little Italy）与 Hosier Lane；下午保留酒店休息；17:30-19:30 QVM Winter Night Market（2026 冬季周三限定），结束后直接回酒店。",
       "lodging": "Oaks Melbourne on Market Hotel",
       "climateNote": "墨尔本冬季约 6-14°C，早晚冷，多风，偶有阵雨。",
       "clothingNote": "羽绒服或防风外套、毛衣、长裤、防水鞋。",
@@ -267,6 +267,26 @@
         },
         {
           "dayId": "d1",
+          "sortOrder": 45,
+          "period": "下午",
+          "place": "Carlton / Lygon Street (Little Italy)",
+          "activity": "从 State Library 向北前往 Carlton，沿 Lygon Street 散步，安排咖啡或 gelato",
+          "highlight": "墨尔本意大利移民街区 + café culture",
+          "tip": "固定站点，控制在 60–90 分钟；若当天延误，先删 NGV，不删 Carlton 或 QVM",
+          "resources": [
+            {
+              "id": "carlton-lygon-map",
+              "title": "Carlton / Lygon Street Little Italy",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Carlton+Lygon+Street+Little+Italy+Melbourne",
+              "imageUrl": "",
+              "imageAlt": "Carlton Lygon Street Little Italy 地图",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d1",
           "sortOrder": 50,
           "period": "下午后段",
           "place": "Hosier Lane",
@@ -292,7 +312,7 @@
           "place": "NGV",
           "activity": "天气冷 / 想室内休息时进入",
           "highlight": "冬天避风避寒",
-          "tip": "如果已经累了，直接跳过；拍照：NGV 中庭 / 红幕布",
+          "tip": "Carlton 为固定站点；若时间不足，先跳过 NGV；拍照：NGV 中庭 / 红幕布",
           "resources": [
             {
               "id": "ngv-map",
@@ -377,9 +397,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：CBD café / Operator25（可选 Brunch）；午餐：Degraves Lane / CBD 简餐 / Pho Tùng（可选）；晚餐：QVM Winter Night Market 街头热食（主）/ CBD 简餐（体力不足）",
+          "activity": "早餐：CBD café / Operator25（可选 Brunch）；午餐：Degraves Lane / CBD 简餐 / Pho Tùng（可选）；Carlton：咖啡或 gelato；晚餐：QVM Winter Night Market 街头热食（主）/ CBD 简餐（体力不足）",
           "highlight": "每日餐食参考",
-          "tip": "夜市作为晚餐，优先选热食；不再另排 Southbank 正式晚餐。",
+          "tip": "Carlton 只做轻量 café / gelato；QVM 夜市仍作为晚餐，不再另排 Southbank 正式晚餐。",
           "resources": [
             {
               "id": "qvm-map",
@@ -438,8 +458,8 @@
       "city": "墨尔本 + Belgrave",
       "lat": -37.8136,
       "lon": 144.9631,
-      "title": "Puffing Billy + Sassafras 半日团",
-      "focus": "Klook / Oznara Puffing Billy + Sassafras 半日团已订：343 Russell Street 集合，含 Puffing Billy 蒸汽火车、Lakeside / Emerald Lake Park、Sassafras 小镇；下午回 CBD 后按体力补 State Library / QVM / Hosier Lane / Southbank，晚上整理大洋路行李。",
+      "title": "Puffing Billy + Sassafras + Fitzroy",
+      "focus": "Klook / Oznara Puffing Billy + Sassafras 半日团已订；返回 343 Russell Street 后固定前往 Fitzroy，沿 Brunswick Street 与 Gertrude Street 漫步，晚上整理大洋路行李。",
       "lodging": "Oaks Melbourne on Market Hotel",
       "climateNote": "墨尔本冬季约 6-14°C，早晚冷，多风，偶有阵雨。",
       "clothingNote": "防风外套比单纯厚毛衣更实用，雨天鞋子尽量防水。",
@@ -674,7 +694,7 @@
           "place": "返回 343 Russell Street",
           "activity": "半日团结束，回到 CBD",
           "highlight": "时间较早，下午还能补一点市区内容",
-          "tip": "若返回约 14:30，可补 State Library / Hosier Lane / Southbank",
+          "tip": "半日团结束后直接前往 Fitzroy；保持约 90 分钟街区时间",
           "resources": [
             {
               "id": "russell-343-map",
@@ -691,43 +711,25 @@
           "dayId": "d2",
           "sortOrder": 80,
           "period": "下午后段",
-          "place": "State Library / QVM / Hosier Lane / CBD",
-          "activity": "根据 D1 完成情况补轻量 city walk",
-          "highlight": "图书馆、市集、涂鸦巷、咖啡",
-          "tip": "最多选 1-2 个，不要把 D2 下午再塞满",
+          "place": "Fitzroy: Brunswick Street → Gertrude Street",
+          "activity": "半日团返城后前往 Fitzroy，完成街区漫步、独立小店和咖啡",
+          "highlight": "街头艺术、老建筑与本地生活版墨尔本",
+          "tip": "固定站点，控制约 90 分钟；18:00 左右离开并回酒店整理大洋路行李",
           "resources": [
             {
-              "id": "state-library-map",
-              "title": "State Library of Victoria",
+              "id": "fitzroy-map",
+              "title": "Fitzroy Brunswick Street / Gertrude Street",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=State+Library+of+Victoria",
+              "url": "https://www.google.com/maps/search/?api=1&query=Fitzroy+Brunswick+Street+Gertrude+Street+Melbourne",
               "imageUrl": "",
-              "imageAlt": "",
+              "imageAlt": "Fitzroy Brunswick Street 与 Gertrude Street 地图",
               "sourceNote": "Google Maps"
             },
             {
-              "id": "qvm-map",
-              "title": "Queen Victoria Market",
+              "id": "russell-343-map",
+              "title": "343 Russell Street",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Market",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "hosier-map",
-              "title": "Hosier Lane",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Hosier+Lane+Melbourne",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "southbank-map",
-              "title": "Southbank",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Southbank+Melbourne",
+              "url": "https://www.google.com/maps/search/?api=1&query=343+Russell+Street+Melbourne",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -2466,8 +2468,8 @@
       "city": "凯恩斯休息日",
       "lat": -16.9186,
       "lon": 145.7781,
-      "title": "Rusty's Market 与休息整理",
-      "focus": "Rusty’s Market + Esplanade Lagoon + 洗衣整理 + Prawn Star / Night Market",
+      "title": "Rusty’s Market + Palm Cove + 休息整理",
+      "focus": "Rusty’s Market + 休息、洗衣与行李整理 + Palm Cove 海滨与棕榈大道 + 返回凯恩斯早晚餐。",
       "lodging": "Southern Cross Atrium Apartments",
       "climateNote": "凯恩斯约 17-26°C，户外热，室内空调冷。",
       "clothingNote": "轻便夏装，随身带薄外套；今天不要再临时加长线。",
@@ -2547,31 +2549,31 @@
           "dayId": "d10",
           "sortOrder": 30,
           "period": "下午",
-          "place": "洗衣、整理行李、轻松逛街、按摩 / Cairns Aquarium 可选",
-          "activity": "洗衣、整理行李、轻松逛街、按摩 / Cairns Aquarium 可选",
+          "place": "洗衣、整理行李、轻松逛街或按摩",
+          "activity": "洗衣、整理行李、轻松逛街或按摩",
           "highlight": "为次日清晨航班做准备",
           "tip": "Jetstar 行李控制在 20kg 内，提前分装",
-          "resources": [
-            {
-              "id": "cairns-aquarium-map",
-              "title": "Cairns Aquarium",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Cairns+Aquarium",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
+          "resources": []
         },
         {
           "dayId": "d10",
           "sortOrder": 40,
-          "period": "傍晚",
-          "place": "Esplanade 海边散步",
-          "activity": "Esplanade 海边散步",
-          "highlight": "凯恩斯最后一个轻松黄昏",
-          "tip": "不要走太远",
-          "resources": []
+          "period": "下午 / 傍晚",
+          "place": "Palm Cove",
+          "activity": "前往 Palm Cove，沿棕榈树海滨大道散步、喝咖啡并看海",
+          "highlight": "热带海滨小镇与凯恩斯北部海岸",
+          "tip": "固定站点，傍晚返回凯恩斯；不再叠加 Cairns Aquarium 或 Esplanade 长走",
+          "resources": [
+            {
+              "id": "palm-cove-map",
+              "title": "Palm Cove",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Palm+Cove+Queensland",
+              "imageUrl": "",
+              "imageAlt": "Palm Cove 地图",
+              "sourceNote": "Google Maps"
+            }
+          ]
         },
         {
           "dayId": "d10",
@@ -2650,8 +2652,8 @@
       "city": "凯恩斯 → 悉尼",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "转场悉尼，The Rocks 与海港夜景",
-      "focus": "JQ953 飞悉尼 + The Rocks + Circular Quay 夜景（Ferry机位）",
+      "title": "转场悉尼，Barangaroo + The Rocks + 海港夜景",
+      "focus": "JQ953 飞悉尼；酒店休息后沿 Barangaroo Reserve / Wulugul Walk 前往 The Rocks，最后到 Circular Quay 看夜景。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "悉尼约 9-18°C，早晚凉，海边防风。",
       "clothingNote": "薄羽绒、风衣或卫衣；从凯恩斯上飞机随身带外套。",
@@ -2751,6 +2753,44 @@
               "title": "Darling Harbour",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Darling+Harbour+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d11",
+          "sortOrder": 45,
+          "period": "下午后段",
+          "place": "Barangaroo Reserve / Wulugul Walk",
+          "activity": "从 Darling Harbour 沿海滨前往 Barangaroo Reserve，再衔接 The Rocks",
+          "highlight": "原生植物、砂岩海岸与悉尼港步行线",
+          "tip": "固定站点，控制约 45–60 分钟；转场日保持轻量，不增加收费项目",
+          "resources": [
+            {
+              "id": "barangaroo-reserve-map",
+              "title": "Barangaroo Reserve",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Barangaroo+Reserve+Sydney",
+              "imageUrl": "",
+              "imageAlt": "Barangaroo Reserve 地图",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "darling-harbour-map",
+              "title": "Darling Harbour",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Darling+Harbour+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "the-rocks-map",
+              "title": "The Rocks",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -5437,6 +5477,42 @@
       "url": "https://www.google.com/maps/search/?api=1&query=Hampden+Bridge+Kangaroo+Valley+NSW",
       "imageUrl": "",
       "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "carlton-lygon-map",
+      "title": "Carlton / Lygon Street Little Italy",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Carlton+Lygon+Street+Little+Italy+Melbourne",
+      "imageUrl": "",
+      "imageAlt": "Carlton Lygon Street Little Italy 地图",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "fitzroy-map",
+      "title": "Fitzroy Brunswick Street / Gertrude Street",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Fitzroy+Brunswick+Street+Gertrude+Street+Melbourne",
+      "imageUrl": "",
+      "imageAlt": "Fitzroy Brunswick Street 与 Gertrude Street 地图",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "palm-cove-map",
+      "title": "Palm Cove",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Palm+Cove+Queensland",
+      "imageUrl": "",
+      "imageAlt": "Palm Cove 地图",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "barangaroo-reserve-map",
+      "title": "Barangaroo Reserve",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Barangaroo+Reserve+Sydney",
+      "imageUrl": "",
+      "imageAlt": "Barangaroo Reserve 地图",
       "sourceNote": "Google Maps"
     }
   ]

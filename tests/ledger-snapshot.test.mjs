@@ -97,6 +97,39 @@ describe("ledger snapshot boundary", () => {
       },
     );
   });
+
+  it("keeps the workbook plan aligned with the current D13-D15 decisions", () => {
+    const workbook = JSON.parse(runPython([
+      "scripts/itinerary_excel.py",
+      "read_finance",
+      "content/aussie-itinerary.xlsx",
+    ]));
+    const planText = JSON.stringify({
+      activityPlan: workbook.activityPlan,
+      budget: workbook.budget,
+      foodMap: workbook.foodMap,
+    });
+    const d1 = workbook.foodMap.find((row) => row.day.startsWith("D1 "));
+    const d13 = workbook.foodMap.find((row) => row.day.startsWith("D13 "));
+    const d14 = workbook.foodMap.find((row) => row.day.startsWith("D14 "));
+    const d15 = workbook.foodMap.find((row) => row.day.startsWith("D15 "));
+    const taronga = workbook.activityPlan.find((row) => /Taronga Zoo/.test(row.item));
+    const activities = workbook.budget.find((row) => /门票活动/.test(row.category));
+
+    assert.match(`${d1.dinner} ${d1.note}`, /Carlton/);
+    assert.match(`${d1.dinner} ${d1.note}`, /QVM Winter Night Market/);
+    assert.match(`${d13.day} ${d13.note}`, /南海岸|Sea Cliff Bridge/);
+    assert.doesNotMatch(`${d13.day} ${d13.note}`, /蓝山|Blue Mountains/);
+    assert.match(`${d14.day} ${d14.dinner} ${d14.note}`, /Taronga/);
+    assert.match(`${d14.day} ${d14.dinner} ${d14.note}`, /Totti/);
+    assert.doesNotMatch(`${d14.day} ${d14.note}`, /观鲸|whale/i);
+    assert.match(`${d15.day} ${d15.note}`, /Manly/);
+    assert.match(`${d15.dinner} ${d15.note}`, /Cafe Sydney/);
+    assert.match(`${taronga.note}`, /D14/);
+    assert.match(`${taronga.note}`, /F2/);
+    assert.match(`${activities.note}`, /Puffing Billy/);
+    assert.doesNotMatch(planText, /Captain Cook|出海观鲸/);
+  });
 });
 
 function expense(overrides = {}) {

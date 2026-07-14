@@ -75,6 +75,39 @@ def read_finance(workbook_path):
             for row in workbook["ActivityCosts"].iter_rows(min_row=2, max_col=6, values_only=True)
             if row[1]
         ],
+        "activityPlan": [
+            {
+                "region": row[0],
+                "item": row[1],
+                "status": row[2],
+                "price": row[3],
+                "cny": row[4],
+                "note": row[5],
+            }
+            for row in workbook["ActivityCosts"].iter_rows(min_row=2, max_col=6, values_only=True)
+            if row[1]
+        ],
+        "budget": [
+            {
+                "category": row[0],
+                "total": row[1],
+                "perPerson": row[2],
+                "note": row[3],
+            }
+            for row in workbook["Budget"].iter_rows(min_row=2, max_col=4, values_only=True)
+            if row[0]
+        ],
+        "foodMap": [
+            {
+                "day": row[0],
+                "breakfast": row[1],
+                "lunch": row[2],
+                "dinner": row[3],
+                "note": row[4],
+            }
+            for row in workbook["FoodMap"].iter_rows(min_row=2, max_col=5, values_only=True)
+            if row[0]
+        ],
     }
     print(json.dumps(result, ensure_ascii=False))
 
