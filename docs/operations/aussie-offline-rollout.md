@@ -4,9 +4,11 @@
 
 - Protected base: `origin/main` at `940758e5505e52b2409c9e8caf69bd31857efc4d`.
 - Verified runtime commit: `a22fffe3ad29e6fa6e731473a86d4152ff835cca`.
+- Release record commit: `20421ebe542f6d7eeb2e773195e59eaaf9793ffc`.
 - Standard preview: `dpl_77Pi8k1rCCBSCXKfK2hC9rrmyBGg`.
 - Real-service QA preview: `dpl_HwVnDMK1AsM69oSv2xsQvwWndJEF` (removed after QA because it used a temporary per-deployment access code).
-- Production deployment: `dpl_An16qJirSyX2ESLWaxgcsEpDKeKx`.
+- Manual Production candidate: `dpl_An16qJirSyX2ESLWaxgcsEpDKeKx`.
+- Git-main Production deployment: `dpl_252a8G1XeVEkad96f72MjvXZqJhC`.
 - Production alias: `https://aussie-split.vercel.app`.
 - Previous protected rollback point: `dpl_BHD14rhFKmAFH9eP1qcExEm1nXv9`.
 
