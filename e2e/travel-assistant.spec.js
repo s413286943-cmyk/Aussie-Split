@@ -39,7 +39,7 @@ test("does not request chat until the traveler sends a question", async ({ page,
   expect(mockApi.assistantCallCount).toBe(1);
 
   await assistant.getByRole("button", { name: /继续追问.*0 条消息/ }).click();
-  await expect(assistant.getByRole("button", { name: "下雨时怎么调整？" })).toBeVisible();
+  await expect(assistant.getByRole("button", { name: "下雨怎么调整？" })).toBeVisible();
   expect(mockApi.assistantCallCount).toBe(1);
 });
 
@@ -47,7 +47,7 @@ test("streams a current-day answer and restores local history after reload", asy
   let { assistant } = await openCurrentDay(page);
   await generateAndOpenChat(assistant);
 
-  await assistant.getByRole("button", { name: "下雨时怎么调整？" }).click();
+  await assistant.getByRole("button", { name: "下雨怎么调整？" }).click();
   await expect(assistant.getByText(chatAnswer, { exact: true })).toBeVisible();
   await expect(assistant.getByText("参考范围 D14", { exact: true })).toBeVisible();
   await expect(assistant.getByRole("button", { name: /继续追问.*2 条消息/ })).toBeVisible();
@@ -63,7 +63,7 @@ test("streams a current-day answer and restores local history after reload", asy
       adviceLabel: "季节穿衣参考",
     },
     checkedKitItemIds: [],
-    question: "下雨时怎么调整？",
+    question: "下雨怎么调整？",
     history: [],
   });
   expect(JSON.stringify(chatRequest)).not.toMatch(/ledger|payer|amount|receipt|operation|supabase|private/i);
@@ -72,7 +72,7 @@ test("streams a current-day answer and restores local history after reload", asy
   ({ assistant } = await currentDayRegions(page));
   await assistant.getByRole("button", { name: /继续追问.*2 条消息/ }).click();
   await expect(
-    assistant.locator(".travel-assistant-chat-message.is-user").getByText("下雨时怎么调整？", { exact: true }),
+    assistant.locator(".travel-assistant-chat-message.is-user").getByText("下雨怎么调整？", { exact: true }),
   ).toBeVisible();
   await expect(assistant.getByText(chatAnswer, { exact: true })).toBeVisible();
   expect(mockApi.getAssistantRequests().filter((body) => body.mode === "chat")).toHaveLength(1);
@@ -81,7 +81,7 @@ test("streams a current-day answer and restores local history after reload", asy
 test("clears only local chat while retaining the generated brief", async ({ page, mockApi }) => {
   let { assistant } = await openCurrentDay(page);
   await generateAndOpenChat(assistant);
-  await assistant.getByRole("button", { name: "下雨时怎么调整？" }).click();
+  await assistant.getByRole("button", { name: "下雨怎么调整？" }).click();
   await expect(assistant.getByText(chatAnswer, { exact: true })).toBeVisible();
 
   await assistant.getByRole("button", { name: "清空对话" }).click();
@@ -101,7 +101,7 @@ test("keeps the brief visible when a chat request fails", async ({ page, mockApi
   await generateAndOpenChat(assistant);
   mockApi.forceAssistantFailure(502);
 
-  await assistant.getByRole("button", { name: "下雨时怎么调整？" }).click();
+  await assistant.getByRole("button", { name: "下雨怎么调整？" }).click();
 
   await expect(assistant.getByText("AI 暂时无法回答，今日简报仍可继续查看", { exact: true })).toBeVisible();
   await expectGeneratedBrief(assistant);

@@ -105,7 +105,14 @@ describe("Today Console travel assistant V1", () => {
       "const quickQuestions = [",
       "];",
     );
-    assert.equal((quickQuestionSource.match(/^  ["'].+["'],?$/gm) || []).length, 4);
+    const quickQuestions = [...quickQuestionSource.matchAll(/^  ["'](.+)["'],?$/gm)]
+      .map((match) => match[1]);
+    assert.deepEqual(quickQuestions, [
+      "下雨怎么调整？",
+      "今天太累可以删什么？",
+      "午餐放在哪里最顺？",
+      "明天要提前准备什么？",
+    ]);
     assert.match(panelSource, /className="travel-assistant-quick-prompts"/);
     assert.match(panelSource, /<textarea[\s\S]*?value=\{chatInput\}/);
     assert.match(panelSource, /<button type="submit"[\s\S]*?>\s*发送\s*<\/button>/);
