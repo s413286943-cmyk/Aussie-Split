@@ -3,8 +3,11 @@ import { describe, it } from "node:test";
 
 import {
   buildTravelAssistantFingerprint,
+  clearTravelChatCache,
   clearTravelBriefCache,
+  readTravelChatCache,
   readTravelBriefCache,
+  writeTravelChatCache,
   writeTravelBriefCache,
 } from "../src/lib/travelAssistantCache.js";
 
@@ -294,6 +297,95 @@ describe("travel assistant local brief cache", () => {
   });
 });
 
+describe("travel assistant local chat cache", () => {
+  it("keeps each day's completed turns separate", () => {
+    const storage = storageFor(new Map());
+    const d14Messages = turnMessages("D14");
+    const d15Messages = turnMessages("D15");
+
+    assert.equal(writeTravelChatCache(storage, "d14", d14Messages), true);
+    assert.equal(writeTravelChatCache(storage, "d15", d15Messages), true);
+
+    assert.deepEqual(readTravelChatCache(storage, "d14"), d14Messages);
+    assert.deepEqual(readTravelChatCache(storage, "d15"), d15Messages);
+  });
+
+  it("retains only the latest eight complete turns", () => {
+    const storage = storageFor(new Map());
+    const messages = Array.from({ length: 9 }, (_, index) => (
+      turnMessages(`第 ${index + 1} 轮`)
+    )).flat();
+
+    assert.equal(writeTravelChatCache(storage, "d14", messages), true);
+
+    assert.deepEqual(readTravelChatCache(storage, "d14"), messages.slice(-16));
+  });
+
+  it("recovers to an empty history for malformed or unavailable storage", () => {
+    const values = new Map();
+    const storage = storageFor(values);
+    writeTravelChatCache(storage, "d14", turnMessages("有效"));
+    const chatKey = [...values.keys()].find((key) => key.includes("chat"));
+
+    for (const value of [
+      "{not-json",
+      JSON.stringify({ version: 2, messages: turnMessages("旧版") }),
+      JSON.stringify({ version: 1, messages: [{ role: "user", content: "少半轮" }] }),
+      JSON.stringify({
+        version: 1,
+        messages: [
+          { role: "assistant", content: "顺序错误" },
+          { role: "user", content: "顺序错误" },
+        ],
+      }),
+    ]) {
+      values.set(chatKey, value);
+      assert.deepEqual(readTravelChatCache(storage, "d14"), []);
+    }
+
+    assert.deepEqual(readTravelChatCache({
+      getItem() {
+        throw new Error("storage unavailable");
+      },
+    }, "d14"), []);
+  });
+
+  it("clears only the selected day's chat and leaves its brief untouched", () => {
+    const values = new Map();
+    const storage = storageFor(values);
+    const fingerprint = fingerprintFor();
+    const briefEntry = entryFor(fingerprint, "D14 brief");
+    writeTravelBriefCache(storage, "d14", briefEntry);
+    writeTravelChatCache(storage, "d14", turnMessages("D14"));
+    writeTravelChatCache(storage, "d15", turnMessages("D15"));
+
+    assert.equal(clearTravelChatCache(storage, "d14"), true);
+
+    assert.deepEqual(readTravelChatCache(storage, "d14"), []);
+    assert.deepEqual(readTravelChatCache(storage, "d15"), turnMessages("D15"));
+    assert.deepEqual(readTravelBriefCache(storage, "d14", fingerprint), {
+      state: "fresh",
+      entry: briefEntry,
+    });
+  });
+
+  it("stores only alternating role and content fields", () => {
+    const values = new Map();
+    const storage = storageFor(values);
+    const messages = [
+      { role: "user", content: " 下雨怎么调整？ ", ledger: "private" },
+      { role: "assistant", content: " 先缩短户外段。 ", receipt: "private" },
+    ];
+
+    assert.equal(writeTravelChatCache(storage, "d14", messages), true);
+    assert.deepEqual(readTravelChatCache(storage, "d14"), [
+      { role: "user", content: "下雨怎么调整？" },
+      { role: "assistant", content: "先缩短户外段。" },
+    ]);
+    assert.doesNotMatch([...values.values()].join("\n"), /ledger|receipt|private/i);
+  });
+});
+
 function fingerprintFor(overrides = {}) {
   return buildTravelAssistantFingerprint({
     day: overrides.day || d14,
@@ -341,4 +433,11 @@ function storageFor(values) {
       values.delete(key);
     },
   };
+}
+
+function turnMessages(label) {
+  return [
+    { role: "user", content: `${label}问题` },
+    { role: "assistant", content: `${label}回答` },
+  ];
 }

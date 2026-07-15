@@ -2,10 +2,13 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
-import { generateTravelBrief } from "@/lib/apiClient";
+import { generateTravelBrief, streamTravelChat } from "@/lib/apiClient";
 import {
   buildTravelAssistantFingerprint,
+  clearTravelChatCache,
+  readTravelChatCache,
   readTravelBriefCache,
+  writeTravelChatCache,
   writeTravelBriefCache,
 } from "@/lib/travelAssistantCache";
 
@@ -14,6 +17,13 @@ const paceLabels = {
   balanced: "均衡",
   full: "充实",
 };
+
+const quickQuestions = [
+  "下雨时怎么调整？",
+  "体力不够先删哪一段？",
+  "今天怎么安排最省力？",
+  "明天要提前准备什么？",
+];
 
 export default function TravelAssistantPanel({ day, weather, checkedKitItems }) {
   const dayId = typeof day?.id === "string" ? day.id : "";
@@ -29,7 +39,16 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
   const [cacheView, setCacheView] = useState({ dayId: "", state: "empty", entry: null });
   const [notice, setNotice] = useState("idle");
   const [loading, setLoading] = useState(false);
+  const [chatView, setChatView] = useState({ dayId: "", messages: [] });
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatInput, setChatInput] = useState("");
+  const [chatNotice, setChatNotice] = useState("idle");
+  const [chatPending, setChatPending] = useState(false);
+  const [streamingMessage, setStreamingMessage] = useState({ question: "", answer: "" });
+  const [chatSourceDayIds, setChatSourceDayIds] = useState([]);
   const inFlightRef = useRef(false);
+  const chatInFlightRef = useRef(false);
+  const chatAbortRef = useRef(null);
   const activeDayRef = useRef(dayId);
   const latestFingerprintRef = useRef(fingerprint);
 
@@ -37,6 +56,27 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
     activeDayRef.current = dayId;
     latestFingerprintRef.current = fingerprint;
   }, [dayId, fingerprint]);
+
+  useEffect(() => {
+    let cancelled = false;
+    chatAbortRef.current?.abort();
+    chatAbortRef.current = null;
+    chatInFlightRef.current = false;
+    const messages = readTravelChatCache(browserStorage(), dayId);
+    queueMicrotask(() => {
+      if (cancelled) return;
+      setChatView({ dayId, messages });
+      setChatOpen(false);
+      setChatInput("");
+      setChatNotice("idle");
+      setChatPending(false);
+      setStreamingMessage({ question: "", answer: "" });
+      setChatSourceDayIds([dayId]);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [dayId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -55,6 +95,7 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
     ? cacheView
     : { dayId, state: "empty", entry: null };
   const entry = activeView.entry;
+  const messages = chatView.dayId === dayId ? chatView.messages : [];
   const status = panelStatus({ state: activeView.state, notice, loading, entry });
 
   async function handleGenerate() {
@@ -96,6 +137,89 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
     }
   }
 
+  async function handleChatSend(rawQuestion) {
+    const question = typeof rawQuestion === "string" ? rawQuestion.trim().slice(0, 400) : "";
+    if (!entry || !question || chatPending || chatInFlightRef.current) return;
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      setChatNotice("error");
+      return;
+    }
+
+    const requestDayId = dayId;
+    const history = messages;
+    const controller = new AbortController();
+    chatAbortRef.current = controller;
+    chatInFlightRef.current = true;
+    setChatPending(true);
+    setChatNotice("pending");
+    setChatInput("");
+    setStreamingMessage({ question, answer: "" });
+
+    try {
+      const response = await streamTravelChat({
+        dayId: requestDayId,
+        weather: safeWeather(weather),
+        checkedKitItemIds,
+        question,
+        history,
+      }, {
+        signal: controller.signal,
+        onDelta(delta) {
+          if (activeDayRef.current !== requestDayId || chatAbortRef.current !== controller) return;
+          setChatNotice("streaming");
+          setStreamingMessage((current) => ({
+            ...current,
+            answer: `${current.answer}${delta}`,
+          }));
+        },
+        onScope(sourceDayIds) {
+          if (activeDayRef.current === requestDayId && chatAbortRef.current === controller) {
+            setChatSourceDayIds(sourceDayIds);
+          }
+        },
+      });
+      if (activeDayRef.current !== requestDayId || chatAbortRef.current !== controller) return;
+
+      const nextMessages = [
+        ...history,
+        { role: "user", content: question },
+        { role: "assistant", content: response.answer },
+      ].slice(-16);
+      writeTravelChatCache(browserStorage(), requestDayId, nextMessages);
+      setChatView({ dayId: requestDayId, messages: nextMessages });
+      setChatSourceDayIds(response.sourceDayIds);
+      setStreamingMessage({ question: "", answer: "" });
+      setChatNotice("done");
+    } catch {
+      if (activeDayRef.current === requestDayId && chatAbortRef.current === controller) {
+        setChatInput(question);
+        setStreamingMessage({ question: "", answer: "" });
+        setChatNotice("error");
+      }
+    } finally {
+      if (chatAbortRef.current === controller) {
+        chatAbortRef.current = null;
+        chatInFlightRef.current = false;
+        if (activeDayRef.current === requestDayId) setChatPending(false);
+      }
+    }
+  }
+
+  function handleChatSubmit(event) {
+    event.preventDefault();
+    handleChatSend(chatInput);
+  }
+
+  function handleClearChat() {
+    if (chatPending) return;
+    clearTravelChatCache(browserStorage(), dayId);
+    setChatView({ dayId, messages: [] });
+    setChatInput("");
+    setChatNotice("idle");
+    setStreamingMessage({ question: "", answer: "" });
+    setChatSourceDayIds([dayId]);
+  }
+
   return (
     <section className="travel-assistant-panel" aria-labelledby={`travel-assistant-title-${dayId}`}>
       <header className="travel-assistant-head">
@@ -118,8 +242,135 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
 
       {loading && !entry ? <TravelAssistantLoading /> : null}
       {entry ? <TravelAssistantBrief brief={entry.brief} /> : null}
+      {entry ? (
+        <TravelAssistantChat
+          dayId={dayId}
+          messages={messages}
+          chatOpen={chatOpen}
+          chatInput={chatInput}
+          chatNotice={chatNotice}
+          chatPending={chatPending}
+          streamingMessage={streamingMessage}
+          sourceDayIds={chatSourceDayIds}
+          onToggle={() => setChatOpen((current) => !current)}
+          onInput={setChatInput}
+          onSubmit={handleChatSubmit}
+          onQuickQuestion={handleChatSend}
+          onClear={handleClearChat}
+        />
+      ) : null}
       {!entry && !loading ? (
         <p className="travel-assistant-empty">生成今日简报后，可快速确认节奏、前三优先事项与最先删减项。</p>
+      ) : null}
+    </section>
+  );
+}
+
+function TravelAssistantChat({
+  dayId,
+  messages,
+  chatOpen,
+  chatInput,
+  chatNotice,
+  chatPending,
+  streamingMessage,
+  sourceDayIds,
+  onToggle,
+  onInput,
+  onSubmit,
+  onQuickQuestion,
+  onClear,
+}) {
+  const chatId = `travel-assistant-chat-${dayId}`;
+  const statusMessage = chatStatusMessage(chatNotice);
+
+  return (
+    <section className="travel-assistant-chat" aria-label="当前日继续追问">
+      <button
+        type="button"
+        className="travel-assistant-chat-disclosure"
+        aria-expanded={chatOpen}
+        aria-controls={chatId}
+        onClick={onToggle}
+      >
+        <span>继续追问</span>
+        <span>{messages.length} 条消息</span>
+      </button>
+
+      {chatOpen ? (
+        <div className="travel-assistant-chat-panel" id={chatId}>
+          <div className="travel-assistant-chat-body" aria-busy={chatPending}>
+            <div className="travel-assistant-quick-prompts" aria-label="快捷问题">
+              {quickQuestions.map((question) => (
+                <button
+                  type="button"
+                  key={question}
+                  onClick={() => onQuickQuestion(question)}
+                  disabled={chatPending}
+                >
+                  {question}
+                </button>
+              ))}
+            </div>
+
+            <div className="travel-assistant-chat-messages">
+              {!messages.length && !streamingMessage.question ? (
+                <p className="travel-assistant-chat-empty">选择快捷问题，或在下方输入当前行程相关问题。</p>
+              ) : null}
+              {messages.map((message, index) => (
+                <article
+                  className={`travel-assistant-chat-message is-${message.role}`}
+                  key={`${message.role}-${index}`}
+                >
+                  <span>{message.role === "user" ? "你" : "行程助手"}</span>
+                  <p>{message.content}</p>
+                </article>
+              ))}
+              {streamingMessage.question ? (
+                <>
+                  <article className="travel-assistant-chat-message is-user">
+                    <span>你</span>
+                    <p>{streamingMessage.question}</p>
+                  </article>
+                  <article className="travel-assistant-chat-message is-assistant">
+                    <span>行程助手</span>
+                    <p>{streamingMessage.answer || "正在思考…"}</p>
+                  </article>
+                </>
+              ) : null}
+            </div>
+
+            <div
+              className={`travel-assistant-chat-live is-${chatNotice}`}
+              role="status"
+              aria-live={chatNotice === "error" ? "assertive" : "polite"}
+            >
+              {statusMessage}
+            </div>
+          </div>
+
+          <form className="travel-assistant-chat-form" onSubmit={onSubmit}>
+            <textarea
+              aria-label="输入继续追问"
+              value={chatInput}
+              onChange={(event) => onInput(event.target.value)}
+              placeholder="例如：如果下雨，今天先调整哪一段？"
+              rows={2}
+              maxLength={400}
+              disabled={chatPending}
+            />
+            <button type="submit" disabled={chatPending || !chatInput.trim()}>
+              发送
+            </button>
+          </form>
+
+          <div className="travel-assistant-chat-footer">
+            <span>参考范围 {formatSourceDays(sourceDayIds)}</span>
+            <button type="button" onClick={onClear} disabled={chatPending || !messages.length}>
+              清空对话
+            </button>
+          </div>
+        </div>
       ) : null}
     </section>
   );
@@ -237,6 +488,14 @@ function generateButtonLabel({ entry, loading, notice }) {
   if (notice === "error" || notice === "offline") return "重试生成";
   if (entry) return "重新生成";
   return "生成今日简报";
+}
+
+function chatStatusMessage(notice) {
+  if (notice === "pending") return "正在思考…";
+  if (notice === "streaming") return "正在回复…";
+  if (notice === "error") return "AI 暂时无法回答，今日简报仍可继续查看";
+  if (notice === "done") return "回答已保存在当前设备。";
+  return "";
 }
 
 function normalizeCheckedKitItemIds(values) {

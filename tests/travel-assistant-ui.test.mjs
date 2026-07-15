@@ -24,7 +24,10 @@ describe("Today Console travel assistant V1", () => {
       panelSource,
       /export default function TravelAssistantPanel\(\{ day, weather, checkedKitItems \}\)/,
     );
-    assert.match(panelSource, /import \{ generateTravelBrief \} from ["']@\/lib\/apiClient["'];/);
+    assert.match(
+      panelSource,
+      /import \{ generateTravelBrief, streamTravelChat \} from ["']@\/lib\/apiClient["'];/,
+    );
     assert.match(panelSource, /from ["']@\/lib\/travelAssistantCache["'];/);
     assert.doesNotMatch(
       panelSource,
@@ -85,8 +88,47 @@ describe("Today Console travel assistant V1", () => {
     assert.ok(dayGuard >= 0 && cacheWrite > dayGuard, "the per-day write must follow the day-change guard");
   });
 
-  it("renders no chat control in V1", () => {
-    assert.doesNotMatch(panelSource, /travel-assistant-chat-body|<form|<textarea|onSubmit=/);
+  it("renders a current-day chat disclosure only after a brief exists and keeps it closed by default", () => {
+    assert.match(panelSource, /const \[chatOpen, setChatOpen\] = useState\(false\);/);
+    assert.match(
+      panelSource,
+      /\{entry \? <TravelAssistantBrief brief=\{entry\.brief\} \/> : null\}[\s\S]*?\{entry \? \([\s\S]*?<TravelAssistantChat/,
+    );
+    assert.match(panelSource, /aria-expanded=\{chatOpen\}/);
+    assert.match(panelSource, /继续追问/);
+    assert.match(panelSource, /\{messages\.length\} 条消息/);
+  });
+
+  it("offers exactly four quick prompts plus textarea, send, and chat-only clear actions", () => {
+    const quickQuestionSource = sourceBetween(
+      panelSource,
+      "const quickQuestions = [",
+      "];",
+    );
+    assert.equal((quickQuestionSource.match(/^  ["'].+["'],?$/gm) || []).length, 4);
+    assert.match(panelSource, /className="travel-assistant-quick-prompts"/);
+    assert.match(panelSource, /<textarea[\s\S]*?value=\{chatInput\}/);
+    assert.match(panelSource, /<button type="submit"[\s\S]*?>\s*发送\s*<\/button>/);
+    assert.match(panelSource, /clearTravelChatCache\(browserStorage\(\), dayId\)/);
+    assert.doesNotMatch(panelSource, /clearTravelBriefCache/);
+  });
+
+  it("loads and saves only local chat history and never starts chat from an effect", () => {
+    assert.match(panelSource, /readTravelChatCache\(browserStorage\(\), dayId\)/);
+    assert.match(panelSource, /writeTravelChatCache\(browserStorage\(\), requestDayId, nextMessages\)/);
+    assert.match(panelSource, /await streamTravelChat\s*\(/);
+    assert.doesNotMatch(effectSource(panelSource), /streamTravelChat\s*\(/);
+  });
+
+  it("announces pending, streaming, and error chat states without moving the input into the scroll body", () => {
+    assert.match(panelSource, /aria-live=\{chatNotice === "error" \? "assertive" : "polite"\}/);
+    assert.match(panelSource, /正在思考/);
+    assert.match(panelSource, /正在回复/);
+    assert.match(panelSource, /AI 暂时无法回答，今日简报仍可继续查看/);
+    assert.match(
+      panelSource,
+      /className="travel-assistant-chat-body"[\s\S]*?<\/div>\s*<form className="travel-assistant-chat-form"/,
+    );
   });
 
   it("keeps priority keys unique when the provider repeats a fact ID", () => {
@@ -126,6 +168,10 @@ describe("Today Console travel assistant V1", () => {
       mobileStyles,
       /\.travel-assistant-chat-body\s*\{[\s\S]*?max-height:\s*52vh;[\s\S]*?overflow-y:\s*auto;/,
     );
+    assert.match(
+      mobileStyles,
+      /\.travel-assistant-quick-prompts\s*\{[\s\S]*?display:\s*flex;[\s\S]*?flex-wrap:\s*nowrap;[\s\S]*?overflow-x:\s*auto;/,
+    );
   });
 });
 
@@ -148,4 +194,11 @@ function mediaBlock(source, marker) {
 function effectSource(source) {
   const handlerStart = source.indexOf("async function handleGenerate");
   return handlerStart < 0 ? source : source.slice(0, handlerStart);
+}
+
+function sourceBetween(source, startMarker, endMarker) {
+  const start = source.indexOf(startMarker);
+  if (start < 0) return "";
+  const end = source.indexOf(endMarker, start + startMarker.length);
+  return source.slice(start + startMarker.length, end < 0 ? source.length : end);
 }

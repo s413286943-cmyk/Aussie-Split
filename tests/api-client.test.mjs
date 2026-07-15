@@ -16,15 +16,19 @@ import {
   fetchReceipt,
   finalizeReceipt,
   generateTravelBrief,
+  streamTravelChat,
   unlockAccessSession,
 } from "../src/lib/apiClient.js";
 import * as protectedApi from "../src/lib/apiClient.js";
 
 const originalFetch = globalThis.fetch;
+const originalWindow = globalThis.window;
 
 describe("browser protected API client", () => {
   afterEach(() => {
     globalThis.fetch = originalFetch;
+    if (originalWindow === undefined) delete globalThis.window;
+    else globalThis.window = originalWindow;
   });
 
   it("uses only relative API URLs with same-origin credentials", async () => {
@@ -141,6 +145,115 @@ describe("browser protected API client", () => {
     assert.deepEqual(parsedBodies.map((body) => body.dayId), ["", ""]);
     assert.equal(parsedBodies.every((body) => typeof body.dayId === "string"), true);
     assert.doesNotMatch(requestBodies.join("\n"), /payer|receipt|supabase/i);
+  });
+
+  it("assembles chunked chat SSE deltas and reports the current-day scope", async () => {
+    const calls = [];
+    const deltaEvents = [];
+    const scopeEvents = [];
+    const sse = [
+      `event: delta\ndata: ${JSON.stringify({ delta: "下雨时" })}\n\n`,
+      `event: delta\ndata: ${JSON.stringify({ delta: "先缩短户外段。" })}\n\n`,
+      `event: scope\ndata: ${JSON.stringify({ sourceDayIds: ["d14"] })}\n\n`,
+      "event: done\ndata: {}\n\n",
+    ].join("");
+    globalThis.fetch = async (url, options = {}) => {
+      calls.push({ url: String(url), options });
+      return chunkedSseResponse(sse, [1, 7, 19, 23, 41, 59]);
+    };
+
+    const result = await streamTravelChat({
+      dayId: "d14",
+      weather: { status: " fallback ", summary: " 有风 ", ledger: "private" },
+      checkedKitItemIds: ["power", "power", "not valid"],
+      question: " 下雨怎么调整？ ",
+      history: [
+        { role: "user", content: " 之前的问题 ", ledger: "private" },
+        { role: "assistant", content: " 之前的回答 ", receipt: "private" },
+      ],
+      ledger: [{ payer: "private" }],
+      receipt: { id: "private" },
+      supabase: { token: "private" },
+    }, {
+      onDelta(delta) {
+        deltaEvents.push(delta);
+      },
+      onScope(sourceDayIds) {
+        scopeEvents.push(sourceDayIds);
+      },
+    });
+
+    assert.deepEqual(result, {
+      answer: "下雨时先缩短户外段。",
+      sourceDayIds: ["d14"],
+    });
+    assert.deepEqual(deltaEvents, ["下雨时", "先缩短户外段。"]);
+    assert.deepEqual(scopeEvents, [["d14"]]);
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].url, "/api/travel-assistant");
+    assert.equal(calls[0].options.credentials, "same-origin");
+    assert.equal(calls[0].options.method, "POST");
+    assert.equal(calls[0].options.headers.Accept, "text/event-stream");
+    assert.equal(calls[0].options.headers["Content-Type"], "application/json");
+    assert.deepEqual(JSON.parse(calls[0].options.body), {
+      mode: "chat",
+      dayId: "d14",
+      weather: {
+        status: "fallback",
+        summary: "有风",
+        detail: "",
+        adviceLabel: "",
+      },
+      checkedKitItemIds: ["power"],
+      question: "下雨怎么调整？",
+      history: [
+        { role: "user", content: "之前的问题" },
+        { role: "assistant", content: "之前的回答" },
+      ],
+    });
+    assert.doesNotMatch(calls[0].options.body, /ledger|payer|receipt|supabase|private/i);
+  });
+
+  it("notifies the access gate and throws AccessRequiredError for chat 401s", async () => {
+    const events = [];
+    globalThis.window = {
+      dispatchEvent(event) {
+        events.push(event.type);
+      },
+    };
+    globalThis.fetch = async () => Response.json(
+      { error: "access_required" },
+      { status: 401 },
+    );
+
+    await assert.rejects(
+      () => streamTravelChat({ dayId: "d14", question: "下雨呢？", history: [] }, {}),
+      (error) => error instanceof AccessRequiredError && error.code === "access_required",
+    );
+    assert.deepEqual(events, ["aussie-chill-access-required"]);
+  });
+
+  it("maps failed and malformed chat streams to a generic API client error", async () => {
+    globalThis.fetch = async () => Response.json(
+      { error: "assistant_unavailable", privateDetail: "must not escape" },
+      { status: 502 },
+    );
+    await assert.rejects(
+      () => streamTravelChat({ dayId: "d14", question: "下雨呢？", history: [] }, {}),
+      (error) => error instanceof ApiClientError && error.status === 502,
+    );
+
+    globalThis.fetch = async () => chunkedSseResponse(
+      "event: delta\ndata: not-json\n\nevent: done\ndata: {}\n\n",
+      [3, 8, 17],
+    );
+    await assert.rejects(
+      () => streamTravelChat({ dayId: "d14", question: "下雨呢？", history: [] }, {}),
+      (error) => error instanceof ApiClientError && error.code === "api_request_failed",
+    );
+
+    const source = readFileSync(new URL("../src/lib/apiClient.js", import.meta.url), "utf8");
+    assert.doesNotMatch(source, /console\.(?:log|info|warn|error)\s*\(/);
   });
 
   it("maps a 401 response to AccessRequiredError", async () => {
@@ -361,5 +474,22 @@ function collectSourceFiles(directory) {
     const path = `${directory}/${entry}`;
     if (statSync(path).isDirectory()) return collectSourceFiles(path);
     return /\.(?:js|jsx|ts|tsx)$/.test(path) ? [path] : [];
+  });
+}
+
+function chunkedSseResponse(source, boundaries) {
+  const bytes = new TextEncoder().encode(source);
+  const cuts = [...boundaries.filter((value) => value > 0 && value < bytes.length), bytes.length];
+  let start = 0;
+  return new Response(new ReadableStream({
+    start(controller) {
+      for (const end of cuts) {
+        controller.enqueue(bytes.slice(start, end));
+        start = end;
+      }
+      controller.close();
+    },
+  }), {
+    headers: { "Content-Type": "text/event-stream; charset=utf-8" },
   });
 }

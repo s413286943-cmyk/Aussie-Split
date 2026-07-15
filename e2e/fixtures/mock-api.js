@@ -88,6 +88,12 @@ export class MockApi {
     if (this.assistantFailureStatus) {
       return json(route, { error: "assistant_unavailable" }, this.assistantFailureStatus);
     }
+    if (body.mode === "chat") {
+      const response = assistantChatResponse(body);
+      return response
+        ? sse(route, response)
+        : json(route, { error: "invalid_request" }, 400);
+    }
     if (body.mode !== "brief") return json(route, { error: "invalid_request" }, 400);
 
     const response = assistantBriefResponse(body.dayId);
@@ -239,6 +245,18 @@ function json(route, body, status = 200) {
   });
 }
 
+function sse(route, body) {
+  return route.fulfill({
+    status: 200,
+    contentType: "text/event-stream; charset=utf-8",
+    headers: {
+      "Cache-Control": "private, no-store",
+      "X-Accel-Buffering": "no",
+    },
+    body,
+  });
+}
+
 function readJsonBody(request) {
   try {
     return request.postDataJSON() || {};
@@ -281,6 +299,26 @@ function assistantBriefResponse(dayId) {
     sourceDayIds,
     generatedAt: "2026-08-11T02:00:00.000Z",
   };
+}
+
+function assistantChatResponse(body) {
+  const day = itinerary.days.find((item) => item.id === body.dayId);
+  if (
+    !day
+    || typeof body.question !== "string"
+    || !body.question.trim()
+    || !Array.isArray(body.history)
+    || body.history.length % 2 !== 0
+  ) {
+    return "";
+  }
+
+  return [
+    `event: delta\ndata: ${JSON.stringify({ delta: "下雨时先缩短 Bondi 海岸步道，" })}\n\n`,
+    `event: delta\ndata: ${JSON.stringify({ delta: "保留 Taronga Zoo 主线。" })}\n\n`,
+    `event: scope\ndata: ${JSON.stringify({ sourceDayIds: [body.dayId] })}\n\n`,
+    "event: done\ndata: {}\n\n",
+  ].join("");
 }
 
 function snapshotServerTime(expenses, activity) {

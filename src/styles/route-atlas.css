@@ -1115,6 +1115,194 @@
   color: var(--muted);
 }
 
+.travel-assistant-chat {
+  min-width: 0;
+  border-top: 1px solid rgba(16, 33, 31, 0.12);
+}
+
+.travel-assistant-chat-disclosure {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border: 0;
+  background: var(--atlas-night);
+  color: var(--atlas-paper);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.travel-assistant-chat-disclosure span:last-child {
+  color: rgba(255, 253, 245, 0.72);
+  font-size: 0.74rem;
+}
+
+.travel-assistant-chat-panel,
+.travel-assistant-chat-body,
+.travel-assistant-chat-messages {
+  min-width: 0;
+  display: grid;
+}
+
+.travel-assistant-chat-body {
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(231, 236, 230, 0.34);
+}
+
+.travel-assistant-quick-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.travel-assistant-quick-prompts button {
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid rgba(13, 108, 115, 0.24);
+  border-radius: 999px;
+  background: var(--atlas-paper);
+  color: var(--atlas-coast);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.travel-assistant-chat-messages {
+  gap: 9px;
+}
+
+.travel-assistant-chat-empty {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.travel-assistant-chat-message {
+  width: fit-content;
+  max-width: min(86%, 680px);
+  padding: 9px 11px;
+  border-radius: 13px;
+}
+
+.travel-assistant-chat-message.is-user {
+  justify-self: end;
+  background: var(--atlas-night);
+  color: var(--atlas-paper);
+}
+
+.travel-assistant-chat-message.is-assistant {
+  justify-self: start;
+  border: 1px solid rgba(13, 108, 115, 0.16);
+  background: var(--atlas-paper);
+  color: var(--atlas-ink);
+}
+
+.travel-assistant-chat-message span {
+  display: block;
+  margin-bottom: 3px;
+  color: inherit;
+  font-size: 0.68rem;
+  font-weight: 950;
+  opacity: 0.68;
+}
+
+.travel-assistant-chat-message p {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.travel-assistant-chat-live {
+  min-height: 20px;
+  color: var(--atlas-coast);
+  font-size: 0.74rem;
+  font-weight: 850;
+}
+
+.travel-assistant-chat-live.is-error {
+  color: var(--atlas-earth);
+}
+
+.travel-assistant-chat-form {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 9px;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(16, 33, 31, 0.1);
+}
+
+.travel-assistant-chat-form textarea {
+  min-width: 0;
+  min-height: 44px;
+  max-height: 120px;
+  resize: vertical;
+  padding: 9px 11px;
+  border: 1px solid rgba(16, 33, 31, 0.2);
+  border-radius: 11px;
+  background: var(--atlas-paper);
+  color: var(--atlas-ink);
+  font: inherit;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.travel-assistant-chat-form button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--atlas-coast);
+  color: var(--atlas-paper);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.travel-assistant-chat-footer {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 16px 12px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.travel-assistant-chat-footer button {
+  border: 0;
+  background: transparent;
+  color: var(--atlas-earth);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.travel-assistant-chat button:disabled {
+  cursor: wait;
+  opacity: 0.52;
+}
+
+.travel-assistant-chat button:focus-visible,
+.travel-assistant-chat textarea:focus-visible {
+  outline: 3px solid rgba(217, 130, 43, 0.72);
+  outline-offset: 2px;
+}
+
 .today-field-kit {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
@@ -1540,6 +1728,25 @@
   .travel-assistant-chat-body {
     max-height: 52vh;
     overflow-y: auto;
+  }
+
+  .travel-assistant-quick-prompts {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+
+  .travel-assistant-quick-prompts button {
+    flex: 0 0 auto;
+    max-width: min(82vw, 320px);
+  }
+
+  .travel-assistant-chat-body,
+  .travel-assistant-chat-form,
+  .travel-assistant-chat-footer {
+    padding-inline: 14px;
   }
 
   .today-field-kit {

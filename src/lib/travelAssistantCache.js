@@ -1,5 +1,7 @@
 const CACHE_VERSION = 1;
 const CACHE_KEY_PREFIX = "aussie-chill-travel-brief-v1:";
+const CHAT_CACHE_KEY_PREFIX = "aussie-chill-travel-chat-v1:";
+const CHAT_MAX_MESSAGES = 16;
 const DAY_ID_PATTERN = /^d(?:[0-9]|1[0-6])$/;
 const CHECKED_ID_PATTERN = /^[a-z0-9-]{1,64}$/;
 const WEATHER_KEYS = ["status", "summary", "detail", "adviceLabel"];
@@ -67,6 +69,49 @@ export function clearTravelBriefCache(storage, dayId) {
 
   try {
     storage.removeItem(cacheKey(dayId));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function readTravelChatCache(storage, dayId) {
+  if (!isValidDayId(dayId)) return [];
+
+  try {
+    if (typeof storage?.getItem !== "function") return [];
+    const raw = storage.getItem(chatCacheKey(dayId));
+    if (typeof raw !== "string" || !raw) return [];
+
+    const stored = JSON.parse(raw);
+    if (!isRecord(stored) || stored.version !== CACHE_VERSION) return [];
+    return projectChatMessages(stored.messages) || [];
+  } catch {
+    return [];
+  }
+}
+
+export function writeTravelChatCache(storage, dayId, messages) {
+  if (!isValidDayId(dayId) || typeof storage?.setItem !== "function") return false;
+  const projectedMessages = projectChatMessages(messages);
+  if (!projectedMessages) return false;
+
+  try {
+    storage.setItem(chatCacheKey(dayId), JSON.stringify({
+      version: CACHE_VERSION,
+      messages: projectedMessages,
+    }));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function clearTravelChatCache(storage, dayId) {
+  if (!isValidDayId(dayId) || typeof storage?.removeItem !== "function") return false;
+
+  try {
+    storage.removeItem(chatCacheKey(dayId));
     return true;
   } catch {
     return false;
@@ -195,6 +240,23 @@ function projectPrepItem(item) {
   return { id: item.id, label: item.label, detail: item.detail };
 }
 
+function projectChatMessages(messages) {
+  if (!Array.isArray(messages) || messages.length % 2 !== 0) return null;
+  const projected = messages.map((message, index) => {
+    const role = index % 2 === 0 ? "user" : "assistant";
+    if (
+      !isRecord(message)
+      || message.role !== role
+      || !isNonEmptyString(message.content)
+    ) {
+      return null;
+    }
+    return { role, content: message.content.trim() };
+  });
+  if (projected.some((message) => !message)) return null;
+  return projected.slice(-CHAT_MAX_MESSAGES);
+}
+
 function isStringList(value, min, max) {
   return Array.isArray(value)
     && value.length >= min
@@ -212,6 +274,10 @@ function isValidDayId(value) {
 
 function cacheKey(dayId) {
   return `${CACHE_KEY_PREFIX}${dayId}`;
+}
+
+function chatCacheKey(dayId) {
+  return `${CHAT_CACHE_KEY_PREFIX}${dayId}`;
 }
 
 function stringValue(value) {

@@ -74,6 +74,109 @@ export function generateTravelBrief(payload) {
   });
 }
 
+export async function streamTravelChat(payload, { onDelta, onScope, signal } = {}) {
+  const dayId = typeof payload.dayId === "string" && /^d(?:[0-9]|1[0-6])$/.test(payload.dayId)
+    ? payload.dayId : "";
+  const weather = Object.fromEntries([
+    "status",
+    "summary",
+    "detail",
+    "adviceLabel",
+  ].map((key) => [
+    key,
+    typeof payload.weather?.[key] === "string" ? payload.weather[key].trim().slice(0, 160) : "",
+  ]));
+  const checkedKitItemIds = [...new Set(
+    (Array.isArray(payload.checkedKitItemIds) ? payload.checkedKitItemIds : [])
+      .filter((value) => typeof value === "string" && /^[a-z0-9-]{1,64}$/.test(value)),
+  )];
+  const question = typeof payload.question === "string" ? payload.question.trim().slice(0, 400) : "";
+  const history = projectChatHistory(payload.history);
+
+  let response;
+  try {
+    response = await fetch("/api/travel-assistant", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        Accept: "text/event-stream",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        mode: "chat",
+        dayId,
+        weather,
+        checkedKitItemIds,
+        question,
+        history,
+      }),
+      signal,
+    });
+  } catch {
+    throw new ApiClientError();
+  }
+
+  if (response.status === 401) {
+    notifyAccessRequired();
+    throw new AccessRequiredError();
+  }
+  if (!response.ok || !response.body) throw new ApiClientError(response.status);
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let answer = "";
+  let sourceDayIds = [];
+  let completed = false;
+
+  try {
+    while (!completed) {
+      const chunk = await reader.read();
+      buffer += decoder.decode(chunk.value, { stream: !chunk.done });
+      buffer = buffer.replace(/\r\n/g, "\n");
+
+      let boundary = buffer.indexOf("\n\n");
+      while (boundary >= 0) {
+        const block = buffer.slice(0, boundary);
+        buffer = buffer.slice(boundary + 2);
+        const event = parseSseEvent(block);
+        if (event?.type === "delta") {
+          if (typeof event.data.delta !== "string") throw new TypeError("Invalid delta event");
+          answer += event.data.delta;
+          if (typeof onDelta === "function") onDelta(event.data.delta);
+        } else if (event?.type === "scope") {
+          if (
+            !Array.isArray(event.data.sourceDayIds)
+            || event.data.sourceDayIds.length !== 1
+            || event.data.sourceDayIds[0] !== dayId
+          ) {
+            throw new TypeError("Invalid scope event");
+          }
+          sourceDayIds = [dayId];
+          if (typeof onScope === "function") onScope(sourceDayIds);
+        } else if (event?.type === "done") {
+          completed = true;
+          break;
+        }
+        boundary = buffer.indexOf("\n\n");
+      }
+
+      if (chunk.done && !completed) throw new TypeError("Incomplete event stream");
+    }
+  } catch (error) {
+    try {
+      await reader.cancel();
+    } catch {
+      // The stream has already failed.
+    }
+    if (error instanceof AccessRequiredError) throw error;
+    throw new ApiClientError(response.status);
+  }
+
+  if (!answer || sourceDayIds.length !== 1) throw new ApiClientError(response.status);
+  return { answer, sourceDayIds };
+}
+
 export async function applyLedgerOperations(operations) {
   const response = await requestJson("/api/sync", {
     method: "POST",
@@ -178,6 +281,37 @@ function writableExpense(expense) {
     note: expense.note || "",
     splitSettled: Boolean(expense.splitSettled),
   };
+}
+
+function projectChatHistory(value) {
+  if (!Array.isArray(value) || value.length % 2 !== 0) return [];
+  const messages = value.map((message, index) => {
+    const role = index % 2 === 0 ? "user" : "assistant";
+    if (
+      !message
+      || typeof message !== "object"
+      || Array.isArray(message)
+      || message.role !== role
+      || typeof message.content !== "string"
+      || !message.content.trim()
+    ) {
+      return null;
+    }
+    return { role, content: message.content.trim().slice(0, 2_000) };
+  });
+  return messages.some((message) => !message) ? [] : messages.slice(-16);
+}
+
+function parseSseEvent(block) {
+  if (!block.trim()) return null;
+  let type = "message";
+  const dataLines = [];
+  for (const line of block.split("\n")) {
+    if (line.startsWith("event:")) type = line.slice(6).trim();
+    else if (line.startsWith("data:")) dataLines.push(line.slice(5).trimStart());
+  }
+  if (!dataLines.length) return null;
+  return { type, data: JSON.parse(dataLines.join("\n")) };
 }
 
 function notifyAccessRequired() {
