@@ -4,9 +4,213 @@ import { describe, it } from "node:test";
 import {
   buildBriefContext,
   buildTripIndex,
+  routeTravelQuestion,
 } from "../src/lib/server/travelAssistantContext.js";
 
 describe("travel assistant allowlisted context", () => {
+  it("keeps an ordinary question on the current full day", () => {
+    const routed = routeTravelQuestion({
+      currentDayId: "d14",
+      question: "今天下雨怎么调整？",
+    });
+
+    assert.equal(routed.scope, "day");
+    assert.deepEqual(routed.sourceDayIds, ["d14"]);
+    assert.deepEqual(routed.matchedDayIds, []);
+    assert.equal(routed.unmatched, false);
+    assert.equal(routed.currentDay.id, "d14");
+    assert.equal(routed.currentDay.facts.length > 0, true);
+    assert.deepEqual(routed.matchedDays, []);
+    assert.deepEqual(routed.tripIndex, []);
+  });
+
+  it("matches exact day aliases without digit-prefix collisions", () => {
+    for (const question of ["D13 如果下雨呢？", "day13 如果下雨呢？", "第13天如果下雨呢？", "Ｄ－１３ 如果下雨呢？"]) {
+      const routed = routeTravelQuestion({ currentDayId: "d14", question });
+      assert.deepEqual(routed.sourceDayIds, ["d14", "d13"]);
+      assert.deepEqual(routed.matchedDayIds, ["d13"]);
+    }
+
+    const d1 = routeTravelQuestion({ currentDayId: "d14", question: "D1 怎么安排？" });
+    const laterDays = routeTravelQuestion({ currentDayId: "d14", question: "D10 和 D16 怎么安排？" });
+    assert.deepEqual(d1.matchedDayIds, ["d1"]);
+    assert.deepEqual(laterDays.matchedDayIds, ["d10", "d16"]);
+    assert.equal(laterDays.matchedDayIds.includes("d1"), false);
+  });
+
+  it("deduplicates repeated and current-day matches", () => {
+    const repeated = routeTravelQuestion({
+      currentDayId: "d14",
+      question: "D13、day13、第13天都看看",
+    });
+    const current = routeTravelQuestion({
+      currentDayId: "d14",
+      question: "D14 的 Taronga 和 Bondi 怎么排？",
+    });
+
+    assert.deepEqual(repeated.matchedDayIds, ["d13"]);
+    assert.deepEqual(repeated.sourceDayIds, ["d14", "d13"]);
+    assert.deepEqual(current.matchedDayIds, ["d14"]);
+    assert.deepEqual(current.sourceDayIds, ["d14"]);
+    assert.deepEqual(current.matchedDays, []);
+  });
+
+  it("marks an out-of-itinerary day reference unmatched", () => {
+    const routed = routeTravelQuestion({ currentDayId: "d14", question: "D17 怎么安排？" });
+
+    assert.deepEqual(routed.sourceDayIds, ["d14"]);
+    assert.deepEqual(routed.matchedDayIds, []);
+    assert.equal(routed.unmatched, true);
+  });
+
+  it("matches Chinese, ISO, and English dates", () => {
+    for (const question of [
+      "8月12日要准备什么？",
+      "8月12号要准备什么？",
+      "2026-08-12 要准备什么？",
+      "2026—08—12 要准备什么？",
+      "Aug 12 要准备什么？",
+      "August 12 要准备什么？",
+      "ＡＵＧＵＳＴ　１２ 要准备什么？",
+    ]) {
+      const routed = routeTravelQuestion({ currentDayId: "d14", question });
+      assert.deepEqual(routed.sourceDayIds, ["d14", "d15"]);
+      assert.deepEqual(routed.matchedDayIds, ["d15"]);
+    }
+  });
+
+  it("maps Cairns aliases to only the five stage days", () => {
+    for (const question of ["Cairns 怎么安排？", "凯恩斯怎么安排？"]) {
+      const routed = routeTravelQuestion({ currentDayId: "d14", question });
+      assert.equal(routed.scope, "city");
+      assert.deepEqual(routed.matchedDayIds, ["d6", "d7", "d8", "d9", "d10"]);
+      assert.equal(routed.matchedDayIds.includes("d5"), false);
+      assert.equal(routed.matchedDayIds.includes("d11"), false);
+    }
+  });
+
+  it("prioritizes answer-bearing stage days inside the context cap", () => {
+    for (const question of ["凯恩斯哪天最适合休息？", "Cairns rest day?"]) {
+      const routed = routeTravelQuestion({ currentDayId: "d14", question });
+
+      assert.equal(routed.scope, "city");
+      assert.deepEqual(routed.matchedDayIds, ["d6", "d7", "d8", "d9", "d10"]);
+      assert.equal(routed.sourceDayIds[0], "d14");
+      assert.equal(routed.sourceDayIds.includes("d10"), true);
+      assert.equal(routed.sourceDayIds.length, 4);
+      assert.deepEqual(routed.matchedDays.map((day) => day.id), routed.sourceDayIds.slice(1));
+    }
+  });
+
+  it("keeps a city-scoped which-day question in city scope", () => {
+    const routed = routeTravelQuestion({
+      currentDayId: "d14",
+      question: "凯恩斯哪天安排最轻松？",
+    });
+
+    assert.equal(routed.scope, "city");
+    assert.deepEqual(routed.matchedDayIds, ["d6", "d7", "d8", "d9", "d10"]);
+    assert.deepEqual(routed.tripIndex, []);
+  });
+
+  it("matches non-stage city names without turning which-day into trip scope", () => {
+    const atherton = routeTravelQuestion({ currentDayId: "d14", question: "阿瑟顿高原哪天？" });
+    const hongKong = routeTravelQuestion({ currentDayId: "d14", question: "香港哪天？" });
+
+    assert.equal(atherton.scope, "city");
+    assert.deepEqual(atherton.matchedDayIds, ["d9"]);
+    assert.deepEqual(atherton.sourceDayIds, ["d14", "d9"]);
+    assert.deepEqual(atherton.tripIndex, []);
+    assert.equal(hongKong.scope, "city");
+    assert.deepEqual(hongKong.matchedDayIds, ["d0", "d16"]);
+    assert.deepEqual(hongKong.sourceDayIds, ["d14", "d0", "d16"]);
+    assert.deepEqual(hongKong.tripIndex, []);
+  });
+
+  it("matches canonical itinerary places and shared stops", () => {
+    const cases = new Map([
+      ["Taronga 怎么走？", ["d14"]],
+      ["Bondi 怎么走？", ["d14"]],
+      ["QVM 怎么走？", ["d1"]],
+      ["Carlton 怎么走？", ["d1"]],
+      ["Palm Cove 怎么走？", ["d10"]],
+      ["Fitzroy 怎么走？", ["d2"]],
+      ["Barangaroo 怎么走？", ["d11"]],
+      ["Twelve Apostles 哪两天会去？", ["d4", "d5"]],
+      ["QVB 哪两天会去？", ["d12", "d15"]],
+    ]);
+
+    for (const [question, expectedDayIds] of cases) {
+      const routed = routeTravelQuestion({ currentDayId: "d14", question });
+      assert.deepEqual(routed.matchedDayIds, expectedDayIds, question);
+    }
+  });
+
+  it("normalizes Unicode width, case, and punctuation", () => {
+    const routed = routeTravelQuestion({
+      currentDayId: "d14",
+      question: "ｑｖｍ！！！QvM？？？",
+    });
+
+    assert.deepEqual(routed.matchedDayIds, ["d1"]);
+    assert.deepEqual(routed.sourceDayIds, ["d14", "d1"]);
+  });
+
+  it("keeps every match ordered while capping full extra days at three", () => {
+    const routed = routeTravelQuestion({
+      currentDayId: "d14",
+      question: "Twelve Apostles、Palm Cove、Barangaroo、QVB、Taronga",
+    });
+
+    assert.deepEqual(routed.matchedDayIds, ["d4", "d5", "d10", "d11", "d12", "d14", "d15"]);
+    assert.deepEqual(routed.sourceDayIds, ["d14", "d4", "d5", "d10"]);
+    assert.deepEqual(routed.matchedDays.map((day) => day.id), ["d4", "d5", "d10"]);
+    assert.equal(routed.sourceDayIds.length, 4);
+  });
+
+  it("returns one full day plus the compact index for trip questions", () => {
+    for (const question of ["全程哪天最累？", "整趟怎么调整？", "整个行程怎么安排？", "所有天里哪天最松？", "哪天最累？", "哪天休息？"]) {
+      const routed = routeTravelQuestion({ currentDayId: "d14", question });
+      assert.equal(routed.scope, "trip", question);
+      assert.deepEqual(routed.sourceDayIds, ["d14"]);
+      assert.equal(routed.currentDay.id, "d14");
+      assert.deepEqual(routed.matchedDays, []);
+      assert.equal(routed.tripIndex.length, 17);
+      assert.equal(routed.tripIndex.some((day) => "facts" in day || "resources" in day), false);
+    }
+  });
+
+  it("does not route from meal blocks or generic ticket notes", () => {
+    const mealOnly = routeTravelQuestion({ currentDayId: "d14", question: "Pho Tùng 怎么走？" });
+    const genericTicket = routeTravelQuestion({ currentDayId: "d14", question: "当天无固定票券怎么走？" });
+
+    assert.deepEqual(mealOnly.matchedDayIds, []);
+    assert.equal(mealOnly.unmatched, true);
+    assert.deepEqual(genericTicket.matchedDayIds, []);
+    assert.equal(genericTicket.unmatched, true);
+  });
+
+  it("distinguishes an unknown target from ordinary quick prompts", () => {
+    const unknown = routeTravelQuestion({ currentDayId: "d14", question: "火星基地怎么走？" });
+    assert.equal(unknown.unmatched, true);
+    assert.deepEqual(unknown.sourceDayIds, ["d14"]);
+
+    for (const question of [
+      "下雨怎么调整？",
+      "今天太累可以删什么？",
+      "午餐放在哪里最顺？",
+      "明天要提前准备什么？",
+      "今天怎么走？",
+      "今天路线怎么安排？",
+      "今天导航顺序是什么？",
+    ]) {
+      const routed = routeTravelQuestion({ currentDayId: "d14", question });
+      assert.equal(routed.unmatched, false, question);
+      assert.deepEqual(routed.sourceDayIds, ["d14"], question);
+      assert.deepEqual(routed.matchedDayIds, [], question);
+    }
+  });
+
   it("builds D14 facts from itinerary, weather, and valid checklist ids", () => {
     const context = buildBriefContext({
       dayId: "d14",
