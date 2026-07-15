@@ -347,7 +347,7 @@ function Hero({ itinerary, nextDay, weather, compact = false }) {
         <span>下一站</span>
         <strong>{nextDay.label} · {nextDay.city}</strong>
         <p>{weather?.summary || nextDay.climateNote}</p>
-        <small>{weather?.detail || nextDay.clothingNote}</small>
+        <small>{weather?.adviceLabel || "季节穿衣参考"} · {weather?.detail || nextDay.clothingNote}</small>
       </aside>
     </header>
   );
@@ -629,7 +629,7 @@ function WeatherStrip({ weather }) {
     <div className={weather.status === "fallback" ? "weather-strip" : `weather-strip ${weather.status}`}>
       <strong>{label}</strong>
       <p>{weather.summary}</p>
-      <small>{weather.detail}</small>
+      <small>{weather.adviceLabel || "季节穿衣参考"} · {weather.detail}</small>
     </div>
   );
 }

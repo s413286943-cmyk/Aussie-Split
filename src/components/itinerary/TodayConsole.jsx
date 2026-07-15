@@ -46,7 +46,10 @@ export default function TodayConsole({ day, weather, ledgerExpenses, ledgerFresh
           <span>{weather?.status === "live" ? "实时天气" : weather?.status === "forecast" ? "天气预报" : "天气参考"}</span>
           <strong>{weather?.summary || day.climateNote}</strong>
         </article>
-        <article><span>穿衣提醒</span><strong>{weather?.detail || day.clothingNote}</strong></article>
+        <article>
+          <span>{weather?.adviceLabel || "季节穿衣参考"}</span>
+          <strong>{weather?.detail || day.clothingNote}</strong>
+        </article>
       </div>
       <TodayMealBoard meals={command.meals} />
       <TodayDocketStrip docket={docket} />
