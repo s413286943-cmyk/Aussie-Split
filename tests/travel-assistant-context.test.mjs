@@ -87,6 +87,19 @@ describe("travel assistant allowlisted context", () => {
     })), Array.from({ length: 3 }, () => ({ scope: "trip", unmatched: false, tripDays: 17 })));
   });
 
+  it("keeps whole-trip lodging topics resolved", () => {
+    const results = [
+      "全程住宿怎么安排？",
+      "整趟住宿怎么调整？",
+    ].map((question) => routeTravelQuestion({ currentDayId: "d14", question }));
+
+    assert.deepEqual(results.map(({ scope, unmatched, tripIndex }) => ({
+      scope,
+      unmatched,
+      tripDays: tripIndex.length,
+    })), Array.from({ length: 2 }, () => ({ scope: "trip", unmatched: false, tripDays: 17 })));
+  });
+
   it("recognizes an English whole-trip which-day question", () => {
     const routed = routeTravelQuestion({
       currentDayId: "d14",
@@ -96,6 +109,25 @@ describe("travel assistant allowlisted context", () => {
     assert.equal(routed.scope, "trip");
     assert.equal(routed.unmatched, false);
     assert.equal(routed.tripIndex.length, 17);
+  });
+
+  it("recognizes equivalent English trip comparisons without overriding explicit scope", () => {
+    const tripResults = [
+      "all days which is hardest?",
+      "entire trip which day is hardest?",
+      "which day is hardest?",
+    ].map((question) => routeTravelQuestion({ currentDayId: "d14", question }));
+    const city = routeTravelQuestion({ currentDayId: "d14", question: "Cairns which day is hardest?" });
+    const day = routeTravelQuestion({ currentDayId: "d14", question: "D13 which day is hardest?" });
+
+    assert.deepEqual(tripResults.map(({ scope, unmatched, tripIndex }) => ({
+      scope,
+      unmatched,
+      tripDays: tripIndex.length,
+    })), Array.from({ length: 3 }, () => ({ scope: "trip", unmatched: false, tripDays: 17 })));
+    assert.equal(city.scope, "city");
+    assert.equal(day.scope, "day");
+    assert.deepEqual(day.matchedDayIds, ["d13"]);
   });
 
   it("keeps partial day and place references unmatched", () => {
@@ -147,6 +179,26 @@ describe("travel assistant allowlisted context", () => {
     assert.deepEqual(routed.matchedDayIds, ["d14"]);
     assert.deepEqual(routed.sourceDayIds, ["d14"]);
     assert.equal(routed.unmatched, true);
+  });
+
+  it("binds explicit years after ordinal English dates", () => {
+    const invalidResults = [
+      "August 12th, 2025",
+      "Aug. 12th, 2025",
+    ].map((question) => routeTravelQuestion({ currentDayId: "d14", question }));
+    const validResults = [
+      "August 12th, 2026",
+      "Aug. 12th",
+    ].map((question) => routeTravelQuestion({ currentDayId: "d14", question }));
+
+    assert.deepEqual(invalidResults.map(({ matchedDayIds, unmatched }) => ({ matchedDayIds, unmatched })), [
+      { matchedDayIds: [], unmatched: true },
+      { matchedDayIds: [], unmatched: true },
+    ]);
+    assert.deepEqual(validResults.map(({ matchedDayIds, unmatched }) => ({ matchedDayIds, unmatched })), [
+      { matchedDayIds: ["d15"], unmatched: false },
+      { matchedDayIds: ["d15"], unmatched: false },
+    ]);
   });
 
   it("maps Cairns aliases to only the five stage days", () => {
@@ -281,6 +333,23 @@ describe("travel assistant allowlisted context", () => {
     assert.equal(mealOnly.unmatched, true);
     assert.deepEqual(genericTicket.matchedDayIds, []);
     assert.equal(genericTicket.unmatched, true);
+  });
+
+  it("marks pure-English unknown navigation targets unmatched", () => {
+    const results = [
+      "How do I get to Mars Beach?",
+      "What is the route to Fake Hotel?",
+      "Where is Mars Beach?",
+    ].map((question) => routeTravelQuestion({ currentDayId: "d14", question }));
+    const valid = routeTravelQuestion({ currentDayId: "d14", question: "What is the route to Palm Cove?" });
+
+    assert.deepEqual(valid.matchedDayIds, ["d10"]);
+    assert.equal(valid.unmatched, false);
+    assert.deepEqual(results.map(({ matchedDayIds, unmatched }) => ({ matchedDayIds, unmatched })), [
+      { matchedDayIds: [], unmatched: true },
+      { matchedDayIds: [], unmatched: true },
+      { matchedDayIds: [], unmatched: true },
+    ]);
   });
 
   it("distinguishes an unknown target from ordinary quick prompts", () => {

@@ -21,8 +21,8 @@ const ENGLISH_MONTHS = [
 ];
 const ROUTING_WORDS_TO_IGNORE = new Set([
   "all", "and", "arrange", "at", "can", "day", "days", "do", "does",
-  "for", "get", "go", "how", "if", "in", "is", "itinerary", "on", "or",
-  "hardest", "plan", "should", "the", "to", "today", "tomorrow", "trip", "visit", "we",
+  "entire", "for", "get", "go", "how", "if", "in", "is", "itinerary", "on", "or",
+  "hardest", "plan", "route", "should", "the", "to", "today", "tomorrow", "trip", "visit", "we",
   "what", "when", "where", "which", "whole",
   ...ENGLISH_MONTHS,
   ...ENGLISH_MONTHS.map((month) => month.slice(0, 3)),
@@ -33,7 +33,7 @@ const ROUTING_PHRASES_TO_IGNORE = [
   "怎么调整", "怎么去", "怎么走", "放在哪里", "最适合", "最轻松", "今天", "明天",
   "下雨", "太累", "可以", "午餐", "晚餐", "早餐", "准备", "安排", "调整", "什么",
   "哪里", "在哪", "哪天", "最累", "最松", "最顺", "会去", "如果", "全程", "整趟",
-  "都看看", "一天", "几天", "提前", "路线", "导航", "顺序", "放在", "交通", "规划", "怎么", "如何", "要", "的", "呢", "吗", "去",
+  "都看看", "一天", "几天", "提前", "路线", "导航", "顺序", "放在", "交通", "住宿", "规划", "怎么", "如何", "要", "的", "呢", "吗", "去",
 ];
 
 /**
@@ -143,8 +143,9 @@ export function routeTravelQuestion({ currentDayId, question }) {
     || hasNamedEntityMatch
     || [...priorities.values()].some((priority) => priority === 20);
   const wholeTrip = /全程|整趟|整个行程|所有天/u.test(normalizedQuestion)
-    || /(?:^|\s)whole\s+trip(?:\s|$)/u.test(normalizedQuestion)
-    || (/哪(?:一|两|些)?天/u.test(normalizedQuestion) && !explicitlyScoped);
+    || /(?:^|\s)(?:(?:whole|entire)\s+trip|all\s+days)(?:\s|$)/u.test(normalizedQuestion)
+    || ((/哪(?:一|两|些)?天/u.test(normalizedQuestion)
+      || /(?:^|\s)which\s+day(?:\s|$)/u.test(normalizedQuestion)) && !explicitlyScoped);
 
   if (wholeTrip) {
     return {
@@ -167,9 +168,11 @@ export function routeTravelQuestion({ currentDayId, question }) {
       || DAY_ORDER.get(left) - DAY_ORDER.get(right)
     ))
     .slice(0, MAX_EXTRA_ROUTED_DAYS);
+  const navigationQuestion = /怎么\s*(?:走|去|到)|路线|导航/u.test(normalizedQuestion)
+    || /\b(?:get\s+to|route\s+to|where\s+is)\b/u.test(normalizedQuestion);
   const unmatched = invalidDayReference
     || unmatchedDateReference
-    || (unmatchedRoutingTarget && /怎么\s*(?:走|去|到)|路线|导航/u.test(normalizedQuestion));
+    || (unmatchedRoutingTarget && navigationQuestion);
 
   return {
     scope: matchedStages.length > 0 || hasCityMatch ? "city" : "day",
@@ -247,7 +250,7 @@ function collectDateReferences(question, normalizedQuestion, matchedIds, priorit
   for (const match of question.matchAll(/(?:^|[^\d])(?:(\d{4})\s*年\s*)?(\d{1,2})\s*月\s*(\d{1,2})\s*[日号](?!\d)/gu)) {
     references.push({ year: match[1] || null, month: Number(match[2]), date: Number(match[3]) });
   }
-  for (const match of normalizedQuestion.matchAll(/(?:^|[^a-z0-9])([a-z]+)\s+(\d{1,2})(?:\s+(\d{4}))?(?!\d)/gu)) {
+  for (const match of normalizedQuestion.matchAll(/(?:^|[^a-z0-9])([a-z]+)\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s+(\d{4}))?(?![a-z0-9])/gu)) {
     const monthIndex = ENGLISH_MONTHS.findIndex((month) => (
       match[1] === month || match[1] === month.slice(0, 3)
     ));
