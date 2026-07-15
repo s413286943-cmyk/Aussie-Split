@@ -54,7 +54,7 @@ describe("travel assistant schema", () => {
   });
 
   it("accepts current-day chat with at most eight alternating turns", () => {
-    const history = Array.from({ length: 8 }, (_, index) => ([
+    const history = Array.from({ length: 9 }, (_, index) => ([
       { role: "user", content: `问题 ${index + 1}` },
       { role: "assistant", content: `回答 ${index + 1}` },
     ])).flat();
@@ -67,7 +67,7 @@ describe("travel assistant schema", () => {
 
     assert.equal(parsed.mode, "chat");
     assert.equal(parsed.question, "下雨怎么调整？");
-    assert.deepEqual(parsed.history, history);
+    assert.deepEqual(parsed.history, history.slice(-16));
   });
 
   it("rejects chat without a question or with incomplete and non-alternating history", () => {
@@ -94,7 +94,7 @@ describe("travel assistant schema", () => {
         dayId: "d14",
         question: "下雨呢？",
         history: Array.from({ length: 18 }, (_, index) => ({
-          role: index % 2 === 0 ? "user" : "assistant",
+          role: index === 0 || index % 2 === 1 ? "assistant" : "user",
           content: `消息 ${index}`,
         })),
       },

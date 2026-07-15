@@ -197,12 +197,13 @@ function normalizeQuestion(value) {
 
 function normalizeHistory(value) {
   if (value === undefined) return [];
-  if (!Array.isArray(value) || value.length > 16) throw new TypeError("Invalid request");
-  return value.map((entry) => {
+  if (!Array.isArray(value) || value.length % 2 !== 0) throw new TypeError("Invalid request");
+  const history = value.map((entry, index) => {
     if (
       !isRecord(entry)
       || Object.keys(entry).some((key) => !HISTORY_KEYS.has(key))
       || !["user", "assistant"].includes(entry.role)
+      || entry.role !== (index % 2 === 0 ? "user" : "assistant")
       || typeof entry.content !== "string"
       || !entry.content.trim()
       || entry.content.length > 2_000
@@ -211,6 +212,7 @@ function normalizeHistory(value) {
     }
     return { role: entry.role, content: entry.content.trim() };
   });
+  return history.slice(-16);
 }
 
 function isRecord(value) {
