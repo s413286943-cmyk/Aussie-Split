@@ -91,7 +91,7 @@ export async function POST(request: Request) {
   }
 }
 
-export function createChatSseResponse({
+function createChatSseResponse({
   answer,
   sourceDayIds,
 }: {

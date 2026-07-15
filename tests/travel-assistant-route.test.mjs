@@ -53,6 +53,10 @@ describe("protected travel-assistant brief route", () => {
     for (const key of envKeys) restoreEnv(key, originalEnv[key]);
   });
 
+  it("exports only framework-supported route fields", () => {
+    assert.deepEqual(Object.keys(travelAssistantRoute).sort(), ["POST", "runtime"]);
+  });
+
   it("rejects an unauthenticated request before reading its body", async () => {
     let bodyRead = false;
     let fetchCalls = 0;
