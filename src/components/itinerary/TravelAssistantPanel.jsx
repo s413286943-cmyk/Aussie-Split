@@ -75,6 +75,12 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
     });
     return () => {
       cancelled = true;
+      const controller = chatAbortRef.current;
+      controller?.abort();
+      if (chatAbortRef.current === controller) {
+        chatAbortRef.current = null;
+        chatInFlightRef.current = false;
+      }
     };
   }, [dayId]);
 

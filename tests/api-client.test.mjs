@@ -214,6 +214,40 @@ describe("browser protected API client", () => {
     assert.doesNotMatch(calls[0].options.body, /ledger|payer|receipt|supabase|private/i);
   });
 
+  it("drops oldest complete multibyte turns until the chat body fits the client ceiling", async () => {
+    const requestBodies = [];
+    const history = Array.from({ length: 8 }, (_, index) => ([
+      { role: "user", content: `${String(index).padStart(2, "0")}${"问".repeat(1_998)}` },
+      { role: "assistant", content: `${String(index).padStart(2, "0")}${"答".repeat(1_998)}` },
+    ])).flat();
+    globalThis.fetch = async (_url, options = {}) => {
+      requestBodies.push(options.body);
+      return chunkedSseResponse([
+        `event: delta\ndata: ${JSON.stringify({ delta: "保留最新上下文。" })}\n\n`,
+        `event: scope\ndata: ${JSON.stringify({ sourceDayIds: ["d14"] })}\n\n`,
+        "event: done\ndata: {}\n\n",
+      ].join(""), [11, 37]);
+    };
+
+    await streamTravelChat({
+      dayId: "d14",
+      question: "继续怎么安排？",
+      history,
+    }, {});
+
+    const [serialized] = requestBodies;
+    const body = JSON.parse(serialized);
+    const safeClientBodyCeiling = 15 * 1_024;
+    assert.ok(new TextEncoder().encode(serialized).byteLength < safeClientBodyCeiling);
+    assert.ok(body.history.length < 16);
+    assert.equal(body.history.length % 2, 0);
+    assert.deepEqual(body.history.slice(-2), history.slice(-2));
+    assert.deepEqual(
+      body.history.map((message) => message.role),
+      body.history.map((_, index) => (index % 2 === 0 ? "user" : "assistant")),
+    );
+  });
+
   it("notifies the access gate and throws AccessRequiredError for chat 401s", async () => {
     const events = [];
     globalThis.window = {

@@ -1,4 +1,5 @@
 export const ACCESS_REQUIRED_EVENT = "aussie-chill-access-required";
+const TRAVEL_CHAT_BODY_BYTE_CEILING = 15 * 1_024;
 
 export class AccessRequiredError extends Error {
   constructor() {
@@ -92,6 +93,14 @@ export async function streamTravelChat(payload, { onDelta, onScope, signal } = {
   )];
   const question = typeof payload.question === "string" ? payload.question.trim().slice(0, 400) : "";
   const history = projectChatHistory(payload.history);
+  const body = buildTravelChatRequestBody({
+    mode: "chat",
+    dayId,
+    weather,
+    checkedKitItemIds,
+    question,
+    history,
+  });
 
   let response;
   try {
@@ -102,14 +111,7 @@ export async function streamTravelChat(payload, { onDelta, onScope, signal } = {
         Accept: "text/event-stream",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        mode: "chat",
-        dayId,
-        weather,
-        checkedKitItemIds,
-        question,
-        history,
-      }),
+      body,
       signal,
     });
   } catch {
@@ -300,6 +302,21 @@ function projectChatHistory(value) {
     return { role, content: message.content.trim().slice(0, 2_000) };
   });
   return messages.some((message) => !message) ? [] : messages.slice(-16);
+}
+
+function buildTravelChatRequestBody(request) {
+  let body = JSON.stringify(request);
+  while (
+    new TextEncoder().encode(body).byteLength >= TRAVEL_CHAT_BODY_BYTE_CEILING
+    && request.history.length >= 2
+  ) {
+    request = { ...request, history: request.history.slice(2) };
+    body = JSON.stringify(request);
+  }
+  if (new TextEncoder().encode(body).byteLength >= TRAVEL_CHAT_BODY_BYTE_CEILING) {
+    throw new ApiClientError();
+  }
+  return body;
 }
 
 function parseSseEvent(block) {

@@ -127,6 +127,17 @@ describe("Today Console travel assistant V1", () => {
     assert.doesNotMatch(effectSource(panelSource), /streamTravelChat\s*\(/);
   });
 
+  it("aborts and clears only the matching chat controller when the day effect cleans up", () => {
+    assert.match(
+      panelSource,
+      /useEffect\(\(\) => \{[\s\S]*?readTravelChatCache\(browserStorage\(\), dayId\);[\s\S]*?return \(\) => \{\s*cancelled = true;\s*const controller = chatAbortRef\.current;\s*controller\?\.abort\(\);\s*if \(chatAbortRef\.current === controller\) \{\s*chatAbortRef\.current = null;\s*chatInFlightRef\.current = false;\s*\}\s*\};\s*\}, \[dayId\]\);/,
+    );
+    assert.match(
+      panelSource,
+      /await streamTravelChat\s*\([\s\S]*?if \(activeDayRef\.current !== requestDayId \|\| chatAbortRef\.current !== controller\) return;[\s\S]*?writeTravelChatCache\(/,
+    );
+  });
+
   it("announces pending, streaming, and error chat states without moving the input into the scroll body", () => {
     assert.match(panelSource, /aria-live=\{chatNotice === "error" \? "assertive" : "polite"\}/);
     assert.match(panelSource, /正在思考/);
