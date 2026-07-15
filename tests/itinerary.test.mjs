@@ -14,6 +14,26 @@ import {
 } from "../src/lib/today.js";
 import { readWorkbook } from "../scripts/import-itinerary.mjs";
 
+const expectedFocus = {
+  d0: "经香港转机，夜航前往墨尔本。",
+  d1: "落地恢复，轻走 CBD；晚间逛 QVM 冬季夜市。",
+  d2: "蒸汽小火车半日，下午漫步 Fitzroy。",
+  d3: "机场取车轻装上路，沿海开到 Apollo Bay。",
+  d4: "穿过雨林走向十二使徒岩，傍晚抵达 Port Campbell。",
+  d5: "清晨补拍海岸，走内陆线返回墨尔本机场。",
+  d6: "从冬季飞进热带，傍晚漫步凯恩斯海滨。",
+  d7: "全天留给大堡礁外礁平台与海上体验。",
+  d8: "沿丹翠河深入雨林，在 Cape Tribulation 看雨林入海。",
+  d9: "轻量自驾串联火山湖、巨树、高原小镇与瀑布。",
+  d10: "逛 Rusty’s Market，休整后去 Palm Cove 看海。",
+  d11: "飞抵悉尼休息后，经 Barangaroo 走向海港夜景。",
+  d12: "从歌剧院导览一路步行到花园、经典机位与 QVB。",
+  d13: "沿 Grand Pacific Drive 南下，串联海崖桥与南海岸小镇。",
+  d14: "上午看澳洲动物，下午走 Bondi 海岸，晚上吃 Totti’s。",
+  d15: "早上按状态决定 Manly，下午采购整理，傍晚 Cafe Sydney。",
+  d16: "完成 TRS 与机场手续，启程回家。",
+};
+
 describe("itinerary data", () => {
   it("imports D0 through D16 from the Excel workbook", () => {
     const imported = readWorkbook();
@@ -23,6 +43,12 @@ describe("itinerary data", () => {
     assert.equal(imported.days[0].date, "2026-07-28");
     assert.equal(imported.days[16].id, "d16");
     assert.equal(imported.days[16].date, "2026-08-13");
+  });
+
+  it("keeps every day-card focus to the approved rhythm sentence", () => {
+    for (const day of itinerary.days) {
+      assert.equal(day.focus, expectedFocus[day.id], `${day.id} focus is not concise`);
+    }
   });
 
   it("uses explicit daily transport, departure, lodging, primary, and ticket controls", () => {
@@ -219,7 +245,7 @@ describe("itinerary data", () => {
     const mealBlock = d1.blocks.find((block) => block.period === "饮食" && block.place === "饮食安排");
     const officialResource = marketBlock?.resources.find((resource) => resource.type === "official");
 
-    assert.match(d1.focus, /QVM Winter Night Market/);
+    assert.match(d1.focus, /QVM 冬季夜市/);
     assert.ok(marketBlock);
     assert.match(marketBlock.tip, /17:00-22:00/);
     assert.match(marketBlock.tip, /免费.*免预约/);
