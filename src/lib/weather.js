@@ -10,7 +10,7 @@ export function buildWeatherUrl(day) {
     latitude: String(day.lat),
     longitude: String(day.lon),
     current: "temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m",
-    daily: "temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,weather_code",
+    daily: "temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_probability_max,wind_speed_10m_max,uv_index_max,weather_code",
     timezone: "auto",
     forecast_days: String(forecastDays),
   });
@@ -35,6 +35,7 @@ export function fallbackWeather(day) {
     status: "fallback",
     summary: day.climateNote,
     detail: day.clothingNote,
+    adviceLabel: "季节穿衣参考",
   };
 }
 
@@ -89,30 +90,40 @@ export function summarizeWeather(day, data, now = new Date()) {
   if (index < 0) return fallbackWeather(day);
   const max = readArray(daily.temperature_2m_max, index);
   const min = readArray(daily.temperature_2m_min, index);
+  if (!Number.isFinite(min) || !Number.isFinite(max)) return fallbackWeather(day);
+  const apparentMin = readArray(daily.apparent_temperature_min, index);
   const rain = readArray(daily.precipitation_probability_max, index);
   const uv = readArray(daily.uv_index_max, index);
-  const wind = status === "live" ? current.wind_speed_10m : undefined;
+  const dailyWind = readArray(daily.wind_speed_10m_max, index);
+  const wind = Number.isFinite(dailyWind)
+    ? dailyWind
+    : status === "live" ? current.wind_speed_10m : undefined;
   const currentTemp = status === "live" ? current.temperature_2m : undefined;
-  const apparent = status === "live" ? current.apparent_temperature : undefined;
   const condition = weatherCodeLabel(status === "live" ? current.weather_code ?? readArray(daily.weather_code, index) : readArray(daily.weather_code, index));
-  const range = Number.isFinite(min) && Number.isFinite(max) ? `${Math.round(min)}-${Math.round(max)}°C` : "";
+  const range = `${Math.round(min)}-${Math.round(max)}°C`;
   const nowText = Number.isFinite(currentTemp) ? `现在 ${Math.round(currentTemp)}°C` : "";
-  const feelsText = Number.isFinite(apparent) ? `体感 ${Math.round(apparent)}°C` : "";
 
   return {
     status,
     summary: [condition, range, nowText].filter(Boolean).join(" · "),
-    detail: buildWeatherAdvice({ rain, uv, wind, feelsText, fallback: day.clothingNote }),
+    detail: buildWeatherAdvice({ apparentMin, min, rain, uv, wind }),
+    adviceLabel: "预报穿衣建议",
   };
 }
 
-export function buildWeatherAdvice({ rain, uv, wind, feelsText, fallback }) {
-  const advice = [];
-  if (feelsText) advice.push(feelsText);
-  if (Number.isFinite(rain) && rain >= 50) advice.push("有雨，鞋子尽量防水");
-  if (Number.isFinite(wind) && wind >= 25) advice.push("风大，防风外套更重要");
-  if (Number.isFinite(uv) && uv >= 6) advice.push("UV 偏高，防晒衣和帽子要带");
-  return advice.length ? advice.join("，") : fallback;
+export function buildWeatherAdvice({ apparentMin, min, rain, uv, wind }) {
+  const temperature = Number.isFinite(apparentMin) ? apparentMin : min;
+  let base = "短袖为主";
+  if (temperature <= 5) base = "轻薄羽绒 + 保暖中层";
+  else if (temperature <= 10) base = "毛衣 / 抓绒 + 防风外套";
+  else if (temperature <= 15) base = "长袖 + 薄外套";
+  else if (temperature <= 20) base = "短袖或长袖叠穿，带薄外套";
+
+  const advice = [base];
+  if (Number.isFinite(rain) && rain >= 50) advice.push("带防水外层或雨具");
+  if (Number.isFinite(wind) && wind >= 25) advice.push("海边优先防风");
+  if (Number.isFinite(uv) && uv >= 6) advice.push("做好防晒");
+  return advice.join("；");
 }
 
 function hasCoordinates(day) {
@@ -211,7 +222,10 @@ function parseDate(value) {
 
 function readArray(values, index) {
   if (!Array.isArray(values)) return undefined;
-  return Number(values[index]);
+  const value = values[index];
+  if (value === null || value === undefined || value === "") return undefined;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : undefined;
 }
 
 function weatherCodeLabel(code) {

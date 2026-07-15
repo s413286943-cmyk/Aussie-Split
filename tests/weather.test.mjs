@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import {
   buildWeatherAdvice,
   buildWeatherUrl,
+  fallbackWeather,
   fetchDayWeather,
   getWeatherStatus,
   isForecastAvailable,
@@ -62,6 +63,9 @@ describe("itinerary weather", () => {
     assert.match(url, /latitude=-16\.9186/);
     assert.match(url, /longitude=145\.7781/);
     assert.match(url, /current=/);
+    assert.match(url, /apparent_temperature_max/);
+    assert.match(url, /apparent_temperature_min/);
+    assert.match(url, /wind_speed_10m_max/);
     assert.match(url, /forecast_days=16/);
   });
 
@@ -85,6 +89,7 @@ describe("itinerary weather", () => {
     assert.equal(result.status, "fallback");
     assert.equal(result.summary, day.climateNote);
     assert.equal(result.detail, day.clothingNote);
+    assert.equal(result.adviceLabel, "季节穿衣参考");
   });
 
   it("keeps supporting a synchronous positional fetcher", async () => {
@@ -780,7 +785,10 @@ describe("itinerary weather", () => {
         time: ["2026-08-04"],
         temperature_2m_max: [27],
         temperature_2m_min: [18],
+        apparent_temperature_max: [29],
+        apparent_temperature_min: [18],
         precipitation_probability_max: [55],
+        wind_speed_10m_max: [28],
         uv_index_max: [7],
         weather_code: [2],
       },
@@ -788,9 +796,11 @@ describe("itinerary weather", () => {
 
     assert.equal(result.status, "live");
     assert.equal(result.summary, "多云 · 18-27°C · 现在 25°C");
-    assert.match(result.detail, /有雨/);
-    assert.match(result.detail, /防风外套/);
-    assert.match(result.detail, /防晒衣/);
+    assert.equal(result.adviceLabel, "预报穿衣建议");
+    assert.equal(
+      result.detail,
+      "短袖或长袖叠穿，带薄外套；带防水外层或雨具；海边优先防风；做好防晒",
+    );
   });
 
   it("summarizes future forecast without current temperature", () => {
@@ -805,7 +815,10 @@ describe("itinerary weather", () => {
         time: ["2026-08-04"],
         temperature_2m_max: [27],
         temperature_2m_min: [18],
+        apparent_temperature_max: [29],
+        apparent_temperature_min: [18],
         precipitation_probability_max: [55],
+        wind_speed_10m_max: [28],
         uv_index_max: [7],
         weather_code: [1],
       },
@@ -815,6 +828,11 @@ describe("itinerary weather", () => {
     assert.equal(result.summary, "多云 · 18-27°C");
     assert.doesNotMatch(result.summary, /现在/);
     assert.doesNotMatch(result.detail, /体感/);
+    assert.equal(result.adviceLabel, "预报穿衣建议");
+    assert.equal(
+      result.detail,
+      "短袖或长袖叠穿，带薄外套；带防水外层或雨具；海边优先防风；做好防晒",
+    );
   });
 
   it("falls back when daily data does not contain the target date", () => {
@@ -832,12 +850,46 @@ describe("itinerary weather", () => {
     assert.equal(result.status, "fallback");
     assert.equal(result.summary, day.climateNote);
     assert.equal(result.detail, day.clothingNote);
+    assert.equal(result.adviceLabel, "季节穿衣参考");
   });
 
-  it("keeps fallback clothing advice when no weather warning applies", () => {
+  it("falls back when the target date has no usable daily temperature range", () => {
+    const result = summarizeWeather(day, {
+      daily: {
+        time: [day.date],
+        temperature_2m_max: [null],
+        temperature_2m_min: [null],
+        precipitation_probability_max: [10],
+        uv_index_max: [3],
+        weather_code: [0],
+      },
+    }, new Date("2026-07-25T12:00:00"));
+
+    assert.deepEqual(result, fallbackWeather(day));
+  });
+
+  it("builds the base layer from the daily apparent minimum", () => {
+    const cases = [
+      { apparentMin: 5, expected: "轻薄羽绒 + 保暖中层" },
+      { apparentMin: 8, expected: "毛衣 / 抓绒 + 防风外套" },
+      { apparentMin: 13, expected: "长袖 + 薄外套" },
+      { apparentMin: 18, expected: "短袖或长袖叠穿，带薄外套" },
+      { apparentMin: 22, expected: "短袖为主" },
+    ];
+
+    for (const { apparentMin, expected } of cases) {
+      assert.equal(buildWeatherAdvice({ apparentMin, min: 30 }), expected);
+    }
+  });
+
+  it("uses the actual daily minimum when apparent temperature is missing", () => {
+    assert.equal(buildWeatherAdvice({ min: 9 }), "毛衣 / 抓绒 + 防风外套");
+  });
+
+  it("appends rain, wind, and UV advice in a stable order", () => {
     assert.equal(
-      buildWeatherAdvice({ rain: 10, uv: 2, wind: 10, fallback: "带薄外套" }),
-      "带薄外套"
+      buildWeatherAdvice({ apparentMin: 8, min: 9, rain: 55, wind: 28, uv: 7 }),
+      "毛衣 / 抓绒 + 防风外套；带防水外层或雨具；海边优先防风；做好防晒",
     );
   });
 });
