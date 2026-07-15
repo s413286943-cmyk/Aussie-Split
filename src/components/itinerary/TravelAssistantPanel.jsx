@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { generateTravelBrief } from "@/lib/apiClient";
 import {
@@ -31,10 +31,15 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
   const [loading, setLoading] = useState(false);
   const inFlightRef = useRef(false);
   const activeDayRef = useRef(dayId);
+  const latestFingerprintRef = useRef(fingerprint);
+
+  useLayoutEffect(() => {
+    activeDayRef.current = dayId;
+    latestFingerprintRef.current = fingerprint;
+  }, [dayId, fingerprint]);
 
   useEffect(() => {
     let cancelled = false;
-    activeDayRef.current = dayId;
     const cached = readTravelBriefCache(browserStorage(), dayId, fingerprint);
     queueMicrotask(() => {
       if (cancelled) return;
@@ -78,11 +83,11 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
         sourceDayIds: response.sourceDayIds,
       };
 
+      if (activeDayRef.current !== requestDayId) return;
+      const completionState = requestFingerprint === latestFingerprintRef.current ? "fresh" : "stale";
       writeTravelBriefCache(browserStorage(), requestDayId, nextEntry);
-      if (activeDayRef.current === requestDayId) {
-        setCacheView({ dayId: requestDayId, state: "fresh", entry: nextEntry });
-        setNotice("generated");
-      }
+      setCacheView({ dayId: requestDayId, state: completionState, entry: nextEntry });
+      setNotice(completionState === "fresh" ? "generated" : "idle");
     } catch {
       if (activeDayRef.current === requestDayId) setNotice("error");
     } finally {

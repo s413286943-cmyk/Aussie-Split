@@ -58,6 +58,33 @@ describe("Today Console travel assistant V1", () => {
     );
   });
 
+  it("keeps an old same-day response stale when the current fingerprint changed in flight", () => {
+    assert.match(panelSource, /const latestFingerprintRef = useRef\(fingerprint\);/);
+    assert.match(
+      panelSource,
+      /useLayoutEffect\(\(\) => \{\s*activeDayRef\.current = dayId;\s*latestFingerprintRef\.current = fingerprint;\s*\}, \[dayId, fingerprint\]\);/,
+    );
+    assert.match(panelSource, /const requestFingerprint = fingerprint;/);
+    assert.match(panelSource, /fingerprint:\s*requestFingerprint,/);
+    assert.match(panelSource, /if \(activeDayRef\.current !== requestDayId\) return;/);
+    assert.match(
+      panelSource,
+      /const completionState = requestFingerprint === latestFingerprintRef\.current\s*\? "fresh"\s*:\s*"stale";/,
+    );
+    assert.match(
+      panelSource,
+      /setCacheView\(\{ dayId: requestDayId, state: completionState, entry: nextEntry \}\);/,
+    );
+    assert.match(
+      panelSource,
+      /setNotice\(completionState === "fresh" \? "generated" : "idle"\);/,
+    );
+
+    const dayGuard = panelSource.indexOf("if (activeDayRef.current !== requestDayId) return;");
+    const cacheWrite = panelSource.indexOf("writeTravelBriefCache(", dayGuard);
+    assert.ok(dayGuard >= 0 && cacheWrite > dayGuard, "the per-day write must follow the day-change guard");
+  });
+
   it("renders no chat control in V1", () => {
     assert.doesNotMatch(panelSource, /travel-assistant-chat-body|<form|<textarea|onSubmit=/);
   });
