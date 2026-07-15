@@ -73,6 +73,43 @@ describe("travel assistant allowlisted context", () => {
     }
   });
 
+  it("keeps general whole-trip topics resolved", () => {
+    const results = [
+      "全程交通怎么安排？",
+      "整个行程有什么需要注意的？",
+      "全程怎么规划？",
+    ].map((question) => routeTravelQuestion({ currentDayId: "d14", question }));
+
+    assert.deepEqual(results.map(({ scope, unmatched, tripIndex }) => ({
+      scope,
+      unmatched,
+      tripDays: tripIndex.length,
+    })), Array.from({ length: 3 }, () => ({ scope: "trip", unmatched: false, tripDays: 17 })));
+  });
+
+  it("recognizes an English whole-trip which-day question", () => {
+    const routed = routeTravelQuestion({
+      currentDayId: "d14",
+      question: "whole trip which day is hardest?",
+    });
+
+    assert.equal(routed.scope, "trip");
+    assert.equal(routed.unmatched, false);
+    assert.equal(routed.tripIndex.length, 17);
+  });
+
+  it("keeps partial day and place references unmatched", () => {
+    const days = routeTravelQuestion({ currentDayId: "d14", question: "D13 和 D17 怎么安排？" });
+    const place = routeTravelQuestion({ currentDayId: "d14", question: "Cairns Mars Beach 怎么走？" });
+
+    assert.deepEqual(days.matchedDayIds, ["d13"]);
+    assert.deepEqual(days.sourceDayIds, ["d14", "d13"]);
+    assert.equal(days.unmatched, true);
+    assert.equal(place.scope, "city");
+    assert.deepEqual(place.matchedDayIds, ["d6", "d7", "d8", "d9", "d10"]);
+    assert.equal(place.unmatched, true);
+  });
+
   it("matches Chinese, ISO, and English dates", () => {
     for (const question of [
       "8月12日要准备什么？",
@@ -99,6 +136,17 @@ describe("travel assistant allowlisted context", () => {
       assert.deepEqual(routed.sourceDayIds, ["d14"], question);
       assert.equal(routed.unmatched, true, question);
     }
+  });
+
+  it("binds each explicit year to its own date reference", () => {
+    const routed = routeTravelQuestion({
+      currentDayId: "d14",
+      question: "2025年8月12日和2026年8月11日",
+    });
+
+    assert.deepEqual(routed.matchedDayIds, ["d14"]);
+    assert.deepEqual(routed.sourceDayIds, ["d14"]);
+    assert.equal(routed.unmatched, true);
   });
 
   it("maps Cairns aliases to only the five stage days", () => {

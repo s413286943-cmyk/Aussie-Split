@@ -22,18 +22,18 @@ const ENGLISH_MONTHS = [
 const ROUTING_WORDS_TO_IGNORE = new Set([
   "all", "and", "arrange", "at", "can", "day", "days", "do", "does",
   "for", "get", "go", "how", "if", "in", "is", "itinerary", "on", "or",
-  "plan", "should", "the", "to", "today", "tomorrow", "trip", "visit", "we",
+  "hardest", "plan", "should", "the", "to", "today", "tomorrow", "trip", "visit", "we",
   "what", "when", "where", "which", "whole",
   ...ENGLISH_MONTHS,
   ...ENGLISH_MONTHS.map((month) => month.slice(0, 3)),
   ...ROUTING_STAGES.flatMap((stage) => stage.aliases.filter((alias) => /^[a-z]+$/.test(alias))),
 ]);
 const ROUTING_PHRASES_TO_IGNORE = [
-  "导航顺序", "提前准备", "当天无", "整个行程", "所有天", "哪一天", "哪两天", "怎么安排",
+  "导航顺序", "提前准备", "需要注意", "当天无", "整个行程", "所有天", "哪一天", "哪两天", "怎么安排",
   "怎么调整", "怎么去", "怎么走", "放在哪里", "最适合", "最轻松", "今天", "明天",
   "下雨", "太累", "可以", "午餐", "晚餐", "早餐", "准备", "安排", "调整", "什么",
   "哪里", "在哪", "哪天", "最累", "最松", "最顺", "会去", "如果", "全程", "整趟",
-  "都看看", "一天", "几天", "提前", "路线", "导航", "顺序", "放在", "如何", "要", "的", "呢", "吗", "去",
+  "都看看", "一天", "几天", "提前", "路线", "导航", "顺序", "放在", "交通", "规划", "怎么", "如何", "要", "的", "呢", "吗", "去",
 ];
 
 /**
@@ -107,7 +107,6 @@ export function routeTravelQuestion({ currentDayId, question }) {
   }
 
   const terms = extractRoutingTerms(normalizedQuestion, rawQuestion);
-  const hasResidualRoutingTarget = terms.english.length > 0 || terms.chinese.length > 0;
   const hasNamedRoutingTerm = terms.english.some((term) => !["rest", "relax"].includes(term))
     || terms.chinese.some((term) => term.length >= 3);
   let hasCityMatch = false;
@@ -136,6 +135,7 @@ export function routeTravelQuestion({ currentDayId, question }) {
   const matchedDayIds = itinerary.days
     .filter((day) => matchedIds.has(day.id))
     .map((day) => day.id);
+  const unmatchedRoutingTarget = hasUnmatchedRoutingTarget(searchableDays, terms);
   const explicitlyScoped = invalidDayReference
     || unmatchedDateReference
     || matchedStages.length > 0
@@ -143,6 +143,7 @@ export function routeTravelQuestion({ currentDayId, question }) {
     || hasNamedEntityMatch
     || [...priorities.values()].some((priority) => priority === 20);
   const wholeTrip = /全程|整趟|整个行程|所有天/u.test(normalizedQuestion)
+    || /(?:^|\s)whole\s+trip(?:\s|$)/u.test(normalizedQuestion)
     || (/哪(?:一|两|些)?天/u.test(normalizedQuestion) && !explicitlyScoped);
 
   if (wholeTrip) {
@@ -152,7 +153,7 @@ export function routeTravelQuestion({ currentDayId, question }) {
       matchedDayIds,
       unmatched: invalidDayReference
         || unmatchedDateReference
-        || (hasResidualRoutingTarget && matchedDayIds.length === 0),
+        || unmatchedRoutingTarget,
       currentDay: projectRoutedDay(currentDay),
       matchedDays: [],
       tripIndex: buildTripIndex(),
@@ -166,11 +167,9 @@ export function routeTravelQuestion({ currentDayId, question }) {
       || DAY_ORDER.get(left) - DAY_ORDER.get(right)
     ))
     .slice(0, MAX_EXTRA_ROUTED_DAYS);
-  const unmatched = matchedDayIds.length === 0 && (
-    invalidDayReference
+  const unmatched = invalidDayReference
     || unmatchedDateReference
-    || (hasResidualRoutingTarget && /怎么\s*(?:走|去|到)|路线|导航/u.test(normalizedQuestion))
-  );
+    || (unmatchedRoutingTarget && /怎么\s*(?:走|去|到)|路线|导航/u.test(normalizedQuestion));
 
   return {
     scope: matchedStages.length > 0 || hasCityMatch ? "city" : "day",
@@ -240,32 +239,39 @@ function collectDayReferences(question, matchedIds, priorities) {
 }
 
 function collectDateReferences(question, normalizedQuestion, matchedIds, priorities) {
-  const sawReference = /\d{4}\s+\d{1,2}\s+\d{1,2}|(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d{1,2}/u.test(normalizedQuestion)
-    || /\d{1,2}\s*月\s*\d{1,2}\s*[日号]/u.test(question);
-  const explicitYears = new Set(
-    [...normalizedQuestion.matchAll(/(?:^|[^\d])(\d{4})(?!\d)/gu)].map((match) => match[1]),
-  );
-  let matched = false;
+  const references = [];
 
-  for (const day of itinerary.days) {
-    const [year, monthText, dayText] = day.date.split("-");
-    const month = Number(monthText);
-    const date = Number(dayText);
-    const monthName = ENGLISH_MONTHS[month - 1];
-    const isoPattern = new RegExp(`(?:^|[^\\d])${year}\\s+0?${month}\\s+0?${date}(?!\\d)`, "u");
-    const chinesePattern = new RegExp(`(?:^|[^\\d])0?${month}\\s*月\\s*0?${date}\\s*[日号](?!\\d)`, "u");
-    const englishPattern = new RegExp(`(?:^|[^a-z0-9])(?:${monthName.slice(0, 3)}|${monthName})\\s+0?${date}(?!\\d)`, "u");
+  for (const match of normalizedQuestion.matchAll(/(?:^|[^\d])(\d{4})\s+(\d{1,2})\s+(\d{1,2})(?!\d)/gu)) {
+    references.push({ year: match[1], month: Number(match[2]), date: Number(match[3]) });
+  }
+  for (const match of question.matchAll(/(?:^|[^\d])(?:(\d{4})\s*年\s*)?(\d{1,2})\s*月\s*(\d{1,2})\s*[日号](?!\d)/gu)) {
+    references.push({ year: match[1] || null, month: Number(match[2]), date: Number(match[3]) });
+  }
+  for (const match of normalizedQuestion.matchAll(/(?:^|[^a-z0-9])([a-z]+)\s+(\d{1,2})(?:\s+(\d{4}))?(?!\d)/gu)) {
+    const monthIndex = ENGLISH_MONTHS.findIndex((month) => (
+      match[1] === month || match[1] === month.slice(0, 3)
+    ));
+    if (monthIndex === -1) continue;
+    references.push({ year: match[3] || null, month: monthIndex + 1, date: Number(match[2]) });
+  }
 
-    const yearMatches = explicitYears.size === 0 || explicitYears.has(year);
-    if (!isoPattern.test(normalizedQuestion)
-      && !(yearMatches && chinesePattern.test(question))
-      && !(yearMatches && englishPattern.test(normalizedQuestion))) continue;
-    matched = true;
+  let unmatched = false;
+  for (const reference of references) {
+    const day = itinerary.days.find((entry) => {
+      const [year, month, date] = entry.date.split("-");
+      return (!reference.year || reference.year === year)
+        && reference.month === Number(month)
+        && reference.date === Number(date);
+    });
+    if (!day) {
+      unmatched = true;
+      continue;
+    }
     matchedIds.add(day.id);
     setRoutingPriority(priorities, day.id, 20);
   }
 
-  return sawReference && !matched;
+  return unmatched;
 }
 
 function extractRoutingTerms(question, sourceQuestion) {
@@ -346,6 +352,25 @@ function routingCityMatches(value, terms) {
   const cityTerms = normalizeRoutingText(value).split(/\s+/u);
   return terms.englishGroups.some((group) => group.every((term) => cityTerms.includes(term)))
     || terms.chinese.some((term) => cityTerms.includes(term));
+}
+
+function hasUnmatchedRoutingTarget(days, terms) {
+  const targets = [
+    ...terms.englishGroups.map((group) => ({
+      english: group,
+      englishGroups: [group],
+      chinese: [],
+    })),
+    ...terms.chinese.map((term) => ({
+      english: [],
+      englishGroups: [],
+      chinese: [term],
+    })),
+  ];
+
+  return targets.some((target) => !days.some((day) => (
+    routingCityMatches(day.city, target) || routingMatchScore(day, target) > 0
+  )));
 }
 
 function isSpecificRoutingResource(resource) {
