@@ -280,6 +280,15 @@ function parseSseEvent(eventText) {
     throw unavailableError();
   }
 
+  if (
+    isRecord(payload)
+    && Array.isArray(payload.choices)
+    && payload.choices.length === 0
+    && isRecord(payload.usage)
+  ) {
+    return { done: false, delta: "" };
+  }
+
   const choice = payload?.choices?.[0];
   const delta = choice?.delta;
   if (!isRecord(payload) || !Array.isArray(payload.choices) || !isRecord(choice) || !isRecord(delta)) {

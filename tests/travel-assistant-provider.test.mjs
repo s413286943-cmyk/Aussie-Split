@@ -133,11 +133,31 @@ describe("travel assistant provider", () => {
     )), true);
   });
 
+  it("accepts a standard usage-only SSE event before brief DONE", async () => {
+    const output = await requestTravelBrief({
+      context: { day: { id: "d14" } },
+      env,
+      fetcher: async () => sseResponse([
+        `data: ${JSON.stringify({
+          choices: [{ delta: { content: "{\"pace\":{}}" } }],
+        })}\n\n`,
+        `data: ${JSON.stringify({
+          choices: [],
+          usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
+        })}\n\n`,
+        "data: [DONE]\n\n",
+      ]),
+    });
+
+    assert.deepEqual(output, { pace: {} });
+  });
+
   it("rejects refused, malformed, incomplete, and invalid brief streams", async () => {
     const bodies = [
       "data: {\"choices\":[{\"delta\":{\"refusal\":\"secret refusal\"}}]}\n\ndata: [DONE]\n\n",
       "data: {not-json}\n\ndata: [DONE]\n\n",
       "data: {\"choices\":[]}\n\ndata: [DONE]\n\n",
+      "data: {\"choices\":[],\"usage\":[]}\n\ndata: [DONE]\n\n",
       "data: {\"choices\":[{\"delta\":{\"content\":\"{\\\"pace\\\":{}}\"}}]}\n\n",
       "data: {\"choices\":[{\"delta\":{\"content\":\"not-json\"}}]}\n\ndata: [DONE]\n\n",
     ];
