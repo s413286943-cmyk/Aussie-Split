@@ -123,6 +123,26 @@ describe("browser protected API client", () => {
     assert.doesNotMatch(briefCall.options.body, /ledger|payer|amount|receipt|operation|supabase/i);
   });
 
+  it("serializes only valid travel brief day ids", async () => {
+    const requestBodies = [];
+    globalThis.fetch = async (_url, options = {}) => {
+      requestBodies.push(options.body);
+      return Response.json({ brief: {}, generatedAt: "2026-07-15T00:00:00.000Z", sourceDayIds: [] });
+    };
+
+    for (const dayId of [
+      { payer: "private", receipt: { id: "private" }, supabase: { token: "private" } },
+      "d17",
+    ]) {
+      await generateTravelBrief({ dayId, weather: {}, checkedKitItemIds: [] });
+    }
+
+    const parsedBodies = requestBodies.map((body) => JSON.parse(body));
+    assert.deepEqual(parsedBodies.map((body) => body.dayId), ["", ""]);
+    assert.equal(parsedBodies.every((body) => typeof body.dayId === "string"), true);
+    assert.doesNotMatch(requestBodies.join("\n"), /payer|receipt|supabase/i);
+  });
+
   it("maps a 401 response to AccessRequiredError", async () => {
     globalThis.fetch = async () => Response.json({ error: "access_required" }, { status: 401 });
 

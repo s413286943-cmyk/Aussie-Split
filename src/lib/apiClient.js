@@ -47,6 +47,8 @@ export function fetchItinerary() {
 }
 
 export function generateTravelBrief(payload) {
+  const dayId = typeof payload.dayId === "string" && /^d(?:[0-9]|1[0-6])$/.test(payload.dayId)
+    ? payload.dayId : "";
   const weather = Object.fromEntries([
     "status",
     "summary",
@@ -65,7 +67,7 @@ export function generateTravelBrief(payload) {
     method: "POST",
     body: JSON.stringify({
       mode: "brief",
-      dayId: payload.dayId,
+      dayId,
       weather,
       checkedKitItemIds,
     }),
