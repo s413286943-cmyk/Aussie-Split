@@ -10,12 +10,14 @@ import { isRequestAuthenticated } from "../../../lib/server/session.js";
 import { buildBriefContext } from "../../../lib/server/travelAssistantContext.js";
 import {
   requestTravelBrief,
+  requestTravelChat,
   TravelAssistantProviderError,
 } from "../../../lib/server/travelAssistantProvider.js";
 import { consumeTravelAssistantCall } from "../../../lib/server/travelAssistantRateLimit.js";
 import {
   parseTravelAssistantRequest,
   validateBriefOutput,
+  validateChatAnswer,
 } from "../../../lib/server/travelAssistantSchema.js";
 
 export const runtime = "nodejs";
@@ -38,8 +40,30 @@ export async function POST(request: Request) {
     }
 
     const rawBody = await request.text();
-    const input = parseTravelAssistantRequest(rawBody, { allowedModes: ["brief"] });
+    const input = parseTravelAssistantRequest(rawBody, { allowedModes: ["brief", "chat"] });
     const context = buildBriefContext(input);
+
+    if (input.mode === "chat") {
+      let rawAnswer;
+      try {
+        rawAnswer = await requestTravelChat({
+          context,
+          question: input.question,
+          history: input.history,
+        });
+      } catch (error) {
+        return providerFailureResponse(error);
+      }
+
+      let answer;
+      try {
+        answer = validateChatAnswer(rawAnswer, context);
+      } catch {
+        return assistantUnavailableResponse();
+      }
+
+      return createChatSseResponse({ answer, sourceDayIds: context.sourceDayIds });
+    }
 
     let rawBrief;
     try {
@@ -65,6 +89,49 @@ export async function POST(request: Request) {
     if (error instanceof TypeError) return invalidRequestResponse();
     return assistantUnavailableResponse();
   }
+}
+
+export function createChatSseResponse({
+  answer,
+  sourceDayIds,
+}: {
+  answer: string;
+  sourceDayIds: string[];
+}) {
+  const events = [
+    ...chunkText(answer, 48).map((delta) => (
+      `event: delta\ndata: ${JSON.stringify({ delta })}\n\n`
+    )),
+    `event: scope\ndata: ${JSON.stringify({ sourceDayIds })}\n\n`,
+    "event: done\ndata: {}\n\n",
+  ];
+  const encoder = new TextEncoder();
+  let index = 0;
+
+  return new Response(new ReadableStream({
+    pull(controller) {
+      const event = events[index];
+      index += 1;
+      if (event === undefined) controller.close();
+      else controller.enqueue(encoder.encode(event));
+    },
+  }), {
+    headers: {
+      "Content-Type": "text/event-stream; charset=utf-8",
+      "Cache-Control": "private, no-store",
+      "X-Accel-Buffering": "no",
+      Connection: "keep-alive",
+    },
+  });
+}
+
+function chunkText(text: string, size: number) {
+  const characters = Array.from(text);
+  const chunks = [];
+  for (let index = 0; index < characters.length; index += size) {
+    chunks.push(characters.slice(index, index + size).join(""));
+  }
+  return chunks;
 }
 
 function providerFailureResponse(error: unknown) {

@@ -50,13 +50,30 @@ export function parseTravelAssistantRequest(rawBody, { allowedModes = ["brief", 
     throw new TypeError("Invalid request");
   }
 
+  if (
+    body.mode === "brief"
+    && (Object.hasOwn(body, "question") || Object.hasOwn(body, "history"))
+  ) {
+    throw new TypeError("Invalid request");
+  }
+
+  const question = normalizeQuestion(body.question);
+  const history = normalizeHistory(body.history);
+  if (body.mode === "chat") {
+    if (!question || history.length % 2 !== 0) throw new TypeError("Invalid request");
+    for (let index = 0; index < history.length; index += 1) {
+      const expectedRole = index % 2 === 0 ? "user" : "assistant";
+      if (history[index].role !== expectedRole) throw new TypeError("Invalid request");
+    }
+  }
+
   return {
     mode: body.mode,
     dayId: body.dayId,
     weather: normalizeWeather(body.weather),
     checkedKitItemIds: uniqueIds(body.checkedKitItemIds),
-    question: normalizeQuestion(body.question),
-    history: normalizeHistory(body.history),
+    question,
+    history,
   };
 }
 
@@ -125,6 +142,10 @@ export function validateBriefOutput(raw, context) {
   };
 }
 
+export function validateChatAnswer(raw, _context) {
+  return safeAdvice(raw, 3_000);
+}
+
 function enrichFactAdvice(item, facts) {
   if (!isRecord(item) || typeof item.factId !== "string" || !facts.has(item.factId)) {
     throw new TypeError("Invalid brief output");
@@ -183,6 +204,7 @@ function normalizeHistory(value) {
       || Object.keys(entry).some((key) => !HISTORY_KEYS.has(key))
       || !["user", "assistant"].includes(entry.role)
       || typeof entry.content !== "string"
+      || !entry.content.trim()
       || entry.content.length > 2_000
     ) {
       throw new TypeError("Invalid request");

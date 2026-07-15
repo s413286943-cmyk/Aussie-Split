@@ -6,6 +6,7 @@ import {
   TravelAssistantProviderError,
   readTravelAssistantConfig,
   requestTravelBrief,
+  requestTravelChat,
 } from "../src/lib/server/travelAssistantProvider.js";
 
 const env = {
@@ -15,6 +16,7 @@ const env = {
 };
 
 const systemPrompt = "You are a travel operations advisor. Return only JSON matching the requested schema. Select only supplied fact IDs and checklist IDs. Do not invent or restate exact times, dates, bookings, prices, people, or places. Reasons must be generic and concise. Hard facts remain controlled by the website.";
+const chatSystemPrompt = "Answer from the supplied itinerary context only. Give advice, never claim to change itinerary, bookings, tickets, checklist, ledger, or receipts. Do not invent exact times, dates, prices, people, bookings, or places. If the context does not contain an answer, say so. Hard facts shown by the website are authoritative.";
 
 describe("travel assistant provider", () => {
   it("is server-only and reads only the three server environment names", () => {
@@ -182,4 +184,114 @@ describe("travel assistant provider", () => {
     );
     assert.equal(signal.aborted, true);
   });
+
+  it("buffers split upstream SSE lines until DONE and sends current-day chat context", async () => {
+    const context = { scope: "today", sourceDayIds: ["d14"], day: { id: "d14" } };
+    const history = [
+      { role: "user", content: "上一问" },
+      { role: "assistant", content: "上一答" },
+    ];
+    const calls = [];
+    const answer = await requestTravelChat({
+      context,
+      question: "下雨怎么调整？",
+      history,
+      env,
+      fetcher: async (url, options) => {
+        calls.push({ url: String(url), options });
+        return sseResponse([
+          "data: {\"choices\":[{\"delta\":{\"content\":\"下雨",
+          "时\"}}]}\n\ndata: {\"choices\":[{\"delta\":{\"content\":\"先缩短户外段。\"}}]}\n",
+          "\ndata: [DONE]\n\n",
+        ]);
+      },
+    });
+
+    assert.equal(answer, "下雨时先缩短户外段。");
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].url, "https://provider.example/v1/chat/completions");
+    const body = JSON.parse(calls[0].options.body);
+    assert.equal(body.model, "gpt-5-mini");
+    assert.equal(body.temperature, 0.2);
+    assert.equal(body.stream, true);
+    assert.equal("response_format" in body, false);
+    assert.deepEqual(body.messages, [
+      { role: "system", content: chatSystemPrompt },
+      {
+        role: "user",
+        content: JSON.stringify({ task: "travel_chat_context", context }),
+      },
+      ...history,
+      { role: "user", content: "下雨怎么调整？" },
+    ]);
+  });
+
+  it("rejects upstream refusals, malformed chunks, and streams without DONE", async () => {
+    const bodies = [
+      "data: {\"choices\":[{\"delta\":{\"refusal\":\"secret refusal\"}}]}\n\ndata: [DONE]\n\n",
+      "data: {not-json}\n\ndata: [DONE]\n\n",
+      "data: {\"choices\":[]}\n\ndata: [DONE]\n\n",
+      "data: {\"choices\":[{\"delta\":{\"content\":\"partial\"}}]}\n\n",
+    ];
+
+    for (const body of bodies) {
+      await assert.rejects(
+        () => requestTravelChat({
+          context: { sourceDayIds: ["d14"] },
+          question: "下雨呢？",
+          history: [],
+          env,
+          fetcher: async () => sseResponse([body]),
+        }),
+        (error) => error instanceof TravelAssistantProviderError
+          && error.code === "provider_unavailable"
+          && !error.message.includes("secret refusal"),
+      );
+    }
+  });
+
+  it("times out while waiting for streamed chat data", async () => {
+    let signal;
+    let cancelled = false;
+    const body = new ReadableStream({
+      pull() {
+        return new Promise(() => {});
+      },
+      cancel() {
+        cancelled = true;
+      },
+    });
+
+    await assert.rejects(
+      () => requestTravelChat({
+        context: { sourceDayIds: ["d14"] },
+        question: "下雨呢？",
+        history: [],
+        env,
+        timeoutMs: 5,
+        fetcher: async (_url, options) => {
+          signal = options.signal;
+          return new Response(body, {
+            headers: { "Content-Type": "text/event-stream" },
+          });
+        },
+      }),
+      (error) => error instanceof TravelAssistantProviderError
+        && error.code === "provider_timeout",
+    );
+    assert.equal(signal.aborted, true);
+    assert.equal(cancelled, true);
+  });
 });
+
+function sseResponse(chunks) {
+  const encoder = new TextEncoder();
+  return new Response(new ReadableStream({
+    start(controller) {
+      for (const chunk of chunks) controller.enqueue(encoder.encode(chunk));
+      controller.close();
+    },
+  }), {
+    headers: { "Content-Type": "text/event-stream" },
+  });
+}

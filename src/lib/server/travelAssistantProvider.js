@@ -1,12 +1,14 @@
 import "server-only";
 
 const DEFAULT_TIMEOUT_MS = 20_000;
+const DEFAULT_CHAT_TIMEOUT_MS = 30_000;
 const PROVIDER_MESSAGES = {
   provider_configuration_error: "Travel assistant provider configuration is unavailable",
   provider_timeout: "Travel assistant provider timed out",
   provider_unavailable: "Travel assistant provider is unavailable",
 };
 const SYSTEM_PROMPT = "You are a travel operations advisor. Return only JSON matching the requested schema. Select only supplied fact IDs and checklist IDs. Do not invent or restate exact times, dates, bookings, prices, people, or places. Reasons must be generic and concise. Hard facts remain controlled by the website.";
+const CHAT_SYSTEM_PROMPT = "Answer from the supplied itinerary context only. Give advice, never claim to change itinerary, bookings, tickets, checklist, ledger, or receipts. Do not invent exact times, dates, prices, people, bookings, or places. If the context does not contain an answer, say so. Hard facts shown by the website are authoritative.";
 const BRIEF_OUTPUT_SHAPE = {
   pace: { level: "easy | balanced | full", note: "string" },
   priorities: [
@@ -117,6 +119,162 @@ export async function requestTravelBrief({
   } finally {
     clearTimeout(timeout);
   }
+}
+
+export async function requestTravelChat({
+  context,
+  question,
+  history,
+  env = process.env,
+  fetcher = fetch,
+  timeoutMs = DEFAULT_CHAT_TIMEOUT_MS,
+}) {
+  const { apiKey, baseUrl, model } = readTravelAssistantConfig(env);
+  const controller = new AbortController();
+  let timedOut = false;
+  const timeout = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, timeoutMs);
+
+  try {
+    const response = await fetcher(`${baseUrl}/v1/chat/completions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        temperature: 0.2,
+        stream: true,
+        messages: [
+          { role: "system", content: CHAT_SYSTEM_PROMPT },
+          {
+            role: "user",
+            content: JSON.stringify({ task: "travel_chat_context", context }),
+          },
+          ...(Array.isArray(history) ? history : []),
+          { role: "user", content: question },
+        ],
+      }),
+      signal: controller.signal,
+    });
+    if (!response?.ok || !response.body) throw unavailableError();
+
+    return await readBufferedChatStream(response.body, controller.signal);
+  } catch (error) {
+    if (timedOut) throw new TravelAssistantProviderError("provider_timeout");
+    if (error instanceof TravelAssistantProviderError) throw error;
+    throw unavailableError();
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function readBufferedChatStream(body, signal) {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let answer = "";
+  let sawDone = false;
+  let streamClosed = false;
+  let rejectOnAbort;
+  const aborted = new Promise((_, reject) => {
+    rejectOnAbort = () => reject(new Error("Provider stream aborted"));
+    signal.addEventListener("abort", rejectOnAbort, { once: true });
+  });
+
+  try {
+    while (!sawDone) {
+      const chunk = await Promise.race([reader.read(), aborted]);
+      if (chunk.done) {
+        streamClosed = true;
+        buffer += decoder.decode();
+      } else {
+        buffer += decoder.decode(chunk.value, { stream: true });
+      }
+
+      const drained = drainSseEvents(buffer, streamClosed);
+      buffer = drained.rest;
+      for (const event of drained.events) {
+        if (event.done) {
+          sawDone = true;
+          break;
+        }
+        answer += event.delta;
+        if (answer.length > 3_000) throw unavailableError();
+      }
+
+      if (streamClosed) break;
+    }
+
+    if (!sawDone || !answer.trim()) throw unavailableError();
+    return answer;
+  } finally {
+    signal.removeEventListener("abort", rejectOnAbort);
+    if (!streamClosed) await reader.cancel().catch(() => {});
+  }
+}
+
+function drainSseEvents(input, includeRemainder) {
+  const events = [];
+  let rest = input;
+  let separator = rest.match(/\r?\n\r?\n/);
+
+  while (separator) {
+    const eventText = rest.slice(0, separator.index);
+    rest = rest.slice(separator.index + separator[0].length);
+    const event = parseSseEvent(eventText);
+    if (event) events.push(event);
+    separator = rest.match(/\r?\n\r?\n/);
+  }
+
+  if (includeRemainder && rest.trim()) {
+    const event = parseSseEvent(rest);
+    if (event) events.push(event);
+    rest = "";
+  }
+
+  return { events, rest };
+}
+
+function parseSseEvent(eventText) {
+  const dataLines = [];
+  for (const line of eventText.split(/\r?\n/)) {
+    if (!line || line.startsWith(":")) continue;
+    if (!line.startsWith("data:")) continue;
+    const data = line.slice(5);
+    dataLines.push(data.startsWith(" ") ? data.slice(1) : data);
+  }
+  if (dataLines.length === 0) return null;
+
+  const data = dataLines.join("\n");
+  if (data === "[DONE]") return { done: true, delta: "" };
+
+  let payload;
+  try {
+    payload = JSON.parse(data);
+  } catch {
+    throw unavailableError();
+  }
+
+  const choice = payload?.choices?.[0];
+  const delta = choice?.delta;
+  if (!isRecord(payload) || !Array.isArray(payload.choices) || !isRecord(choice) || !isRecord(delta)) {
+    throw unavailableError();
+  }
+  if (
+    delta.refusal !== undefined
+    && delta.refusal !== null
+    && (typeof delta.refusal !== "string" || delta.refusal.trim())
+  ) {
+    throw unavailableError();
+  }
+  if (delta.content !== undefined && delta.content !== null && typeof delta.content !== "string") {
+    throw unavailableError();
+  }
+  return { done: false, delta: delta.content || "" };
 }
 
 function configString(value) {

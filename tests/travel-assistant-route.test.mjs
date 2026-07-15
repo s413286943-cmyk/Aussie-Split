@@ -175,6 +175,85 @@ describe("protected travel-assistant brief route", () => {
     assert.deepEqual(providerPrompt.context.sourceDayIds, ["d1"]);
   });
 
+  it("returns buffered and validated current-day chat as controlled SSE", async () => {
+    const fetchRequests = [];
+    globalThis.fetch = providerFetch(fetchRequests, () => providerChatResponse([
+      "下雨时",
+      "先缩短户外段。",
+    ]));
+
+    const response = await postTravelAssistant(authenticatedMutation(validChatRequest()));
+    const body = await response.text();
+
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("Content-Type"), "text/event-stream; charset=utf-8");
+    assert.equal(response.headers.get("Cache-Control"), "private, no-store");
+    assert.equal(response.headers.get("X-Accel-Buffering"), "no");
+    assert.equal(response.headers.get("Connection"), "keep-alive");
+    assert.equal(body, [
+      `event: delta\ndata: ${JSON.stringify({ delta: "下雨时先缩短户外段。" })}\n\n`,
+      `event: scope\ndata: ${JSON.stringify({ sourceDayIds: ["d14"] })}\n\n`,
+      "event: done\ndata: {}\n\n",
+    ].join(""));
+
+    assert.equal(fetchRequests.length, 1);
+    const providerBody = JSON.parse(fetchRequests[0].options.body);
+    assert.equal(providerBody.stream, true);
+    assert.deepEqual(providerBody.messages.at(-1), {
+      role: "user",
+      content: "下雨怎么调整？",
+    });
+    const contextEnvelope = JSON.parse(providerBody.messages[1].content);
+    assert.deepEqual(contextEnvelope.context.sourceDayIds, ["d14"]);
+    assert.equal(JSON.stringify(providerBody).includes("ledgerExpenses"), false);
+    assert.equal(JSON.stringify(providerBody).includes("CALLER_LEDGER_MUST_NOT_LEAK"), false);
+  });
+
+  it("rejects invalid chat before provider fetch and preserves brief-only shape rules", async () => {
+    let fetchCalls = 0;
+    globalThis.fetch = async () => {
+      fetchCalls += 1;
+      throw new Error("Provider must not be called");
+    };
+    const cases = [
+      { mode: "chat", dayId: "d14" },
+      { mode: "chat", dayId: "d14", question: "" },
+      { mode: "brief", dayId: "d14", question: "下雨呢？" },
+      {
+        mode: "chat",
+        dayId: "d14",
+        question: "下雨呢？",
+        history: [{ role: "user", content: "未完成的一轮" }],
+      },
+    ];
+
+    for (const body of cases) {
+      resetRateLimit();
+      const response = await postTravelAssistant(authenticatedMutation(body));
+      assert.equal(response.status, 400);
+      assert.deepEqual(await response.json(), { error: "invalid_request" });
+    }
+    assert.equal(fetchCalls, 0);
+  });
+
+  it("validates the full upstream chat answer before emitting any SSE", async () => {
+    const invalidAnswers = [
+      "x".repeat(3_001),
+      "请先检查付款人和小票。",
+      "建议 18:30 出发。",
+      "建议安排在 2026-08-11。",
+    ];
+
+    for (const answer of invalidAnswers) {
+      resetRateLimit();
+      globalThis.fetch = providerFetch([], () => providerChatResponse([answer]));
+      const response = await postTravelAssistant(authenticatedMutation(validChatRequest()));
+      assert.equal(response.status, 502);
+      assert.equal(response.headers.get("Content-Type"), "application/json; charset=utf-8");
+      assert.deepEqual(await response.json(), { error: "assistant_unavailable" });
+    }
+  });
+
   it("rate limits the same authenticated session and trusted address with Retry-After", async () => {
     const fetchRequests = [];
     globalThis.fetch = providerFetch(fetchRequests, () => validProviderResponse());
@@ -365,6 +444,18 @@ function validBriefRequest() {
   return { mode: "brief", dayId: "d1" };
 }
 
+function validChatRequest() {
+  return {
+    mode: "chat",
+    dayId: "d14",
+    question: "下雨怎么调整？",
+    history: [
+      { role: "user", content: "今天体力一般。" },
+      { role: "assistant", content: "优先保留主线。" },
+    ],
+  };
+}
+
 function validBriefOutput() {
   return {
     pace: { level: "balanced", note: "Keep transitions calm and flexible." },
@@ -443,6 +534,25 @@ function validProviderResponse(output = validBriefOutput()) {
         content: JSON.stringify(output),
       },
     }],
+  });
+}
+
+function providerChatResponse(deltas) {
+  const encoder = new TextEncoder();
+  const events = [
+    ...deltas.map((content) => (
+      `data: ${JSON.stringify({ choices: [{ delta: { content } }] })}\n\n`
+    )),
+    "data: [DONE]\n\n",
+  ];
+  return new Response(new ReadableStream({
+    pull(controller) {
+      const event = events.shift();
+      if (event === undefined) controller.close();
+      else controller.enqueue(encoder.encode(event));
+    },
+  }), {
+    headers: { "Content-Type": "text/event-stream" },
   });
 }
 
