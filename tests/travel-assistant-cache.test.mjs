@@ -104,6 +104,14 @@ describe("travel assistant local brief cache", () => {
       writeTravelBriefCache(storage, "d14", entryFor(fingerprint, "Too many days", ["d14", "d15"])),
       false,
     );
+    assert.equal(
+      writeTravelBriefCache(
+        storage,
+        "d14",
+        entryFor(fingerprint, "Inner wrong day", ["d14"], ["d15"]),
+      ),
+      false,
+    );
     assert.equal(values.size, 0);
     assert.deepEqual(readTravelBriefCache(storage, "d14", fingerprint), {
       state: "empty",
@@ -117,6 +125,14 @@ describe("travel assistant local brief cache", () => {
     mismatchedStored.entry.sourceDayIds = ["d15"];
     values.set(key, JSON.stringify(mismatchedStored));
 
+    assert.deepEqual(readTravelBriefCache(storage, "d14", fingerprint), {
+      state: "empty",
+      entry: null,
+    });
+
+    mismatchedStored.entry.sourceDayIds = ["d14"];
+    mismatchedStored.entry.brief.sourceDayIds = ["d15"];
+    values.set(key, JSON.stringify(mismatchedStored));
     assert.deepEqual(readTravelBriefCache(storage, "d14", fingerprint), {
       state: "empty",
       entry: null,
@@ -245,6 +261,7 @@ describe("travel assistant local brief cache", () => {
     const stored = JSON.parse(serialized);
 
     assert.deepEqual(stored.entry.brief, safeEntry.brief);
+    assert.deepEqual(stored.entry.brief.sourceDayIds, ["d14"]);
     assert.doesNotMatch(serialized, /ledger|payer|amount|receipt|operation|supabase/i);
 
     stored.entry.brief.ledger = [{ payer: "private" }];
@@ -253,6 +270,7 @@ describe("travel assistant local brief cache", () => {
     values.set(key, JSON.stringify(stored));
     const readEntry = readTravelBriefCache(storage, "d14", fingerprint).entry;
     assert.deepEqual(readEntry.brief, safeEntry.brief);
+    assert.deepEqual(readEntry.brief.sourceDayIds, ["d14"]);
     assert.doesNotMatch(JSON.stringify(readEntry), /ledger|payer|receipt|supabase/i);
 
     assert.equal(writeTravelBriefCache(storageFor(new Map()), "d14", {
@@ -284,7 +302,7 @@ function fingerprintFor(overrides = {}) {
   });
 }
 
-function entryFor(fingerprint, note, sourceDayIds = ["d14"]) {
+function entryFor(fingerprint, note, sourceDayIds = ["d14"], briefSourceDayIds = sourceDayIds) {
   return {
     fingerprint,
     generatedAt: "2026-07-15T00:00:00.000Z",
@@ -305,8 +323,9 @@ function entryFor(fingerprint, note, sourceDayIds = ["d14"]) {
         { id: "power", label: "Charge phone", detail: "Confirm a full battery." },
       ],
       suggestedQuestions: ["What should we skip first?"],
+      sourceDayIds: [...briefSourceDayIds],
     },
-    sourceDayIds,
+    sourceDayIds: [...sourceDayIds],
   };
 }
 

@@ -123,7 +123,7 @@ function projectEntry(entry, dayId) {
   ) {
     return null;
   }
-  const brief = projectBrief(entry.brief);
+  const brief = projectBrief(entry.brief, dayId);
   if (!brief) return null;
 
   return {
@@ -134,7 +134,7 @@ function projectEntry(entry, dayId) {
   };
 }
 
-function projectBrief(brief) {
+function projectBrief(brief, dayId) {
   if (
     !isRecord(brief)
     || !isRecord(brief.pace)
@@ -146,6 +146,9 @@ function projectBrief(brief) {
     || !Array.isArray(brief.tomorrowPrep)
     || brief.tomorrowPrep.length > 4
     || !isStringList(brief.suggestedQuestions, 1, 4)
+    || !Array.isArray(brief.sourceDayIds)
+    || brief.sourceDayIds.length !== 1
+    || brief.sourceDayIds[0] !== dayId
   ) {
     return null;
   }
@@ -164,6 +167,7 @@ function projectBrief(brief) {
     firstCut,
     tomorrowPrep,
     suggestedQuestions: [...brief.suggestedQuestions],
+    sourceDayIds: [dayId],
   };
 }
 
