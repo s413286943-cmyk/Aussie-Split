@@ -63,19 +63,41 @@ describe("travel assistant allowlisted context", () => {
     assert.equal(routed.unmatched, true);
   });
 
+  it("preserves unresolved targets when whole-trip context is requested", () => {
+    for (const question of ["火星基地哪天去？", "全程和 D17 怎么安排？"]) {
+      const routed = routeTravelQuestion({ currentDayId: "d14", question });
+
+      assert.equal(routed.scope, "trip", question);
+      assert.equal(routed.unmatched, true, question);
+      assert.equal(routed.tripIndex.length, 17, question);
+    }
+  });
+
   it("matches Chinese, ISO, and English dates", () => {
     for (const question of [
       "8月12日要准备什么？",
       "8月12号要准备什么？",
+      "2026年8月12日要准备什么？",
       "2026-08-12 要准备什么？",
       "2026—08—12 要准备什么？",
       "Aug 12 要准备什么？",
       "August 12 要准备什么？",
+      "August 12, 2026 要准备什么？",
       "ＡＵＧＵＳＴ　１２ 要准备什么？",
     ]) {
       const routed = routeTravelQuestion({ currentDayId: "d14", question });
       assert.deepEqual(routed.sourceDayIds, ["d14", "d15"]);
       assert.deepEqual(routed.matchedDayIds, ["d15"]);
+    }
+  });
+
+  it("rejects explicit dates from outside the itinerary year", () => {
+    for (const question of ["2025年8月12日要准备什么？", "August 12, 2025 要准备什么？"]) {
+      const routed = routeTravelQuestion({ currentDayId: "d14", question });
+
+      assert.deepEqual(routed.matchedDayIds, [], question);
+      assert.deepEqual(routed.sourceDayIds, ["d14"], question);
+      assert.equal(routed.unmatched, true, question);
     }
   });
 
@@ -144,6 +166,29 @@ describe("travel assistant allowlisted context", () => {
       const routed = routeTravelQuestion({ currentDayId: "d14", question });
       assert.deepEqual(routed.matchedDayIds, expectedDayIds, question);
     }
+  });
+
+  it("matches complete multiword targets instead of generic suffixes", () => {
+    for (const question of ["Mars Beach 怎么走？", "Fake Hotel 怎么走？"]) {
+      const routed = routeTravelQuestion({ currentDayId: "d14", question });
+
+      assert.deepEqual(routed.matchedDayIds, [], question);
+      assert.equal(routed.unmatched, true, question);
+    }
+
+    const sameDay = routeTravelQuestion({ currentDayId: "d13", question: "Taronga Bondi 怎么安排？" });
+    assert.deepEqual(sameDay.matchedDayIds, ["d14"]);
+    assert.deepEqual(sameDay.sourceDayIds, ["d13", "d14"]);
+  });
+
+  it("matches two-character alphanumeric place ids without accepting two-letter words", () => {
+    const routed = routeTravelQuestion({ currentDayId: "d14", question: "T2 怎么走？" });
+    const stopWord = routeTravelQuestion({ currentDayId: "d14", question: "to 怎么走？" });
+
+    assert.deepEqual(routed.matchedDayIds, ["d11"]);
+    assert.deepEqual(routed.sourceDayIds, ["d14", "d11"]);
+    assert.equal(routed.unmatched, false);
+    assert.deepEqual(stopWord.matchedDayIds, []);
   });
 
   it("normalizes Unicode width, case, and punctuation", () => {

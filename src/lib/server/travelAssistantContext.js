@@ -106,7 +106,7 @@ export function routeTravelQuestion({ currentDayId, question }) {
     }
   }
 
-  const terms = extractRoutingTerms(normalizedQuestion);
+  const terms = extractRoutingTerms(normalizedQuestion, rawQuestion);
   const hasResidualRoutingTarget = terms.english.length > 0 || terms.chinese.length > 0;
   const hasNamedRoutingTerm = terms.english.some((term) => !["rest", "relax"].includes(term))
     || terms.chinese.some((term) => term.length >= 3);
@@ -150,7 +150,9 @@ export function routeTravelQuestion({ currentDayId, question }) {
       scope: "trip",
       sourceDayIds: [currentDay.id],
       matchedDayIds,
-      unmatched: false,
+      unmatched: invalidDayReference
+        || unmatchedDateReference
+        || (hasResidualRoutingTarget && matchedDayIds.length === 0),
       currentDay: projectRoutedDay(currentDay),
       matchedDays: [],
       tripIndex: buildTripIndex(),
@@ -240,6 +242,9 @@ function collectDayReferences(question, matchedIds, priorities) {
 function collectDateReferences(question, normalizedQuestion, matchedIds, priorities) {
   const sawReference = /\d{4}\s+\d{1,2}\s+\d{1,2}|(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d{1,2}/u.test(normalizedQuestion)
     || /\d{1,2}\s*月\s*\d{1,2}\s*[日号]/u.test(question);
+  const explicitYears = new Set(
+    [...normalizedQuestion.matchAll(/(?:^|[^\d])(\d{4})(?!\d)/gu)].map((match) => match[1]),
+  );
   let matched = false;
 
   for (const day of itinerary.days) {
@@ -251,7 +256,10 @@ function collectDateReferences(question, normalizedQuestion, matchedIds, priorit
     const chinesePattern = new RegExp(`(?:^|[^\\d])0?${month}\\s*月\\s*0?${date}\\s*[日号](?!\\d)`, "u");
     const englishPattern = new RegExp(`(?:^|[^a-z0-9])(?:${monthName.slice(0, 3)}|${monthName})\\s+0?${date}(?!\\d)`, "u");
 
-    if (!isoPattern.test(normalizedQuestion) && !chinesePattern.test(question) && !englishPattern.test(normalizedQuestion)) continue;
+    const yearMatches = explicitYears.size === 0 || explicitYears.has(year);
+    if (!isoPattern.test(normalizedQuestion)
+      && !(yearMatches && chinesePattern.test(question))
+      && !(yearMatches && englishPattern.test(normalizedQuestion))) continue;
     matched = true;
     matchedIds.add(day.id);
     setRoutingPriority(priorities, day.id, 20);
@@ -260,10 +268,14 @@ function collectDateReferences(question, normalizedQuestion, matchedIds, priorit
   return sawReference && !matched;
 }
 
-function extractRoutingTerms(question) {
-  const english = [...question.matchAll(/[a-z][a-z0-9]*/gu)]
-    .map((match) => match[0])
-    .filter((word) => word.length >= 3 && !ROUTING_WORDS_TO_IGNORE.has(word));
+function extractRoutingTerms(question, sourceQuestion) {
+  const englishGroups = sourceQuestion
+    .split(/[、,，;；/|]|\b(?:and|or)\b|[和与及或]/gu)
+    .map((part) => [...normalizeRoutingText(part).matchAll(/[a-z][a-z0-9]*/gu)]
+      .map((match) => match[0])
+      .filter(isMeaningfulEnglishRoutingWord))
+    .filter((group) => group.length > 0);
+  const english = englishGroups.flat();
   let chinese = question.replace(/[^\p{Script=Han}\s]+/gu, " ");
 
   for (const alias of ROUTING_STAGES.flatMap((stage) => stage.aliases)) {
@@ -274,8 +286,15 @@ function extractRoutingTerms(question) {
 
   return {
     english: [...new Set(english)],
+    englishGroups: englishGroups.map((group) => [...new Set(group)]),
     chinese: [...new Set(chinese.split(/\s+/u).filter((term) => term.length >= 2))],
   };
+}
+
+function isMeaningfulEnglishRoutingWord(word) {
+  return !ROUTING_WORDS_TO_IGNORE.has(word)
+    && !/^(?:d|day)\d{1,2}$/u.test(word)
+    && (word.length >= 3 || /^[a-z]\d$/u.test(word));
 }
 
 function routingMatchScore(day, terms) {
@@ -293,27 +312,39 @@ function routingMatchScore(day, terms) {
       .filter(isSpecificRoutingResource)
       .map((resource) => ({ value: resource.title, score: 2 })),
   ];
-  let score = 0;
+  const matchedEnglish = new Set();
+  let englishScore = 0;
+  let chineseScore = 0;
 
   for (const field of fields) {
-    if (routingFieldMatches(field.value, terms)) score = Math.max(score, field.score);
+    const normalized = normalizeRoutingText(field.value);
+    const englishWords = new Set(normalized.match(/[a-z][a-z0-9]*/gu) || []);
+    for (const term of terms.english) {
+      if (!englishWords.has(term)) continue;
+      matchedEnglish.add(term);
+      englishScore = Math.max(englishScore, field.score);
+    }
+
+    const compact = normalized.replace(/\s+/gu, "");
+    if (/休息|休整/u.test(compact)) {
+      for (const term of terms.english.filter((entry) => ["rest", "relax"].includes(entry))) {
+        matchedEnglish.add(term);
+        englishScore = Math.max(englishScore, field.score);
+      }
+    }
+    if (terms.chinese.some((term) => compact.includes(term))) {
+      chineseScore = Math.max(chineseScore, field.score);
+    }
   }
-  return score;
-}
-
-function routingFieldMatches(value, terms) {
-  const normalized = normalizeRoutingText(value);
-  const englishWords = new Set(normalized.match(/[a-z][a-z0-9]*/gu) || []);
-  if (terms.english.some((term) => englishWords.has(term))) return true;
-
-  const compact = normalized.replace(/\s+/gu, "");
-  if (terms.english.some((term) => ["rest", "relax"].includes(term)) && /休息|休整/u.test(compact)) return true;
-  return terms.chinese.some((term) => compact.includes(term));
+  const englishGroupMatched = terms.englishGroups.some((group) => (
+    group.every((term) => matchedEnglish.has(term))
+  ));
+  return Math.max(englishGroupMatched ? englishScore : 0, chineseScore);
 }
 
 function routingCityMatches(value, terms) {
   const cityTerms = normalizeRoutingText(value).split(/\s+/u);
-  return terms.english.some((term) => cityTerms.includes(term))
+  return terms.englishGroups.some((group) => group.every((term) => cityTerms.includes(term)))
     || terms.chinese.some((term) => cityTerms.includes(term));
 }
 
