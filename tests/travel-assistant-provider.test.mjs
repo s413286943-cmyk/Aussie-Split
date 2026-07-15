@@ -76,7 +76,7 @@ describe("travel assistant provider", () => {
     }
   });
 
-  it("requests JSON object output and parses the message content", async () => {
+  it("buffers split brief SSE JSON until DONE while requesting JSON object output", async () => {
     const context = { day: { id: "d14" } };
     const calls = [];
     const output = await requestTravelBrief({
@@ -84,7 +84,11 @@ describe("travel assistant provider", () => {
       env,
       fetcher: async (url, options) => {
         calls.push({ url: String(url), options });
-        return Response.json({ choices: [{ message: { content: "{\"pace\":{}}" } }] });
+        return sseResponse([
+          "data: {\"choices\":[{\"delta\":{\"content\":\"{\\\"pace\\\":\"}}]}",
+          "\n\ndata: {\"choices\":[{\"delta\":{\"content\":\"{}}\"}}]}\n",
+          "\ndata: [DONE]\n\n",
+        ]);
       },
     });
 
@@ -99,11 +103,13 @@ describe("travel assistant provider", () => {
     assert.deepEqual(Object.keys(body), [
       "model",
       "temperature",
+      "stream",
       "response_format",
       "messages",
     ]);
     assert.equal(body.model, "gpt-5-mini");
     assert.equal(body.temperature, 0.2);
+    assert.equal(body.stream, true);
     assert.deepEqual(body.response_format, { type: "json_object" });
     assert.equal(body.messages.length, 2);
     assert.deepEqual(body.messages[0], { role: "system", content: systemPrompt });
@@ -125,6 +131,61 @@ describe("travel assistant provider", () => {
     assert.equal(userMessage.outputSchema.priorities.every((priority) => (
       Object.keys(priority).join(",") === "factId,reason"
     )), true);
+  });
+
+  it("rejects refused, malformed, incomplete, and invalid brief streams", async () => {
+    const bodies = [
+      "data: {\"choices\":[{\"delta\":{\"refusal\":\"secret refusal\"}}]}\n\ndata: [DONE]\n\n",
+      "data: {not-json}\n\ndata: [DONE]\n\n",
+      "data: {\"choices\":[]}\n\ndata: [DONE]\n\n",
+      "data: {\"choices\":[{\"delta\":{\"content\":\"{\\\"pace\\\":{}}\"}}]}\n\n",
+      "data: {\"choices\":[{\"delta\":{\"content\":\"not-json\"}}]}\n\ndata: [DONE]\n\n",
+    ];
+
+    for (const body of bodies) {
+      await assert.rejects(
+        () => requestTravelBrief({
+          context: { day: { id: "d14" } },
+          env,
+          fetcher: async () => sseResponse([body]),
+        }),
+        (error) => error instanceof TravelAssistantProviderError
+          && error.code === "provider_unavailable"
+          && error.message === "Travel assistant provider is unavailable"
+          && !error.message.includes("secret refusal"),
+      );
+    }
+  });
+
+  it("times out while waiting for streamed brief data", async () => {
+    let signal;
+    let streamController;
+    const body = new ReadableStream({
+      start(controller) {
+        streamController = controller;
+      },
+      pull() {
+        return new Promise(() => {});
+      },
+    });
+
+    await assert.rejects(
+      () => requestTravelBrief({
+        context: { day: { id: "d14" } },
+        env,
+        timeoutMs: 5,
+        fetcher: async (_url, options) => {
+          signal = options.signal;
+          signal.addEventListener("abort", () => streamController.close(), { once: true });
+          return new Response(body, {
+            headers: { "Content-Type": "text/event-stream" },
+          });
+        },
+      }),
+      (error) => error instanceof TravelAssistantProviderError
+        && error.code === "provider_timeout",
+    );
+    assert.equal(signal.aborted, true);
   });
 
   it("does not read or expose an upstream error body", async () => {

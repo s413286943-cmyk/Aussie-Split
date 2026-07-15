@@ -2,7 +2,8 @@ import "server-only";
 
 const DEFAULT_TIMEOUT_MS = 20_000;
 const DEFAULT_CHAT_TIMEOUT_MS = 30_000;
-const MAX_CHAT_SSE_BUFFER_BYTES = 32 * 1024;
+const MAX_PROVIDER_SSE_BUFFER_BYTES = 32 * 1024;
+const MAX_CHAT_ANSWER_CHARACTERS = 3_000;
 const PROVIDER_MESSAGES = {
   provider_configuration_error: "Travel assistant provider configuration is unavailable",
   provider_timeout: "Travel assistant provider timed out",
@@ -89,6 +90,7 @@ export async function requestTravelBrief({
       body: JSON.stringify({
         model,
         temperature: 0.2,
+        stream: true,
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
@@ -104,11 +106,9 @@ export async function requestTravelBrief({
       }),
       signal: controller.signal,
     });
-    if (!response?.ok) throw unavailableError();
+    if (!response?.ok || !response.body) throw unavailableError();
 
-    const envelope = await response.json();
-    const content = envelope?.choices?.[0]?.message?.content;
-    if (typeof content !== "string") throw unavailableError();
+    const content = await readBufferedProviderStream(response.body, controller.signal);
 
     const brief = JSON.parse(content);
     if (!isRecord(brief)) throw unavailableError();
@@ -163,7 +163,11 @@ export async function requestTravelChat({
     });
     if (!response?.ok || !response.body) throw unavailableError();
 
-    return await readBufferedChatStream(response.body, controller.signal);
+    return await readBufferedProviderStream(
+      response.body,
+      controller.signal,
+      MAX_CHAT_ANSWER_CHARACTERS,
+    );
   } catch (error) {
     if (timedOut) throw new TravelAssistantProviderError("provider_timeout");
     if (error instanceof TravelAssistantProviderError) throw error;
@@ -173,7 +177,7 @@ export async function requestTravelChat({
   }
 }
 
-async function readBufferedChatStream(body, signal) {
+async function readBufferedProviderStream(body, signal, maxOutputCharacters = Infinity) {
   if (signal.aborted) throw new Error("Provider stream aborted");
   const reader = body.getReader();
   const decoder = new TextDecoder();
@@ -198,7 +202,7 @@ async function readBufferedChatStream(body, signal) {
       }
       const drained = drainSseEvents(buffer, streamClosed);
       buffer = drained.rest;
-      if (Buffer.byteLength(buffer, "utf8") > MAX_CHAT_SSE_BUFFER_BYTES) {
+      if (Buffer.byteLength(buffer, "utf8") > MAX_PROVIDER_SSE_BUFFER_BYTES) {
         throw unavailableError();
       }
       for (const event of drained.events) {
@@ -207,7 +211,7 @@ async function readBufferedChatStream(body, signal) {
           break;
         }
         answer += event.delta;
-        if (answer.length > 3_000) throw unavailableError();
+        if (answer.length > maxOutputCharacters) throw unavailableError();
       }
 
       if (streamClosed) break;
@@ -246,7 +250,7 @@ function drainSseEvents(input, includeRemainder) {
 }
 
 function assertSseEventWithinLimit(eventText) {
-  if (Buffer.byteLength(eventText, "utf8") > MAX_CHAT_SSE_BUFFER_BYTES) {
+  if (Buffer.byteLength(eventText, "utf8") > MAX_PROVIDER_SSE_BUFFER_BYTES) {
     throw unavailableError();
   }
 }

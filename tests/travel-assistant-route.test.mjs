@@ -527,14 +527,7 @@ function expectedBriefOutput() {
 }
 
 function validProviderResponse(output = validBriefOutput()) {
-  return Response.json({
-    choices: [{
-      message: {
-        role: "assistant",
-        content: JSON.stringify(output),
-      },
-    }],
-  });
+  return providerChatResponse([JSON.stringify(output)]);
 }
 
 function providerChatResponse(deltas) {
