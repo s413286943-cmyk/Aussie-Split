@@ -88,6 +88,10 @@ describe("travel assistant schema", () => {
     }, context));
     assert.throws(() => validateBriefOutput({
       ...base,
+      tradeoffs: ["Currency details stay generic."],
+    }, context));
+    assert.throws(() => validateBriefOutput({
+      ...base,
       pace: { level: "balanced", note: "18:30 出发。" },
     }, context));
   });

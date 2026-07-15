@@ -12,7 +12,7 @@ const REQUEST_KEYS = new Set([
   "history",
 ]);
 const HISTORY_KEYS = new Set(["role", "content"]);
-const SENSITIVE_PATTERN = /(?:ledger|payer|amount|receipt|attachment|operation|supabase|付款人|分摊|小票|收据|金额|A\$\s*\d|[$¥€£]|\b(?:AUD|CNY|RMB)\b)/i;
+const SENSITIVE_PATTERN = /(?:ledger|payer|amount|receipt|attachment|operation|supabase|currency|付款人|分摊|小票|收据|金额|A\$\s*\d|[$¥€£]|\b(?:AUD|CNY|RMB)\b)/i;
 const EXACT_TIME_PATTERN = /\b(?:[01]?\d|2[0-3]):[0-5]\d\b/;
 const EXACT_DATE_PATTERN = /\b\d{4}-\d{2}-\d{2}\b|\d{1,2}月\d{1,2}日/;
 
