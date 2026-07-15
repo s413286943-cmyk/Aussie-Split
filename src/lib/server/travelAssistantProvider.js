@@ -3,6 +3,7 @@ import "server-only";
 const DEFAULT_TIMEOUT_MS = 20_000;
 const DEFAULT_CHAT_TIMEOUT_MS = 30_000;
 const MAX_PROVIDER_SSE_BUFFER_BYTES = 32 * 1024;
+const MAX_BRIEF_OUTPUT_CHARACTERS = 8 * 1024;
 const MAX_CHAT_ANSWER_CHARACTERS = 3_000;
 const PROVIDER_MESSAGES = {
   provider_configuration_error: "Travel assistant provider configuration is unavailable",
@@ -108,7 +109,11 @@ export async function requestTravelBrief({
     });
     if (!response?.ok || !response.body) throw unavailableError();
 
-    const content = await readBufferedProviderStream(response.body, controller.signal);
+    const content = await readBufferedProviderStream(
+      response.body,
+      controller.signal,
+      MAX_BRIEF_OUTPUT_CHARACTERS,
+    );
 
     const brief = JSON.parse(content);
     if (!isRecord(brief)) throw unavailableError();

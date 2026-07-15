@@ -188,6 +188,46 @@ describe("travel assistant provider", () => {
     assert.equal(signal.aborted, true);
   });
 
+  it("fails closed and cancels when many small brief events exceed the aggregate ceiling", async () => {
+    let cancelled = false;
+    let emitted = 0;
+    const encoder = new TextEncoder();
+    const body = new ReadableStream({
+      pull(controller) {
+        if (emitted < 100) {
+          emitted += 1;
+          controller.enqueue(encoder.encode(
+            `data: ${JSON.stringify({
+              choices: [{ delta: { content: "x".repeat(100) } }],
+            })}\n\n`,
+          ));
+          return undefined;
+        }
+        return new Promise(() => {});
+      },
+      cancel() {
+        cancelled = true;
+      },
+    });
+
+    await assert.rejects(
+      Promise.race([
+        requestTravelBrief({
+          context: { day: { id: "d14" } },
+          env,
+          timeoutMs: 1_000,
+          fetcher: async () => new Response(body),
+        }),
+        rejectAfter(100, "brief aggregate check hung"),
+      ]),
+      (error) => error instanceof TravelAssistantProviderError
+        && error.code === "provider_unavailable"
+        && error.message === "Travel assistant provider is unavailable"
+        && !error.message.includes("brief aggregate check hung"),
+    );
+    assert.equal(cancelled, true);
+  });
+
   it("does not read or expose an upstream error body", async () => {
     const response = new Response("secret upstream detail", { status: 500 });
 
