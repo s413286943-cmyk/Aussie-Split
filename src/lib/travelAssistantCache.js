@@ -29,11 +29,12 @@ export function readTravelBriefCache(storage, dayId, fingerprint) {
     if (typeof raw !== "string" || !raw) return emptyResult();
 
     const stored = JSON.parse(raw);
-    if (!isRecord(stored) || stored.version !== CACHE_VERSION || !isValidEntry(stored.entry)) {
+    if (!isRecord(stored) || stored.version !== CACHE_VERSION) {
       return emptyResult();
     }
 
-    const entry = projectEntry(stored.entry);
+    const entry = projectEntry(stored.entry, dayId);
+    if (!entry) return emptyResult();
     return {
       state: entry.fingerprint === fingerprint ? "fresh" : "stale",
       entry,
@@ -44,14 +45,16 @@ export function readTravelBriefCache(storage, dayId, fingerprint) {
 }
 
 export function writeTravelBriefCache(storage, dayId, entry) {
-  if (!isValidDayId(dayId) || !isValidEntry(entry) || typeof storage?.setItem !== "function") {
+  if (!isValidDayId(dayId) || typeof storage?.setItem !== "function") {
     return false;
   }
+  const projectedEntry = projectEntry(entry, dayId);
+  if (!projectedEntry) return false;
 
   try {
     storage.setItem(cacheKey(dayId), JSON.stringify({
       version: CACHE_VERSION,
-      entry: projectEntry(entry),
+      entry: projectedEntry,
     }));
     return true;
   } catch {
@@ -109,25 +112,94 @@ function normalizeCheckedIds(values) {
   )))].sort();
 }
 
-function projectEntry(entry) {
+function projectEntry(entry, dayId) {
+  if (
+    !isRecord(entry)
+    || !isNonEmptyString(entry.fingerprint)
+    || !isNonEmptyString(entry.generatedAt)
+    || !Array.isArray(entry.sourceDayIds)
+    || entry.sourceDayIds.length !== 1
+    || entry.sourceDayIds[0] !== dayId
+  ) {
+    return null;
+  }
+  const brief = projectBrief(entry.brief);
+  if (!brief) return null;
+
   return {
     fingerprint: entry.fingerprint,
     generatedAt: entry.generatedAt,
-    brief: entry.brief,
-    sourceDayIds: [...entry.sourceDayIds],
+    brief,
+    sourceDayIds: [dayId],
   };
 }
 
-function isValidEntry(entry) {
-  return isRecord(entry)
-    && typeof entry.fingerprint === "string"
-    && Boolean(entry.fingerprint)
-    && typeof entry.generatedAt === "string"
-    && Boolean(entry.generatedAt)
-    && isRecord(entry.brief)
-    && Array.isArray(entry.sourceDayIds)
-    && entry.sourceDayIds.length > 0
-    && entry.sourceDayIds.every(isValidDayId);
+function projectBrief(brief) {
+  if (
+    !isRecord(brief)
+    || !isRecord(brief.pace)
+    || !["easy", "balanced", "full"].includes(brief.pace.level)
+    || !isNonEmptyString(brief.pace.note)
+    || !Array.isArray(brief.priorities)
+    || brief.priorities.length !== 3
+    || !isStringList(brief.tradeoffs, 1, 3)
+    || !Array.isArray(brief.tomorrowPrep)
+    || brief.tomorrowPrep.length > 4
+    || !isStringList(brief.suggestedQuestions, 1, 4)
+  ) {
+    return null;
+  }
+
+  const priorities = brief.priorities.map(projectFactAdvice);
+  const firstCut = projectFactAdvice(brief.firstCut);
+  const tomorrowPrep = brief.tomorrowPrep.map(projectPrepItem);
+  if (priorities.some((item) => !item) || !firstCut || tomorrowPrep.some((item) => !item)) {
+    return null;
+  }
+
+  return {
+    pace: { level: brief.pace.level, note: brief.pace.note },
+    priorities,
+    tradeoffs: [...brief.tradeoffs],
+    firstCut,
+    tomorrowPrep,
+    suggestedQuestions: [...brief.suggestedQuestions],
+  };
+}
+
+function projectFactAdvice(item) {
+  if (
+    !isRecord(item)
+    || !isNonEmptyString(item.factId)
+    || !isNonEmptyString(item.title)
+    || !isNonEmptyString(item.reason)
+  ) {
+    return null;
+  }
+  return { factId: item.factId, title: item.title, reason: item.reason };
+}
+
+function projectPrepItem(item) {
+  if (
+    !isRecord(item)
+    || !isNonEmptyString(item.id)
+    || !isNonEmptyString(item.label)
+    || !isNonEmptyString(item.detail)
+  ) {
+    return null;
+  }
+  return { id: item.id, label: item.label, detail: item.detail };
+}
+
+function isStringList(value, min, max) {
+  return Array.isArray(value)
+    && value.length >= min
+    && value.length <= max
+    && value.every(isNonEmptyString);
+}
+
+function isNonEmptyString(value) {
+  return typeof value === "string" && Boolean(value.trim());
 }
 
 function isValidDayId(value) {

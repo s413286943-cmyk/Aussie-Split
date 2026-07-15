@@ -91,6 +91,38 @@ describe("travel assistant local brief cache", () => {
     assert.deepEqual(readTravelBriefCache(storage, "d15", d15Fingerprint).entry, d15Entry);
   });
 
+  it("rejects source day ids that do not exactly match the cache key", () => {
+    const values = new Map();
+    const storage = storageFor(values);
+    const fingerprint = fingerprintFor();
+
+    assert.equal(
+      writeTravelBriefCache(storage, "d14", entryFor(fingerprint, "Wrong day", ["d15"])),
+      false,
+    );
+    assert.equal(
+      writeTravelBriefCache(storage, "d14", entryFor(fingerprint, "Too many days", ["d14", "d15"])),
+      false,
+    );
+    assert.equal(values.size, 0);
+    assert.deepEqual(readTravelBriefCache(storage, "d14", fingerprint), {
+      state: "empty",
+      entry: null,
+    });
+
+    const validEntry = entryFor(fingerprint, "D14 brief");
+    writeTravelBriefCache(storage, "d14", validEntry);
+    const [key] = values.keys();
+    const mismatchedStored = JSON.parse(values.get(key));
+    mismatchedStored.entry.sourceDayIds = ["d15"];
+    values.set(key, JSON.stringify(mismatchedStored));
+
+    assert.deepEqual(readTravelBriefCache(storage, "d14", fingerprint), {
+      state: "empty",
+      entry: null,
+    });
+  });
+
   it("returns empty for malformed, wrong-version, or wrong-shape stored values", () => {
     const values = new Map();
     const storage = storageFor(values);
@@ -103,6 +135,10 @@ describe("travel assistant local brief cache", () => {
       "{not-json",
       JSON.stringify({ version: 2, entry }),
       JSON.stringify({ version: 1, entry: { fingerprint } }),
+      JSON.stringify({
+        version: 1,
+        entry: { ...entry, brief: { ...entry.brief, firstCut: null } },
+      }),
     ]) {
       values.set(key, stored);
       assert.deepEqual(readTravelBriefCache(storage, "d14", fingerprint), {
@@ -178,6 +214,53 @@ describe("travel assistant local brief cache", () => {
     assert.doesNotMatch(serialized, /expenses|ledger|payer|amount|receipt|operation|supabase/i);
   });
 
+  it("deep-projects only the exact V1 brief output shape", () => {
+    const values = new Map();
+    const storage = storageFor(values);
+    const fingerprint = fingerprintFor();
+    const safeEntry = entryFor(fingerprint, "D14 brief");
+    const privateEntry = {
+      ...safeEntry,
+      ledger: [{ payer: "private", amount: 99 }],
+      receipt: { id: "private" },
+      brief: {
+        ...safeEntry.brief,
+        payer: "private",
+        supabase: { token: "private" },
+        pace: { ...safeEntry.brief.pace, receipt: "private" },
+        priorities: safeEntry.brief.priorities.map((item) => ({
+          ...item,
+          operation: "private",
+        })),
+        firstCut: { ...safeEntry.brief.firstCut, amount: 99 },
+        tomorrowPrep: safeEntry.brief.tomorrowPrep.map((item) => ({
+          ...item,
+          ledger: "private",
+        })),
+      },
+    };
+
+    assert.equal(writeTravelBriefCache(storage, "d14", privateEntry), true);
+    const serialized = [...values.values()][0];
+    const stored = JSON.parse(serialized);
+
+    assert.deepEqual(stored.entry.brief, safeEntry.brief);
+    assert.doesNotMatch(serialized, /ledger|payer|amount|receipt|operation|supabase/i);
+
+    stored.entry.brief.ledger = [{ payer: "private" }];
+    stored.entry.brief.pace.receipt = { supabase: "private" };
+    const [key] = values.keys();
+    values.set(key, JSON.stringify(stored));
+    const readEntry = readTravelBriefCache(storage, "d14", fingerprint).entry;
+    assert.deepEqual(readEntry.brief, safeEntry.brief);
+    assert.doesNotMatch(JSON.stringify(readEntry), /ledger|payer|receipt|supabase/i);
+
+    assert.equal(writeTravelBriefCache(storageFor(new Map()), "d14", {
+      ...safeEntry,
+      brief: { ...safeEntry.brief, priorities: [] },
+    }), false);
+  });
+
   it("rejects invalid day ids without accessing storage", () => {
     const values = new Map();
     const storage = storageFor(values);
@@ -205,7 +288,24 @@ function entryFor(fingerprint, note, sourceDayIds = ["d14"]) {
   return {
     fingerprint,
     generatedAt: "2026-07-15T00:00:00.000Z",
-    brief: { pace: { level: "balanced", note } },
+    brief: {
+      pace: { level: "balanced", note },
+      priorities: [
+        { factId: "block:d14:10", title: "Taronga Zoo", reason: "Keep the main stop." },
+        { factId: "block:d14:20", title: "Sydney Harbour", reason: "Protect the transfer." },
+        { factId: "block:d14:30", title: "Bondi", reason: "Keep the coast flexible." },
+      ],
+      tradeoffs: ["Shorten the optional walk first."],
+      firstCut: {
+        factId: "block:d14:40",
+        title: "Optional stop",
+        reason: "Drop this stop when energy falls.",
+      },
+      tomorrowPrep: [
+        { id: "power", label: "Charge phone", detail: "Confirm a full battery." },
+      ],
+      suggestedQuestions: ["What should we skip first?"],
+    },
     sourceDayIds,
   };
 }
