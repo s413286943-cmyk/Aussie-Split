@@ -196,12 +196,11 @@ async function readBufferedChatStream(body, signal) {
       } else {
         buffer += decoder.decode(chunk.value, { stream: true });
       }
+      const drained = drainSseEvents(buffer, streamClosed);
+      buffer = drained.rest;
       if (Buffer.byteLength(buffer, "utf8") > MAX_CHAT_SSE_BUFFER_BYTES) {
         throw unavailableError();
       }
-
-      const drained = drainSseEvents(buffer, streamClosed);
-      buffer = drained.rest;
       for (const event of drained.events) {
         if (event.done) {
           sawDone = true;
@@ -230,18 +229,26 @@ function drainSseEvents(input, includeRemainder) {
   while (separator) {
     const eventText = rest.slice(0, separator.index);
     rest = rest.slice(separator.index + separator[0].length);
+    assertSseEventWithinLimit(eventText);
     const event = parseSseEvent(eventText);
     if (event) events.push(event);
     separator = rest.match(/\r?\n\r?\n/);
   }
 
   if (includeRemainder && rest.trim()) {
+    assertSseEventWithinLimit(rest);
     const event = parseSseEvent(rest);
     if (event) events.push(event);
     rest = "";
   }
 
   return { events, rest };
+}
+
+function assertSseEventWithinLimit(eventText) {
+  if (Buffer.byteLength(eventText, "utf8") > MAX_CHAT_SSE_BUFFER_BYTES) {
+    throw unavailableError();
+  }
 }
 
 function parseSseEvent(eventText) {

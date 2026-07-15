@@ -316,6 +316,51 @@ describe("travel assistant provider", () => {
     assert.equal(cancelled, true);
   });
 
+  it("accepts one large network chunk made of small complete SSE events", async () => {
+    const noContentEvent = `data: ${JSON.stringify({
+      choices: [{ delta: { role: "assistant" } }],
+    })}\n\n`;
+    const body = [
+      noContentEvent.repeat(700),
+      `data: ${JSON.stringify({ choices: [{ delta: { content: "保留主线。" } }] })}\n\n`,
+      "data: [DONE]\n\n",
+    ].join("");
+    assert.equal(Buffer.byteLength(body, "utf8") > 32 * 1024, true);
+
+    const answer = await requestTravelChat({
+      context: { sourceDayIds: ["d14"] },
+      question: "下雨呢？",
+      history: [],
+      env,
+      fetcher: async () => sseResponse([body]),
+    });
+
+    assert.equal(answer, "保留主线。");
+  });
+
+  it("fails closed when one complete SSE event exceeds the raw event ceiling", async () => {
+    const oversizedEvent = `data: ${JSON.stringify({
+      choices: [{ delta: { role: "assistant" }, padding: "x".repeat(32 * 1024) }],
+    })}\n\n`;
+    const body = [
+      oversizedEvent,
+      `data: ${JSON.stringify({ choices: [{ delta: { content: "不应返回。" } }] })}\n\n`,
+      "data: [DONE]\n\n",
+    ].join("");
+
+    await assert.rejects(
+      () => requestTravelChat({
+        context: { sourceDayIds: ["d14"] },
+        question: "下雨呢？",
+        history: [],
+        env,
+        fetcher: async () => sseResponse([body]),
+      }),
+      (error) => error instanceof TravelAssistantProviderError
+        && error.code === "provider_unavailable",
+    );
+  });
+
   it("does not hang when the timeout fires before stream abort handling is attached", async () => {
     let signal;
     const body = new ReadableStream({
