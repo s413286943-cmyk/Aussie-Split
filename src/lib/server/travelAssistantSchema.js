@@ -12,9 +12,9 @@ const REQUEST_KEYS = new Set([
   "history",
 ]);
 const HISTORY_KEYS = new Set(["role", "content"]);
-const SENSITIVE_PATTERN = /(?:ledger|payer|amount|receipt|attachment|operation|supabase|currency|付款人|分摊|小票|收据|金额|A\$\s*\d|[$¥€£]|\b(?:AUD|CNY|RMB)\b)/i;
-const EXACT_TIME_PATTERN = /\b(?:[01]?\d|2[0-3]):[0-5]\d\b/;
-const EXACT_DATE_PATTERN = /\b\d{4}-\d{2}-\d{2}\b|\d{1,2}月\d{1,2}日/;
+const SENSITIVE_PATTERN = /(?:\b(?:ledger|payer|amount|receipt|attachment|operation|supabase|currency|payment|dollars?|AUD|CNY|RMB)\b|付款人|分摊|小票|收据|金额|支付|澳元|A\$\s*\d|[$¥€£])/i;
+const EXACT_TIME_PATTERN = /\b(?:[01]?\d|2[0-3])[:：][0-5]\d(?:\s*[ap]m)?\b/i;
+const EXACT_DATE_PATTERN = /\b\d{4}-\d{2}-\d{2}\b|\d{1,2}月\d{1,2}日|\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+(?:0?[1-9]|[12]\d|3[01])\b/i;
 
 export function parseTravelAssistantRequest(rawBody, { allowedModes = ["brief", "chat"] } = {}) {
   if (typeof rawBody !== "string" || Buffer.byteLength(rawBody, "utf8") > MAX_BODY_BYTES) {
@@ -61,7 +61,14 @@ export function parseTravelAssistantRequest(rawBody, { allowedModes = ["brief", 
 }
 
 export function validateBriefOutput(raw, context) {
-  const value = typeof raw === "string" ? JSON.parse(raw) : raw;
+  let value = raw;
+  if (typeof raw === "string") {
+    try {
+      value = JSON.parse(raw);
+    } catch {
+      throw new TypeError("Invalid brief output");
+    }
+  }
   if (
     !isRecord(value)
     || !isRecord(value.pace)

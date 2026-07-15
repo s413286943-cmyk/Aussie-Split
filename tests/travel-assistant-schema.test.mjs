@@ -9,6 +9,14 @@ import {
 
 const context = buildBriefContext({ dayId: "d14" });
 const factIds = context.facts.map((fact) => fact.id);
+const validBrief = {
+  pace: { level: "balanced", note: "按体力走。" },
+  priorities: factIds.slice(0, 3).map((factId) => ({ factId, reason: "主线项目。" })),
+  tradeoffs: ["保留主线。"],
+  firstCut: { factId: factIds.at(-1), reason: "先删次要段。" },
+  tomorrowPrepItemIds: [],
+  suggestedQuestions: ["下雨怎么调整？"],
+};
 
 describe("travel assistant schema", () => {
   it("accepts only the V1 brief request shape", () => {
@@ -65,34 +73,60 @@ describe("travel assistant schema", () => {
       .map(({ id, label }) => ({ id, label })));
   });
 
-  it("rejects unknown fact ids, money, private fields, and exact times in advice", () => {
-    const base = {
-      pace: { level: "balanced", note: "按体力走。" },
-      priorities: factIds.slice(0, 3).map((factId) => ({ factId, reason: "主线项目。" })),
-      tradeoffs: ["保留主线。"],
-      firstCut: { factId: factIds.at(-1), reason: "先删次要段。" },
-      tomorrowPrepItemIds: [],
-      suggestedQuestions: ["下雨怎么调整？"],
-    };
+  it("accepts benign advice containing an English keyword substring", () => {
+    const output = validateBriefOutput({
+      ...validBrief,
+      tradeoffs: ["Safety is paramount."],
+    }, context);
 
+    assert.deepEqual(output.tradeoffs, ["Safety is paramount."]);
+  });
+
+  it("rejects unknown fact ids, money, private fields, and exact times in advice", () => {
     assert.throws(() => validateBriefOutput({
-      ...base,
+      ...validBrief,
       priorities: [
         { factId: "block:d14:999", reason: "未知" },
-        ...base.priorities.slice(1),
+        ...validBrief.priorities.slice(1),
       ],
     }, context));
     assert.throws(() => validateBriefOutput({
-      ...base,
+      ...validBrief,
       tradeoffs: ["付款人先支付 A$99。"],
     }, context));
     assert.throws(() => validateBriefOutput({
-      ...base,
+      ...validBrief,
       tradeoffs: ["Currency details stay generic."],
     }, context));
+    for (const advice of [
+      "建议支付 99 澳元。",
+      "The payment is 99 dollars.",
+      "18：30",
+      "9:05am",
+      "August 11",
+    ]) {
+      assert.throws(() => validateBriefOutput({
+        ...validBrief,
+        tradeoffs: [advice],
+      }, context));
+    }
     assert.throws(() => validateBriefOutput({
-      ...base,
+      ...validBrief,
       pace: { level: "balanced", note: "18:30 出发。" },
     }, context));
+  });
+
+  it("returns a generic brief error for malformed raw JSON", () => {
+    const marker = "PRIVATE_UPSTREAM_TEXT";
+
+    assert.throws(
+      () => validateBriefOutput(`{"pace":"${marker}"`, context),
+      (error) => {
+        assert.equal(error instanceof TypeError, true);
+        assert.equal(error.message, "Invalid brief output");
+        assert.equal(error.message.includes(marker), false);
+        return true;
+      },
+    );
   });
 });
