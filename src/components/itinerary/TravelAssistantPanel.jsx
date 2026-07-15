@@ -145,7 +145,7 @@ function TravelAssistantBrief({ brief }) {
         <h4>优先顺序</h4>
         <div className="travel-assistant-priorities">
           {priorities.map((item, index) => (
-            <article className="travel-assistant-priority" key={item.factId || `${item.title}-${index}`}>
+            <article className="travel-assistant-priority" key={`${item.factId}-${index}`}>
               <span>{index + 1}</span>
               <div>
                 <strong>{item.title}</strong>

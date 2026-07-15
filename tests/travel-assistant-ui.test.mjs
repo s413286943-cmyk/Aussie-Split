@@ -89,6 +89,14 @@ describe("Today Console travel assistant V1", () => {
     assert.doesNotMatch(panelSource, /travel-assistant-chat-body|<form|<textarea|onSubmit=/);
   });
 
+  it("keeps priority keys unique when the provider repeats a fact ID", () => {
+    assert.match(
+      panelSource,
+      /key=\{`\$\{item\.factId\}-\$\{index\}`\}/,
+    );
+    assert.doesNotMatch(panelSource, /key=\{item\.factId\s*\|\|/);
+  });
+
   it("uses the route-atlas panel and three-column priority contracts", () => {
     assert.match(styles, /\.travel-assistant-panel\s*\{/);
     assert.match(
