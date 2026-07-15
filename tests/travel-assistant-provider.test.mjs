@@ -131,6 +131,10 @@ describe("travel assistant provider", () => {
     assert.equal(userMessage.outputSchema.priorities.every((priority) => (
       Object.keys(priority).join(",") === "factId,reason"
     )), true);
+    assert.deepEqual(
+      userMessage.outputSchema.tomorrowPrepItemIds,
+      ["0-4 supplied checklist ID strings"],
+    );
   });
 
   it("accepts a standard usage-only SSE event before brief DONE", async () => {

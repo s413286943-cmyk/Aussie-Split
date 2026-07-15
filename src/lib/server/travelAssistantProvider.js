@@ -21,7 +21,7 @@ const BRIEF_OUTPUT_SHAPE = {
   ],
   tradeoffs: ["string"],
   firstCut: { factId: "string", reason: "string" },
-  tomorrowPrepItemIds: ["string"],
+  tomorrowPrepItemIds: ["0-4 supplied checklist ID strings"],
   suggestedQuestions: ["string"],
 };
 
