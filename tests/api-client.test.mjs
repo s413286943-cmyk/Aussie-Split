@@ -63,12 +63,28 @@ describe("browser protected API client", () => {
     await generateTravelBrief({
       dayId: "d14",
       weather: {
-        status: "forecast",
-        summary: "晴",
-        detail: "薄外套",
+        status: " forecast ",
+        summary: " 晴 ",
+        detail: {
+          payer: "private",
+          amount: 99,
+          receipt: { id: "private" },
+          supabase: { token: "private" },
+        },
         adviceLabel: "预报穿衣建议",
+        ledger: [{ id: "private" }],
+        receipt: { id: "private" },
+        supabase: { token: "private" },
       },
-      checkedKitItemIds: ["power"],
+      checkedKitItemIds: [
+        "power",
+        "weather-shell",
+        "power",
+        "not valid",
+        "UPPER",
+        "",
+        { payer: "private", amount: 99, receipt: "private", supabase: "private" },
+      ],
       ledger: [{ id: "private" }],
       payer: "private",
       amount: 99,
@@ -95,11 +111,15 @@ describe("browser protected API client", () => {
       weather: {
         status: "forecast",
         summary: "晴",
-        detail: "薄外套",
+        detail: "",
         adviceLabel: "预报穿衣建议",
       },
-      checkedKitItemIds: ["power"],
+      checkedKitItemIds: ["power", "weather-shell"],
     });
+    assert.deepEqual(Object.keys(briefBody.weather).sort(), ["adviceLabel", "detail", "status", "summary"]);
+    assert.equal(Object.values(briefBody.weather).every((value) => typeof value === "string"), true);
+    assert.equal(new Set(briefBody.checkedKitItemIds).size, briefBody.checkedKitItemIds.length);
+    assert.equal(briefBody.checkedKitItemIds.every((id) => /^[a-z0-9-]{1,64}$/.test(id)), true);
     assert.doesNotMatch(briefCall.options.body, /ledger|payer|amount|receipt|operation|supabase/i);
   });
 

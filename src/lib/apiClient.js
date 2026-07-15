@@ -47,13 +47,27 @@ export function fetchItinerary() {
 }
 
 export function generateTravelBrief(payload) {
+  const weather = Object.fromEntries([
+    "status",
+    "summary",
+    "detail",
+    "adviceLabel",
+  ].map((key) => [
+    key,
+    typeof payload.weather?.[key] === "string" ? payload.weather[key].trim().slice(0, 160) : "",
+  ]));
+  const checkedKitItemIds = [...new Set(
+    (Array.isArray(payload.checkedKitItemIds) ? payload.checkedKitItemIds : [])
+      .filter((value) => typeof value === "string" && /^[a-z0-9-]{1,64}$/.test(value)),
+  )];
+
   return requestJson("/api/travel-assistant", {
     method: "POST",
     body: JSON.stringify({
       mode: "brief",
       dayId: payload.dayId,
-      weather: payload.weather,
-      checkedKitItemIds: payload.checkedKitItemIds,
+      weather,
+      checkedKitItemIds,
     }),
   });
 }
