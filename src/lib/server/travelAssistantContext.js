@@ -6,6 +6,18 @@ import { buildDayCarryChecklist, parseMealPlan } from "../today.js";
 const DAY_ID_PATTERN = /^d(?:[0-9]|1[0-6])$/;
 const WEATHER_STATUSES = new Set(["live", "forecast", "fallback"]);
 
+/**
+ * @param {{
+ *   dayId: string,
+ *   weather?: {
+ *     status?: string,
+ *     summary?: string,
+ *     adviceLabel?: string,
+ *     detail?: string,
+ *   },
+ *   checkedKitItemIds?: string[],
+ * }} input
+ */
 export function buildBriefContext({ dayId, weather, checkedKitItemIds = [] }) {
   const day = findDay(dayId);
   const dayIndex = itinerary.days.findIndex((entry) => entry.id === day.id);
