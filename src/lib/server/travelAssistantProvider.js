@@ -2,6 +2,7 @@ import "server-only";
 
 const DEFAULT_TIMEOUT_MS = 20_000;
 const DEFAULT_CHAT_TIMEOUT_MS = 30_000;
+const MAX_CHAT_SSE_BUFFER_BYTES = 32 * 1024;
 const PROVIDER_MESSAGES = {
   provider_configuration_error: "Travel assistant provider configuration is unavailable",
   provider_timeout: "Travel assistant provider timed out",
@@ -173,6 +174,7 @@ export async function requestTravelChat({
 }
 
 async function readBufferedChatStream(body, signal) {
+  if (signal.aborted) throw new Error("Provider stream aborted");
   const reader = body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
@@ -193,6 +195,9 @@ async function readBufferedChatStream(body, signal) {
         buffer += decoder.decode();
       } else {
         buffer += decoder.decode(chunk.value, { stream: true });
+      }
+      if (Buffer.byteLength(buffer, "utf8") > MAX_CHAT_SSE_BUFFER_BYTES) {
+        throw unavailableError();
       }
 
       const drained = drainSseEvents(buffer, streamClosed);

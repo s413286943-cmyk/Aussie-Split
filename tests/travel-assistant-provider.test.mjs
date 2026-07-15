@@ -282,6 +282,72 @@ describe("travel assistant provider", () => {
     assert.equal(signal.aborted, true);
     assert.equal(cancelled, true);
   });
+
+  it("fails closed when delimiter-free upstream data exceeds the raw buffer ceiling", async () => {
+    let cancelled = false;
+    const body = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode(`data: ${"x".repeat(32 * 1024)}`));
+      },
+      pull() {
+        return new Promise(() => {});
+      },
+      cancel() {
+        cancelled = true;
+      },
+    });
+
+    await assert.rejects(
+      Promise.race([
+        requestTravelChat({
+          context: { sourceDayIds: ["d14"] },
+          question: "下雨呢？",
+          history: [],
+          env,
+          timeoutMs: 1_000,
+          fetcher: async () => new Response(body),
+        }),
+        rejectAfter(100, "stream buffer check hung"),
+      ]),
+      (error) => error instanceof TravelAssistantProviderError
+        && error.code === "provider_unavailable"
+        && !error.message.includes("stream buffer check hung"),
+    );
+    assert.equal(cancelled, true);
+  });
+
+  it("does not hang when the timeout fires before stream abort handling is attached", async () => {
+    let signal;
+    const body = new ReadableStream({
+      pull() {
+        return new Promise(() => {});
+      },
+    });
+
+    await assert.rejects(
+      Promise.race([
+        requestTravelChat({
+          context: { sourceDayIds: ["d14"] },
+          question: "下雨呢？",
+          history: [],
+          env,
+          timeoutMs: 5,
+          fetcher: async (_url, options) => {
+            signal = options.signal;
+            await new Promise((resolve) => {
+              signal.addEventListener("abort", resolve, { once: true });
+            });
+            return new Response(body);
+          },
+        }),
+        rejectAfter(100, "pre-aborted stream check hung"),
+      ]),
+      (error) => error instanceof TravelAssistantProviderError
+        && error.code === "provider_timeout"
+        && !error.message.includes("pre-aborted stream check hung"),
+    );
+    assert.equal(signal.aborted, true);
+  });
 });
 
 function sseResponse(chunks) {
@@ -293,5 +359,11 @@ function sseResponse(chunks) {
     },
   }), {
     headers: { "Content-Type": "text/event-stream" },
+  });
+}
+
+function rejectAfter(delayMs, message) {
+  return new Promise((_, reject) => {
+    setTimeout(() => reject(new Error(message)), delayMs);
   });
 }
