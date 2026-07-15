@@ -46,6 +46,18 @@ export function fetchItinerary() {
   return requestJson("/api/itinerary");
 }
 
+export function generateTravelBrief(payload) {
+  return requestJson("/api/travel-assistant", {
+    method: "POST",
+    body: JSON.stringify({
+      mode: "brief",
+      dayId: payload.dayId,
+      weather: payload.weather,
+      checkedKitItemIds: payload.checkedKitItemIds,
+    }),
+  });
+}
+
 export async function applyLedgerOperations(operations) {
   const response = await requestJson("/api/sync", {
     method: "POST",

@@ -15,6 +15,7 @@ import {
   fetchLedgerSnapshot,
   fetchReceipt,
   finalizeReceipt,
+  generateTravelBrief,
   unlockAccessSession,
 } from "../src/lib/apiClient.js";
 import * as protectedApi from "../src/lib/apiClient.js";
@@ -42,6 +43,9 @@ describe("browser protected API client", () => {
       if (url === "/api/receipts/upload-url") return Response.json({ mode: "signed-put" });
       if (url === "/api/receipts/finalize") return Response.json({ receipt: { receiptId: "receipt-one" } });
       if (url === "/api/receipts/expense-one") return Response.json({ signedUrl: "https://signed.example" });
+      if (url === "/api/travel-assistant") {
+        return Response.json({ brief: {}, generatedAt: "2026-07-15T00:00:00.000Z", sourceDayIds: ["d14"] });
+      }
       throw new Error(`Unexpected URL: ${url}`);
     };
 
@@ -56,6 +60,22 @@ describe("browser protected API client", () => {
     await createReceiptUploadContract({ expenseId: "expense-one" });
     await finalizeReceipt({ expenseId: "expense-one", receiptId: "receipt-one" });
     await fetchReceipt("expense-one");
+    await generateTravelBrief({
+      dayId: "d14",
+      weather: {
+        status: "forecast",
+        summary: "晴",
+        detail: "薄外套",
+        adviceLabel: "预报穿衣建议",
+      },
+      checkedKitItemIds: ["power"],
+      ledger: [{ id: "private" }],
+      payer: "private",
+      amount: 99,
+      receipt: { id: "private" },
+      operation: { id: "private" },
+      supabase: { token: "private" },
+    });
 
     assert.equal(calls.every((call) => call.url.startsWith("/api/")), true);
     assert.equal(calls.every((call) => !call.url.startsWith("http")), true);
@@ -64,6 +84,23 @@ describe("browser protected API client", () => {
       assert.equal(call.options.headers.Accept, "application/json");
       if (call.options.body) assert.equal(call.options.headers["Content-Type"], "application/json");
     }
+
+    const briefCall = calls.find((call) => call.url === "/api/travel-assistant");
+    const briefBody = JSON.parse(briefCall.options.body);
+    assert.equal(briefCall.options.credentials, "same-origin");
+    assert.deepEqual(Object.keys(briefBody).sort(), ["checkedKitItemIds", "dayId", "mode", "weather"]);
+    assert.deepEqual(briefBody, {
+      mode: "brief",
+      dayId: "d14",
+      weather: {
+        status: "forecast",
+        summary: "晴",
+        detail: "薄外套",
+        adviceLabel: "预报穿衣建议",
+      },
+      checkedKitItemIds: ["power"],
+    });
+    assert.doesNotMatch(briefCall.options.body, /ledger|payer|amount|receipt|operation|supabase/i);
   });
 
   it("maps a 401 response to AccessRequiredError", async () => {
