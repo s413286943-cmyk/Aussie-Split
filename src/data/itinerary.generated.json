@@ -54,11 +54,11 @@
       "city": "上海 → 香港 → 墨尔本",
       "lat": 31.2304,
       "lon": 121.4737,
-      "title": "上海出发，香港转机飞墨尔本",
+      "title": "启程澳洲：香港转机，夜航墨尔本",
       "focus": "经香港转机，夜航前往墨尔本。",
       "lodging": "飞机上",
       "climateNote": "夜航为主，机场和机舱温差明显。",
-      "clothingNote": "随身带薄外套、颈枕、充电线和第一天入境资料。",
+      "clothingNote": "随身带薄外套、颈枕和充电线；入境与酒店资料放在随身包。",
       "coverImageUrl": "/itinerary/d0-shanghai-departure.png",
       "coverImageAlt": "上海机场夜间出发",
       "transport": "航班 / 机场转场",
@@ -98,7 +98,7 @@
           "place": "上海 → 香港 → 墨尔本",
           "activity": "出发，香港转机 1h35m，夜航飞墨尔本",
           "highlight": "旅程开始",
-          "tip": "护照、签证、酒店信息和第一晚随身物品放随身包",
+          "tip": "护照、签证、酒店信息和抵达墨尔本后的随身用品放在随身包。",
           "resources": [
             {
               "id": "flight-cathay",
@@ -121,8 +121,8 @@
       "city": "墨尔本",
       "lat": -37.8136,
       "lon": 144.9631,
-      "title": "抵达墨尔本，CBD + Carlton + QVM 冬季夜市",
-      "focus": "落地恢复，轻走 CBD；晚间逛 QVM 冬季夜市。",
+      "title": "初到墨尔本：CBD、Carlton 与 QVM 冬季夜市",
+      "focus": "抵达后慢慢恢复，逛过 CBD 与 Carlton，晚上去 QVM 冬季夜市吃晚餐。",
       "lodging": "Oaks Melbourne on Market Hotel",
       "climateNote": "墨尔本冬季约 6-14°C，早晚冷，多风，偶有阵雨。",
       "clothingNote": "羽绒服或防风外套、毛衣、长裤、防水鞋。",
@@ -150,12 +150,12 @@
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
-        "title": "当天无固定票券",
+        "title": "今天无需提前购票",
         "type": "note",
         "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "每日明确票券状态"
+        "sourceNote": "当天以免费景点或灵活安排为主"
       },
       "blocks": [
         {
@@ -165,7 +165,7 @@
           "place": "墨尔本机场 → CBD",
           "activity": "入境、取行李，打车 / Uber 或 SkyBus 进城",
           "highlight": "初到澳洲，适应南半球冬天",
-          "tip": "4人 + 行李较多，打车 / Uber 更舒服；拍照：机场到达、第一眼 Melbourne CBD",
+          "tip": "4 人加行李较多，打车 / Uber 更舒服；从机场到 CBD 的沿途就是旅程的第一眼。",
           "resources": [
             {
               "id": "mel-airport-map",
@@ -185,7 +185,7 @@
           "place": "CBD / 酒店附近",
           "activity": "酒店寄存行李 + 咖啡早餐",
           "highlight": "墨尔本咖啡文化开场",
-          "tip": "不要急着暴走，先恢复；拍照：咖啡桌面、街角 café",
+          "tip": "先寄存行李，找一家街角 café 吃早餐，让身体慢慢进入墨尔本节奏。",
           "resources": [
             {
               "id": "oaks-market-map",
@@ -223,7 +223,7 @@
           "place": "Degraves Lane / Flinders Street 一带",
           "activity": "轻量午餐 / café / laneway walk",
           "highlight": "墨尔本巷弄文化",
-          "tip": "如果疲惫，就只做 Degraves + Flinders，不再加远点；拍照：Degraves Street 巷道纵深、Flinders Street Station 外观",
+          "tip": "体力一般时走 Degraves Lane 与 Flinders Street 已经很充实；有余力再继续。",
           "resources": [
             {
               "id": "degraves-map",
@@ -252,7 +252,7 @@
           "place": "State Library of Victoria",
           "activity": "参观经典阅览室",
           "highlight": "历史建筑 + 圆顶阅览室",
-          "tip": "只短暂停留拍照，不必完整逛；拍照：State Library 圆顶阅览室 6F 俯拍",
+          "tip": "在圆顶阅览室停留片刻即可，六楼俯拍视角最完整。",
           "resources": [
             {
               "id": "state-library-map",
@@ -272,7 +272,7 @@
           "place": "Carlton / Lygon Street (Little Italy)",
           "activity": "从 State Library 向北前往 Carlton，沿 Lygon Street 散步，安排咖啡或 gelato",
           "highlight": "墨尔本意大利移民街区 + café culture",
-          "tip": "固定站点，控制在 60–90 分钟；若当天延误，先删 NGV，不删 Carlton 或 QVM",
+          "tip": "建议预留 60–90 分钟，在 Lygon Street 喝咖啡或吃 gelato；抵达较晚时可略过 NGV。",
           "resources": [
             {
               "id": "carlton-lygon-map",
@@ -292,7 +292,7 @@
           "place": "Hosier Lane",
           "activity": "涂鸦巷拍照",
           "highlight": "街头艺术 + 文艺墨尔本",
-          "tip": "20-30 分钟足够；拍照：Hosier Lane 涂鸦墙主背景",
+          "tip": "预留 20–30 分钟，选一面喜欢的涂鸦墙慢慢拍。",
           "resources": [
             {
               "id": "hosier-map",
@@ -312,7 +312,7 @@
           "place": "NGV",
           "activity": "天气冷 / 想室内休息时进入",
           "highlight": "冬天避风避寒",
-          "tip": "Carlton 为固定站点；若时间不足，先跳过 NGV；拍照：NGV 中庭 / 红幕布",
+          "tip": "天气冷或想在室内休息时再去；时间有限可直接前往 Carlton。",
           "resources": [
             {
               "id": "ngv-map",
@@ -332,7 +332,7 @@
           "place": "Queen Victoria Market",
           "activity": "17:30-19:30 QVM Winter Night Market",
           "highlight": "冬季周三限定夜市",
-          "tip": "官方场次 17:00-22:00，免费入场、免预约；落地日建议 17:30 前到，按体力逛 30-120 分钟，穿防风保暖外套。",
+          "tip": "开放时间 17:00-22:00，免费入场、免预约；建议 17:30 左右到，按体力逛 30–120 分钟。",
           "resources": [
             {
               "id": "qvm-map",
@@ -361,7 +361,7 @@
           "place": "QVM → Oaks Melbourne on Market Hotel",
           "activity": "夜市用餐后直接回酒店休息",
           "highlight": "落地日收尾",
-          "tip": "不再另订正式餐厅；如体力不足，可只逛 30-60 分钟后返回酒店。",
+          "tip": "在夜市吃过晚餐就回酒店休息；体力有限时逛 30–60 分钟也很合适。",
           "resources": [
             {
               "id": "qvm-map",
@@ -398,8 +398,8 @@
           "period": "饮食",
           "place": "饮食安排",
           "activity": "早餐：CBD café / Operator25（可选 Brunch）；午餐：Degraves Lane / CBD 简餐 / Pho Tùng（可选）；Carlton：咖啡或 gelato；晚餐：QVM Winter Night Market 街头热食（主）/ CBD 简餐（体力不足）",
-          "highlight": "每日餐食参考",
-          "tip": "Carlton 只做轻量 café / gelato；QVM 夜市仍作为晚餐，不再另排 Southbank 正式晚餐。",
+          "highlight": "当天餐食节奏",
+          "tip": "Carlton 适合用一杯咖啡或 gelato 稍作休息；晚餐就在 QVM 冬季夜市边逛边吃。",
           "resources": [
             {
               "id": "qvm-map",
@@ -458,8 +458,8 @@
       "city": "墨尔本 + Belgrave",
       "lat": -37.8136,
       "lon": 144.9631,
-      "title": "Puffing Billy + Sassafras + Fitzroy",
-      "focus": "蒸汽小火车半日，下午漫步 Fitzroy。",
+      "title": "墨尔本近郊：Puffing Billy、Sassafras 与 Fitzroy",
+      "focus": "上午乘 Puffing Billy 穿行山林，下午在 Fitzroy 看街区与小店。",
       "lodging": "Oaks Melbourne on Market Hotel",
       "climateNote": "墨尔本冬季约 6-14°C，早晚冷，多风，偶有阵雨。",
       "clothingNote": "防风外套比单纯厚毛衣更实用，雨天鞋子尽量防水。",
@@ -645,7 +645,7 @@
           "place": "Lakeside / Emerald Lake Park",
           "activity": "湖边短停 / visitor centre / café / 简单休息",
           "highlight": "湖边公园、游客中心、火车站台氛围",
-          "tip": "不安排正式深度游，轻松走走即可",
+          "tip": "沿湖边和游客中心轻松走走，留出返程时间。",
           "resources": [
             {
               "id": "emerald-lake-park-map",
@@ -674,7 +674,7 @@
           "place": "Sassafras",
           "activity": "小镇短停",
           "highlight": "茶屋、糖果店、Dandenong Ranges 小镇感",
-          "tip": "只做短停，不安排正式下午茶，避免拖慢行程",
+          "tip": "逛一两家小店、喝杯热饮即可，注意返程集合时间。",
           "resources": [
             {
               "id": "sassafras-map",
@@ -693,7 +693,7 @@
           "period": "下午",
           "place": "返回 343 Russell Street",
           "activity": "半日团结束，回到 CBD",
-          "highlight": "时间较早，下午还能补一点市区内容",
+          "highlight": "返城后继续 Fitzroy 街区漫步",
           "tip": "半日团结束后直接前往 Fitzroy；保持约 90 分钟街区时间",
           "resources": [
             {
@@ -714,7 +714,7 @@
           "place": "Fitzroy: Brunswick Street → Gertrude Street",
           "activity": "半日团返城后前往 Fitzroy，完成街区漫步、独立小店和咖啡",
           "highlight": "街头艺术、老建筑与本地生活版墨尔本",
-          "tip": "固定站点，控制约 90 分钟；18:00 左右离开并回酒店整理大洋路行李",
+          "tip": "预留约 90 分钟，从 Brunswick Street 走到 Gertrude Street；18:00 左右回酒店整理行李。",
           "resources": [
             {
               "id": "fitzroy-map",
@@ -742,7 +742,7 @@
           "period": "晚上",
           "place": "酒店 / CBD",
           "activity": "简单晚餐 + 整理大洋路行李",
-          "highlight": "为 D3 机场取车做准备",
+          "highlight": "为次日大洋路做好准备",
           "tip": "大件行李寄存，只带登机箱和随身包上大洋路；早点睡",
           "resources": [
             {
@@ -771,8 +771,8 @@
           "period": "饮食",
           "place": "饮食安排",
           "activity": "早餐：酒店附近 café / 集合前简单吃；午餐：Lakeside / Emerald Lake Park café 或团中简餐；晚餐：CBD / Southbank 轻松晚餐",
-          "highlight": "每日餐食参考",
-          "tip": "半日团当天不安排升级餐厅，重点是准时集合和晚上整理行李",
+          "highlight": "当天餐食节奏",
+          "tip": "集合前吃得简单些；返城后在 Fitzroy / CBD 轻松晚餐，留出整理行李的时间。",
           "resources": [
             {
               "id": "russell-343-map",
@@ -822,8 +822,8 @@
       "city": "墨尔本机场 → Apollo Bay",
       "lat": -38.7599,
       "lon": 143.6692,
-      "title": "大洋路 Road Trip Day 1",
-      "focus": "机场取车轻装上路，沿海开到 Apollo Bay。",
+      "title": "驶上大洋路：Torquay、Lorne 到 Apollo Bay",
+      "focus": "机场取车后沿海向西，途经 Torquay、Lorne，傍晚住进 Apollo Bay。",
       "lodging": "Seaview Motel & Apartments",
       "climateNote": "维州南海岸冬季多风，体感比温度更冷。",
       "clothingNote": "防风外套、长裤、防滑鞋；车上备水和零食。",
@@ -851,12 +851,12 @@
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
-        "title": "当天无固定票券",
+        "title": "今天无需提前购票",
         "type": "note",
         "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "每日明确票券状态"
+        "sourceNote": "当天以免费景点或灵活安排为主"
       },
       "blocks": [
         {
@@ -865,8 +865,8 @@
           "period": "上午",
           "place": "墨尔本 CBD → 墨尔本机场",
           "activity": "前往机场取车，确认车辆、保险、第二驾驶人、导航和行李安排",
-          "highlight": "Road trip 正式开始",
-          "tip": "不在 CBD 内取车，降低右舵第一天压力；取车后先设置好导航和语音提示",
+          "highlight": "从机场取车，正式驶上大洋路",
+          "tip": "从机场取车能避开 CBD 复杂路况；出发前先设置导航和语音提示，让右舵适应更从容。",
           "resources": [
             {
               "id": "mel-airport-map",
@@ -886,7 +886,7 @@
           "place": "墨尔本机场 → Torquay",
           "activity": "从机场出发，经 Geelong Bypass 前往 Torquay",
           "highlight": "右舵适应第一段",
-          "tip": "经过 Geelong 外围即可，不进 Geelong 市区；第一段以安全和适应为主",
+          "tip": "经过 Geelong 外围即可，刚开始适应右舵时把安全放在第一位。",
           "resources": [
             {
               "id": "mel-airport-map",
@@ -915,7 +915,7 @@
           "place": "Torquay",
           "activity": "咖啡 / 短暂停留 / 进入海岸线节奏",
           "highlight": "大洋路氛围开始",
-          "tip": "Torquay 可作为第一正式休息点，不要一开始就频繁停车",
+          "tip": "把 Torquay 作为第一处完整休息点，喝杯咖啡再进入海岸线。",
           "resources": [
             {
               "id": "torquay-map",
@@ -1015,7 +1015,7 @@
           "place": "Lorne",
           "activity": "午餐 + 补给",
           "highlight": "最舒服海滨小镇之一",
-          "tip": "今天真正的休息点放在 Lorne，不赶",
+          "tip": "在 Lorne 慢慢吃午餐、补给并休息，不必赶时间。",
           "resources": [
             {
               "id": "lorne-map",
@@ -1133,7 +1133,7 @@
           "place": "Apollo Bay",
           "activity": "Fishermen’s Co-op / seafood café 晚餐",
           "highlight": "海边渔港氛围",
-          "tip": "D3 不做饭，轻松吃 fish & chips / 海鲜，早点休息",
+          "tip": "到 Apollo Bay 后吃 fish & chips 或海鲜，早点休息。",
           "resources": [
             {
               "id": "apollo-map",
@@ -1161,8 +1161,8 @@
           "period": "饮食",
           "place": "饮食安排",
           "activity": "早餐：出发咖啡；午餐：Lorne café / Snow Monkey Ramen（备选）；晚餐：Apollo Bay Fishermen’s Co-op / seafood café",
-          "highlight": "每日餐食参考",
-          "tip": "第一天右舵 + 海岸驾驶，不折腾做饭；fish & chips / 海鲜最适合",
+          "highlight": "当天餐食节奏",
+          "tip": "海岸驾驶日以轻松好吃为主，Apollo Bay 的 fish & chips / 海鲜正合适。",
           "resources": [
             {
               "id": "lorne-map",
@@ -1212,8 +1212,8 @@
       "city": "Apollo Bay → Port Campbell",
       "lat": -38.6191,
       "lon": 142.9956,
-      "title": "十二使徒岩与 Loch Ard Gorge",
-      "focus": "穿过雨林走向十二使徒岩，傍晚抵达 Port Campbell。",
+      "title": "大洋路海岸：雨林、十二使徒岩与 Loch Ard Gorge",
+      "focus": "从雨林步道驶向十二使徒岩，在 Loch Ard Gorge 慢慢看海岸地貌。",
       "lodging": "Southern Ocean Villas",
       "climateNote": "海岸风大，步道和台阶雨后湿滑。",
       "clothingNote": "防风外套、防水鞋；拍照时不要太靠近海浪。",
@@ -1241,12 +1241,12 @@
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
-        "title": "当天无固定票券",
+        "title": "今天无需提前购票",
         "type": "note",
         "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "每日明确票券状态"
+        "sourceNote": "当天以免费景点或灵活安排为主"
       },
       "blocks": [
         {
@@ -1295,7 +1295,7 @@
           "period": "下午",
           "place": "Twelve Apostles",
           "activity": "十二使徒岩主观景台",
-          "highlight": "世界级海岸地貌，大洋路地标",
+          "highlight": "大洋路最具代表性的海岸地貌",
           "tip": "左侧平台更适合拍海岸线纵深；如果人多，不要停太久",
           "resources": [
             {
@@ -1315,7 +1315,7 @@
           "period": "下午",
           "place": "Loch Ard Gorge",
           "activity": "峡谷、海湾、海蚀地貌",
-          "highlight": "D4 核心拍摄点，比十二使徒更值得慢慢看",
+          "highlight": "峡谷、海湾与沉船海岸故事",
           "tip": "这里要认真留时间，不要只拍一张就走",
           "resources": [
             {
@@ -1403,9 +1403,9 @@
           "sortOrder": 80,
           "period": "晚上",
           "place": "Port Campbell",
-          "activity": "买食材后视情况决定：附近 public electric BBQ / villa 厨房自炊 / 外食备选",
+          "activity": "抵达后按天气选择公共电烤炉 BBQ、villa 厨房自炊或附近餐厅",
           "highlight": "灵活完成 BBQ-style dinner",
-          "tip": "Southern Ocean Villas 不提供自有 BBQ，但附近有两个免费 electric BBQ；villa 厨房完整，提供油、盐、胡椒和锡纸",
+          "tip": "Southern Ocean Villas 没有自带 BBQ，但附近有两处免费 electric BBQ；villa 厨房备有油、盐、胡椒和锡纸。",
           "resources": [
             {
               "id": "port-campbell-map",
@@ -1423,9 +1423,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：Apollo Bay café；午餐：轻食 / picnic；晚餐：Apollo Bay 主采购食材 → 抵达 Southern Ocean Villas 后看天气和时间：可去附近 public electric BBQ；不行就 villa 厨房自炊",
-          "highlight": "每日餐食参考",
-          "tip": "不把 Port Campbell 当主采购点；核心是 BBQ-style dinner，不强求户外；villa 有完整厨房、锅具、餐具、油盐胡椒和锡纸",
+          "activity": "早餐：Apollo Bay café；午餐：轻食 / picnic；晚餐：在 Apollo Bay 买好食材，抵达后按天气选择公共 electric BBQ 或 villa 厨房自炊",
+          "highlight": "当天餐食节奏",
+          "tip": "食材尽量在 Apollo Bay 买齐；抵达后视天气选择公共 BBQ 或 villa 厨房。",
           "resources": [
             {
               "id": "apollo-map",
@@ -1457,8 +1457,8 @@
       "city": "Port Campbell → 墨尔本机场",
       "lat": -37.669,
       "lon": 144.841,
-      "title": "清晨补拍，内陆回机场",
-      "focus": "清晨补拍海岸，走内陆线返回墨尔本机场。",
+      "title": "告别大洋路：清晨海岸与内陆返程",
+      "focus": "清晨再看一眼海岸，经 Colac 走内陆线返回墨尔本机场。",
       "lodging": "Holiday Inn Melbourne Airport",
       "climateNote": "早晨海边冷，回程时间长。",
       "clothingNote": "早上防风保暖，下午回机场前预留加油和还车时间。",
@@ -1486,12 +1486,12 @@
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
-        "title": "当天无固定票券",
+        "title": "今天无需提前购票",
         "type": "note",
         "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "每日明确票券状态"
+        "sourceNote": "当天以免费景点或灵活安排为主"
       },
       "blocks": [
         {
@@ -1499,9 +1499,9 @@
           "sortOrder": 10,
           "period": "早上",
           "place": "Twelve Apostles / Loch Ard Gorge",
-          "activity": "清晨补拍",
+          "activity": "清晨再看一处海岸景点",
           "highlight": "光线柔和，人相对少",
-          "tip": "如果 D4 天气不好，这天可补救；二选一即可，不必两个都重刷",
+          "tip": "若前一天下雨，可在十二使徒岩或 Loch Ard Gorge 中选一处重访；天气好则按时间择一。",
           "resources": [
             {
               "id": "twelve-apostles-map",
@@ -1597,7 +1597,7 @@
           "sortOrder": 50,
           "period": "中午 / 下午",
           "place": "Bay of Islands",
-          "activity": "可选加点",
+          "activity": "时间充裕时延伸",
           "highlight": "更开阔、更荒凉的海蚀柱群",
           "tip": "天气好、时间宽裕再去；如果要赶机场就跳过",
           "resources": [
@@ -1638,7 +1638,7 @@
           "period": "傍晚",
           "place": "墨尔本机场",
           "activity": "抵达机场、还车、取回寄存大件行李",
-          "highlight": "Road trip 收束",
+          "highlight": "大洋路自驾收尾",
           "tip": "预留加油、找还车点、整理车内物品和取行李时间",
           "resources": [
             {
@@ -1686,9 +1686,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：Port Campbell café；午餐：Colac / Timboon Ice Cream（🔥）；晚餐：机场酒店简餐",
-          "highlight": "每日餐食参考",
-          "tip": "冰淇淋补偿日；晚餐不折腾，重点是还车、取行李、整理热带段",
+          "activity": "早餐：Port Campbell café；午餐：Colac / Timboon Ice Cream；晚餐：机场酒店简餐",
+          "highlight": "当天餐食节奏",
+          "tip": "Timboon Ice Cream 可作为回程中的小惊喜；抵达机场后简单用餐并整理行李。",
           "resources": [
             {
               "id": "colac-map",
@@ -1738,8 +1738,8 @@
       "city": "墨尔本 → 凯恩斯",
       "lat": -16.9186,
       "lon": 145.7781,
-      "title": "飞进热带，Esplanade Lagoon",
-      "focus": "从冬季飞进热带，傍晚漫步凯恩斯海滨。",
+      "title": "抵达凯恩斯：Esplanade Lagoon 与热带夜市",
+      "focus": "从墨尔本飞到凯恩斯，下午在 Esplanade Lagoon 放松，晚上逛夜市。",
       "lodging": "Southern Cross Atrium Apartments",
       "climateNote": "凯恩斯约 17-26°C，旱季，阳光充足。",
       "clothingNote": "短袖、防晒衣、墨镜、帽子；机舱和室内空调可能冷。",
@@ -1832,7 +1832,7 @@
           "place": "Cairns Night Markets",
           "activity": "夜市、简餐、纪念品",
           "highlight": "热闹轻松",
-          "tip": "今日不安排正式大餐",
+          "tip": "在夜市边逛边吃，让转场日轻松收尾。",
           "resources": [
             {
               "id": "cairns-night-market-map",
@@ -1850,9 +1850,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：飞机/机场；午餐：简餐 / overlay coffee（花生拿铁🔥）；晚餐：Night Market",
-          "highlight": "每日餐食参考",
-          "tip": "花生咖啡可试",
+          "activity": "早餐：飞机 / 机场；午餐：简餐 / Overlay Coffee（可试花生拿铁）；晚餐：Cairns Night Markets",
+          "highlight": "当天餐食节奏",
+          "tip": "到凯恩斯后的第一杯可以试试花生咖啡，晚上随意逛夜市。",
           "resources": []
         }
       ]
@@ -1865,8 +1865,8 @@
       "city": "凯恩斯",
       "lat": -16.9186,
       "lon": 145.7781,
-      "title": "Reef Magic 外礁一日游",
-      "focus": "全天留给大堡礁外礁平台与海上体验。",
+      "title": "奔赴外礁：Reef Magic 大堡礁一日",
+      "focus": "在 Reef Magic 外礁平台体验浮潜、半潜艇与大堡礁海上风景。",
       "lodging": "Southern Cross Atrium Apartments",
       "climateNote": "海上日晒强，船舱空调可能很冷。",
       "clothingNote": "防晒衣比防晒霜更重要，带薄外套并提前吃晕船药。",
@@ -1978,7 +1978,7 @@
           "place": "返回凯恩斯",
           "activity": "下船休息",
           "highlight": "通常会比较疲惫",
-          "tip": "晚上不要订太正式的餐厅",
+          "tip": "下船后回酒店休息，晚间只留一顿轻松晚餐。",
           "resources": [
             {
               "id": "reef-fleet-terminal-map",
@@ -1998,7 +1998,7 @@
           "place": "码头附近",
           "activity": "Prawn Star / Salt House / Dundee’s 可选",
           "highlight": "海边晚餐",
-          "tip": "轻松即可，不要再安排夜间项目",
+          "tip": "按体力选码头附近餐厅，轻松吃完就回酒店。",
           "resources": [
             {
               "id": "prawn-star-map",
@@ -2034,9 +2034,9 @@
           "sortOrder": 80,
           "period": "提醒",
           "place": "今日提醒",
-          "activity": "Reef Magic 是凯恩斯段核心项目，重点是完成一次稳定的大堡礁外礁体验。",
-          "highlight": "海况、风浪、晕船和体力比晴雨更影响体验",
-          "tip": "不必追求拍很多水下画面，先保证舒适和安全。",
+          "activity": "Reef Magic 是今天的主角，先照顾好海况、晕船和体力，再慢慢享受外礁。",
+          "highlight": "舒适与安全比拍摄数量更重要",
+          "tip": "水下照片随缘，先保证自己舒服、安全。",
           "resources": [
             {
               "id": "reef-magic-official",
@@ -2055,8 +2055,8 @@
           "period": "饮食",
           "place": "饮食安排",
           "activity": "早餐：酒店轻食；午餐：Reef Magic 外礁平台午餐（已订）；晚餐：Prawn Star / Salt House",
-          "highlight": "每日餐食参考",
-          "tip": "出海后不要订太正式的餐厅，视体力轻松吃",
+          "highlight": "当天餐食节奏",
+          "tip": "出海回来通常会累，码头附近找一家顺眼的店轻松吃。",
           "resources": [
             {
               "id": "reef-magic-official",
@@ -2097,8 +2097,8 @@
       "city": "丹翠雨林",
       "lat": -16.1705,
       "lon": 145.4185,
-      "title": "丹翠雨林 + Cape Tribulation 小团",
-      "focus": "沿丹翠河深入雨林，在 Cape Tribulation 看雨林入海。",
+      "title": "深入丹翠：雨林、河流与 Cape Tribulation",
+      "focus": "沿丹翠河进入雨林，在 Cape Tribulation 看雨林与海相接。",
       "lodging": "Southern Cross Atrium Apartments",
       "climateNote": "热带雨林湿润，车内空调可能冷。",
       "clothingNote": "短袖、防晒、防蚊、帽子、薄外套；不建议下海游泳。",
@@ -2180,7 +2180,7 @@
           "period": "下午",
           "place": "Cape Tribulation",
           "activity": "雨林入海、海滩短停留",
-          "highlight": "这天最特别的画面",
+          "highlight": "雨林与海洋在这里交会",
           "tip": "不建议下海游泳；注意鳄鱼、水母和警示牌",
           "resources": [
             {
@@ -2200,7 +2200,7 @@
           "period": "下午后段",
           "place": "Daintree Ferry / Ice Cream",
           "activity": "渡河、热带水果冰淇淋",
-          "highlight": "Daintree Ice-Cream Company 是很强的 only here 体验",
+          "highlight": "丹翠地区很有代表性的热带味道",
           "tip": "冰淇淋已包含在 Billy Tea 行程内",
           "resources": [
             {
@@ -2221,7 +2221,7 @@
           "place": "返回凯恩斯",
           "activity": "18:30 后回到市区",
           "highlight": "回程可休息",
-          "tip": "晚餐简单，不再加夜间项目",
+          "tip": "回程车上可以休息，回到市区后就近吃晚餐。",
           "resources": []
         },
         {
@@ -2229,9 +2229,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：酒店早餐；午餐：团餐；晚餐：凯恩斯随便",
-          "highlight": "每日餐食参考",
-          "tip": "Daintree Ice Cream 必吃；回程较晚，晚餐简单",
+          "activity": "早餐：酒店早餐；午餐：团餐；晚餐：凯恩斯市区简餐",
+          "highlight": "当天餐食节奏",
+          "tip": "团餐和热带水果冰淇淋都在行程里，回城较晚，晚餐简单即可。",
           "resources": [
             {
               "id": "daintree-icecream-map",
@@ -2254,8 +2254,8 @@
       "city": "阿瑟顿高原",
       "lat": -17.2706,
       "lon": 145.5831,
-      "title": "火山湖、巨树、小镇与瀑布",
-      "focus": "轻量自驾串联火山湖、巨树、高原小镇与瀑布。",
+      "title": "阿瑟顿高原：火山湖、巨树与瀑布",
+      "focus": "自驾串联 Lake Eacham、Curtain Fig Tree、高原小镇与瀑布。",
       "lodging": "Southern Cross Atrium Apartments",
       "climateNote": "高原比凯恩斯海边更清凉。",
       "clothingNote": "短袖加薄外套，瀑布和雨林步道注意防滑。",
@@ -2283,12 +2283,12 @@
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
-        "title": "当天无固定票券",
+        "title": "今天无需提前购票",
         "type": "note",
         "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "每日明确票券状态"
+        "sourceNote": "当天以免费景点或灵活安排为主"
       },
       "blocks": [
         {
@@ -2386,7 +2386,7 @@
           "period": "下午",
           "place": "Millaa Millaa Falls / Ellinjaa Falls",
           "activity": "瀑布短停留、拍照",
-          "highlight": "阿瑟顿这一天的视觉高潮",
+          "highlight": "雨林瀑布与高原绿意",
           "tip": "优先 Millaa Millaa；体力够再加 Ellinjaa，不必塞满全部瀑布",
           "resources": [
             {
@@ -2425,8 +2425,8 @@
           "period": "晚上",
           "place": "凯恩斯",
           "activity": "简单晚餐",
-          "highlight": "不安排正式大餐",
-          "tip": "为周五休息日保留体力",
+          "highlight": "回城后轻松晚餐",
+          "tip": "下山后就近用餐，早点休息。",
           "resources": []
         },
         {
@@ -2434,9 +2434,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：café 早餐；午餐：Gallo Dairyland / Millaa Millaa；晚餐：回凯恩斯随便",
-          "highlight": "每日餐食参考",
-          "tip": "奶制品 + 瀑布",
+          "activity": "早餐：café 早餐；午餐：Gallo Dairyland / Millaa Millaa；晚餐：凯恩斯市区简餐",
+          "highlight": "当天餐食节奏",
+          "tip": "午餐在高原小镇慢慢吃，回凯恩斯后按体力选一顿轻松晚餐。",
           "resources": [
             {
               "id": "millaa-map",
@@ -2468,11 +2468,11 @@
       "city": "凯恩斯休息日",
       "lat": -16.9186,
       "lon": 145.7781,
-      "title": "Rusty’s Market + Palm Cove + 休息整理",
-      "focus": "逛 Rusty’s Market，休整后去 Palm Cove 看海。",
+      "title": "慢享凯恩斯：Rusty’s Market 与 Palm Cove",
+      "focus": "上午逛 Rusty’s Market，午后休整，傍晚去 Palm Cove 看海。",
       "lodging": "Southern Cross Atrium Apartments",
       "climateNote": "凯恩斯约 17-26°C，户外热，室内空调冷。",
-      "clothingNote": "轻便夏装，随身带薄外套；今天不要再临时加长线。",
+      "clothingNote": "轻便夏装，随身带薄外套；傍晚海边有风。",
       "coverImageUrl": "/itinerary/d10-cairns-rustys-market.png",
       "coverImageAlt": "凯恩斯市场与海滨",
       "transport": "步行 / 市内短途交通",
@@ -2497,12 +2497,12 @@
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
-        "title": "当天无固定票券",
+        "title": "今天无需提前购票",
         "type": "note",
         "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "每日明确票券状态"
+        "sourceNote": "当天以免费景点或灵活安排为主"
       },
       "blocks": [
         {
@@ -2512,7 +2512,7 @@
           "place": "Rusty’s Market 买热带水果、咖啡、简单早餐",
           "activity": "Rusty’s Market 买热带水果、咖啡、简单早餐",
           "highlight": "周五正好开市，适合补水果和轻食",
-          "tip": "买能当天吃完或带上飞机前吃完的，不要买太多",
+          "tip": "优先买当天能吃完的水果与轻食，方便次日早班机。",
           "resources": [
             {
               "id": "rustys-map",
@@ -2532,7 +2532,7 @@
           "place": "酒店休息 / 泳池 / Esplanade Lagoon",
           "activity": "酒店休息 / 泳池 / Esplanade Lagoon",
           "highlight": "热带城市躺平感",
-          "tip": "不安排远距离移动",
+          "tip": "午间留在酒店或 Esplanade 放松，让节奏慢下来。",
           "resources": [
             {
               "id": "cairns-lagoon-map",
@@ -2562,7 +2562,7 @@
           "place": "Palm Cove",
           "activity": "前往 Palm Cove，沿棕榈树海滨大道散步、喝咖啡并看海",
           "highlight": "热带海滨小镇与凯恩斯北部海岸",
-          "tip": "固定站点，傍晚返回凯恩斯；不再叠加 Cairns Aquarium 或 Esplanade 长走",
+          "tip": "沿棕榈树海滨大道散步、喝杯咖啡，天黑前后返回凯恩斯。",
           "resources": [
             {
               "id": "palm-cove-map",
@@ -2619,8 +2619,8 @@
           "period": "饮食",
           "place": "饮食安排",
           "activity": "早餐：Rusty’s Market / Market水果；午餐：简餐；晚餐：Prawn Star / seafood café（优先）",
-          "highlight": "每日餐食参考",
-          "tip": "修复 + 海鲜；不要再加长线",
+          "highlight": "当天餐食节奏",
+          "tip": "Market 水果、海鲜和 Palm Cove 咖啡串成轻松的一天。",
           "resources": [
             {
               "id": "rustys-map",
@@ -2652,8 +2652,8 @@
       "city": "凯恩斯 → 悉尼",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "转场悉尼，Barangaroo + The Rocks + 海港夜景",
-      "focus": "飞抵悉尼休息后，经 Barangaroo 走向海港夜景。",
+      "title": "初到悉尼：Barangaroo、The Rocks 与海港夜景",
+      "focus": "飞抵悉尼后休息片刻，沿 Barangaroo、The Rocks 走到 Circular Quay 夜景。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "悉尼约 9-18°C，早晚凉，海边防风。",
       "clothingNote": "薄羽绒、风衣或卫衣；从凯恩斯上飞机随身带外套。",
@@ -2695,7 +2695,7 @@
           "period": "清晨",
           "place": "凯恩斯酒店 → 凯恩斯机场 T2",
           "activity": "早起退房，打车 / Uber 前往机场",
-          "highlight": "转场日开始",
+          "highlight": "从凯恩斯启程前往悉尼",
           "tip": "前一晚必须完成打包；Jetstar 行李按 20kg 控制",
           "resources": [
             {
@@ -2745,8 +2745,8 @@
           "period": "下午",
           "place": "Darling Harbour / 酒店周边",
           "activity": "轻松适应，简单午餐或休息",
-          "highlight": "不硬玩，恢复清晨航班疲劳",
-          "tip": "可在酒店附近熟悉环境",
+          "highlight": "在 Darling Harbour 缓一缓",
+          "tip": "先休息、吃点东西，再开始海港散步。",
           "resources": [
             {
               "id": "darling-harbour-map",
@@ -2766,7 +2766,7 @@
           "place": "Barangaroo Reserve / Wulugul Walk",
           "activity": "从 Darling Harbour 沿海滨前往 Barangaroo Reserve，再衔接 The Rocks",
           "highlight": "原生植物、砂岩海岸与悉尼港步行线",
-          "tip": "固定站点，控制约 45–60 分钟；转场日保持轻量，不增加收费项目",
+          "tip": "预留 45–60 分钟沿海滨慢慢走，转场日下午以看景和恢复为主。",
           "resources": [
             {
               "id": "barangaroo-reserve-map",
@@ -2803,8 +2803,8 @@
           "period": "傍晚",
           "place": "The Rocks",
           "activity": "岩石区散步、晚餐",
-          "highlight": "砂岩建筑、老城氛围",
-          "tip": "悉尼第一晚很适合这里",
+          "highlight": "砂岩老街与海港傍晚",
+          "tip": "在 The Rocks 边走边找晚餐，感受悉尼老城区的第一晚。",
           "resources": [
             {
               "id": "the-rocks-map",
@@ -2824,7 +2824,7 @@
           "place": "Circular Quay",
           "activity": "歌剧院、海港大桥夜景",
           "highlight": "悉尼开场画面",
-          "tip": "轻松看夜景即可，不要安排太复杂",
+          "tip": "看完歌剧院与海港大桥夜景后轻松回酒店。",
           "resources": [
             {
               "id": "circular-quay-map",
@@ -2843,8 +2843,8 @@
           "period": "饮食",
           "place": "饮食安排",
           "activity": "早餐：café / A.P Bakery（可选）；午餐：飞机/机场 / mezze feast；晚餐：The Rocks pub",
-          "highlight": "每日餐食参考",
-          "tip": "转场日，晚餐轻松",
+          "highlight": "当天餐食节奏",
+          "tip": "转场日不赶餐厅，晚上在 The Rocks 找一家舒服的 pub 收尾。",
           "resources": [
             {
               "id": "the-rocks-map",
@@ -2867,8 +2867,8 @@
       "city": "悉尼市区",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "歌剧院中文导览 + The Rocks Weekend Market",
-      "focus": "中文导览结束后步行逛 The Rocks 周末市集，再前往植物园、经典机位与 QVB。",
+      "title": "悉尼经典一日：歌剧院、The Rocks Weekend Market、植物园与 QVB",
+      "focus": "从歌剧院中文导览出发，逛 The Rocks 周末市集，再沿植物园走到经典海港机位与 QVB。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "悉尼冬季晴天概率较好，早晚凉。",
       "clothingNote": "薄羽绒或风衣，海港边风大时注意保暖。",
@@ -3103,7 +3103,7 @@
           "place": "Royal Botanic Garden",
           "activity": "植物园海港步道",
           "highlight": "海港景观非常好",
-          "tip": "这段不是赶景点，是慢慢走向 Mrs Macquarie’s Chair；可拍草坪远景框住歌剧院 + 海港桥",
+          "tip": "沿海港步道慢慢走向 Mrs Macquarie’s Chair，途中可从草坪远望歌剧院与海港桥。",
           "resources": [
             {
               "id": "botanic-garden-map",
@@ -3163,7 +3163,7 @@
           "place": "CBD / Darling Harbour",
           "activity": "Hello Auntie / CBD 晚餐",
           "highlight": "城市核心日收尾",
-          "tip": "不一定要升级晚餐，给 D14 / D15 留空间；达令港夜景可选",
+          "tip": "在 CBD / Darling Harbour 轻松收尾；达令港夜景按体力决定。",
           "resources": [
             {
               "id": "darling-harbour-map",
@@ -3191,8 +3191,8 @@
           "period": "饮食",
           "place": "饮食安排",
           "activity": "早餐：bills / Toby’s Estate；午餐：The Rocks Markets / Circular Quay 简餐；晚餐：Hello Auntie",
-          "highlight": "每日餐食参考",
-          "tip": "9:30 歌剧院中文导览已订；导览后固定步行前往 The Rocks Weekend Market，停留约 45–60 分钟",
+          "highlight": "当天餐食节奏",
+          "tip": "市集可边逛边吃；若只简单垫一口，晚上再去 Hello Auntie。",
           "resources": [
             {
               "id": "bills-sydney-map",
@@ -3260,8 +3260,8 @@
       "city": "悉尼南海岸",
       "lat": -34.6713,
       "lon": 150.8565,
-      "title": "南海岸：Kiama、Gerringong 与袋鼠谷",
-      "focus": "沿 Grand Pacific Drive 南下，串联海崖桥与南海岸小镇。",
+      "title": "悉尼南海岸：Sea Cliff Bridge、Kiama 与 Gerringong",
+      "focus": "沿 Grand Pacific Drive 南下，经过 Sea Cliff Bridge、Kiama 与 Gerringong，视情况延伸袋鼠谷。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "南海岸晴天最出片；沿海有风，袋鼠谷山区傍晚更凉。",
       "clothingNote": "海边防风，穿舒适步行鞋；出发前检查 Royal National Park 道路警报。",
@@ -3289,12 +3289,12 @@
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
-        "title": "当天无固定票券",
+        "title": "今天无需提前购票",
         "type": "note",
         "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "每日明确票券状态"
+        "sourceNote": "当天以免费景点或灵活安排为主"
       },
       "blocks": [
         {
@@ -3304,7 +3304,7 @@
           "place": "悉尼 → Royal National Park / Bald Hill",
           "activity": "自驾南下，进入 Grand Pacific Drive",
           "highlight": "城市切换到南海岸",
-          "tip": "路线已确定为南海岸；出发前查看 Royal National Park alerts，遇关闭按导航绕行",
+          "tip": "出发前查看 Royal National Park alerts，遇临时关闭按导航绕行。",
           "resources": [
             {
               "id": "royal-national-park-map",
@@ -3382,7 +3382,7 @@
           "place": "Wollongong / 南海岸补给",
           "activity": "短停咖啡或直接通过",
           "highlight": "为 Kiama 留出完整窗口",
-          "tip": "不把 Wollongong 做成长停；进度慢就直接去 Kiama",
+          "tip": "在 Wollongong 喝杯咖啡即可，把完整午餐和散步留给 Kiama。",
           "resources": [
             {
               "id": "wollongong-map",
@@ -3451,7 +3451,7 @@
           "place": "Kiama → Gerringong",
           "activity": "沿海继续南下",
           "highlight": "海岸逐渐转为农场与小镇",
-          "tip": "Gerringong 距 Kiama 很近，是今天的确定停靠",
+          "tip": "从 Kiama 很快就能到 Gerringong，沿海公路和农场景色会自然切换。",
           "resources": [
             {
               "id": "kiama-map",
@@ -3480,7 +3480,7 @@
           "place": "Gerringong / Werri Beach",
           "activity": "看海岸、草坡与小镇，短停咖啡或散步",
           "highlight": "南海岸与乡村景观同框",
-          "tip": "不要在这里拖成完整下午；14:40 左右做袋鼠谷判断",
+          "tip": "预留约 55 分钟看海、喝咖啡；14:40 左右再决定是否前往袋鼠谷。",
           "resources": [
             {
               "id": "gerringong-map",
@@ -3529,7 +3529,7 @@
           "place": "Kangaroo Valley / Hampden Bridge",
           "activity": "看历史桥、山谷与小镇",
           "highlight": "海岸日的乡村加餐",
-          "tip": "只做 Hampden Bridge + 小镇短停；不再加 Fitzroy Falls",
+          "tip": "若前往袋鼠谷，只安排 Hampden Bridge 与小镇短停，16:15 前返程。",
           "resources": [
             {
               "id": "kangaroo-valley-map",
@@ -3595,8 +3595,8 @@
           "period": "饮食",
           "place": "饮食安排",
           "activity": "早餐：café；午餐：Kiama Hungry Monkey / Kiama 简餐；晚餐：回城后 CBD / 酒店附近简餐",
-          "highlight": "每日餐食参考",
-          "tip": "今天以南海岸驾驶为主；不为餐厅绕路，给 Gerringong 和可选袋鼠谷留时间",
+          "highlight": "当天餐食节奏",
+          "tip": "午餐留在 Kiama，返城后就近用餐，把时间留给海岸和小镇。",
           "resources": [
             {
               "id": "kiama-map",
@@ -3646,8 +3646,8 @@
       "city": "悉尼",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "Taronga Zoo + Bondi + Totti’s",
-      "focus": "上午看澳洲动物，下午走 Bondi 海岸，晚上吃 Totti’s。",
+      "title": "动物园到海岸：Taronga、Bondi 与 Totti’s",
+      "focus": "搭渡轮看 Taronga 的澳洲动物，下午走 Bondi 海岸，晚上在 Totti’s 用餐。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "悉尼冬季早晚凉，渡轮甲板、动物园高处和 Bondi 海边都有风。",
       "clothingNote": "穿舒适步行鞋，薄外套随身；Bondi 海岸步道只走短段。",
@@ -3766,7 +3766,7 @@
           "place": "Taronga Zoo",
           "activity": "优先游览 Australian Wildlife 区域与悉尼港景观",
           "highlight": "澳洲本土动物 + Harbour view",
-          "tip": "不追求全园；当天动物展示和 keeper talk 以官网及现场为准",
+          "tip": "优先 Australian Wildlife 区域与海港景观，再按当天 keeper talk 调整顺序。",
           "resources": [
             {
               "id": "taronga-zoo-map",
@@ -3833,7 +3833,7 @@
           "place": "Bondi Beach → Icebergs → Tamarama",
           "activity": "海滩散步并走一段 Coastal Walk",
           "highlight": "泳池、海浪、悬崖海岸线",
-          "tip": "不走完整 Bondi–Coogee；17:45 左右结束海边，给晚餐交通留时间",
+          "tip": "走 Bondi–Tamarama 短段即可，17:45 左右离开海边，从容前往晚餐。",
           "resources": [
             {
               "id": "bondi-map",
@@ -3899,8 +3899,8 @@
           "period": "饮食",
           "place": "饮食安排",
           "activity": "早餐：CBD café；午餐：Taronga Zoo 轻食 / Circular Quay 简餐；晚餐：Totti’s Bondi 18:30（已订）",
-          "highlight": "每日餐食参考",
-          "tip": "动物园午餐不要拖；下午只走 Bondi–Tamarama 短段，按时到 Totti’s",
+          "highlight": "当天餐食节奏",
+          "tip": "动物园午餐简单些，海边散步结束后从容前往 18:30 的 Totti’s。",
           "resources": [
             {
               "id": "taronga-zoo-map",
@@ -3959,8 +3959,8 @@
       "city": "悉尼",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "Manly 弹性早晨 + 最后采购 + Cafe Sydney",
-      "focus": "早上按状态决定 Manly，下午采购整理，傍晚 Cafe Sydney。",
+      "title": "悉尼告别日：可选 Manly、最后采购与 Cafe Sydney",
+      "focus": "上午悠闲安排 Manly 或 CBD，下午采购并整理行李，傍晚在 Cafe Sydney 告别。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "悉尼早晚凉，若去 Manly，渡轮甲板和海边风更明显。",
       "clothingNote": "薄外套随身；晚餐换 smart casual，并给回酒店整理行李留足时间。",
@@ -3988,12 +3988,12 @@
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
-        "title": "当天无固定票券",
+        "title": "今天无需提前购票",
         "type": "note",
         "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "每日明确票券状态"
+        "sourceNote": "当天以免费景点或灵活安排为主"
       },
       "blocks": [
         {
@@ -4001,9 +4001,9 @@
           "sortOrder": 10,
           "period": "上午",
           "place": "酒店 / 悉尼市区",
-          "activity": "慢早餐，按睡眠、天气和体力决定是否去 Manly",
-          "highlight": "最后一天保留弹性",
-          "tip": "状态好才启动 Manly；否则留在 CBD，直接进入轻松采购与整理",
+          "activity": "慢早餐，结合睡眠、天气和体力决定 Manly 或 CBD",
+          "highlight": "告别日从容开场",
+          "tip": "睡饱、天气好就去 Manly；否则留在 CBD 慢慢吃早餐。",
           "resources": [
             {
               "id": "oaks-sydney-map",
@@ -4032,7 +4032,7 @@
           "place": "Circular Quay → Manly",
           "activity": "搭乘公共 F1 Manly Ferry",
           "highlight": "悉尼港经典渡轮体验",
-          "tip": "仅在状态好且能于 13:00–13:30 返程时执行；当天查看班次",
+          "tip": "确认能在 13:00–13:30 前返程再出发，并查看当天船班。",
           "resources": [
             {
               "id": "circular-quay-map",
@@ -4061,7 +4061,7 @@
           "place": "Manly Beach / The Corso",
           "activity": "海边散步、咖啡或早午餐",
           "highlight": "比 Bondi 更松弛",
-          "tip": "不追求打卡；午餐不要拖太久",
+          "tip": "在海边散步、喝咖啡，12:45 左右准备返程。",
           "resources": [
             {
               "id": "manly-beach-map",
@@ -4099,7 +4099,7 @@
           "place": "Manly → Circular Quay / CBD",
           "activity": "最晚搭船回市区",
           "highlight": "给采购、TRS 和晚餐留余量",
-          "tip": "若早上没有去 Manly，这一时段可在 CBD 咖啡或提前购物",
+          "tip": "若上午留在 CBD，这段时间可喝咖啡或提前开始采购。",
           "resources": [
             {
               "id": "manly-ferry-map",
@@ -4261,8 +4261,8 @@
           "period": "饮食",
           "place": "饮食安排",
           "activity": "早餐：café / Single O / Toby’s Estate；午餐：若去 Manly 则 fish & chips / café，否则 CBD 简餐；晚餐：Cafe Sydney 17:30 Outdoor Terrace Dining（已订）",
-          "highlight": "每日餐食参考",
-          "tip": "Manly 是状态触发项；无论去不去，14:00 后进入采购、TRS 和告别晚餐主线",
+          "highlight": "当天餐食节奏",
+          "tip": "无论上午在哪，14:00 后都回到 CBD 采购、整理 TRS，最后去 Cafe Sydney。",
           "resources": [
             {
               "id": "single-o-map",
@@ -4330,8 +4330,8 @@
       "city": "悉尼 → 香港 → 上海",
       "lat": -33.9399,
       "lon": 151.1753,
-      "title": "返程与 TRS 退税",
-      "focus": "完成 TRS 与机场手续，启程回家。",
+      "title": "告别澳洲：TRS 退税与返程",
+      "focus": "完成 TRS 与机场手续，带着旅程回家。",
       "lodging": "-",
       "climateNote": "机场和机舱温差明显。",
       "clothingNote": "提前整理退税物品和购物小票，随身带薄外套。",
@@ -4372,9 +4372,9 @@
           "sortOrder": 10,
           "period": "上午",
           "place": "悉尼机场",
-          "activity": "办理 TRS 退税，登机返程。",
+          "activity": "办理 TRS 退税与登机手续，启程回家",
           "highlight": "满载而归",
-          "tip": "提前下载 TRS App 填好信息，可走快速通道。",
+          "tip": "提前在 TRS App 填好信息，符合条件时可走快速通道。",
           "resources": [
             {
               "id": "sydney-airport-map",
@@ -4401,9 +4401,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：机场早餐；午餐：飞机；晚餐：无",
-          "highlight": "无",
-          "tip": "结束",
+          "activity": "早餐：机场早餐；午餐 / 晚餐：按航班餐食安排",
+          "highlight": "返程日简单省心",
+          "tip": "早点到机场，吃好早餐后按航班节奏休息。",
           "resources": []
         }
       ]
@@ -5501,12 +5501,12 @@
     },
     {
       "id": "no-fixed-ticket",
-      "title": "当天无固定票券",
+      "title": "今天无需提前购票",
       "type": "note",
       "url": "",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "每日明确票券状态"
+      "sourceNote": "当天以免费景点或灵活安排为主"
     },
     {
       "id": "qvm-winter-night-market-official",

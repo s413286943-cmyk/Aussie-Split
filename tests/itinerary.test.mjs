@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 
 import itinerary from "../src/data/itinerary.generated.json" with { type: "json" };
@@ -14,25 +15,50 @@ import {
 } from "../src/lib/today.js";
 import { readWorkbook } from "../scripts/import-itinerary.mjs";
 
+const expectedTitles = {
+  d0: "启程澳洲：香港转机，夜航墨尔本",
+  d1: "初到墨尔本：CBD、Carlton 与 QVM 冬季夜市",
+  d2: "墨尔本近郊：Puffing Billy、Sassafras 与 Fitzroy",
+  d3: "驶上大洋路：Torquay、Lorne 到 Apollo Bay",
+  d4: "大洋路海岸：雨林、十二使徒岩与 Loch Ard Gorge",
+  d5: "告别大洋路：清晨海岸与内陆返程",
+  d6: "抵达凯恩斯：Esplanade Lagoon 与热带夜市",
+  d7: "奔赴外礁：Reef Magic 大堡礁一日",
+  d8: "深入丹翠：雨林、河流与 Cape Tribulation",
+  d9: "阿瑟顿高原：火山湖、巨树与瀑布",
+  d10: "慢享凯恩斯：Rusty’s Market 与 Palm Cove",
+  d11: "初到悉尼：Barangaroo、The Rocks 与海港夜景",
+  d12: "悉尼经典一日：歌剧院、The Rocks Weekend Market、植物园与 QVB",
+  d13: "悉尼南海岸：Sea Cliff Bridge、Kiama 与 Gerringong",
+  d14: "动物园到海岸：Taronga、Bondi 与 Totti’s",
+  d15: "悉尼告别日：可选 Manly、最后采购与 Cafe Sydney",
+  d16: "告别澳洲：TRS 退税与返程",
+};
+
 const expectedFocus = {
   d0: "经香港转机，夜航前往墨尔本。",
-  d1: "落地恢复，轻走 CBD；晚间逛 QVM 冬季夜市。",
-  d2: "蒸汽小火车半日，下午漫步 Fitzroy。",
-  d3: "机场取车轻装上路，沿海开到 Apollo Bay。",
-  d4: "穿过雨林走向十二使徒岩，傍晚抵达 Port Campbell。",
-  d5: "清晨补拍海岸，走内陆线返回墨尔本机场。",
-  d6: "从冬季飞进热带，傍晚漫步凯恩斯海滨。",
-  d7: "全天留给大堡礁外礁平台与海上体验。",
-  d8: "沿丹翠河深入雨林，在 Cape Tribulation 看雨林入海。",
-  d9: "轻量自驾串联火山湖、巨树、高原小镇与瀑布。",
-  d10: "逛 Rusty’s Market，休整后去 Palm Cove 看海。",
-  d11: "飞抵悉尼休息后，经 Barangaroo 走向海港夜景。",
-  d12: "中文导览结束后步行逛 The Rocks 周末市集，再前往植物园、经典机位与 QVB。",
-  d13: "沿 Grand Pacific Drive 南下，串联海崖桥与南海岸小镇。",
-  d14: "上午看澳洲动物，下午走 Bondi 海岸，晚上吃 Totti’s。",
-  d15: "早上按状态决定 Manly，下午采购整理，傍晚 Cafe Sydney。",
-  d16: "完成 TRS 与机场手续，启程回家。",
+  d1: "抵达后慢慢恢复，逛过 CBD 与 Carlton，晚上去 QVM 冬季夜市吃晚餐。",
+  d2: "上午乘 Puffing Billy 穿行山林，下午在 Fitzroy 看街区与小店。",
+  d3: "机场取车后沿海向西，途经 Torquay、Lorne，傍晚住进 Apollo Bay。",
+  d4: "从雨林步道驶向十二使徒岩，在 Loch Ard Gorge 慢慢看海岸地貌。",
+  d5: "清晨再看一眼海岸，经 Colac 走内陆线返回墨尔本机场。",
+  d6: "从墨尔本飞到凯恩斯，下午在 Esplanade Lagoon 放松，晚上逛夜市。",
+  d7: "在 Reef Magic 外礁平台体验浮潜、半潜艇与大堡礁海上风景。",
+  d8: "沿丹翠河进入雨林，在 Cape Tribulation 看雨林与海相接。",
+  d9: "自驾串联 Lake Eacham、Curtain Fig Tree、高原小镇与瀑布。",
+  d10: "上午逛 Rusty’s Market，午后休整，傍晚去 Palm Cove 看海。",
+  d11: "飞抵悉尼后休息片刻，沿 Barangaroo、The Rocks 走到 Circular Quay 夜景。",
+  d12: "从歌剧院中文导览出发，逛 The Rocks 周末市集，再沿植物园走到经典海港机位与 QVB。",
+  d13: "沿 Grand Pacific Drive 南下，经过 Sea Cliff Bridge、Kiama 与 Gerringong，视情况延伸袋鼠谷。",
+  d14: "搭渡轮看 Taronga 的澳洲动物，下午走 Bondi 海岸，晚上在 Totti’s 用餐。",
+  d15: "上午悠闲安排 Manly 或 CBD，下午采购并整理行李，傍晚在 Cafe Sydney 告别。",
+  d16: "完成 TRS 与机场手续，带着旅程回家。",
 };
+
+const itineraryUiSource = readFileSync(
+  new URL("../src/components/ItineraryApp.jsx", import.meta.url),
+  "utf8",
+);
 
 describe("itinerary data", () => {
   it("imports D0 through D16 from the Excel workbook", () => {
@@ -49,6 +75,36 @@ describe("itinerary data", () => {
     for (const day of itinerary.days) {
       assert.equal(day.focus, expectedFocus[day.id], `${day.id} focus is not concise`);
     }
+  });
+
+  it("uses one traveller-facing title style across D0 through D16", () => {
+    for (const day of itinerary.days) {
+      assert.equal(day.title, expectedTitles[day.id], `${day.id} title is not traveller-facing`);
+      assert.doesNotMatch(day.title, /Road Trip Day\s*\d+/i);
+    }
+  });
+
+  it("keeps planning-revision language out of traveller-facing card copy", () => {
+    const revisionLanguage = /固定站点|固定步行|先删|仍作为|不再另排|路线已确定|不增加收费项目|不再叠加|不再加|主采购点|补偿日|状态触发项|升级餐厅|不折腾/;
+
+    for (const day of itinerary.days) {
+      const cardCopy = [
+        day.title,
+        day.focus,
+        day.clothingNote,
+        ...day.blocks.flatMap((block) => [block.activity, block.highlight, block.tip]),
+      ].filter(Boolean).join(" ");
+
+      assert.doesNotMatch(cardCopy, revisionLanguage, `${day.id} still uses planning-revision language`);
+    }
+  });
+
+  it("labels the overview with traveller-facing language", () => {
+    assert.match(itineraryUiSource, />路线速览</);
+    assert.match(itineraryUiSource, /先看 \$\{keyStops\.length\} 个重点/);
+    assert.match(itineraryUiSource, /地图与官网入口/);
+    assert.match(itineraryUiSource, />餐食建议</);
+    assert.doesNotMatch(itineraryUiSource, />路书重点|快捷链接/);
   });
 
   it("uses explicit daily transport, departure, lodging, primary, and ticket controls", () => {

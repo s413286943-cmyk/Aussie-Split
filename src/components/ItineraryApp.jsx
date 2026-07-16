@@ -528,19 +528,19 @@ function DayCard({ day, weather, ledgerExpenses = [], compact = false, current =
         <div className="day-brief-grid">
           <WeatherStrip weather={dayWeather} />
           <article className="day-brief-card">
-            <span>路书重点</span>
-            <strong>{keyStops.length ? `${keyStops.length} 个主要停靠` : "机动安排"}</strong>
-            <small>{resourcesCount ? `${resourcesCount} 个快捷链接` : "无外部链接"}</small>
+            <span>路线速览</span>
+            <strong>{keyStops.length ? `先看 ${keyStops.length} 个重点` : "自由安排"}</strong>
+            <small>{resourcesCount ? `${resourcesCount} 个地图与官网入口` : "当天无需外部链接"}</small>
           </article>
         </div>
-        <div className="route-stop-list" aria-label={`${day.label} 主要停靠`}>
+        <div className="route-stop-list" aria-label={`${day.label} 路线重点`}>
           {keyStops.map((block) => (
             <span key={`${day.id}-stop-${block.sortOrder}`}>{block.place}</span>
           ))}
         </div>
         {foodBlock && (
           <div className="food-brief" data-food-block="true">
-            <span>饮食安排</span>
+            <span>餐食建议</span>
             <p>{foodBlock.activity}</p>
             {foodBlock.tip && <small>{foodBlock.tip}</small>}
           </div>

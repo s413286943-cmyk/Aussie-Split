@@ -69,7 +69,7 @@ test("mobile itinerary keeps controls and day text inside the viewport", async (
   const currentDay = page.locator("#d2");
   await expect(currentDay).toBeAttached();
   await currentDay.scrollIntoViewIfNeeded();
-  await expect(currentDay.locator("h3")).toHaveText("Puffing Billy + Sassafras + Fitzroy");
+  await expect(currentDay.locator("h3")).toHaveText("墨尔本近郊：Puffing Billy、Sassafras 与 Fitzroy");
   expect(await documentOverflowsHorizontally(page)).toBe(false);
   expect(await findClippedText(page)).toEqual([]);
 });
@@ -81,7 +81,7 @@ test("mobile direct D15 link keeps the offscreen stage inside the viewport", asy
 
   const d15 = page.locator("#d15");
   await expect(d15).toBeAttached();
-  await expect(d15.locator("h3")).toHaveText("Manly 弹性早晨 + 最后采购 + Cafe Sydney");
+  await expect(d15.locator("h3")).toHaveText("悉尼告别日：可选 Manly、最后采购与 Cafe Sydney");
   const bounds = await d15.evaluate((element) => {
     const rect = element.getBoundingClientRect();
     return { left: rect.left, right: rect.right, viewport: window.innerWidth };
