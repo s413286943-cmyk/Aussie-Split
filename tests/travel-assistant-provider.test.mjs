@@ -16,7 +16,7 @@ const env = {
 };
 
 const systemPrompt = "You are a travel operations advisor. Return only JSON matching the requested schema. Write all user-facing prose in Simplified Chinese. Select only supplied fact IDs and checklist IDs. Do not invent or restate exact times, dates, bookings, prices, people, or places. Reasons must be generic and concise. Hard facts remain controlled by the website.";
-const chatSystemPrompt = "Answer from the supplied itinerary context only. Write all user-facing prose in Simplified Chinese. Give advice, never claim to change itinerary, bookings, tickets, checklist, ledger, or receipts. Do not invent exact times, dates, prices, people, bookings, or places. If the context does not contain an answer, say so. Hard facts shown by the website are authoritative.";
+const chatSystemPrompt = "Answer from the supplied itinerary context only. Write all user-facing prose in Simplified Chinese. Give advice, never claim to change itinerary, bookings, tickets, checklist, ledger, or receipts. Never offer to mark, check, add, remove, edit, update, save, upload, book, cancel, or record anything for the traveler. Phrase every action as something the traveler can do, never as something you can or will do. Do not invent exact times, dates, prices, people, bookings, or places. If the context does not contain an answer, say so. Hard facts shown by the website are authoritative.";
 
 describe("travel assistant provider", () => {
   it("is server-only and reads only the three server environment names", () => {
@@ -349,6 +349,39 @@ describe("travel assistant provider", () => {
       ...history,
       { role: "user", content: "下雨怎么调整？" },
     ]);
+    assert.match(
+      body.messages[0].content,
+      /never offer to mark, check, add, remove, edit, update, save, upload, book, cancel, or record anything/i,
+    );
+    assert.match(
+      body.messages[0].content,
+      /phrase every action as something the traveler can do/i,
+    );
+  });
+
+  it("fails closed when a chat answer claims it can mutate traveler data", async () => {
+    const unsafeAnswers = [
+      "如果你想，我可以把防风防雨外套标注为出门优先携带。",
+      "我已经为你勾选清单并保存。",
+      "I can update the itinerary for you.",
+    ];
+
+    for (const unsafeAnswer of unsafeAnswers) {
+      await assert.rejects(
+        () => requestTravelChat({
+          context: { scope: "today", sourceDayIds: ["d0"], day: { id: "d0" } },
+          question: "下雨怎么调整？",
+          history: [],
+          env,
+          fetcher: async () => sseResponse([
+            `data: ${JSON.stringify({ choices: [{ delta: { content: unsafeAnswer } }] })}\n\n`,
+            "data: [DONE]\n\n",
+          ]),
+        }),
+        (error) => error instanceof TravelAssistantProviderError
+          && error.code === "provider_unavailable",
+      );
+    }
   });
 
   it("adds an explicit anti-hallucination instruction only for unmatched routed references", async () => {

@@ -5,13 +5,19 @@ const DEFAULT_CHAT_TIMEOUT_MS = 30_000;
 const MAX_PROVIDER_SSE_BUFFER_BYTES = 32 * 1024;
 const MAX_BRIEF_OUTPUT_CHARACTERS = 8 * 1024;
 const MAX_CHAT_ANSWER_CHARACTERS = 3_000;
+const MUTATION_ACTIONS_PATTERN = "(?:标注|勾选|修改|更新|添加|加入|删除|移除|保存|上传|记录|记账|预订|订票|取消|调整|更改)";
+const CHINESE_CAPABILITY_CLAIM = new RegExp(
+  `(?:我|助手|AI)\\s*(?:可以|能|会|将|要|已经|已|来|帮你|替你|为你)[^。！？\\n]{0,80}${MUTATION_ACTIONS_PATTERN}`,
+  "iu",
+);
+const ENGLISH_CAPABILITY_CLAIM = /\b(?:i|we)\s+(?:can|could|will|would|already|have(?!\s+not\b)(?:\s+already)?|am\s+going\s+to)\b[^.!?\n]{0,100}\b(?:mark|check|add|remove|update|change|save|upload|record|book|cancel|edit)\b/iu;
 const PROVIDER_MESSAGES = {
   provider_configuration_error: "Travel assistant provider configuration is unavailable",
   provider_timeout: "Travel assistant provider timed out",
   provider_unavailable: "Travel assistant provider is unavailable",
 };
 const SYSTEM_PROMPT = "You are a travel operations advisor. Return only JSON matching the requested schema. Write all user-facing prose in Simplified Chinese. Select only supplied fact IDs and checklist IDs. Do not invent or restate exact times, dates, bookings, prices, people, or places. Reasons must be generic and concise. Hard facts remain controlled by the website.";
-const CHAT_SYSTEM_PROMPT = "Answer from the supplied itinerary context only. Write all user-facing prose in Simplified Chinese. Give advice, never claim to change itinerary, bookings, tickets, checklist, ledger, or receipts. Do not invent exact times, dates, prices, people, bookings, or places. If the context does not contain an answer, say so. Hard facts shown by the website are authoritative.";
+const CHAT_SYSTEM_PROMPT = "Answer from the supplied itinerary context only. Write all user-facing prose in Simplified Chinese. Give advice, never claim to change itinerary, bookings, tickets, checklist, ledger, or receipts. Never offer to mark, check, add, remove, edit, update, save, upload, book, cancel, or record anything for the traveler. Phrase every action as something the traveler can do, never as something you can or will do. Do not invent exact times, dates, prices, people, bookings, or places. If the context does not contain an answer, say so. Hard facts shown by the website are authoritative.";
 const UNMATCHED_CHAT_INSTRUCTION = "One or more requested place, date, or day references were not found in the supplied itinerary. Say that they were not found, do not infer or invent them, and answer any matched portion only from supplied facts.";
 const BRIEF_OUTPUT_SHAPE = {
   pace: { level: "easy | balanced | full", note: "string" },
@@ -169,11 +175,13 @@ export async function requestTravelChat({
     });
     if (!response?.ok || !response.body) throw unavailableError();
 
-    return await readBufferedProviderStream(
+    const answer = await readBufferedProviderStream(
       response.body,
       controller.signal,
       MAX_CHAT_ANSWER_CHARACTERS,
     );
+    assertChatCapabilityBoundary(answer);
+    return answer;
   } catch (error) {
     if (timedOut) throw new TravelAssistantProviderError("provider_timeout");
     if (error instanceof TravelAssistantProviderError) throw error;
@@ -187,6 +195,12 @@ function chatSystemPrompt(context) {
   return context?.unmatched === true
     ? `${CHAT_SYSTEM_PROMPT} ${UNMATCHED_CHAT_INSTRUCTION}`
     : CHAT_SYSTEM_PROMPT;
+}
+
+function assertChatCapabilityBoundary(answer) {
+  if (CHINESE_CAPABILITY_CLAIM.test(answer) || ENGLISH_CAPABILITY_CLAIM.test(answer)) {
+    throw unavailableError();
+  }
 }
 
 async function readBufferedProviderStream(body, signal, maxOutputCharacters = Infinity) {
