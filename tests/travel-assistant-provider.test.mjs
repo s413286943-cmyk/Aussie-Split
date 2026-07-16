@@ -16,7 +16,7 @@ const env = {
 };
 
 const systemPrompt = "You are a travel operations advisor. Return only JSON matching the requested schema. Write all user-facing prose in Simplified Chinese. Select only supplied fact IDs and checklist IDs. Do not invent or restate exact times, dates, bookings, prices, people, or places. Reasons must be generic and concise. Hard facts remain controlled by the website.";
-const chatSystemPrompt = "Answer from the supplied itinerary context only. Write all user-facing prose in Simplified Chinese. Give advice, never claim to change itinerary, bookings, tickets, checklist, ledger, or receipts. Never offer to mark, check, add, remove, edit, update, save, upload, book, cancel, or record anything for the traveler. Phrase every action as something the traveler can do, never as something you can or will do. Only repeat exact times or dates when they appear in the supplied context. Never invent times, dates, prices, people, bookings, or places. If the context does not contain an answer, say so. Hard facts shown by the website are authoritative.";
+const chatSystemPrompt = "Answer from the supplied itinerary context only. Write all user-facing prose in Simplified Chinese. Give advice, never claim to change itinerary, bookings, tickets, checklist, ledger, or receipts. Never offer to mark, check, add, remove, edit, update, save, upload, book, cancel, or record anything for the traveler. Phrase every action as something the traveler can do, never as something you can or will do. Only repeat exact times or dates when they appear in the supplied context. Never invent times, dates, prices, people, bookings, or places. Do not state or infer booking, ticket, or payment status. Do not expose internal IDs. If the context does not contain an answer, say so. Hard facts shown by the website are authoritative.";
 
 describe("travel assistant provider", () => {
   it("is server-only and reads only the three server environment names", () => {
@@ -365,6 +365,11 @@ describe("travel assistant provider", () => {
       body.messages[0].content,
       /never invent times, dates, prices, people, bookings, or places/i,
     );
+    assert.match(
+      body.messages[0].content,
+      /do not state or infer booking, ticket, or payment status/i,
+    );
+    assert.match(body.messages[0].content, /do not expose internal ids/i);
   });
 
   it("fails closed when a chat answer claims it can mutate traveler data", async () => {

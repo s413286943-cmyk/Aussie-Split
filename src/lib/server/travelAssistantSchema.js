@@ -12,7 +12,9 @@ const REQUEST_KEYS = new Set([
   "history",
 ]);
 const HISTORY_KEYS = new Set(["role", "content"]);
-const SENSITIVE_PATTERN = /(?:\b(?:ledger|payer|amount|receipt|attachment|operation|supabase|currency|payment|dollars?|AUD|CNY|RMB)\b|付款人|分摊|小票|收据|金额|支付|澳元|A\$\s*\d|[$¥€£])/i;
+const SENSITIVE_PATTERN = /(?:\b(?:ledger|payer|amount|receipt|attachment|operation|supabase|currency|payment|dollars?|AUD|CNY|RMB)\b|付款人|分摊|小票|收据|金额|澳元|A\$\s*\d|[$¥€£])/i;
+const PAYMENT_WORD_PATTERN = /支付/i;
+const PAYMENT_STATUS_PATTERN = /(?:(?:已(?:经)?|尚未|未|待)(?:完成)?(?:支付|付款)|(?:支付|付款)(?:已(?:经)?|尚未|未|待|完成|成功|失败))/i;
 const EXACT_TIME_PATTERN = /\b(?:[01]?\d|2[0-3])[:：][0-5]\d(?:\s*[ap]m)?\b/i;
 const EXACT_DATE_PATTERN = /\b\d{4}-\d{2}-\d{2}\b|\d{1,2}月\d{1,2}日|\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+(?:0?[1-9]|[12]\d|3[01])\b/i;
 
@@ -164,6 +166,8 @@ function safeAdvice(value, maxLength) {
     !text
     || text.length > maxLength
     || SENSITIVE_PATTERN.test(text)
+    || PAYMENT_WORD_PATTERN.test(text)
+    || PAYMENT_STATUS_PATTERN.test(text)
     || EXACT_TIME_PATTERN.test(text)
     || EXACT_DATE_PATTERN.test(text)
   ) {
@@ -175,11 +179,17 @@ function safeAdvice(value, maxLength) {
 function safeChatAdvice(value, context, maxLength) {
   if (typeof value !== "string") throw new TypeError("Invalid advice text");
   const text = value.trim();
-  if (!text || text.length > maxLength || SENSITIVE_PATTERN.test(text)) {
+  const contextText = JSON.stringify(context || {});
+  if (
+    !text
+    || text.length > maxLength
+    || SENSITIVE_PATTERN.test(text)
+    || (PAYMENT_WORD_PATTERN.test(text) && !PAYMENT_WORD_PATTERN.test(contextText))
+    || PAYMENT_STATUS_PATTERN.test(text)
+  ) {
     throw new TypeError("Invalid advice text");
   }
 
-  const contextText = JSON.stringify(context || {});
   const allowedTimes = new Set(
     collectExactMatches(EXACT_TIME_PATTERN, contextText).map(normalizeExactTime),
   );

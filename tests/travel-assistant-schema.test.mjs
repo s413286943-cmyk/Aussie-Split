@@ -220,12 +220,21 @@ describe("travel assistant schema", () => {
     assert.deepEqual(d13ChatContext.sourceDayIds, ["d0", "d13"]);
   });
 
+  it("accepts generic payment wording that is already present in routed context", () => {
+    const answer = "地图、支付和票据都靠手机，出门前先确认电量。";
+
+    assert.equal(validateChatAnswer(answer, d13ChatContext), answer);
+    assert.throws(() => validateChatAnswer(answer, { sourceDayIds: ["d0"] }));
+  });
+
   it("rejects oversized, private, monetary, and unsupported exact chat advice", () => {
     const invalidAnswers = [
       "x".repeat(3_001),
       "先查看 ledger 再决定。",
       "让付款人处理小票。",
       "预算是 A$99。",
+      "订单已经支付。",
+      "这笔费用待付款。",
       "建议 03:17 出发。",
       "安排在 2026-08-11。",
       "August 11 is best.",
