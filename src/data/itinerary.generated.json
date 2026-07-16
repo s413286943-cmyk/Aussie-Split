@@ -2867,8 +2867,8 @@
       "city": "悉尼市区",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "悉尼经典地标与歌剧院中文导览",
-      "focus": "从歌剧院导览一路步行到花园、经典机位与 QVB。",
+      "title": "歌剧院中文导览 + The Rocks Weekend Market",
+      "focus": "中文导览结束后步行逛 The Rocks 周末市集，再前往植物园、经典机位与 QVB。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "悉尼冬季晴天概率较好，早晚凉。",
       "clothingNote": "薄羽绒或风衣，海港边风大时注意保暖。",
@@ -2985,11 +2985,11 @@
         {
           "dayId": "d12",
           "sortOrder": 40,
-          "period": "10:30–11:00",
-          "place": "Opera House 周边",
-          "activity": "补拍 / 咖啡 / 短休息",
-          "highlight": "导览后消化一下",
-          "tip": "不急着赶路；可补 Man O’War Steps / 歌剧院侧面",
+          "period": "10:30–10:50",
+          "place": "Opera House → The Rocks",
+          "activity": "中文导览结束后沿 Circular Quay 步行前往 The Rocks Weekend Market",
+          "highlight": "海港步行衔接悉尼老城区",
+          "tip": "步行约 15–20 分钟；沿途可拍 Ferry、Opera House 与 Harbour Bridge",
           "resources": [
             {
               "id": "opera-house-map",
@@ -2999,13 +2999,107 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "the-rocks-map",
+              "title": "The Rocks",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "the-rocks-market-official",
+              "title": "The Rocks Weekend Market",
+              "type": "official",
+              "url": "https://therocks.com/whats-on/market-overview",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "The Rocks 官方市场页"
             }
           ]
         },
         {
           "dayId": "d12",
           "sortOrder": 50,
-          "period": "11:00–12:30",
+          "period": "10:50–11:50",
+          "place": "The Rocks Weekend Market",
+          "activity": "逛手作摊位、老街与周末市集",
+          "highlight": "悉尼老城区、手作市集、Harbour Bridge 背景和本地周末氛围",
+          "tip": "周日 10:00–17:00 开放；停留约 45–60 分钟，不必赶着逛完所有摊位",
+          "resources": [
+            {
+              "id": "the-rocks-map",
+              "title": "The Rocks",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "the-rocks-market-official",
+              "title": "The Rocks Weekend Market",
+              "type": "official",
+              "url": "https://therocks.com/whats-on/market-overview",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "The Rocks 官方市场页"
+            }
+          ]
+        },
+        {
+          "dayId": "d12",
+          "sortOrder": 60,
+          "period": "11:50–12:40",
+          "place": "The Rocks / Circular Quay",
+          "activity": "市集小吃或简单午餐 / 咖啡",
+          "highlight": "就地补体力，不为午餐绕路",
+          "tip": "若市集已吃饱，这里只补咖啡；给下午植物园和 QVB 留节奏",
+          "resources": [
+            {
+              "id": "the-rocks-map",
+              "title": "The Rocks",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "the-rocks-market-official",
+              "title": "The Rocks Weekend Market",
+              "type": "official",
+              "url": "https://therocks.com/whats-on/market-overview",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "The Rocks 官方市场页"
+            },
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d12",
+          "sortOrder": 70,
+          "period": "12:40–14:10",
           "place": "Royal Botanic Garden",
           "activity": "植物园海港步道",
           "highlight": "海港景观非常好",
@@ -3024,28 +3118,8 @@
         },
         {
           "dayId": "d12",
-          "sortOrder": 60,
-          "period": "12:30–13:30",
-          "place": "Circular Quay / CBD",
-          "activity": "简单午餐 / 咖啡",
-          "highlight": "补体力",
-          "tip": "不建议这天中午专门跑太远吃饭",
-          "resources": [
-            {
-              "id": "circular-quay-map",
-              "title": "Circular Quay",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d12",
-          "sortOrder": 70,
-          "period": "13:30–15:00",
+          "sortOrder": 80,
+          "period": "14:10–15:10",
           "place": "Mrs Macquarie’s Chair",
           "activity": "歌剧院 + 海港大桥同框",
           "highlight": "悉尼最经典机位",
@@ -3064,8 +3138,8 @@
         },
         {
           "dayId": "d12",
-          "sortOrder": 80,
-          "period": "15:00–17:00",
+          "sortOrder": 90,
+          "period": "15:30–17:00",
           "place": "QVB / Westfield / CBD",
           "activity": "购物、室内休息",
           "highlight": "建筑漂亮，适合逛",
@@ -3084,7 +3158,7 @@
         },
         {
           "dayId": "d12",
-          "sortOrder": 90,
+          "sortOrder": 100,
           "period": "晚上",
           "place": "CBD / Darling Harbour",
           "activity": "Hello Auntie / CBD 晚餐",
@@ -3116,9 +3190,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：bills / Toby’s Estate；午餐：Circular Quay / CBD 简餐；晚餐：Hello Auntie",
+          "activity": "早餐：bills / Toby’s Estate；午餐：The Rocks Markets / Circular Quay 简餐；晚餐：Hello Auntie",
           "highlight": "每日餐食参考",
-          "tip": "9:30 歌剧院中文导览已订；午餐不建议跑太远，给下午植物园和 QVB 留节奏",
+          "tip": "9:30 歌剧院中文导览已订；导览后固定步行前往 The Rocks Weekend Market，停留约 45–60 分钟",
           "resources": [
             {
               "id": "bills-sydney-map",
@@ -3137,6 +3211,24 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "the-rocks-map",
+              "title": "The Rocks",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "the-rocks-market-official",
+              "title": "The Rocks Weekend Market",
+              "type": "official",
+              "url": "https://therocks.com/whats-on/market-overview",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "The Rocks 官方市场页"
             },
             {
               "id": "circular-quay-map",
@@ -4740,6 +4832,15 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
+    },
+    {
+      "id": "the-rocks-market-official",
+      "title": "The Rocks Weekend Market",
+      "type": "official",
+      "url": "https://therocks.com/whats-on/market-overview",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "The Rocks 官方市场页"
     },
     {
       "id": "circular-quay-map",

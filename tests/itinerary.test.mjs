@@ -27,7 +27,7 @@ const expectedFocus = {
   d9: "轻量自驾串联火山湖、巨树、高原小镇与瀑布。",
   d10: "逛 Rusty’s Market，休整后去 Palm Cove 看海。",
   d11: "飞抵悉尼休息后，经 Barangaroo 走向海港夜景。",
-  d12: "从歌剧院导览一路步行到花园、经典机位与 QVB。",
+  d12: "中文导览结束后步行逛 The Rocks 周末市集，再前往植物园、经典机位与 QVB。",
   d13: "沿 Grand Pacific Drive 南下，串联海崖桥与南海岸小镇。",
   d14: "上午看澳洲动物，下午走 Bondi 海岸，晚上吃 Totti’s。",
   d15: "早上按状态决定 Manly，下午采购整理，傍晚 Cafe Sydney。",
@@ -254,6 +254,33 @@ describe("itinerary data", () => {
       "https://whatson.melbourne.vic.gov.au/things-to-do/winter-night-market",
     );
     assert.match(mealBlock.activity, /QVM Winter Night Market/);
+  });
+
+  it("adds The Rocks Weekend Market after the D12 Opera House tour", () => {
+    const d12 = itinerary.days.find((day) => day.id === "d12");
+    const tourIndex = d12.blocks.findIndex((block) => /中文内部导览/.test(block.activity));
+    const walkIndex = d12.blocks.findIndex((block) => /Opera House → The Rocks/.test(block.place));
+    const marketIndex = d12.blocks.findIndex((block) => block.place === "The Rocks Weekend Market");
+    const marketBlock = d12.blocks[marketIndex];
+    const mealBlock = d12.blocks.find((block) => block.period === "饮食" && block.place === "饮食安排");
+    const officialResource = marketBlock?.resources.find((resource) => resource.type === "official");
+
+    assert.match(d12.title, /The Rocks Weekend Market/);
+    assert.match(d12.focus, /The Rocks 周末市集/);
+    assert.equal(walkIndex, tourIndex + 1);
+    assert.equal(marketIndex, walkIndex + 1);
+    assert.match(d12.blocks[walkIndex].activity, /导览结束后.*步行前往/);
+    assert.match(marketBlock.tip, /10:00–17:00/);
+    assert.match(marketBlock.tip, /45–60 分钟/);
+    assert.match(marketBlock.highlight, /悉尼老城区/);
+    assert.match(marketBlock.highlight, /手作市集/);
+    assert.match(marketBlock.highlight, /Harbour Bridge/);
+    assert.match(marketBlock.highlight, /本地周末氛围/);
+    assert.equal(
+      officialResource?.url,
+      "https://therocks.com/whats-on/market-overview",
+    );
+    assert.match(mealBlock.activity, /The Rocks Markets/);
   });
 
   it("includes a daily meal-map block from D1 through D16", () => {
