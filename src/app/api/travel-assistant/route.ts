@@ -7,7 +7,11 @@ import {
   requestRejectedResponse,
 } from "../../../lib/server/http.js";
 import { isRequestAuthenticated } from "../../../lib/server/session.js";
-import { buildBriefContext } from "../../../lib/server/travelAssistantContext.js";
+import {
+  buildBriefContext,
+  buildChatContext,
+  routeTravelQuestion,
+} from "../../../lib/server/travelAssistantContext.js";
 import {
   requestTravelBrief,
   requestTravelChat,
@@ -41,9 +45,17 @@ export async function POST(request: Request) {
 
     const rawBody = await request.text();
     const input = parseTravelAssistantRequest(rawBody, { allowedModes: ["brief", "chat"] });
-    const context = buildBriefContext(input);
 
     if (input.mode === "chat") {
+      const routed = routeTravelQuestion({
+        currentDayId: input.dayId,
+        question: input.question,
+      });
+      const context = buildChatContext({
+        routed,
+        weather: input.weather,
+        checkedKitItemIds: input.checkedKitItemIds,
+      });
       let rawAnswer;
       try {
         rawAnswer = await requestTravelChat({
@@ -62,9 +74,14 @@ export async function POST(request: Request) {
         return assistantUnavailableResponse();
       }
 
-      return createChatSseResponse({ answer, sourceDayIds: context.sourceDayIds });
+      return createChatSseResponse({
+        answer,
+        scope: context.scope,
+        sourceDayIds: context.sourceDayIds,
+      });
     }
 
+    const context = buildBriefContext(input);
     let rawBrief;
     try {
       rawBrief = await requestTravelBrief({ context });
@@ -93,16 +110,18 @@ export async function POST(request: Request) {
 
 function createChatSseResponse({
   answer,
+  scope,
   sourceDayIds,
 }: {
   answer: string;
+  scope: string;
   sourceDayIds: string[];
 }) {
   const events = [
+    `event: scope\ndata: ${JSON.stringify({ scope, sourceDayIds })}\n\n`,
     ...chunkText(answer, 48).map((delta) => (
       `event: delta\ndata: ${JSON.stringify({ delta })}\n\n`
     )),
-    `event: scope\ndata: ${JSON.stringify({ sourceDayIds })}\n\n`,
     "event: done\ndata: {}\n\n",
   ];
   const encoder = new TextEncoder();

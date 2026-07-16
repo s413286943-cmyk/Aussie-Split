@@ -128,6 +128,7 @@ export async function streamTravelChat(payload, { onDelta, onScope, signal } = {
   const decoder = new TextDecoder();
   let buffer = "";
   let answer = "";
+  let scope = "";
   let sourceDayIds = [];
   let completed = false;
 
@@ -143,20 +144,19 @@ export async function streamTravelChat(payload, { onDelta, onScope, signal } = {
         buffer = buffer.slice(boundary + 2);
         const event = parseSseEvent(block);
         if (event?.type === "delta") {
+          if (!scope) throw new TypeError("Scope event required before delta");
           if (typeof event.data.delta !== "string") throw new TypeError("Invalid delta event");
           answer += event.data.delta;
           if (typeof onDelta === "function") onDelta(event.data.delta);
         } else if (event?.type === "scope") {
-          if (
-            !Array.isArray(event.data.sourceDayIds)
-            || event.data.sourceDayIds.length !== 1
-            || event.data.sourceDayIds[0] !== dayId
-          ) {
-            throw new TypeError("Invalid scope event");
-          }
-          sourceDayIds = [dayId];
-          if (typeof onScope === "function") onScope(sourceDayIds);
+          if (scope) throw new TypeError("Duplicate scope event");
+          const metadata = projectChatScope(event.data, dayId);
+          if (!metadata) throw new TypeError("Invalid scope event");
+          scope = metadata.scope;
+          sourceDayIds = metadata.sourceDayIds;
+          if (typeof onScope === "function") onScope(metadata);
         } else if (event?.type === "done") {
+          if (!scope) throw new TypeError("Scope event required before done");
           completed = true;
           break;
         }
@@ -175,8 +175,8 @@ export async function streamTravelChat(payload, { onDelta, onScope, signal } = {
     throw new ApiClientError(response.status);
   }
 
-  if (!answer || sourceDayIds.length !== 1) throw new ApiClientError(response.status);
-  return { answer, sourceDayIds };
+  if (!answer || !scope || sourceDayIds.length < 1) throw new ApiClientError(response.status);
+  return { answer, scope, sourceDayIds };
 }
 
 export async function applyLedgerOperations(operations) {
@@ -302,6 +302,23 @@ function projectChatHistory(value) {
     return { role, content: message.content.trim().slice(0, 2_000) };
   });
   return messages.some((message) => !message) ? [] : messages.slice(-16);
+}
+
+function projectChatScope(value, currentDayId) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  if (!["day", "city", "trip"].includes(value.scope)) return null;
+  if (
+    !Array.isArray(value.sourceDayIds)
+    || value.sourceDayIds.length < 1
+    || value.sourceDayIds.length > 4
+    || value.sourceDayIds[0] !== currentDayId
+    || value.sourceDayIds.some((dayId) => !/^d(?:[0-9]|1[0-6])$/.test(dayId))
+    || new Set(value.sourceDayIds).size !== value.sourceDayIds.length
+    || (value.scope === "trip" && value.sourceDayIds.length !== 1)
+  ) {
+    return null;
+  }
+  return { scope: value.scope, sourceDayIds: [...value.sourceDayIds] };
 }
 
 function buildTravelChatRequestBody(request) {

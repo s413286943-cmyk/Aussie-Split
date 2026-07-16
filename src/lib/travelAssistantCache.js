@@ -2,6 +2,7 @@ const CACHE_VERSION = 1;
 const CACHE_KEY_PREFIX = "aussie-chill-travel-brief-v1:";
 const CHAT_CACHE_KEY_PREFIX = "aussie-chill-travel-chat-v1:";
 const CHAT_MAX_MESSAGES = 16;
+const CHAT_SCOPES = new Set(["day", "city", "trip"]);
 const DAY_ID_PATTERN = /^d(?:[0-9]|1[0-6])$/;
 const CHECKED_ID_PATTERN = /^[a-z0-9-]{1,64}$/;
 const WEATHER_KEYS = ["status", "summary", "detail", "adviceLabel"];
@@ -85,7 +86,7 @@ export function readTravelChatCache(storage, dayId) {
 
     const stored = JSON.parse(raw);
     if (!isRecord(stored) || stored.version !== CACHE_VERSION) return [];
-    return projectChatMessages(stored.messages) || [];
+    return projectChatMessages(stored.messages, dayId) || [];
   } catch {
     return [];
   }
@@ -93,7 +94,7 @@ export function readTravelChatCache(storage, dayId) {
 
 export function writeTravelChatCache(storage, dayId, messages) {
   if (!isValidDayId(dayId) || typeof storage?.setItem !== "function") return false;
-  const projectedMessages = projectChatMessages(messages);
+  const projectedMessages = projectChatMessages(messages, dayId);
   if (!projectedMessages) return false;
 
   try {
@@ -240,7 +241,7 @@ function projectPrepItem(item) {
   return { id: item.id, label: item.label, detail: item.detail };
 }
 
-function projectChatMessages(messages) {
+function projectChatMessages(messages, dayId) {
   if (!Array.isArray(messages) || messages.length % 2 !== 0) return null;
   const projected = messages.map((message, index) => {
     const role = index % 2 === 0 ? "user" : "assistant";
@@ -251,10 +252,33 @@ function projectChatMessages(messages) {
     ) {
       return null;
     }
-    return { role, content: message.content.trim() };
+    const base = { role, content: message.content.trim() };
+    if (role === "user") return base;
+    const hasScope = Object.hasOwn(message, "scope");
+    const hasSourceDayIds = Object.hasOwn(message, "sourceDayIds");
+    if (!hasScope && !hasSourceDayIds) return base;
+    if (!hasScope || !hasSourceDayIds) return null;
+    const scope = projectChatScope(message.scope, message.sourceDayIds, dayId);
+    return scope ? { ...base, ...scope } : null;
   });
   if (projected.some((message) => !message)) return null;
   return projected.slice(-CHAT_MAX_MESSAGES);
+}
+
+function projectChatScope(scope, sourceDayIds, currentDayId) {
+  if (
+    !CHAT_SCOPES.has(scope)
+    || !Array.isArray(sourceDayIds)
+    || sourceDayIds.length < 1
+    || sourceDayIds.length > 4
+    || sourceDayIds[0] !== currentDayId
+    || sourceDayIds.some((dayId) => !isValidDayId(dayId))
+    || new Set(sourceDayIds).size !== sourceDayIds.length
+    || (scope === "trip" && sourceDayIds.length !== 1)
+  ) {
+    return null;
+  }
+  return { scope, sourceDayIds: [...sourceDayIds] };
 }
 
 function isStringList(value, min, max) {

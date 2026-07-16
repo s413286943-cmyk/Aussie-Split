@@ -12,6 +12,7 @@ const PROVIDER_MESSAGES = {
 };
 const SYSTEM_PROMPT = "You are a travel operations advisor. Return only JSON matching the requested schema. Write all user-facing prose in Simplified Chinese. Select only supplied fact IDs and checklist IDs. Do not invent or restate exact times, dates, bookings, prices, people, or places. Reasons must be generic and concise. Hard facts remain controlled by the website.";
 const CHAT_SYSTEM_PROMPT = "Answer from the supplied itinerary context only. Write all user-facing prose in Simplified Chinese. Give advice, never claim to change itinerary, bookings, tickets, checklist, ledger, or receipts. Do not invent exact times, dates, prices, people, bookings, or places. If the context does not contain an answer, say so. Hard facts shown by the website are authoritative.";
+const UNMATCHED_CHAT_INSTRUCTION = "One or more requested place, date, or day references were not found in the supplied itinerary. Say that they were not found, do not infer or invent them, and answer any matched portion only from supplied facts.";
 const BRIEF_OUTPUT_SHAPE = {
   pace: { level: "easy | balanced | full", note: "string" },
   priorities: [
@@ -155,7 +156,7 @@ export async function requestTravelChat({
         temperature: 0.2,
         stream: true,
         messages: [
-          { role: "system", content: CHAT_SYSTEM_PROMPT },
+          { role: "system", content: chatSystemPrompt(context) },
           {
             role: "user",
             content: JSON.stringify({ task: "travel_chat_context", context }),
@@ -180,6 +181,12 @@ export async function requestTravelChat({
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function chatSystemPrompt(context) {
+  return context?.unmatched === true
+    ? `${CHAT_SYSTEM_PROMPT} ${UNMATCHED_CHAT_INSTRUCTION}`
+    : CHAT_SYSTEM_PROMPT;
 }
 
 async function readBufferedProviderStream(body, signal, maxOutputCharacters = Infinity) {

@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 
 import {
   buildBriefContext,
+  buildChatContext,
   buildTripIndex,
   routeTravelQuestion,
 } from "../src/lib/server/travelAssistantContext.js";
@@ -370,6 +371,112 @@ describe("travel assistant allowlisted context", () => {
       assert.equal(routed.unmatched, false, question);
       assert.deepEqual(routed.sourceDayIds, ["d14"], question);
       assert.deepEqual(routed.matchedDayIds, [], question);
+    }
+  });
+
+  it("keeps the full current-day brief package for ordinary chat questions", () => {
+    const input = {
+      dayId: "d14",
+      weather: {
+        status: "forecast",
+        summary: "晴 · 9-18°C",
+        adviceLabel: "预报穿衣建议",
+        detail: "长袖 + 薄外套",
+      },
+      checkedKitItemIds: ["power"],
+    };
+    const briefContext = buildBriefContext(input);
+    const context = buildChatContext({
+      routed: routeTravelQuestion({
+        currentDayId: input.dayId,
+        question: "今天下雨怎么调整？",
+      }),
+      weather: input.weather,
+      checkedKitItemIds: input.checkedKitItemIds,
+    });
+
+    assert.equal(context.scope, "day");
+    assert.deepEqual(context.sourceDayIds, ["d14"]);
+    assert.equal(context.unmatched, false);
+    assert.deepEqual(context.day, briefContext.day);
+    assert.deepEqual(context.weather, briefContext.weather);
+    assert.deepEqual(context.checklist, briefContext.checklist);
+    assert.deepEqual(context.facts, briefContext.facts);
+    assert.deepEqual(context.tomorrow, briefContext.tomorrow);
+    assert.deepEqual(context.matchedDayIds, []);
+    assert.deepEqual(context.matchedDays, []);
+    assert.deepEqual(context.tripIndex, []);
+  });
+
+  it("adds only the routed full day for explicit day and date questions", () => {
+    const cases = [
+      { question: "D13 怎么安排？", expectedDayId: "d13" },
+      { question: "8月12日怎么安排？", expectedDayId: "d15" },
+    ];
+
+    for (const testCase of cases) {
+      const context = buildChatContext({
+        routed: routeTravelQuestion({ currentDayId: "d14", question: testCase.question }),
+      });
+
+      assert.deepEqual(context.sourceDayIds, ["d14", testCase.expectedDayId], testCase.question);
+      assert.deepEqual(context.matchedDays.map((day) => day.id), [testCase.expectedDayId], testCase.question);
+      assert.equal(
+        context.matchedDays[0].facts.every((fact) => fact.id.startsWith(`block:${testCase.expectedDayId}:`)),
+        true,
+        testCase.question,
+      );
+      assert.deepEqual(context.tripIndex, [], testCase.question);
+    }
+  });
+
+  it("keeps city chat context to three routed full days and prioritizes D10", () => {
+    const context = buildChatContext({
+      routed: routeTravelQuestion({
+        currentDayId: "d14",
+        question: "Cairns 哪天休息？",
+      }),
+    });
+
+    assert.equal(context.scope, "city");
+    assert.equal(context.sourceDayIds[0], "d14");
+    assert.equal(context.sourceDayIds.length, 4);
+    assert.equal(context.sourceDayIds.includes("d10"), true);
+    assert.deepEqual(context.matchedDays.map((day) => day.id), context.sourceDayIds.slice(1));
+    assert.equal(context.matchedDays.length, 3);
+    assert.deepEqual(context.tripIndex, []);
+  });
+
+  it("keeps trip chat context to the full current day plus the compact 17-row index", () => {
+    const context = buildChatContext({
+      routed: routeTravelQuestion({
+        currentDayId: "d14",
+        question: "全程哪天最累？",
+      }),
+    });
+
+    assert.equal(context.scope, "trip");
+    assert.deepEqual(context.sourceDayIds, ["d14"]);
+    assert.equal(context.day.id, "d14");
+    assert.equal(context.facts.every((fact) => fact.id.startsWith("block:d14:")), true);
+    assert.deepEqual(context.matchedDays, []);
+    assert.equal(context.tripIndex.length, 17);
+    assert.equal(context.tripIndex.some((day) => "facts" in day || "resources" in day), false);
+  });
+
+  it("keeps routed chat context free of ledger, receipt, history, and storage data", () => {
+    const contexts = [
+      "D13 怎么安排？",
+      "Cairns 哪天休息？",
+      "全程哪天最累？",
+    ].map((question) => buildChatContext({
+      routed: routeTravelQuestion({ currentDayId: "d14", question }),
+    }));
+
+    for (const context of contexts) {
+      const serialized = JSON.stringify(context);
+      assert.doesNotMatch(serialized, /ledger|payer|amount|receipt|operation|supabase|attachment|splitSettled|recentExpenses/i);
+      assert.equal(Object.hasOwn(context, "history"), false);
     }
   });
 

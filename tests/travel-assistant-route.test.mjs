@@ -195,8 +195,8 @@ describe("protected travel-assistant brief route", () => {
     assert.equal(response.headers.get("X-Accel-Buffering"), "no");
     assert.equal(response.headers.get("Connection"), "keep-alive");
     assert.equal(body, [
+      `event: scope\ndata: ${JSON.stringify({ scope: "day", sourceDayIds: ["d14"] })}\n\n`,
       `event: delta\ndata: ${JSON.stringify({ delta: "下雨时先缩短户外段。" })}\n\n`,
-      `event: scope\ndata: ${JSON.stringify({ sourceDayIds: ["d14"] })}\n\n`,
       "event: done\ndata: {}\n\n",
     ].join(""));
 
@@ -211,6 +211,134 @@ describe("protected travel-assistant brief route", () => {
     assert.deepEqual(contextEnvelope.context.sourceDayIds, ["d14"]);
     assert.equal(JSON.stringify(providerBody).includes("ledgerExpenses"), false);
     assert.equal(JSON.stringify(providerBody).includes("CALLER_LEDGER_MUST_NOT_LEAK"), false);
+  });
+
+  it("routes locked day, date, city, and trip chat scopes before the provider call", async () => {
+    const cases = [
+      {
+        question: "今天下雨怎么调整？",
+        scope: "day",
+        sourceDayIds: ["d14"],
+        matchedDayIds: [],
+        tripRows: 0,
+      },
+      {
+        question: "D13 怎么安排？",
+        scope: "day",
+        sourceDayIds: ["d14", "d13"],
+        matchedDayIds: ["d13"],
+        tripRows: 0,
+      },
+      {
+        question: "8月12日怎么安排？",
+        scope: "day",
+        sourceDayIds: ["d14", "d15"],
+        matchedDayIds: ["d15"],
+        tripRows: 0,
+      },
+      {
+        question: "Cairns 哪天休息？",
+        scope: "city",
+        sourceDayIds: ["d14", "d10", "d7", "d6"],
+        matchedDayIds: ["d10", "d7", "d6"],
+        tripRows: 0,
+      },
+      {
+        question: "全程哪天最累？",
+        scope: "trip",
+        sourceDayIds: ["d14"],
+        matchedDayIds: [],
+        tripRows: 17,
+      },
+    ];
+
+    for (const testCase of cases) {
+      resetRateLimit();
+      const fetchRequests = [];
+      globalThis.fetch = providerFetch(fetchRequests, () => providerChatResponse(["按已提供的行程安排。"]));
+
+      const response = await postTravelAssistant(authenticatedMutation({
+        ...validChatRequest(),
+        question: testCase.question,
+      }));
+      const responseBody = await response.text();
+
+      assert.equal(response.status, 200, testCase.question);
+      assert.match(
+        responseBody,
+        new RegExp(`event: scope\\ndata: ${escapeRegExp(JSON.stringify({
+          scope: testCase.scope,
+          sourceDayIds: testCase.sourceDayIds,
+        }))}\\n\\n`),
+        testCase.question,
+      );
+
+      const providerBody = JSON.parse(fetchRequests[0].options.body);
+      const context = JSON.parse(providerBody.messages[1].content).context;
+      assert.equal(context.scope, testCase.scope, testCase.question);
+      assert.deepEqual(context.sourceDayIds, testCase.sourceDayIds, testCase.question);
+      assert.equal(context.day.id, "d14", testCase.question);
+      assert.equal(context.facts.every((fact) => fact.id.startsWith("block:d14:")), true, testCase.question);
+      assert.equal(typeof context.weather.summary, "string", testCase.question);
+      assert.equal(Array.isArray(context.checklist), true, testCase.question);
+      assert.equal(context.tomorrow.dayId, "d15", testCase.question);
+      assert.deepEqual(context.matchedDays.map((day) => day.id), testCase.matchedDayIds, testCase.question);
+      assert.equal(context.matchedDays.length <= 3, true, testCase.question);
+      assert.equal(context.tripIndex.length, testCase.tripRows, testCase.question);
+      assert.equal(context.tripIndex.some((day) => "facts" in day || "resources" in day), false, testCase.question);
+      assert.equal(Object.hasOwn(context, "currentDay"), false, testCase.question);
+      assert.doesNotMatch(
+        JSON.stringify(context),
+        /ledger|payer|amount|receipt|operation|supabase|attachment|splitSettled|recentExpenses/i,
+        testCase.question,
+      );
+    }
+  });
+
+  it("warns the provider for unknown references while preserving matched facts", async () => {
+    const cases = [
+      {
+        question: "火星基地怎么走？",
+        expectedUnmatched: true,
+        expectedMatchedDays: [],
+      },
+      {
+        question: "D13 和 D17 怎么安排？",
+        expectedUnmatched: true,
+        expectedMatchedDays: ["d13"],
+      },
+      {
+        question: "全程交通怎么安排？",
+        expectedUnmatched: false,
+        expectedMatchedDays: [],
+      },
+    ];
+
+    for (const testCase of cases) {
+      resetRateLimit();
+      const fetchRequests = [];
+      globalThis.fetch = providerFetch(fetchRequests, () => providerChatResponse(["仅按已提供的事实回答。"]));
+
+      const response = await postTravelAssistant(authenticatedMutation({
+        ...validChatRequest(),
+        question: testCase.question,
+      }));
+      assert.equal(response.status, 200, testCase.question);
+      await response.text();
+
+      const providerBody = JSON.parse(fetchRequests[0].options.body);
+      const context = JSON.parse(providerBody.messages[1].content).context;
+      const systemPrompt = providerBody.messages[0].content;
+      assert.equal(context.unmatched, testCase.expectedUnmatched, testCase.question);
+      assert.deepEqual(context.matchedDays.map((day) => day.id), testCase.expectedMatchedDays, testCase.question);
+      if (testCase.expectedUnmatched) {
+        assert.match(systemPrompt, /one or more requested place, date, or day references were not found/i, testCase.question);
+        assert.match(systemPrompt, /do not infer or invent them/i, testCase.question);
+        assert.match(systemPrompt, /answer any matched portion only from supplied facts/i, testCase.question);
+      } else {
+        assert.doesNotMatch(systemPrompt, /requested place, date, or day references were not found/i, testCase.question);
+      }
+    }
   });
 
   it("rejects invalid chat before provider fetch and preserves brief-only shape rules", async () => {
@@ -564,6 +692,10 @@ function providerFetch(requests, respond) {
 
 function assertOnlyProviderUrls(requests) {
   for (const request of requests) assert.equal(request.url, providerUrl);
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function restoreEnv(name, value) {

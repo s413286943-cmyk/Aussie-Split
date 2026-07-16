@@ -44,8 +44,12 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
   const [chatInput, setChatInput] = useState("");
   const [chatNotice, setChatNotice] = useState("idle");
   const [chatPending, setChatPending] = useState(false);
-  const [streamingMessage, setStreamingMessage] = useState({ question: "", answer: "" });
-  const [chatSourceDayIds, setChatSourceDayIds] = useState([]);
+  const [streamingMessage, setStreamingMessage] = useState({
+    question: "",
+    answer: "",
+    scope: "",
+    sourceDayIds: [],
+  });
   const inFlightRef = useRef(false);
   const chatInFlightRef = useRef(false);
   const chatAbortRef = useRef(null);
@@ -70,8 +74,7 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
       setChatInput("");
       setChatNotice("idle");
       setChatPending(false);
-      setStreamingMessage({ question: "", answer: "" });
-      setChatSourceDayIds([dayId]);
+      setStreamingMessage({ question: "", answer: "", scope: "", sourceDayIds: [] });
     });
     return () => {
       cancelled = true;
@@ -159,7 +162,7 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
     setChatPending(true);
     setChatNotice("pending");
     setChatInput("");
-    setStreamingMessage({ question, answer: "" });
+    setStreamingMessage({ question, answer: "", scope: "", sourceDayIds: [] });
 
     try {
       const response = await streamTravelChat({
@@ -178,9 +181,13 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
             answer: `${current.answer}${delta}`,
           }));
         },
-        onScope(sourceDayIds) {
+        onScope(scope) {
           if (activeDayRef.current === requestDayId && chatAbortRef.current === controller) {
-            setChatSourceDayIds(sourceDayIds);
+            setStreamingMessage((current) => ({
+              ...current,
+              scope: scope.scope,
+              sourceDayIds: scope.sourceDayIds,
+            }));
           }
         },
       });
@@ -189,17 +196,16 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
       const nextMessages = [
         ...history,
         { role: "user", content: question },
-        { role: "assistant", content: response.answer },
+        { role: "assistant", content: response.answer, scope: response.scope, sourceDayIds: response.sourceDayIds },
       ].slice(-16);
       writeTravelChatCache(browserStorage(), requestDayId, nextMessages);
       setChatView({ dayId: requestDayId, messages: nextMessages });
-      setChatSourceDayIds(response.sourceDayIds);
-      setStreamingMessage({ question: "", answer: "" });
+      setStreamingMessage({ question: "", answer: "", scope: "", sourceDayIds: [] });
       setChatNotice("done");
     } catch {
       if (activeDayRef.current === requestDayId && chatAbortRef.current === controller) {
         setChatInput(question);
-        setStreamingMessage({ question: "", answer: "" });
+        setStreamingMessage({ question: "", answer: "", scope: "", sourceDayIds: [] });
         setChatNotice("error");
       }
     } finally {
@@ -222,8 +228,7 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
     setChatView({ dayId, messages: [] });
     setChatInput("");
     setChatNotice("idle");
-    setStreamingMessage({ question: "", answer: "" });
-    setChatSourceDayIds([dayId]);
+    setStreamingMessage({ question: "", answer: "", scope: "", sourceDayIds: [] });
   }
 
   return (
@@ -257,7 +262,6 @@ export default function TravelAssistantPanel({ day, weather, checkedKitItems }) 
           chatNotice={chatNotice}
           chatPending={chatPending}
           streamingMessage={streamingMessage}
-          sourceDayIds={chatSourceDayIds}
           onToggle={() => setChatOpen((current) => !current)}
           onInput={setChatInput}
           onSubmit={handleChatSubmit}
@@ -280,7 +284,6 @@ function TravelAssistantChat({
   chatNotice,
   chatPending,
   streamingMessage,
-  sourceDayIds,
   onToggle,
   onInput,
   onSubmit,
@@ -330,6 +333,12 @@ function TravelAssistantChat({
                 >
                   <span>{message.role === "user" ? "你" : "行程助手"}</span>
                   <p>{message.content}</p>
+                  {message.role === "assistant" ? (
+                    <ChatSourceChip
+                      scope={message.scope}
+                      sourceDayIds={message.sourceDayIds}
+                    />
+                  ) : null}
                 </article>
               ))}
               {streamingMessage.question ? (
@@ -341,6 +350,10 @@ function TravelAssistantChat({
                   <article className="travel-assistant-chat-message is-assistant">
                     <span>行程助手</span>
                     <p>{streamingMessage.answer || "正在思考…"}</p>
+                    <ChatSourceChip
+                      scope={streamingMessage.scope}
+                      sourceDayIds={streamingMessage.sourceDayIds}
+                    />
                   </article>
                 </>
               ) : null}
@@ -371,7 +384,6 @@ function TravelAssistantChat({
           </form>
 
           <div className="travel-assistant-chat-footer">
-            <span>参考范围 {formatSourceDays(sourceDayIds)}</span>
             <button type="button" onClick={onClear} disabled={chatPending || !messages.length}>
               清空对话
             </button>
@@ -380,6 +392,11 @@ function TravelAssistantChat({
       ) : null}
     </section>
   );
+}
+
+function ChatSourceChip({ scope, sourceDayIds }) {
+  const label = formatChatSource(scope, sourceDayIds);
+  return label ? <span className="travel-assistant-chat-source">{label}</span> : null;
 }
 
 function TravelAssistantBrief({ brief }) {
@@ -545,6 +562,21 @@ function formatGeneratedTime(value) {
 function formatSourceDays(values) {
   const days = list(values).filter((value) => /^d(?:[0-9]|1[0-6])$/.test(value));
   return days.length ? days.map((value) => value.toUpperCase()).join(" / ") : "当前日";
+}
+
+function formatChatSource(scope, sourceDayIds) {
+  if (!["day", "city", "trip"].includes(scope)) return "";
+  const days = list(sourceDayIds);
+  if (
+    days.length < 1
+    || days.length > 4
+    || days.some((value) => !/^d(?:[0-9]|1[0-6])$/.test(value))
+    || new Set(days).size !== days.length
+  ) {
+    return "";
+  }
+  const formattedDays = days.map((value) => value.toUpperCase()).join(" · ");
+  return scope === "trip" ? `参考 ${formattedDays} + 全程索引` : `参考 ${formattedDays}`;
 }
 
 function list(value) {

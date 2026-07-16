@@ -313,12 +313,30 @@ function assistantChatResponse(body) {
     return "";
   }
 
+  const scope = assistantChatScope(body.dayId, body.question);
+
   return [
+    `event: scope\ndata: ${JSON.stringify(scope)}\n\n`,
     `event: delta\ndata: ${JSON.stringify({ delta: "下雨时先缩短 Bondi 海岸步道，" })}\n\n`,
     `event: delta\ndata: ${JSON.stringify({ delta: "保留 Taronga Zoo 主线。" })}\n\n`,
-    `event: scope\ndata: ${JSON.stringify({ sourceDayIds: [body.dayId] })}\n\n`,
     "event: done\ndata: {}\n\n",
   ].join("");
+}
+
+function assistantChatScope(currentDayId, question) {
+  if (/全程|整趟|整个行程/u.test(question)) {
+    return { scope: "trip", sourceDayIds: [currentDayId] };
+  }
+  if (/cairns|凯恩斯/iu.test(question)) {
+    return { scope: "city", sourceDayIds: [currentDayId, "d10", "d7", "d6"] };
+  }
+  if (/8\s*月\s*12\s*日/u.test(question)) {
+    return { scope: "day", sourceDayIds: [currentDayId, "d15"] };
+  }
+  if (/(?:^|\W)d\s*13(?:\W|$)/iu.test(question)) {
+    return { scope: "day", sourceDayIds: [currentDayId, "d13"] };
+  }
+  return { scope: "day", sourceDayIds: [currentDayId] };
 }
 
 function snapshotServerTime(expenses, activity) {

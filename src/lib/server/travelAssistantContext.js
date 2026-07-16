@@ -87,6 +87,36 @@ export function buildTripIndex() {
   }));
 }
 
+/**
+ * @param {{
+ *   routed: ReturnType<typeof routeTravelQuestion>,
+ *   weather?: {
+ *     status?: string,
+ *     summary?: string,
+ *     adviceLabel?: string,
+ *     detail?: string,
+ *   },
+ *   checkedKitItemIds?: string[],
+ * }} input
+ */
+export function buildChatContext({ routed, weather, checkedKitItemIds = [] }) {
+  const current = buildBriefContext({
+    dayId: routed.currentDay.id,
+    weather,
+    checkedKitItemIds,
+  });
+
+  return {
+    ...current,
+    scope: routed.scope,
+    sourceDayIds: [...routed.sourceDayIds],
+    unmatched: routed.unmatched === true,
+    matchedDayIds: [...routed.matchedDayIds],
+    matchedDays: [...routed.matchedDays],
+    tripIndex: [...routed.tripIndex],
+  };
+}
+
 export function routeTravelQuestion({ currentDayId, question }) {
   const currentDay = findDay(currentDayId);
   const rawQuestion = normalizeRoutingSource(question);

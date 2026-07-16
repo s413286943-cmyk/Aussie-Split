@@ -127,6 +127,25 @@ describe("Today Console travel assistant V1", () => {
     assert.doesNotMatch(effectSource(panelSource), /streamTravelChat\s*\(/);
   });
 
+  it("stores and renders server-returned scope on each assistant answer", () => {
+    assert.match(
+      panelSource,
+      /\{ role: "assistant", content: response\.answer, scope: response\.scope, sourceDayIds: response\.sourceDayIds \}/,
+    );
+    assert.match(
+      panelSource,
+      /message\.role === "assistant"[\s\S]*?<ChatSourceChip\s+scope=\{message\.scope\}\s+sourceDayIds=\{message\.sourceDayIds\}/,
+    );
+    assert.match(
+      panelSource,
+      /<ChatSourceChip\s+scope=\{streamingMessage\.scope\}\s+sourceDayIds=\{streamingMessage\.sourceDayIds\}/,
+    );
+    assert.match(panelSource, /onScope\(scope\)[\s\S]*?scope,[\s\S]*?sourceDayIds: scope\.sourceDayIds/);
+    assert.match(panelSource, /参考 \$\{formattedDays\} \+ 全程索引/);
+    assert.match(panelSource, /join\(" · "\)/);
+    assert.match(styles, /\.travel-assistant-chat-source\s*\{/);
+  });
+
   it("aborts and clears only the matching chat controller when the day effect cleans up", () => {
     assert.match(
       panelSource,

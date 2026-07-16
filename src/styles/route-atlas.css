@@ -1222,6 +1222,23 @@
   line-height: 1.5;
 }
 
+.travel-assistant-chat-source {
+  width: fit-content;
+  min-height: 22px;
+  display: inline-flex;
+  align-items: center;
+  margin: 7px 0 0;
+  padding: 3px 8px;
+  border: 1px solid rgba(13, 108, 115, 0.2);
+  border-radius: 999px;
+  background: rgba(13, 108, 115, 0.07);
+  color: var(--atlas-coast);
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1.2;
+  opacity: 1;
+}
+
 .travel-assistant-chat-live {
   min-height: 20px;
   color: var(--atlas-coast);
@@ -1275,7 +1292,7 @@
   min-width: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 12px;
   padding: 0 16px 12px;
   color: var(--muted);

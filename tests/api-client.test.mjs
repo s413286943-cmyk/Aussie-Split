@@ -151,10 +151,11 @@ describe("browser protected API client", () => {
     const calls = [];
     const deltaEvents = [];
     const scopeEvents = [];
+    const eventOrder = [];
     const sse = [
+      `event: scope\ndata: ${JSON.stringify({ scope: "day", sourceDayIds: ["d14"] })}\n\n`,
       `event: delta\ndata: ${JSON.stringify({ delta: "下雨时" })}\n\n`,
       `event: delta\ndata: ${JSON.stringify({ delta: "先缩短户外段。" })}\n\n`,
-      `event: scope\ndata: ${JSON.stringify({ sourceDayIds: ["d14"] })}\n\n`,
       "event: done\ndata: {}\n\n",
     ].join("");
     globalThis.fetch = async (url, options = {}) => {
@@ -169,7 +170,13 @@ describe("browser protected API client", () => {
       question: " 下雨怎么调整？ ",
       history: [
         { role: "user", content: " 之前的问题 ", ledger: "private" },
-        { role: "assistant", content: " 之前的回答 ", receipt: "private" },
+        {
+          role: "assistant",
+          content: " 之前的回答 ",
+          scope: "city",
+          sourceDayIds: ["d14", "d10"],
+          receipt: "private",
+        },
       ],
       ledger: [{ payer: "private" }],
       receipt: { id: "private" },
@@ -177,18 +184,22 @@ describe("browser protected API client", () => {
     }, {
       onDelta(delta) {
         deltaEvents.push(delta);
+        eventOrder.push("delta");
       },
-      onScope(sourceDayIds) {
-        scopeEvents.push(sourceDayIds);
+      onScope(scope) {
+        scopeEvents.push(scope);
+        eventOrder.push("scope");
       },
     });
 
     assert.deepEqual(result, {
       answer: "下雨时先缩短户外段。",
+      scope: "day",
       sourceDayIds: ["d14"],
     });
     assert.deepEqual(deltaEvents, ["下雨时", "先缩短户外段。"]);
-    assert.deepEqual(scopeEvents, [["d14"]]);
+    assert.deepEqual(scopeEvents, [{ scope: "day", sourceDayIds: ["d14"] }]);
+    assert.deepEqual(eventOrder, ["scope", "delta", "delta"]);
     assert.equal(calls.length, 1);
     assert.equal(calls[0].url, "/api/travel-assistant");
     assert.equal(calls[0].options.credentials, "same-origin");
@@ -214,6 +225,83 @@ describe("browser protected API client", () => {
     assert.doesNotMatch(calls[0].options.body, /ledger|payer|receipt|supabase|private/i);
   });
 
+  it("accepts only server scope metadata with the current day first and at most four unique days", async () => {
+    const validScopes = [
+      { scope: "day", sourceDayIds: ["d14", "d13"] },
+      { scope: "city", sourceDayIds: ["d14", "d10", "d7", "d6"] },
+      { scope: "trip", sourceDayIds: ["d14"] },
+    ];
+
+    for (const expectedScope of validScopes) {
+      globalThis.fetch = async () => chunkedSseResponse([
+        `event: scope\ndata: ${JSON.stringify(expectedScope)}\n\n`,
+        `event: delta\ndata: ${JSON.stringify({ delta: "按行程回答。" })}\n\n`,
+        "event: done\ndata: {}\n\n",
+      ].join(""), [3, 17, 41]);
+
+      const result = await streamTravelChat({
+        dayId: "d14",
+        question: "怎么安排？",
+        history: [],
+      });
+      assert.deepEqual(result, { answer: "按行程回答。", ...expectedScope });
+    }
+
+    const invalidScopes = [
+      { scope: "unknown", sourceDayIds: ["d14"] },
+      { scope: "day", sourceDayIds: [] },
+      { scope: "day", sourceDayIds: ["d13", "d14"] },
+      { scope: "city", sourceDayIds: ["d14", "d10", "d10"] },
+      { scope: "city", sourceDayIds: ["d14", "d10", "d7", "d6", "d9"] },
+      { scope: "day", sourceDayIds: ["d14", "d17"] },
+      { scope: "trip", sourceDayIds: ["d14", "d13"] },
+    ];
+
+    for (const invalidScope of invalidScopes) {
+      globalThis.fetch = async () => chunkedSseResponse([
+        `event: scope\ndata: ${JSON.stringify(invalidScope)}\n\n`,
+        `event: delta\ndata: ${JSON.stringify({ delta: "不应接受。" })}\n\n`,
+        "event: done\ndata: {}\n\n",
+      ].join(""), [5, 29]);
+
+      await assert.rejects(
+        () => streamTravelChat({ dayId: "d14", question: "怎么安排？", history: [] }),
+        (error) => error instanceof ApiClientError && error.code === "api_request_failed",
+      );
+    }
+  });
+
+  it("fails closed before rendering text when scope ordering is invalid", async () => {
+    const invalidStreams = [
+      [
+        `event: delta\ndata: ${JSON.stringify({ delta: "不应显示。" })}\n\n`,
+        `event: scope\ndata: ${JSON.stringify({ scope: "day", sourceDayIds: ["d14"] })}\n\n`,
+        "event: done\ndata: {}\n\n",
+      ].join(""),
+      [
+        `event: scope\ndata: ${JSON.stringify({ scope: "day", sourceDayIds: ["d14"] })}\n\n`,
+        `event: scope\ndata: ${JSON.stringify({ scope: "day", sourceDayIds: ["d14"] })}\n\n`,
+        `event: delta\ndata: ${JSON.stringify({ delta: "不应显示。" })}\n\n`,
+        "event: done\ndata: {}\n\n",
+      ].join(""),
+      "event: done\ndata: {}\n\n",
+    ];
+
+    for (const sse of invalidStreams) {
+      const deltas = [];
+      globalThis.fetch = async () => chunkedSseResponse(sse, [3, 17, 41]);
+
+      await assert.rejects(
+        () => streamTravelChat(
+          { dayId: "d14", question: "怎么安排？", history: [] },
+          { onDelta: (delta) => deltas.push(delta) },
+        ),
+        (error) => error instanceof ApiClientError && error.code === "api_request_failed",
+      );
+      assert.deepEqual(deltas, []);
+    }
+  });
+
   it("drops oldest complete multibyte turns until the chat body fits the client ceiling", async () => {
     const requestBodies = [];
     const history = Array.from({ length: 8 }, (_, index) => ([
@@ -223,8 +311,8 @@ describe("browser protected API client", () => {
     globalThis.fetch = async (_url, options = {}) => {
       requestBodies.push(options.body);
       return chunkedSseResponse([
+        `event: scope\ndata: ${JSON.stringify({ scope: "day", sourceDayIds: ["d14"] })}\n\n`,
         `event: delta\ndata: ${JSON.stringify({ delta: "保留最新上下文。" })}\n\n`,
-        `event: scope\ndata: ${JSON.stringify({ sourceDayIds: ["d14"] })}\n\n`,
         "event: done\ndata: {}\n\n",
       ].join(""), [11, 37]);
     };

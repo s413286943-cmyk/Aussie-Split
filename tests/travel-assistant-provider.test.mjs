@@ -351,6 +351,36 @@ describe("travel assistant provider", () => {
     ]);
   });
 
+  it("adds an explicit anti-hallucination instruction only for unmatched routed references", async () => {
+    const prompts = [];
+    const contexts = [
+      { scope: "day", sourceDayIds: ["d14"], unmatched: true },
+      { scope: "trip", sourceDayIds: ["d14"], unmatched: false },
+    ];
+
+    for (const context of contexts) {
+      await requestTravelChat({
+        context,
+        question: context.unmatched ? "D13 和 D17 怎么安排？" : "全程交通怎么安排？",
+        history: [],
+        env,
+        fetcher: async (_url, options) => {
+          prompts.push(JSON.parse(options.body).messages[0].content);
+          return sseResponse([
+            `data: ${JSON.stringify({ choices: [{ delta: { content: "按已提供的行程回答。" } }] })}\n\n`,
+            "data: [DONE]\n\n",
+          ]);
+        },
+      });
+    }
+
+    assert.match(prompts[0], /one or more requested place, date, or day references were not found/i);
+    assert.match(prompts[0], /do not infer or invent them/i);
+    assert.match(prompts[0], /answer any matched portion only from supplied facts/i);
+    assert.equal(prompts[1], chatSystemPrompt);
+    assert.doesNotMatch(prompts[1], /requested place, date, or day references were not found/i);
+  });
+
   it("rejects upstream refusals, malformed chunks, and streams without DONE", async () => {
     const bodies = [
       "data: {\"choices\":[{\"delta\":{\"refusal\":\"secret refusal\"}}]}\n\ndata: [DONE]\n\n",

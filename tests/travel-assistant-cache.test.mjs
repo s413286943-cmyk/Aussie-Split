@@ -384,6 +384,66 @@ describe("travel assistant local chat cache", () => {
     ]);
     assert.doesNotMatch([...values.values()].join("\n"), /ledger|receipt|private/i);
   });
+
+  it("stores validated server scope metadata only on assistant messages", () => {
+    const values = new Map();
+    const storage = storageFor(values);
+    const messages = [
+      {
+        role: "user",
+        content: " D13 怎么安排？ ",
+        scope: "trip",
+        sourceDayIds: ["d15"],
+        ledger: "private",
+      },
+      {
+        role: "assistant",
+        content: " 参考已提供的两天行程。 ",
+        scope: "day",
+        sourceDayIds: ["d14", "d13"],
+        receipt: "private",
+      },
+    ];
+
+    assert.equal(writeTravelChatCache(storage, "d14", messages), true);
+    assert.deepEqual(readTravelChatCache(storage, "d14"), [
+      { role: "user", content: "D13 怎么安排？" },
+      {
+        role: "assistant",
+        content: "参考已提供的两天行程。",
+        scope: "day",
+        sourceDayIds: ["d14", "d13"],
+      },
+    ]);
+    assert.doesNotMatch([...values.values()].join("\n"), /ledger|receipt|private/i);
+  });
+
+  it("reads legacy role-content turns and rejects malformed assistant scope metadata", () => {
+    const values = new Map();
+    const storage = storageFor(values);
+    const legacyMessages = turnMessages("旧缓存");
+    writeTravelChatCache(storage, "d14", legacyMessages);
+    const chatKey = [...values.keys()].find((key) => key.includes("chat"));
+
+    values.set(chatKey, JSON.stringify({ version: 1, messages: legacyMessages }));
+    assert.deepEqual(readTravelChatCache(storage, "d14"), legacyMessages);
+
+    for (const assistant of [
+      { role: "assistant", content: "错误范围", scope: "unknown", sourceDayIds: ["d14"] },
+      { role: "assistant", content: "错误首日", scope: "day", sourceDayIds: ["d13", "d14"] },
+      { role: "assistant", content: "重复日期", scope: "city", sourceDayIds: ["d14", "d14"] },
+      { role: "assistant", content: "全程范围过多", scope: "trip", sourceDayIds: ["d14", "d13"] },
+    ]) {
+      values.set(chatKey, JSON.stringify({
+        version: 1,
+        messages: [
+          { role: "user", content: "问题" },
+          assistant,
+        ],
+      }));
+      assert.deepEqual(readTravelChatCache(storage, "d14"), []);
+    }
+  });
 });
 
 function fingerprintFor(overrides = {}) {

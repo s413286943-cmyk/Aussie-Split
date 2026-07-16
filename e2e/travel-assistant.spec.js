@@ -49,7 +49,7 @@ test("streams a current-day answer and restores local history after reload", asy
 
   await assistant.getByRole("button", { name: "下雨怎么调整？" }).click();
   await expect(assistant.getByText(chatAnswer, { exact: true })).toBeVisible();
-  await expect(assistant.getByText("参考范围 D14", { exact: true })).toBeVisible();
+  await expect(assistant.getByText("参考 D14", { exact: true })).toBeVisible();
   await expect(assistant.getByRole("button", { name: /继续追问.*2 条消息/ })).toBeVisible();
 
   const chatRequest = mockApi.getAssistantRequests().find((body) => body.mode === "chat");
@@ -75,7 +75,112 @@ test("streams a current-day answer and restores local history after reload", asy
     assistant.locator(".travel-assistant-chat-message.is-user").getByText("下雨怎么调整？", { exact: true }),
   ).toBeVisible();
   await expect(assistant.getByText(chatAnswer, { exact: true })).toBeVisible();
+  await expect(assistant.getByText("参考 D14", { exact: true })).toBeVisible();
   expect(mockApi.getAssistantRequests().filter((body) => body.mode === "chat")).toHaveLength(1);
+});
+
+test("shows the source chip before a delayed answer finishes streaming", async ({ page }) => {
+  const { assistant } = await openCurrentDay(page);
+  await generateAndOpenChat(assistant);
+
+  await page.evaluate(() => {
+    const originalFetch = window.fetch.bind(window);
+    window.fetch = async (input, options) => {
+      const url = typeof input === "string" ? input : input.url;
+      const body = JSON.parse(options?.body || "{}");
+      if (url !== "/api/travel-assistant" || body.mode !== "chat") {
+        return originalFetch(input, options);
+      }
+
+      const encoder = new TextEncoder();
+      return new Response(new ReadableStream({
+        start(controller) {
+          controller.enqueue(encoder.encode(
+            `event: scope\ndata: ${JSON.stringify({ scope: "day", sourceDayIds: ["d14"] })}\n\n`,
+          ));
+          window.__releaseAssistantChat = () => {
+            controller.enqueue(encoder.encode(
+              `event: delta\ndata: ${JSON.stringify({ delta: "下雨时先缩短 Bondi 海岸步道，保留 Taronga Zoo 主线。" })}\n\n`
+              + "event: done\ndata: {}\n\n",
+            ));
+            controller.close();
+          };
+        },
+      }), {
+        status: 200,
+        headers: { "Content-Type": "text/event-stream; charset=utf-8" },
+      });
+    };
+  });
+
+  await assistant.getByRole("button", { name: "下雨怎么调整？" }).click();
+  const streamingAnswer = assistant.locator(".travel-assistant-chat-message.is-assistant");
+  await expect(streamingAnswer.getByText("参考 D14", { exact: true })).toBeVisible();
+  await expect(streamingAnswer.getByText("正在思考…", { exact: true })).toBeVisible();
+
+  await page.evaluate(() => window.__releaseAssistantChat());
+  await expect(streamingAnswer.getByText(chatAnswer, { exact: true })).toBeVisible();
+});
+
+test("shows server-routed day, city, and trip sources and restores them from the current-day cache", async ({ page, mockApi }) => {
+  let { assistant } = await openCurrentDay(page);
+  await generateAndOpenChat(assistant);
+  const cases = [
+    { question: "D13 怎么安排？", label: "参考 D14 · D13" },
+    { question: "8月12日怎么安排？", label: "参考 D14 · D15" },
+    { question: "Cairns 哪天休息？", label: "参考 D14 · D10 · D7 · D6" },
+    { question: "全程哪天最累？", label: "参考 D14 + 全程索引" },
+  ];
+
+  for (const [index, testCase] of cases.entries()) {
+    const textbox = assistant.getByRole("textbox", { name: "输入继续追问" });
+    await textbox.fill(testCase.question);
+    await assistant.getByRole("button", { name: "发送" }).click();
+    const answers = assistant.locator(".travel-assistant-chat-message.is-assistant");
+    await expect(answers).toHaveCount(index + 1);
+    await expect(answers.nth(index).getByText(testCase.label, { exact: true })).toBeVisible();
+  }
+
+  const chatRequests = mockApi.getAssistantRequests().filter((body) => body.mode === "chat");
+  expect(chatRequests.map((body) => body.question)).toEqual(cases.map((testCase) => testCase.question));
+  for (const request of chatRequests) {
+    expect(request.dayId).toBe("d14");
+    expect(request.history.every((message) => (
+      Object.keys(message).sort().join(",") === "content,role"
+    ))).toBe(true);
+  }
+
+  const cached = await page.evaluate(() => ({
+    d14: localStorage.getItem("aussie-chill-travel-chat-v1:d14"),
+    d13: localStorage.getItem("aussie-chill-travel-chat-v1:d13"),
+    d15: localStorage.getItem("aussie-chill-travel-chat-v1:d15"),
+    d10: localStorage.getItem("aussie-chill-travel-chat-v1:d10"),
+  }));
+  expect(cached.d14).not.toBeNull();
+  expect(cached.d13).toBeNull();
+  expect(cached.d15).toBeNull();
+  expect(cached.d10).toBeNull();
+  const storedMessages = JSON.parse(cached.d14).messages;
+  expect(storedMessages.filter((message) => message.role === "assistant").map((message) => ({
+    scope: message.scope,
+    sourceDayIds: message.sourceDayIds,
+  }))).toEqual([
+    { scope: "day", sourceDayIds: ["d14", "d13"] },
+    { scope: "day", sourceDayIds: ["d14", "d15"] },
+    { scope: "city", sourceDayIds: ["d14", "d10", "d7", "d6"] },
+    { scope: "trip", sourceDayIds: ["d14"] },
+  ]);
+
+  await page.reload();
+  ({ assistant } = await currentDayRegions(page));
+  const disclosure = assistant.getByRole("button", { name: /继续追问.*8 条消息/ });
+  await expect(disclosure).toHaveAttribute("aria-expanded", "false");
+  await disclosure.click();
+  for (const testCase of cases) {
+    await expect(assistant.getByText(testCase.label, { exact: true })).toBeVisible();
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await documentOverflowsHorizontally(page)).toBe(false);
 });
 
 test("clears only local chat while retaining the generated brief", async ({ page, mockApi }) => {
