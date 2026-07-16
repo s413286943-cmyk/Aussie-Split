@@ -142,8 +142,8 @@ export function validateBriefOutput(raw, context) {
   };
 }
 
-export function validateChatAnswer(raw, _context) {
-  return safeAdvice(raw, 3_000);
+export function validateChatAnswer(raw, context) {
+  return safeChatAdvice(raw, context, 3_000);
 }
 
 function enrichFactAdvice(item, facts) {
@@ -170,6 +170,78 @@ function safeAdvice(value, maxLength) {
     throw new TypeError("Invalid advice text");
   }
   return text;
+}
+
+function safeChatAdvice(value, context, maxLength) {
+  if (typeof value !== "string") throw new TypeError("Invalid advice text");
+  const text = value.trim();
+  if (!text || text.length > maxLength || SENSITIVE_PATTERN.test(text)) {
+    throw new TypeError("Invalid advice text");
+  }
+
+  const contextText = JSON.stringify(context || {});
+  const allowedTimes = new Set(
+    collectExactMatches(EXACT_TIME_PATTERN, contextText).map(normalizeExactTime),
+  );
+  const allowedDates = collectAllowedDates(contextText);
+  const hasUnsupportedTime = collectExactMatches(EXACT_TIME_PATTERN, text)
+    .some((token) => !allowedTimes.has(normalizeExactTime(token)));
+  const hasUnsupportedDate = collectExactMatches(EXACT_DATE_PATTERN, text)
+    .some((token) => !allowedDates.has(normalizeExactDate(token)));
+
+  if (hasUnsupportedTime || hasUnsupportedDate) {
+    throw new TypeError("Invalid advice text");
+  }
+  return text;
+}
+
+function collectExactMatches(pattern, text) {
+  const flags = pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`;
+  return [...text.matchAll(new RegExp(pattern.source, flags))].map((match) => match[0]);
+}
+
+function collectAllowedDates(contextText) {
+  const allowed = new Set();
+  for (const token of collectExactMatches(EXACT_DATE_PATTERN, contextText)) {
+    const normalized = normalizeExactDate(token);
+    allowed.add(normalized);
+    if (normalized.startsWith("iso:")) {
+      const [, , month, day] = normalized.match(/^iso:(\d{4})-(\d{2})-(\d{2})$/) || [];
+      if (month && day) allowed.add(`md:${Number(month)}-${Number(day)}`);
+    }
+  }
+  return allowed;
+}
+
+function normalizeExactTime(token) {
+  const match = token
+    .toLowerCase()
+    .replace("：", ":")
+    .replace(/\s+/g, "")
+    .match(/^(\d{1,2}):(\d{2})(am|pm)?$/);
+  if (!match) return token;
+  let hour = Number(match[1]);
+  if (match[3] === "am") hour %= 12;
+  if (match[3] === "pm") hour = (hour % 12) + 12;
+  return `${String(hour).padStart(2, "0")}:${match[2]}`;
+}
+
+function normalizeExactDate(token) {
+  const iso = token.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) return `iso:${iso[1]}-${iso[2]}-${iso[3]}`;
+
+  const chinese = token.match(/^(\d{1,2})月(\d{1,2})日$/);
+  if (chinese) return `md:${Number(chinese[1])}-${Number(chinese[2])}`;
+
+  const english = token.match(/^([A-Za-z]+)\s+(\d{1,2})$/);
+  if (english) {
+    const months = [
+      "january", "february", "march", "april", "may", "june",
+      "july", "august", "september", "october", "november", "december",
+    ];
+    return `md:${months.indexOf(english[1].toLowerCase()) + 1}-${Number(english[2])}`;
+  }
+  return token;
 }
 
 function normalizeWeather(weather) {

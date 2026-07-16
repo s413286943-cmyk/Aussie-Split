@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { buildBriefContext } from "../src/lib/server/travelAssistantContext.js";
+import {
+  buildBriefContext,
+  buildChatContext,
+  routeTravelQuestion,
+} from "../src/lib/server/travelAssistantContext.js";
 import {
   parseTravelAssistantRequest,
   validateBriefOutput,
@@ -9,6 +13,11 @@ import {
 } from "../src/lib/server/travelAssistantSchema.js";
 
 const context = buildBriefContext({ dayId: "d14" });
+const d13ChatContext = buildChatContext({
+  routed: routeTravelQuestion({ currentDayId: "d0", question: "D13 怎么安排？" }),
+  weather: {},
+  checkedKitItemIds: [],
+});
 const factIds = context.facts.map((fact) => fact.id);
 const validBrief = {
   pace: { level: "balanced", note: "按体力走。" },
@@ -204,19 +213,26 @@ describe("travel assistant schema", () => {
     assert.deepEqual(context.sourceDayIds, ["d14"]);
   });
 
+  it("accepts exact dates and times only when they come from routed chat context", () => {
+    const answer = "D13 是 8月10日，08:00 出发，14:40 决定是否延伸袋鼠谷。";
+
+    assert.equal(validateChatAnswer(answer, d13ChatContext), answer);
+    assert.deepEqual(d13ChatContext.sourceDayIds, ["d0", "d13"]);
+  });
+
   it("rejects oversized, private, monetary, and unsupported exact chat advice", () => {
     const invalidAnswers = [
       "x".repeat(3_001),
       "先查看 ledger 再决定。",
       "让付款人处理小票。",
       "预算是 A$99。",
-      "建议 18:30 出发。",
+      "建议 03:17 出发。",
       "安排在 2026-08-11。",
       "August 11 is best.",
     ];
 
     for (const answer of invalidAnswers) {
-      assert.throws(() => validateChatAnswer(answer, context));
+      assert.throws(() => validateChatAnswer(answer, d13ChatContext));
     }
   });
 });

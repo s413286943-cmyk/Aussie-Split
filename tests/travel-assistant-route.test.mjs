@@ -372,8 +372,8 @@ describe("protected travel-assistant brief route", () => {
     const invalidAnswers = [
       "x".repeat(3_001),
       "请先检查付款人和小票。",
-      "建议 18:30 出发。",
-      "建议安排在 2026-08-11。",
+      "建议 03:17 出发。",
+      "建议安排在 2027-08-11。",
     ];
 
     for (const answer of invalidAnswers) {
