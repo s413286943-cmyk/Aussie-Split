@@ -15,20 +15,15 @@ import {
   fetchLedgerSnapshot,
   fetchReceipt,
   finalizeReceipt,
-  generateTravelBrief,
-  streamTravelChat,
   unlockAccessSession,
 } from "../src/lib/apiClient.js";
 import * as protectedApi from "../src/lib/apiClient.js";
 
 const originalFetch = globalThis.fetch;
-const originalWindow = globalThis.window;
 
 describe("browser protected API client", () => {
   afterEach(() => {
     globalThis.fetch = originalFetch;
-    if (originalWindow === undefined) delete globalThis.window;
-    else globalThis.window = originalWindow;
   });
 
   it("uses only relative API URLs with same-origin credentials", async () => {
@@ -47,9 +42,6 @@ describe("browser protected API client", () => {
       if (url === "/api/receipts/upload-url") return Response.json({ mode: "signed-put" });
       if (url === "/api/receipts/finalize") return Response.json({ receipt: { receiptId: "receipt-one" } });
       if (url === "/api/receipts/expense-one") return Response.json({ signedUrl: "https://signed.example" });
-      if (url === "/api/travel-assistant") {
-        return Response.json({ brief: {}, generatedAt: "2026-07-15T00:00:00.000Z", sourceDayIds: ["d14"] });
-      }
       throw new Error(`Unexpected URL: ${url}`);
     };
 
@@ -64,38 +56,6 @@ describe("browser protected API client", () => {
     await createReceiptUploadContract({ expenseId: "expense-one" });
     await finalizeReceipt({ expenseId: "expense-one", receiptId: "receipt-one" });
     await fetchReceipt("expense-one");
-    await generateTravelBrief({
-      dayId: "d14",
-      weather: {
-        status: " forecast ",
-        summary: " 晴 ",
-        detail: {
-          payer: "private",
-          amount: 99,
-          receipt: { id: "private" },
-          supabase: { token: "private" },
-        },
-        adviceLabel: "预报穿衣建议",
-        ledger: [{ id: "private" }],
-        receipt: { id: "private" },
-        supabase: { token: "private" },
-      },
-      checkedKitItemIds: [
-        "power",
-        "weather-shell",
-        "power",
-        "not valid",
-        "UPPER",
-        "",
-        { payer: "private", amount: 99, receipt: "private", supabase: "private" },
-      ],
-      ledger: [{ id: "private" }],
-      payer: "private",
-      amount: 99,
-      receipt: { id: "private" },
-      operation: { id: "private" },
-      supabase: { token: "private" },
-    });
 
     assert.equal(calls.every((call) => call.url.startsWith("/api/")), true);
     assert.equal(calls.every((call) => !call.url.startsWith("http")), true);
@@ -104,278 +64,6 @@ describe("browser protected API client", () => {
       assert.equal(call.options.headers.Accept, "application/json");
       if (call.options.body) assert.equal(call.options.headers["Content-Type"], "application/json");
     }
-
-    const briefCall = calls.find((call) => call.url === "/api/travel-assistant");
-    const briefBody = JSON.parse(briefCall.options.body);
-    assert.equal(briefCall.options.credentials, "same-origin");
-    assert.deepEqual(Object.keys(briefBody).sort(), ["checkedKitItemIds", "dayId", "mode", "weather"]);
-    assert.deepEqual(briefBody, {
-      mode: "brief",
-      dayId: "d14",
-      weather: {
-        status: "forecast",
-        summary: "晴",
-        detail: "",
-        adviceLabel: "预报穿衣建议",
-      },
-      checkedKitItemIds: ["power", "weather-shell"],
-    });
-    assert.deepEqual(Object.keys(briefBody.weather).sort(), ["adviceLabel", "detail", "status", "summary"]);
-    assert.equal(Object.values(briefBody.weather).every((value) => typeof value === "string"), true);
-    assert.equal(new Set(briefBody.checkedKitItemIds).size, briefBody.checkedKitItemIds.length);
-    assert.equal(briefBody.checkedKitItemIds.every((id) => /^[a-z0-9-]{1,64}$/.test(id)), true);
-    assert.doesNotMatch(briefCall.options.body, /ledger|payer|amount|receipt|operation|supabase/i);
-  });
-
-  it("serializes only valid travel brief day ids", async () => {
-    const requestBodies = [];
-    globalThis.fetch = async (_url, options = {}) => {
-      requestBodies.push(options.body);
-      return Response.json({ brief: {}, generatedAt: "2026-07-15T00:00:00.000Z", sourceDayIds: [] });
-    };
-
-    for (const dayId of [
-      { payer: "private", receipt: { id: "private" }, supabase: { token: "private" } },
-      "d17",
-    ]) {
-      await generateTravelBrief({ dayId, weather: {}, checkedKitItemIds: [] });
-    }
-
-    const parsedBodies = requestBodies.map((body) => JSON.parse(body));
-    assert.deepEqual(parsedBodies.map((body) => body.dayId), ["", ""]);
-    assert.equal(parsedBodies.every((body) => typeof body.dayId === "string"), true);
-    assert.doesNotMatch(requestBodies.join("\n"), /payer|receipt|supabase/i);
-  });
-
-  it("assembles chunked chat SSE deltas and reports the current-day scope", async () => {
-    const calls = [];
-    const deltaEvents = [];
-    const scopeEvents = [];
-    const eventOrder = [];
-    const sse = [
-      `event: scope\ndata: ${JSON.stringify({ scope: "day", sourceDayIds: ["d14"] })}\n\n`,
-      `event: delta\ndata: ${JSON.stringify({ delta: "下雨时" })}\n\n`,
-      `event: delta\ndata: ${JSON.stringify({ delta: "先缩短户外段。" })}\n\n`,
-      "event: done\ndata: {}\n\n",
-    ].join("");
-    globalThis.fetch = async (url, options = {}) => {
-      calls.push({ url: String(url), options });
-      return chunkedSseResponse(sse, [1, 7, 19, 23, 41, 59]);
-    };
-
-    const result = await streamTravelChat({
-      dayId: "d14",
-      weather: { status: " fallback ", summary: " 有风 ", ledger: "private" },
-      checkedKitItemIds: ["power", "power", "not valid"],
-      question: " 下雨怎么调整？ ",
-      history: [
-        { role: "user", content: " 之前的问题 ", ledger: "private" },
-        {
-          role: "assistant",
-          content: " 之前的回答 ",
-          scope: "city",
-          sourceDayIds: ["d14", "d10"],
-          receipt: "private",
-        },
-      ],
-      ledger: [{ payer: "private" }],
-      receipt: { id: "private" },
-      supabase: { token: "private" },
-    }, {
-      onDelta(delta) {
-        deltaEvents.push(delta);
-        eventOrder.push("delta");
-      },
-      onScope(scope) {
-        scopeEvents.push(scope);
-        eventOrder.push("scope");
-      },
-    });
-
-    assert.deepEqual(result, {
-      answer: "下雨时先缩短户外段。",
-      scope: "day",
-      sourceDayIds: ["d14"],
-    });
-    assert.deepEqual(deltaEvents, ["下雨时", "先缩短户外段。"]);
-    assert.deepEqual(scopeEvents, [{ scope: "day", sourceDayIds: ["d14"] }]);
-    assert.deepEqual(eventOrder, ["scope", "delta", "delta"]);
-    assert.equal(calls.length, 1);
-    assert.equal(calls[0].url, "/api/travel-assistant");
-    assert.equal(calls[0].options.credentials, "same-origin");
-    assert.equal(calls[0].options.method, "POST");
-    assert.equal(calls[0].options.headers.Accept, "text/event-stream");
-    assert.equal(calls[0].options.headers["Content-Type"], "application/json");
-    assert.deepEqual(JSON.parse(calls[0].options.body), {
-      mode: "chat",
-      dayId: "d14",
-      weather: {
-        status: "fallback",
-        summary: "有风",
-        detail: "",
-        adviceLabel: "",
-      },
-      checkedKitItemIds: ["power"],
-      question: "下雨怎么调整？",
-      history: [
-        { role: "user", content: "之前的问题" },
-        { role: "assistant", content: "之前的回答" },
-      ],
-    });
-    assert.doesNotMatch(calls[0].options.body, /ledger|payer|receipt|supabase|private/i);
-  });
-
-  it("accepts only server scope metadata with the current day first and at most four unique days", async () => {
-    const validScopes = [
-      { scope: "day", sourceDayIds: ["d14", "d13"] },
-      { scope: "city", sourceDayIds: ["d14", "d10", "d7", "d6"] },
-      { scope: "trip", sourceDayIds: ["d14"] },
-    ];
-
-    for (const expectedScope of validScopes) {
-      globalThis.fetch = async () => chunkedSseResponse([
-        `event: scope\ndata: ${JSON.stringify(expectedScope)}\n\n`,
-        `event: delta\ndata: ${JSON.stringify({ delta: "按行程回答。" })}\n\n`,
-        "event: done\ndata: {}\n\n",
-      ].join(""), [3, 17, 41]);
-
-      const result = await streamTravelChat({
-        dayId: "d14",
-        question: "怎么安排？",
-        history: [],
-      });
-      assert.deepEqual(result, { answer: "按行程回答。", ...expectedScope });
-    }
-
-    const invalidScopes = [
-      { scope: "unknown", sourceDayIds: ["d14"] },
-      { scope: "day", sourceDayIds: [] },
-      { scope: "day", sourceDayIds: ["d13", "d14"] },
-      { scope: "city", sourceDayIds: ["d14", "d10", "d10"] },
-      { scope: "city", sourceDayIds: ["d14", "d10", "d7", "d6", "d9"] },
-      { scope: "day", sourceDayIds: ["d14", "d17"] },
-      { scope: "trip", sourceDayIds: ["d14", "d13"] },
-    ];
-
-    for (const invalidScope of invalidScopes) {
-      globalThis.fetch = async () => chunkedSseResponse([
-        `event: scope\ndata: ${JSON.stringify(invalidScope)}\n\n`,
-        `event: delta\ndata: ${JSON.stringify({ delta: "不应接受。" })}\n\n`,
-        "event: done\ndata: {}\n\n",
-      ].join(""), [5, 29]);
-
-      await assert.rejects(
-        () => streamTravelChat({ dayId: "d14", question: "怎么安排？", history: [] }),
-        (error) => error instanceof ApiClientError && error.code === "api_request_failed",
-      );
-    }
-  });
-
-  it("fails closed before rendering text when scope ordering is invalid", async () => {
-    const invalidStreams = [
-      [
-        `event: delta\ndata: ${JSON.stringify({ delta: "不应显示。" })}\n\n`,
-        `event: scope\ndata: ${JSON.stringify({ scope: "day", sourceDayIds: ["d14"] })}\n\n`,
-        "event: done\ndata: {}\n\n",
-      ].join(""),
-      [
-        `event: scope\ndata: ${JSON.stringify({ scope: "day", sourceDayIds: ["d14"] })}\n\n`,
-        `event: scope\ndata: ${JSON.stringify({ scope: "day", sourceDayIds: ["d14"] })}\n\n`,
-        `event: delta\ndata: ${JSON.stringify({ delta: "不应显示。" })}\n\n`,
-        "event: done\ndata: {}\n\n",
-      ].join(""),
-      "event: done\ndata: {}\n\n",
-    ];
-
-    for (const sse of invalidStreams) {
-      const deltas = [];
-      globalThis.fetch = async () => chunkedSseResponse(sse, [3, 17, 41]);
-
-      await assert.rejects(
-        () => streamTravelChat(
-          { dayId: "d14", question: "怎么安排？", history: [] },
-          { onDelta: (delta) => deltas.push(delta) },
-        ),
-        (error) => error instanceof ApiClientError && error.code === "api_request_failed",
-      );
-      assert.deepEqual(deltas, []);
-    }
-  });
-
-  it("drops oldest complete multibyte turns until the chat body fits the client ceiling", async () => {
-    const requestBodies = [];
-    const history = Array.from({ length: 8 }, (_, index) => ([
-      { role: "user", content: `${String(index).padStart(2, "0")}${"问".repeat(1_998)}` },
-      { role: "assistant", content: `${String(index).padStart(2, "0")}${"答".repeat(1_998)}` },
-    ])).flat();
-    globalThis.fetch = async (_url, options = {}) => {
-      requestBodies.push(options.body);
-      return chunkedSseResponse([
-        `event: scope\ndata: ${JSON.stringify({ scope: "day", sourceDayIds: ["d14"] })}\n\n`,
-        `event: delta\ndata: ${JSON.stringify({ delta: "保留最新上下文。" })}\n\n`,
-        "event: done\ndata: {}\n\n",
-      ].join(""), [11, 37]);
-    };
-
-    await streamTravelChat({
-      dayId: "d14",
-      question: "继续怎么安排？",
-      history,
-    }, {});
-
-    const [serialized] = requestBodies;
-    const body = JSON.parse(serialized);
-    const safeClientBodyCeiling = 15 * 1_024;
-    assert.ok(new TextEncoder().encode(serialized).byteLength < safeClientBodyCeiling);
-    assert.ok(body.history.length < 16);
-    assert.equal(body.history.length % 2, 0);
-    assert.deepEqual(body.history.slice(-2), history.slice(-2));
-    assert.deepEqual(
-      body.history.map((message) => message.role),
-      body.history.map((_, index) => (index % 2 === 0 ? "user" : "assistant")),
-    );
-  });
-
-  it("notifies the access gate and throws AccessRequiredError for chat 401s", async () => {
-    const events = [];
-    globalThis.window = {
-      dispatchEvent(event) {
-        events.push(event.type);
-      },
-    };
-    globalThis.fetch = async () => Response.json(
-      { error: "access_required" },
-      { status: 401 },
-    );
-
-    await assert.rejects(
-      () => streamTravelChat({ dayId: "d14", question: "下雨呢？", history: [] }, {}),
-      (error) => error instanceof AccessRequiredError && error.code === "access_required",
-    );
-    assert.deepEqual(events, ["aussie-chill-access-required"]);
-  });
-
-  it("maps failed and malformed chat streams to a generic API client error", async () => {
-    globalThis.fetch = async () => Response.json(
-      { error: "assistant_unavailable", privateDetail: "must not escape" },
-      { status: 502 },
-    );
-    await assert.rejects(
-      () => streamTravelChat({ dayId: "d14", question: "下雨呢？", history: [] }, {}),
-      (error) => error instanceof ApiClientError && error.status === 502,
-    );
-
-    globalThis.fetch = async () => chunkedSseResponse(
-      "event: delta\ndata: not-json\n\nevent: done\ndata: {}\n\n",
-      [3, 8, 17],
-    );
-    await assert.rejects(
-      () => streamTravelChat({ dayId: "d14", question: "下雨呢？", history: [] }, {}),
-      (error) => error instanceof ApiClientError && error.code === "api_request_failed",
-    );
-
-    const source = readFileSync(new URL("../src/lib/apiClient.js", import.meta.url), "utf8");
-    assert.doesNotMatch(source, /console\.(?:log|info|warn|error)\s*\(/);
   });
 
   it("maps a 401 response to AccessRequiredError", async () => {
@@ -596,22 +284,5 @@ function collectSourceFiles(directory) {
     const path = `${directory}/${entry}`;
     if (statSync(path).isDirectory()) return collectSourceFiles(path);
     return /\.(?:js|jsx|ts|tsx)$/.test(path) ? [path] : [];
-  });
-}
-
-function chunkedSseResponse(source, boundaries) {
-  const bytes = new TextEncoder().encode(source);
-  const cuts = [...boundaries.filter((value) => value > 0 && value < bytes.length), bytes.length];
-  let start = 0;
-  return new Response(new ReadableStream({
-    start(controller) {
-      for (const end of cuts) {
-        controller.enqueue(bytes.slice(start, end));
-        start = end;
-      }
-      controller.close();
-    },
-  }), {
-    headers: { "Content-Type": "text/event-stream; charset=utf-8" },
   });
 }

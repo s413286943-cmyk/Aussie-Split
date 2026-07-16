@@ -8,7 +8,6 @@ import {
   collectTodayResources,
   summarizeDayLedger,
 } from "@/lib/today";
-import TravelAssistantPanel from "./TravelAssistantPanel";
 
 const resourceLabels = {
   map: "地图",
@@ -54,11 +53,6 @@ export default function TodayConsole({ day, weather, ledgerExpenses, ledgerFresh
       </div>
       <TodayMealBoard meals={command.meals} />
       <TodayDocketStrip docket={docket} />
-      <TravelAssistantPanel
-        day={day}
-        weather={weather}
-        checkedKitItems={checkedKitItems}
-      />
       <div className="today-field-kit" aria-label="今日出门和账本联动">
         <TodayCarryChecklist day={day} items={carryItems} checkedItems={checkedKitItems} onToggleItem={onToggleKitItem} />
         <TodayLedgerDock day={day} summary={ledgerSummary} freshness={ledgerFreshness} />
