@@ -11,12 +11,57 @@ import {
   syncOfflineReceipts,
   undoOfflineDelete,
 } from "../src/lib/offlineLedger.js";
-import { getReceiptBlobByExpenseId } from "../src/lib/offlineDb.js";
+import { getReceiptBlobByExpenseId, openOfflineDb } from "../src/lib/offlineDb.js";
 import { compareMutationVersions } from "../src/lib/mutationVersion.js";
+import { parseExpenseOperationBatch } from "../src/lib/server/http.js";
 
 const baseNow = 1_780_000_000_000;
 
 describe("offline ledger lifecycle", () => {
+  it("repairs a previously migrated legacy split state before retrying sync", async () => {
+    const indexedDB = new IDBFactory();
+    const storage = memoryStorage();
+    const db = await openOfflineDb({ indexedDB });
+    const updatedAt = new Date(baseNow).toISOString();
+    const mutationVersion = "1780000000000-000000-legacy-device";
+    const legacyExpense = expenseFixture({ mutationVersion, updatedAt });
+    delete legacyExpense.splitSettled;
+    const activity = activityFixture();
+    const transaction = db.transaction(["expenses", "activity", "outbox", "meta"], "readwrite");
+    transaction.objectStore("expenses").put(legacyExpense);
+    transaction.objectStore("activity").put(activity);
+    transaction.objectStore("outbox").put({
+      opId: "legacy-op-000000-legacy-device",
+      type: "upsert",
+      expenseId: legacyExpense.id,
+      mutationVersion,
+      expense: legacyExpense,
+      activity,
+      createdAt: updatedAt,
+    });
+    transaction.objectStore("meta").put({ key: "localStorageMigrated", value: true });
+    await completeTransaction(transaction);
+    db.close();
+
+    const context = await initializeOfflineLedger({
+      indexedDB,
+      storage,
+      now: baseNow + 2_000,
+      randomUUID: uuidSequence(),
+    });
+
+    assert.equal(context.state.expenses[0].splitSettled, false);
+    const synced = await syncOfflineLedger(context, {
+      now: () => baseNow + 3_000,
+      async sendOperations(batch) {
+        assert.doesNotThrow(() => parseExpenseOperationBatch({ operations: batch }));
+        return responseFor(batch);
+      },
+    });
+    assert.equal(synced.state.outboxCount, 0);
+    closeOfflineLedger(context);
+  });
+
   it("carries the legacy mutation high-water above a rolled-back clock", async () => {
     const previousHighWater = "1780000500000-000009-browser-old";
     const context = await initializeOfflineLedger({
@@ -501,4 +546,12 @@ function memoryStorage(initial = {}) {
 function uuidSequence() {
   let value = 0;
   return () => `00000000-0000-4000-8000-${String(++value).padStart(12, "0")}`;
+}
+
+function completeTransaction(transaction) {
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = resolve;
+    transaction.onerror = () => reject(transaction.error);
+    transaction.onabort = () => reject(transaction.error);
+  });
 }

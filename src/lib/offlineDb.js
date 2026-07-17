@@ -105,6 +105,45 @@ export async function migrateLegacyLocalStorage(db, options) {
   }
 }
 
+export async function repairLegacySplitState(db) {
+  const transaction = db.transaction(["expenses", "outbox"], "readwrite");
+  const completed = transactionComplete(transaction);
+
+  try {
+    const expenseStore = transaction.objectStore("expenses");
+    const outbox = transaction.objectStore("outbox");
+    const [expenses, operations] = await Promise.all([
+      requestResult(expenseStore.getAll()),
+      requestResult(outbox.getAll()),
+    ]);
+    let repaired = 0;
+
+    for (const expense of expenses) {
+      if (typeof expense.splitSettled === "boolean") continue;
+      expenseStore.put({ ...expense, splitSettled: false });
+      repaired += 1;
+    }
+    for (const operation of operations) {
+      if (
+        operation?.type !== "upsert"
+        || !operation.expense
+        || typeof operation.expense.splitSettled === "boolean"
+      ) continue;
+      outbox.put({
+        ...operation,
+        expense: { ...operation.expense, splitSettled: false },
+      });
+    }
+
+    await completed;
+    return repaired;
+  } catch (error) {
+    abortTransaction(transaction);
+    await completed.then(() => undefined, () => undefined);
+    throw error;
+  }
+}
+
 export async function loadOfflineLedger(db) {
   const transaction = db.transaction(["expenses", "activity", "outbox", "meta"], "readonly");
   const completed = transactionComplete(transaction);

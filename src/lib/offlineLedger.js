@@ -14,6 +14,7 @@ import {
   markReceiptUploadFailure,
   migrateLegacyLocalStorage,
   openOfflineDb,
+  repairLegacySplitState,
   releaseSyncLease,
   renewSyncLease,
   renewReceiptUploadClaim,
@@ -41,6 +42,7 @@ export async function initializeOfflineLedger(options) {
       highWater: identity.highWater,
       now,
     });
+    await repairLegacySplitState(db);
     await cleanupDeletedReceiptBlobs(db, { deletedBefore: Math.max(0, now - DELETE_UNDO_MS) });
     const context = {
       db,
