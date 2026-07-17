@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Noto_Sans_SC } from "next/font/google";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import "@/styles/tokens.css";
 import "@/styles/ledger.css";
@@ -8,6 +9,13 @@ import "@/styles/route-atlas.css";
 import "@/styles/ledger-focus.css";
 import "@/styles/live-route.css";
 import "@/styles/motion.css";
+
+const aussieSans = Noto_Sans_SC({
+  variable: "--font-aussie-sans",
+  weight: "variable",
+  display: "swap",
+  preload: false,
+});
 
 export const metadata: Metadata = {
   title: "Aussie Chill",
@@ -33,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" className={aussieSans.variable}>
       <body>
         {children}
         <ServiceWorkerRegistration release={serviceWorkerRelease} />

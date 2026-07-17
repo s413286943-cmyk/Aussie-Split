@@ -20,6 +20,20 @@ test("homepage opens the itinerary while the ledger overview remains available",
   await expect(page.getByRole("heading", { name: "Draft museum tickets" })).toBeVisible();
 });
 
+test("site uses one type family for display, body, and data", async ({ page }) => {
+  await page.goto("/ledger");
+  await expect(page.locator(".docket-metrics")).toBeVisible();
+
+  const fontFamilies = await page.evaluate(() => ({
+    body: getComputedStyle(document.body).fontFamily,
+    display: getComputedStyle(document.querySelector(".hero h1")).fontFamily,
+    data: getComputedStyle(document.querySelector(".docket-metrics strong")).fontFamily,
+  }));
+
+  expect(fontFamilies.display).toBe(fontFamilies.body);
+  expect(fontFamilies.data).toBe(fontFamilies.body);
+});
+
 test("add, edit, split-settle, delete, and Undo work through rendered ledger controls", async ({ page }) => {
   await page.goto("/add");
 

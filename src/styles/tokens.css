@@ -15,9 +15,9 @@
   --shadow: 0 16px 42px rgba(31, 48, 42, 0.1);
   --receipt-shadow: 0 6px 18px rgba(31, 48, 42, 0.07);
   --radius: 8px;
-  --font-display: "Avenir Next Condensed", "DIN Condensed", "PingFang SC", "Noto Sans CJK SC", sans-serif;
-  --font-body: "Avenir Next", "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
-  --font-utility: SFMono-Regular, "SF Mono", "Roboto Mono", ui-monospace, monospace;
+  --font-display: var(--font-aussie-sans), "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-body: var(--font-aussie-sans), "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-utility: var(--font-aussie-sans), "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
 html {
