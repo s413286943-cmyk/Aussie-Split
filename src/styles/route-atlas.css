@@ -1210,16 +1210,75 @@
 }
 
 @media (max-width: 480px) {
+  .route-hero:not(.is-compact) {
+    min-height: clamp(420px, 54svh, 452px);
+    grid-template-rows: auto auto;
+    align-content: space-between;
+  }
+
+  .route-hero:not(.is-compact) .itinerary-hero-copy {
+    align-self: start;
+    gap: 10px;
+    padding: 18px 16px 10px;
+  }
+
+  .route-hero:not(.is-compact) .itinerary-hero-copy p {
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
+  .route-hero:not(.is-compact) .itinerary-hero-copy h1 {
+    font-size: 2.06rem;
+    line-height: 0.98;
+  }
+
+  .route-hero:not(.is-compact) .hero-meta {
+    gap: 6px;
+    margin-top: 0;
+  }
+
+  .route-hero:not(.is-compact) .hero-meta span {
+    min-height: 30px;
+    padding: 0 8px;
+    font-size: 0.72rem;
+  }
+
+  .route-hero:not(.is-compact) .hero-meta span:first-child {
+    white-space: nowrap;
+  }
+
+  .route-hero:not(.is-compact) .hero-route-strip {
+    display: none;
+  }
+
+  .route-hero:not(.is-compact) .hero-weather {
+    width: calc(100% - 20px);
+    margin: 10px;
+    padding: 12px 14px;
+  }
+
+  .route-hero:not(.is-compact) .hero-weather strong {
+    margin-top: 3px;
+    font-size: 1rem;
+  }
+
+  .route-hero:not(.is-compact) .hero-weather p {
+    margin-top: 6px;
+    font-size: 0.88rem;
+  }
+
+  .route-hero:not(.is-compact) .hero-weather small {
+    margin-top: 6px;
+    font-size: 0.76rem;
+    line-height: 1.35;
+  }
+
   .manifest-days {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .today-summary h2 {
     font-size: 1.82rem;
-  }
-
-  .itinerary-hero-copy h1 {
-    font-size: 2.48rem;
   }
 
   .hero-meta span {

@@ -74,6 +74,36 @@ test("mobile itinerary keeps controls and day text inside the viewport", async (
   expect(await findClippedText(page)).toEqual([]);
 });
 
+test("mobile pre-trip hero keeps the first screen compact", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.clock.setFixedTime(new Date("2026-07-17T10:00:00+08:00"));
+  await page.goto("/itinerary");
+
+  const hero = page.locator(".route-hero:not(.is-compact)");
+  await expect(hero).toBeVisible();
+  const layout = await hero.evaluate((element) => {
+    const title = element.querySelector(".itinerary-hero-copy h1");
+    const meta = element.querySelector(".hero-meta");
+    const routeStrip = element.querySelector(".hero-route-strip");
+    const weather = element.querySelector(".hero-weather");
+    return {
+      heroHeight: element.getBoundingClientRect().height,
+      titleHeight: title?.getBoundingClientRect().height ?? 0,
+      metaHeight: meta?.getBoundingClientRect().height ?? 0,
+      routeStripDisplay: routeStrip ? getComputedStyle(routeStrip).display : "missing",
+      weatherHeight: weather?.getBoundingClientRect().height ?? 0,
+    };
+  });
+
+  expect(layout.heroHeight).toBeLessThanOrEqual(480);
+  expect(layout.titleHeight).toBeLessThanOrEqual(80);
+  expect(layout.metaHeight).toBeLessThanOrEqual(66);
+  expect(layout.routeStripDisplay).toBe("none");
+  expect(layout.weatherHeight).toBeLessThanOrEqual(145);
+  expect(await documentOverflowsHorizontally(page)).toBe(false);
+  expect(await findClippedText(page)).toEqual([]);
+});
+
 test("mobile direct D15 link keeps the offscreen stage inside the viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.clock.setFixedTime(new Date("2026-07-11T10:00:00+08:00"));
