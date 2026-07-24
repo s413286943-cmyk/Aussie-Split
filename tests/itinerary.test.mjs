@@ -26,11 +26,11 @@ const expectedTitles = {
   d7: "奔赴外礁：Reef Magic 大堡礁一日",
   d8: "深入丹翠：雨林、河流与 Cape Tribulation",
   d9: "阿瑟顿高原：火山湖、巨树与瀑布",
-  d10: "慢享凯恩斯：Rusty’s Market 与 Palm Cove",
+  d10: "慢享凯恩斯：Rusty's Market 与 Palm Cove",
   d11: "初到悉尼：Barangaroo、The Rocks 与海港夜景",
   d12: "悉尼经典一日：歌剧院、The Rocks Weekend Market、植物园与 QVB",
   d13: "悉尼南海岸：Sea Cliff Bridge、Kiama 与 Gerringong",
-  d14: "动物园到海岸：Taronga、Bondi 与 Totti’s",
+  d14: "动物园到海岸：Taronga、Bondi 与 Totti's",
   d15: "悉尼告别日：可选 Manly、最后采购与 Cafe Sydney",
   d16: "告别澳洲：TRS 退税与返程",
 };
@@ -46,11 +46,11 @@ const expectedFocus = {
   d7: "在 Reef Magic 外礁平台体验浮潜、半潜艇与大堡礁海上风景。",
   d8: "沿丹翠河进入雨林，在 Cape Tribulation 看雨林与海相接。",
   d9: "自驾串联 Lake Eacham、Curtain Fig Tree、高原小镇与瀑布。",
-  d10: "上午逛 Rusty’s Market，午后休整，傍晚去 Palm Cove 看海。",
+  d10: "上午逛 Rusty's Market，午后休整，傍晚去 Palm Cove 看海。",
   d11: "飞抵悉尼后休息片刻，沿 Barangaroo、The Rocks 走到 Circular Quay 夜景。",
   d12: "从歌剧院中文导览出发，逛 The Rocks 周末市集，再沿植物园走到经典海港机位与 QVB。",
   d13: "沿 Grand Pacific Drive 南下，经过 Sea Cliff Bridge、Kiama 与 Gerringong，视情况延伸袋鼠谷。",
-  d14: "搭渡轮看 Taronga 的澳洲动物，下午走 Bondi 海岸，晚上在 Totti’s 用餐。",
+  d14: "搭渡轮看 Taronga 的澳洲动物，下午走 Bondi 海岸，晚上在 Totti's 用餐。",
   d15: "上午悠闲安排 Manly 或 CBD，下午采购并整理行李，傍晚在 Cafe Sydney 告别。",
   d16: "完成 TRS 与机场手续，带着旅程回家。",
 };
@@ -82,6 +82,14 @@ describe("itinerary data", () => {
       assert.equal(day.title, expectedTitles[day.id], `${day.id} title is not traveller-facing`);
       assert.doesNotMatch(day.title, /Road Trip Day\s*\d+/i);
     }
+  });
+
+  it("uses half-width apostrophes inside English names", () => {
+    assert.doesNotMatch(
+      JSON.stringify(itinerary),
+      /[A-Za-z][‘’][A-Za-z]/,
+      "English names still contain full-width curly apostrophes",
+    );
   });
 
   it("keeps planning-revision language out of traveller-facing card copy", () => {

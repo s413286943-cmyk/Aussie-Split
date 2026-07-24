@@ -992,7 +992,7 @@
           "dayId": "d3",
           "sortOrder": 70,
           "period": "中午前后",
-          "place": "Teddy’s Lookout",
+          "place": "Teddy's Lookout",
           "activity": "S型海岸 + 河口入海",
           "highlight": "全路段最经典构图点之一",
           "tip": "必停，但不需要久留",
@@ -1131,7 +1131,7 @@
           "sortOrder": 130,
           "period": "晚上",
           "place": "Apollo Bay",
-          "activity": "Fishermen’s Co-op / seafood café 晚餐",
+          "activity": "Fishermen's Co-op / seafood café 晚餐",
           "highlight": "海边渔港氛围",
           "tip": "到 Apollo Bay 后吃 fish & chips 或海鲜，早点休息。",
           "resources": [
@@ -1146,7 +1146,7 @@
             },
             {
               "id": "fishermens-coop-map",
-              "title": "Apollo Bay Fishermen’s Co-op",
+              "title": "Apollo Bay Fishermen's Co-op",
               "type": "restaurant",
               "url": "https://www.google.com/maps/search/?api=1&query=Apollo+Bay+Fishermens+Co-op",
               "imageUrl": "",
@@ -1160,7 +1160,7 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：出发咖啡；午餐：Lorne café / Snow Monkey Ramen（备选）；晚餐：Apollo Bay Fishermen’s Co-op / seafood café",
+          "activity": "早餐：出发咖啡；午餐：Lorne café / Snow Monkey Ramen（备选）；晚餐：Apollo Bay Fishermen's Co-op / seafood café",
           "highlight": "当天餐食节奏",
           "tip": "海岸驾驶日以轻松好吃为主，Apollo Bay 的 fish & chips / 海鲜正合适。",
           "resources": [
@@ -1193,7 +1193,7 @@
             },
             {
               "id": "fishermens-coop-map",
-              "title": "Apollo Bay Fishermen’s Co-op",
+              "title": "Apollo Bay Fishermen's Co-op",
               "type": "restaurant",
               "url": "https://www.google.com/maps/search/?api=1&query=Apollo+Bay+Fishermens+Co-op",
               "imageUrl": "",
@@ -1996,7 +1996,7 @@
           "sortOrder": 50,
           "period": "晚上",
           "place": "码头附近",
-          "activity": "Prawn Star / Salt House / Dundee’s 可选",
+          "activity": "Prawn Star / Salt House / Dundee's 可选",
           "highlight": "海边晚餐",
           "tip": "按体力选码头附近餐厅，轻松吃完就回酒店。",
           "resources": [
@@ -2020,7 +2020,7 @@
             },
             {
               "id": "dundees-map",
-              "title": "Dundee’s Cairns",
+              "title": "Dundee's Cairns",
               "type": "restaurant",
               "url": "https://www.google.com/maps/search/?api=1&query=Dundee%27s+Cairns",
               "imageUrl": "",
@@ -2468,8 +2468,8 @@
       "city": "凯恩斯休息日",
       "lat": -16.9186,
       "lon": 145.7781,
-      "title": "慢享凯恩斯：Rusty’s Market 与 Palm Cove",
-      "focus": "上午逛 Rusty’s Market，午后休整，傍晚去 Palm Cove 看海。",
+      "title": "慢享凯恩斯：Rusty's Market 与 Palm Cove",
+      "focus": "上午逛 Rusty's Market，午后休整，傍晚去 Palm Cove 看海。",
       "lodging": "Southern Cross Atrium Apartments",
       "climateNote": "凯恩斯约 17-26°C，户外热，室内空调冷。",
       "clothingNote": "轻便夏装，随身带薄外套；傍晚海边有风。",
@@ -2509,8 +2509,8 @@
           "dayId": "d10",
           "sortOrder": 10,
           "period": "上午",
-          "place": "Rusty’s Market 买热带水果、咖啡、简单早餐",
-          "activity": "Rusty’s Market 买热带水果、咖啡、简单早餐",
+          "place": "Rusty's Market 买热带水果、咖啡、简单早餐",
+          "activity": "Rusty's Market 买热带水果、咖啡、简单早餐",
           "highlight": "周五正好开市，适合补水果和轻食",
           "tip": "优先买当天能吃完的水果与轻食，方便次日早班机。",
           "resources": [
@@ -2618,7 +2618,7 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：Rusty’s Market / Market水果；午餐：简餐；晚餐：Prawn Star / seafood café（优先）",
+          "activity": "早餐：Rusty's Market / Market水果；午餐：简餐；晚餐：Prawn Star / seafood café（优先）",
           "highlight": "当天餐食节奏",
           "tip": "Market 水果、海鲜和 Palm Cove 咖啡串成轻松的一天。",
           "resources": [
@@ -2938,7 +2938,7 @@
           "sortOrder": 20,
           "period": "08:30–09:10",
           "place": "Opera House 外观",
-          "activity": "歌剧院外观、台阶、Man O’War Steps 初拍",
+          "activity": "歌剧院外观、台阶、Man O'War Steps 初拍",
           "highlight": "悉尼核心地标",
           "tip": "导览前先拍外观，避免后面人多；重点拍帆形结构、台阶、侧面海港机位",
           "resources": [
@@ -3103,7 +3103,7 @@
           "place": "Royal Botanic Garden",
           "activity": "植物园海港步道",
           "highlight": "海港景观非常好",
-          "tip": "沿海港步道慢慢走向 Mrs Macquarie’s Chair，途中可从草坪远望歌剧院与海港桥。",
+          "tip": "沿海港步道慢慢走向 Mrs Macquarie's Chair，途中可从草坪远望歌剧院与海港桥。",
           "resources": [
             {
               "id": "botanic-garden-map",
@@ -3120,7 +3120,7 @@
           "dayId": "d12",
           "sortOrder": 80,
           "period": "14:10–15:10",
-          "place": "Mrs Macquarie’s Chair",
+          "place": "Mrs Macquarie's Chair",
           "activity": "歌剧院 + 海港大桥同框",
           "highlight": "悉尼最经典机位",
           "tip": "晴天很好看，风大注意保暖；可在石椅机位左侧 45° 构图",
@@ -3190,7 +3190,7 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：bills / Toby’s Estate；午餐：The Rocks Markets / Circular Quay 简餐；晚餐：Hello Auntie",
+          "activity": "早餐：bills / Toby's Estate；午餐：The Rocks Markets / Circular Quay 简餐；晚餐：Hello Auntie",
           "highlight": "当天餐食节奏",
           "tip": "市集可边逛边吃；若只简单垫一口，晚上再去 Hello Auntie。",
           "resources": [
@@ -3205,7 +3205,7 @@
             },
             {
               "id": "tobys-estate-map",
-              "title": "Toby’s Estate Sydney",
+              "title": "Toby's Estate Sydney",
               "type": "restaurant",
               "url": "https://www.google.com/maps/search/?api=1&query=Toby%27s+Estate+Sydney",
               "imageUrl": "",
@@ -3646,15 +3646,15 @@
       "city": "悉尼",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "动物园到海岸：Taronga、Bondi 与 Totti’s",
-      "focus": "搭渡轮看 Taronga 的澳洲动物，下午走 Bondi 海岸，晚上在 Totti’s 用餐。",
+      "title": "动物园到海岸：Taronga、Bondi 与 Totti's",
+      "focus": "搭渡轮看 Taronga 的澳洲动物，下午走 Bondi 海岸，晚上在 Totti's 用餐。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "悉尼冬季早晚凉，渡轮甲板、动物园高处和 Bondi 海边都有风。",
       "clothingNote": "穿舒适步行鞋，薄外套随身；Bondi 海岸步道只走短段。",
       "coverImageUrl": "/itinerary/d14-taronga-bondi.png",
       "coverImageAlt": "Taronga Zoo、悉尼港与 Bondi 海岸",
       "transport": "F2 Ferry + 打车 / 市内交通 + 步行",
-      "leaveBy": "08:30–09:00 出门前往 Circular Quay；18:15 前抵达 Totti’s",
+      "leaveBy": "08:30–09:00 出门前往 Circular Quay；18:15 前抵达 Totti's",
       "lodgingResource": {
         "id": "oaks-sydney-map",
         "title": "Oaks Sydney Goldsbrough Suites",
@@ -3868,7 +3868,7 @@
           "dayId": "d14",
           "sortOrder": 60,
           "period": "18:30",
-          "place": "Totti’s Bondi",
+          "place": "Totti's Bondi",
           "activity": "分享式 Italian 晚餐（已订）",
           "highlight": "puffy bread + shared plates",
           "tip": "餐厅在 Bondi Road，不在沙滩第一排；建议 18:15 前抵达",
@@ -3898,9 +3898,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：CBD café；午餐：Taronga Zoo 轻食 / Circular Quay 简餐；晚餐：Totti’s Bondi 18:30（已订）",
+          "activity": "早餐：CBD café；午餐：Taronga Zoo 轻食 / Circular Quay 简餐；晚餐：Totti's Bondi 18:30（已订）",
           "highlight": "当天餐食节奏",
-          "tip": "动物园午餐简单些，海边散步结束后从容前往 18:30 的 Totti’s。",
+          "tip": "动物园午餐简单些，海边散步结束后从容前往 18:30 的 Totti's。",
           "resources": [
             {
               "id": "taronga-zoo-map",
@@ -4260,7 +4260,7 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：café / Single O / Toby’s Estate；午餐：若去 Manly 则 fish & chips / café，否则 CBD 简餐；晚餐：Cafe Sydney 17:30 Outdoor Terrace Dining（已订）",
+          "activity": "早餐：café / Single O / Toby's Estate；午餐：若去 Manly 则 fish & chips / café，否则 CBD 简餐；晚餐：Cafe Sydney 17:30 Outdoor Terrace Dining（已订）",
           "highlight": "当天餐食节奏",
           "tip": "无论上午在哪，14:00 后都回到 CBD 采购、整理 TRS，最后去 Cafe Sydney。",
           "resources": [
@@ -4275,7 +4275,7 @@
             },
             {
               "id": "tobys-estate-map",
-              "title": "Toby’s Estate Sydney",
+              "title": "Toby's Estate Sydney",
               "type": "restaurant",
               "url": "https://www.google.com/maps/search/?api=1&query=Toby%27s+Estate+Sydney",
               "imageUrl": "",
@@ -5060,7 +5060,7 @@
     },
     {
       "id": "fishermens-coop-map",
-      "title": "Apollo Bay Fishermen’s Co-op",
+      "title": "Apollo Bay Fishermen's Co-op",
       "type": "restaurant",
       "url": "https://www.google.com/maps/search/?api=1&query=Apollo+Bay+Fishermens+Co-op",
       "imageUrl": "",
@@ -5123,7 +5123,7 @@
     },
     {
       "id": "dundees-map",
-      "title": "Dundee’s Cairns",
+      "title": "Dundee's Cairns",
       "type": "restaurant",
       "url": "https://www.google.com/maps/search/?api=1&query=Dundee%27s+Cairns",
       "imageUrl": "",
@@ -5285,7 +5285,7 @@
     },
     {
       "id": "tobys-estate-map",
-      "title": "Toby’s Estate Sydney",
+      "title": "Toby's Estate Sydney",
       "type": "restaurant",
       "url": "https://www.google.com/maps/search/?api=1&query=Toby%27s+Estate+Sydney",
       "imageUrl": "",
