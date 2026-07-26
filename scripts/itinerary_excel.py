@@ -11,7 +11,11 @@ def write_workbook(input_path, workbook_path):
     default = workbook.active
     workbook.remove(default)
 
-    for sheet_name in ("Days", "Blocks", "Resources"):
+    sheet_names = ["Days", "Blocks", "Resources"]
+    if "Priorities" in payload:
+        sheet_names.append("Priorities")
+
+    for sheet_name in sheet_names:
         rows = payload[sheet_name]
         sheet = workbook.create_sheet(sheet_name)
         headers = list(rows[0].keys())
@@ -26,7 +30,7 @@ def write_workbook(input_path, workbook_path):
 def read_workbook(workbook_path):
     workbook = load_workbook(workbook_path, data_only=True)
     result = {}
-    for sheet_name in ("Days", "Blocks", "Resources"):
+    for sheet_name in ("Days", "Blocks", "Resources", "Priorities"):
         sheet = workbook[sheet_name]
         rows = list(sheet.iter_rows(values_only=True))
         headers = [str(value or "").strip() for value in rows[0]]

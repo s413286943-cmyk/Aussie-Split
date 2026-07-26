@@ -178,6 +178,93 @@
   font-variant-numeric: tabular-nums;
 }
 
+.manifest-priorities {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding-top: 2px;
+}
+
+.priority-heading {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid rgba(16, 33, 31, 0.12);
+  border-radius: var(--radius);
+  background: rgba(255, 253, 245, 0.72);
+}
+
+.priority-heading > span {
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 950;
+}
+
+.priority-heading h3 {
+  font-size: 1.48rem;
+  line-height: 1.08;
+}
+
+.priority-heading p {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.priority-list {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.priority-item {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr;
+  align-content: start;
+  gap: 5px;
+  min-width: 0;
+  min-height: 130px;
+  padding: 10px;
+  border: 1px solid rgba(16, 33, 31, 0.12);
+  border-radius: 9px;
+  background: rgba(255, 253, 245, 0.84);
+  scroll-snap-align: start;
+}
+
+.priority-item.is-backup {
+  border-style: dashed;
+  background: rgba(229, 165, 50, 0.1);
+}
+
+.priority-rank {
+  font-size: 1.15rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.priority-item strong {
+  overflow-wrap: anywhere;
+  font-size: 0.82rem;
+  line-height: 1.2;
+}
+
+.priority-item small {
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.priority-item em {
+  align-self: end;
+  color: var(--muted);
+  font-size: 0.67rem;
+  font-style: normal;
+  line-height: 1.35;
+}
+
 .today-command-head {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(220px, 30%);
@@ -1103,6 +1190,20 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .manifest-priorities {
+    grid-template-columns: 1fr;
+  }
+
+  .priority-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .priority-heading {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 4px;
+  }
+
   .manifest-stage {
     min-height: 0;
   }
@@ -1185,6 +1286,20 @@
 
   .manifest-stages {
     grid-template-columns: 1fr;
+  }
+
+  .priority-list {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+
+  .priority-item {
+    flex: 0 0 176px;
+    min-height: 120px;
   }
 
   .day-map-actions a {

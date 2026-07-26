@@ -264,7 +264,9 @@ function ItineraryExperience({ itinerary }) {
   return (
     <main className={`itinerary-shell route-atlas travel-mode-${mode.phase}`} ref={shellRef}>
       <Hero itinerary={itinerary} nextDay={heroDay} weather={weatherByDay[heroDay.id]} compact={mode.phase !== "before"} />
-      {mode.phase === "before" && <RouteManifest days={itinerary.days} stages={itinerary.stages} />}
+      {mode.phase === "before" && (
+        <RouteManifest days={itinerary.days} stages={itinerary.stages} priorities={itinerary.priorities} />
+      )}
       {mode.phase === "after" && <PostTripSummary expenses={ledgerExpenses} />}
       <TodayConsole
         day={todayDay}
@@ -372,8 +374,9 @@ function PostTripSummary({ expenses }) {
   );
 }
 
-function RouteManifest({ days, stages }) {
+function RouteManifest({ days, stages, priorities = [] }) {
   const bookendDays = days.filter((day) => day.id === "d0" || day.id === "d16");
+  const dayById = new Map(days.map((day) => [day.id, day]));
 
   return (
     <section className="route-manifest" aria-label="路线总览" data-motion="day-jump">
@@ -415,6 +418,30 @@ function RouteManifest({ days, stages }) {
           );
         })}
       </div>
+      <section className="manifest-priorities" aria-labelledby="priority-title">
+        <div className="priority-heading">
+          <span>旅程重点</span>
+          <h3 id="priority-title">旅程 Top 7</h3>
+          <p>按想去程度排好；Fitzroy 留作返城后的轻松备选。</p>
+        </div>
+        <div className="priority-list">
+          {priorities.map((priority) => {
+            const day = dayById.get(priority.dayId);
+            return (
+              <a
+                className={priority.status === "备选" ? "priority-item is-backup" : "priority-item"}
+                href={`#${priority.dayId}`}
+                key={priority.rank}
+              >
+                <span className="priority-rank">{formatPriorityRank(priority.rank)}</span>
+                <strong>{priority.title}</strong>
+                <small>{day.label} · {priority.status}</small>
+                <em>{priority.note}</em>
+              </a>
+            );
+          })}
+        </div>
+      </section>
     </section>
   );
 }
@@ -649,7 +676,11 @@ function ResourceLinks({ resources }) {
 }
 
 function primaryBlocks(day) {
-  return day.blocks.filter((block) => block.period !== "饮食");
+  return day.blocks.filter((block) => block.period !== "饮食" && !/备选|可选/.test(block.period));
+}
+
+function formatPriorityRank(rank) {
+  return ["🥇", "🥈", "🥉"][rank - 1] || `${rank}`;
 }
 
 function formatShortDate(day) {

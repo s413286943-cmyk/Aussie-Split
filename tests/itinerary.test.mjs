@@ -18,9 +18,9 @@ import { readWorkbook } from "../scripts/import-itinerary.mjs";
 const expectedTitles = {
   d0: "启程澳洲：香港转机，夜航墨尔本",
   d1: "初到墨尔本：CBD、Carlton 与 QVM 冬季夜市",
-  d2: "墨尔本近郊：Puffing Billy、Sassafras 与 Fitzroy",
+  d2: "墨尔本近郊：Puffing Billy 与 Sassafras",
   d3: "驶上大洋路：Torquay、Lorne 到 Apollo Bay",
-  d4: "大洋路海岸：雨林、十二使徒岩与 Loch Ard Gorge",
+  d4: "红杉林到海岸：The Redwoods、十二使徒岩与 Loch Ard Gorge",
   d5: "告别大洋路：清晨海岸与内陆返程",
   d6: "抵达凯恩斯：Esplanade Lagoon 与热带夜市",
   d7: "奔赴外礁：Reef Magic 大堡礁一日",
@@ -28,7 +28,7 @@ const expectedTitles = {
   d9: "阿瑟顿高原：火山湖、巨树与瀑布",
   d10: "慢享凯恩斯：Rusty's Market 与 Palm Cove",
   d11: "初到悉尼：Barangaroo、The Rocks 与海港夜景",
-  d12: "悉尼经典一日：歌剧院、The Rocks Weekend Market、植物园与 QVB",
+  d12: "悉尼经典一日：歌剧院、The Rocks Markets、植物园与 QVB",
   d13: "悉尼南海岸：Sea Cliff Bridge、Kiama 与 Gerringong",
   d14: "动物园到海岸：Taronga、Bondi 与 Totti's",
   d15: "悉尼告别日：可选 Manly、最后采购与 Cafe Sydney",
@@ -38,9 +38,9 @@ const expectedTitles = {
 const expectedFocus = {
   d0: "经香港转机，夜航前往墨尔本。",
   d1: "抵达后慢慢恢复，逛过 CBD 与 Carlton，晚上去 QVM 冬季夜市吃晚餐。",
-  d2: "上午乘 Puffing Billy 穿行山林，下午在 Fitzroy 看街区与小店。",
+  d2: "上午乘 Puffing Billy 穿行山林；返城后若时间和体力合适，再去 Fitzroy 走走。",
   d3: "机场取车后沿海向西，途经 Torquay、Lorne，傍晚住进 Apollo Bay。",
-  d4: "从雨林步道驶向十二使徒岩，在 Loch Ard Gorge 慢慢看海岸地貌。",
+  d4: "先走进 The Redwoods Otways，再回到海岸看十二使徒岩、Loch Ard Gorge 与 The Razorback。",
   d5: "清晨再看一眼海岸，经 Colac 走内陆线返回墨尔本机场。",
   d6: "从墨尔本飞到凯恩斯，下午在 Esplanade Lagoon 放松，晚上逛夜市。",
   d7: "在 Reef Magic 外礁平台体验浮潜、半潜艇与大堡礁海上风景。",
@@ -48,7 +48,7 @@ const expectedFocus = {
   d9: "自驾串联 Lake Eacham、Curtain Fig Tree、高原小镇与瀑布。",
   d10: "上午逛 Rusty's Market，午后休整，傍晚去 Palm Cove 看海。",
   d11: "飞抵悉尼后休息片刻，沿 Barangaroo、The Rocks 走到 Circular Quay 夜景。",
-  d12: "从歌剧院中文导览出发，逛 The Rocks 周末市集，再沿植物园走到经典海港机位与 QVB。",
+  d12: "从歌剧院中文导览出发，逛 The Rocks Markets，再沿植物园走到经典海港机位与 QVB。",
   d13: "沿 Grand Pacific Drive 南下，经过 Sea Cliff Bridge、Kiama 与 Gerringong，视情况延伸袋鼠谷。",
   d14: "搭渡轮看 Taronga 的澳洲动物，下午走 Bondi 海岸，晚上在 Totti's 用餐。",
   d15: "上午悠闲安排 Manly 或 CBD，下午采购并整理行李，傍晚在 Cafe Sydney 告别。",
@@ -167,10 +167,9 @@ describe("itinerary data", () => {
     assert.ok(itinerary.days.every((day) => day.coverImageUrl.startsWith("/itinerary/")));
   });
 
-  it("keeps the four fixed stops without replacing D1's QVM night market", () => {
+  it("keeps the three fixed city stops without replacing D1's QVM night market", () => {
     const expectations = [
       { dayId: "d1", place: /Carlton/, detail: /Lygon Street|Little Italy/, resourceId: "carlton-lygon-map" },
-      { dayId: "d2", place: /Fitzroy/, detail: /Brunswick Street|Gertrude Street/, resourceId: "fitzroy-map" },
       { dayId: "d10", place: /Palm Cove/, detail: /棕榈|海滨|Esplanade/, resourceId: "palm-cove-map" },
       { dayId: "d11", place: /Barangaroo Reserve/, detail: /Wulugul Walk|海滨步道/, resourceId: "barangaroo-reserve-map" },
     ];
@@ -197,6 +196,68 @@ describe("itinerary data", () => {
     const d1Text = [d1.focus, ...d1.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`)].join(" ");
     assert.match(d1Text, /Carlton/);
     assert.match(d1Text, /QVM Winter Night Market/);
+  });
+
+  it("keeps Fitzroy as D2 backup instead of a fixed stop", () => {
+    const d2 = itinerary.days.find((day) => day.id === "d2");
+    const fitzroy = d2.blocks.find((block) => /Fitzroy/.test(block.place));
+
+    assert.doesNotMatch(d2.title, /Fitzroy/);
+    assert.ok(fitzroy, "D2 is missing Fitzroy");
+    assert.match(fitzroy.period, /备选/);
+    assert.match(`${fitzroy.activity} ${fitzroy.tip}`, /若|如果|视时间|体力/);
+    assert.ok(fitzroy.resources.some((resource) => resource.id === "fitzroy-map"));
+  });
+
+  it("keeps the ranked Top 7 mapped to their itinerary days", () => {
+    assert.deepEqual(
+      itinerary.priorities.map(({ rank, dayId, title, status }) => ({ rank, dayId, title, status })),
+      [
+        { rank: 1, dayId: "d1", title: "QVM Winter Night Market", status: "必去" },
+        { rank: 2, dayId: "d4", title: "The Redwoods Otways", status: "必去" },
+        { rank: 3, dayId: "d2", title: "Fitzroy", status: "备选" },
+        { rank: 4, dayId: "d10", title: "Palm Cove", status: "必去" },
+        { rank: 5, dayId: "d11", title: "Barangaroo Reserve", status: "必去" },
+        { rank: 6, dayId: "d12", title: "The Rocks Markets", status: "必去" },
+        { rank: 7, dayId: "d4", title: "The Razorback", status: "必去" },
+      ],
+    );
+
+    for (const priority of itinerary.priorities) {
+      const day = itinerary.days.find((item) => item.id === priority.dayId);
+      assert.ok(day, `unknown priority day ${priority.dayId}`);
+      assert.ok(
+        day.blocks.some((block) => block.resources.some((resource) => resource.id === priority.resource.id)),
+        `${priority.title} is not represented in ${priority.dayId}`,
+      );
+    }
+  });
+
+  it("runs D4 through The Redwoods and The Razorback in route order", () => {
+    const d4 = itinerary.days.find((day) => day.id === "d4");
+    const redwoods = d4.blocks.find((block) => /The Redwoods/.test(block.place));
+    const apostles = d4.blocks.find((block) => /Twelve Apostles/.test(block.place));
+    const lochArd = d4.blocks.find((block) => block.place === "Loch Ard Gorge");
+    const razorback = d4.blocks.find((block) => /The Razorback/.test(block.place));
+    const portCampbell = d4.blocks.find((block) => block.place === "Port Campbell");
+    const dinner = d4.blocks.find((block) => block.period === "晚上");
+
+    assert.equal(d4.primaryResource.id, "redwoods-otways-map");
+    assert.equal(new Set(d4.blocks.map((block) => block.sortOrder)).size, d4.blocks.length);
+    assert.ok(redwoods, "D4 is missing The Redwoods Otways");
+    assert.ok(razorback, "D4 is missing The Razorback");
+    assert.ok(redwoods.sortOrder < apostles.sortOrder);
+    assert.ok(apostles.sortOrder < lochArd.sortOrder);
+    assert.ok(lochArd.sortOrder < razorback.sortOrder);
+    assert.ok(razorback.sortOrder < portCampbell.sortOrder);
+    assert.equal(dinner.sortOrder, 80);
+    assert.match(`${razorback.activity} ${razorback.tip}`, /Loch Ard Gorge|同一景区|步行/);
+  });
+
+  it("shows the ranked list in the route overview and excludes backup stops from the compact summary", () => {
+    assert.match(itineraryUiSource, />旅程 Top 7</);
+    assert.match(itineraryUiSource, /priorities\.map/);
+    assert.match(itineraryUiSource, /备选\|可选/);
   });
 
   it("keeps D3 visually before the Twelve Apostles route", () => {
@@ -320,17 +381,17 @@ describe("itinerary data", () => {
     assert.match(mealBlock.activity, /QVM Winter Night Market/);
   });
 
-  it("adds The Rocks Weekend Market after the D12 Opera House tour", () => {
+  it("adds The Rocks Markets after the D12 Opera House tour", () => {
     const d12 = itinerary.days.find((day) => day.id === "d12");
     const tourIndex = d12.blocks.findIndex((block) => /中文内部导览/.test(block.activity));
     const walkIndex = d12.blocks.findIndex((block) => /Opera House → The Rocks/.test(block.place));
-    const marketIndex = d12.blocks.findIndex((block) => block.place === "The Rocks Weekend Market");
+    const marketIndex = d12.blocks.findIndex((block) => block.place === "The Rocks Markets");
     const marketBlock = d12.blocks[marketIndex];
     const mealBlock = d12.blocks.find((block) => block.period === "饮食" && block.place === "饮食安排");
     const officialResource = marketBlock?.resources.find((resource) => resource.type === "official");
 
-    assert.match(d12.title, /The Rocks Weekend Market/);
-    assert.match(d12.focus, /The Rocks 周末市集/);
+    assert.match(d12.title, /The Rocks Markets/);
+    assert.match(d12.focus, /The Rocks Markets/);
     assert.equal(walkIndex, tourIndex + 1);
     assert.equal(marketIndex, walkIndex + 1);
     assert.match(d12.blocks[walkIndex].activity, /导览结束后.*步行前往/);

@@ -29,19 +29,22 @@ const requiredDayColumns = [
 ];
 const requiredBlockColumns = ["day_id", "sort_order", "period", "place", "activity", "highlight", "tip", "resource_ids"];
 const requiredResourceColumns = ["resource_id", "title", "type", "url", "image_url", "image_alt", "source_note"];
+const requiredPriorityColumns = ["rank", "day_id", "title", "status", "note", "resource_id"];
 const resourceTypes = new Set(["map", "official", "booking", "restaurant", "photo", "note"]);
+const priorityStatuses = new Set(["必去", "备选"]);
 
 export function readWorkbook(sourcePath = workbookPath) {
   const workbook = JSON.parse(runPython(["scripts/itinerary_excel.py", "read", sourcePath]));
   const days = readSheet(workbook, "Days", requiredDayColumns).map(normalizeDay);
   const blocks = readSheet(workbook, "Blocks", requiredBlockColumns).map(normalizeBlock);
   const resources = readSheet(workbook, "Resources", requiredResourceColumns).map(normalizeResource);
+  const priorities = readSheet(workbook, "Priorities", requiredPriorityColumns).map(normalizePriority);
 
-  return buildItinerary(days, blocks, resources);
+  return buildItinerary(days, blocks, resources, priorities);
 }
 
-export function buildItinerary(days, blocks, resources) {
-  validateRows(days, blocks, resources);
+export function buildItinerary(days, blocks, resources, priorities) {
+  validateRows(days, blocks, resources, priorities);
 
   const resourceMap = new Map(resources.map((resource) => [resource.id, resource]));
   const blockGroups = new Map();
@@ -70,6 +73,17 @@ export function buildItinerary(days, blocks, resources) {
     return normalized;
   });
 
+  const itineraryPriorities = priorities
+    .map((priority) => {
+      const normalized = {
+        ...priority,
+        resource: resourceMap.get(priority.resourceId),
+      };
+      delete normalized.resourceId;
+      return normalized;
+    })
+    .sort((left, right) => left.rank - right.rank);
+
   return {
     trip: {
       title: "Aussie Chill",
@@ -86,6 +100,7 @@ export function buildItinerary(days, blocks, resources) {
     ],
     days: itineraryDays,
     resources,
+    priorities: itineraryPriorities,
   };
 }
 
@@ -154,7 +169,18 @@ function normalizeResource(row) {
   };
 }
 
-function validateRows(days, blocks, resources) {
+function normalizePriority(row) {
+  return {
+    rank: Number(row.rank),
+    dayId: text(row.day_id),
+    title: text(row.title),
+    status: text(row.status),
+    note: text(row.note),
+    resourceId: text(row.resource_id),
+  };
+}
+
+function validateRows(days, blocks, resources, priorities) {
   const ids = days.map((day) => day.id);
   if (days.length !== 17) throw new Error(`Expected 17 days, got ${days.length}`);
   if (ids[0] !== "d0" || ids[16] !== "d16") throw new Error("Expected D0-D16 day ids");
@@ -207,6 +233,20 @@ function validateRows(days, blocks, resources) {
     if (!Number.isFinite(block.sortOrder)) throw new Error(`Invalid sort_order for ${block.dayId}`);
     for (const resourceId of block.resourceIds) {
       if (!resourceIds.has(resourceId)) throw new Error(`Unknown resource_id ${resourceId} in ${block.dayId}`);
+    }
+  }
+
+  const priorityRanks = priorities.map((priority) => priority.rank).sort((left, right) => left - right);
+  if (priorities.length !== 7 || priorityRanks.join(",") !== "1,2,3,4,5,6,7") {
+    throw new Error("Expected itinerary priority ranks 1 through 7");
+  }
+  for (const priority of priorities) {
+    if (!dayIds.has(priority.dayId)) throw new Error(`Unknown priority day_id ${priority.dayId}`);
+    if (!priority.title || !priority.note || !priorityStatuses.has(priority.status)) {
+      throw new Error(`Invalid priority ${priority.rank}`);
+    }
+    if (!resourceIds.has(priority.resourceId)) {
+      throw new Error(`Unknown priority resource_id ${priority.resourceId}`);
     }
   }
 }

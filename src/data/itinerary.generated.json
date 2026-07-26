@@ -458,8 +458,8 @@
       "city": "墨尔本 + Belgrave",
       "lat": -37.8136,
       "lon": 144.9631,
-      "title": "墨尔本近郊：Puffing Billy、Sassafras 与 Fitzroy",
-      "focus": "上午乘 Puffing Billy 穿行山林，下午在 Fitzroy 看街区与小店。",
+      "title": "墨尔本近郊：Puffing Billy 与 Sassafras",
+      "focus": "上午乘 Puffing Billy 穿行山林；返城后若时间和体力合适，再去 Fitzroy 走走。",
       "lodging": "Oaks Melbourne on Market Hotel",
       "climateNote": "墨尔本冬季约 6-14°C，早晚冷，多风，偶有阵雨。",
       "clothingNote": "防风外套比单纯厚毛衣更实用，雨天鞋子尽量防水。",
@@ -710,11 +710,11 @@
         {
           "dayId": "d2",
           "sortOrder": 80,
-          "period": "下午后段",
+          "period": "备选 · 下午后段",
           "place": "Fitzroy: Brunswick Street → Gertrude Street",
-          "activity": "半日团返城后前往 Fitzroy，完成街区漫步、独立小店和咖啡",
-          "highlight": "街头艺术、老建筑与本地生活版墨尔本",
-          "tip": "预留约 90 分钟，从 Brunswick Street 走到 Gertrude Street；18:00 左右回酒店整理行李。",
+          "activity": "若半日团准时返城且体力充足，再沿 Brunswick Street / Gertrude Street 随意走走。",
+          "highlight": "街区小店、咖啡与旧工业街景",
+          "tip": "把 Fitzroy 当作加分项；返城较晚或需要休息时直接回酒店。",
           "resources": [
             {
               "id": "fitzroy-map",
@@ -772,7 +772,7 @@
           "place": "饮食安排",
           "activity": "早餐：酒店附近 café / 集合前简单吃；午餐：Lakeside / Emerald Lake Park café 或团中简餐；晚餐：CBD / Southbank 轻松晚餐",
           "highlight": "当天餐食节奏",
-          "tip": "集合前吃得简单些；返城后在 Fitzroy / CBD 轻松晚餐，留出整理行李的时间。",
+          "tip": "Fitzroy 仅作返城后的备选；不去时直接在 CBD 用餐。",
           "resources": [
             {
               "id": "russell-343-map",
@@ -1212,15 +1212,15 @@
       "city": "Apollo Bay → Port Campbell",
       "lat": -38.6191,
       "lon": 142.9956,
-      "title": "大洋路海岸：雨林、十二使徒岩与 Loch Ard Gorge",
-      "focus": "从雨林步道驶向十二使徒岩，在 Loch Ard Gorge 慢慢看海岸地貌。",
+      "title": "红杉林到海岸：The Redwoods、十二使徒岩与 Loch Ard Gorge",
+      "focus": "先走进 The Redwoods Otways，再回到海岸看十二使徒岩、Loch Ard Gorge 与 The Razorback。",
       "lodging": "Southern Ocean Villas",
       "climateNote": "海岸风大，步道和台阶雨后湿滑。",
       "clothingNote": "防风外套、防水鞋；拍照时不要太靠近海浪。",
       "coverImageUrl": "/itinerary/d4-twelve-apostles-gorge.png",
       "coverImageAlt": "十二使徒岩与峡谷海岸",
       "transport": "自驾 · 大洋路海岸段",
-      "leaveBy": "08:30 前离开 Apollo Bay",
+      "leaveBy": "07:45 前离开 Apollo Bay",
       "lodgingResource": {
         "id": "southern-ocean-villas-map",
         "title": "Southern Ocean Villas",
@@ -1231,13 +1231,13 @@
         "sourceNote": "Google Maps"
       },
       "primaryResource": {
-        "id": "maits-rest-map",
-        "title": "Maits Rest Rainforest Walk",
+        "id": "redwoods-otways-map",
+        "title": "The Redwoods Otways",
         "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Maits+Rest+Rainforest+Walk",
+        "url": "https://www.google.com/maps/search/?api=1&query=The+Redwoods+Otways+Beech+Forest+VIC",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "Google Maps"
+        "sourceNote": "Google Maps · Binns Road, Beech Forest"
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
@@ -1252,11 +1252,11 @@
         {
           "dayId": "d4",
           "sortOrder": 10,
-          "period": "上午",
+          "period": "备选 · 清晨",
           "place": "Maits Rest Rainforest Walk",
-          "activity": "雨林短步道",
+          "activity": "若 07:45 前离开 Apollo Bay 且时间充裕，可先走一段雨林环线。",
           "highlight": "冬日湿润雨林，非常有氛围",
-          "tip": "步道轻松，适合作为早晨活动；注意地面湿滑",
+          "tip": "只有早出发且时间充裕时再停，约 30 分钟。",
           "resources": [
             {
               "id": "maits-rest-map",
@@ -1272,6 +1272,35 @@
         {
           "dayId": "d4",
           "sortOrder": 20,
+          "period": "上午",
+          "place": "The Redwoods Otways",
+          "activity": "从北侧 Binns Road 进入红杉林，沿 Aire River 林间步道慢走约 30–45 分钟。",
+          "highlight": "高大的加州红杉、林下光影与安静的河谷氛围",
+          "tip": "林区无手机信号，地面可能湿滑；出发前查看 Parks Victoria 路况与现场标识。",
+          "resources": [
+            {
+              "id": "redwoods-otways-map",
+              "title": "The Redwoods Otways",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=The+Redwoods+Otways+Beech+Forest+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Binns Road, Beech Forest"
+            },
+            {
+              "id": "redwoods-otways-official",
+              "title": "Aire Valley Reserve (Red Woods) · Parks Victoria",
+              "type": "official",
+              "url": "https://www.parks.vic.gov.au/places-to-see/sites/aire-valley-reserve-%28red-woods%29-day-visitor-area",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Parks Victoria · 行前查看开放、路况与安全提示"
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 30,
           "period": "中午前后",
           "place": "Gibson Steps",
           "activity": "下到海滩看悬崖与海蚀柱",
@@ -1291,7 +1320,7 @@
         },
         {
           "dayId": "d4",
-          "sortOrder": 30,
+          "sortOrder": 40,
           "period": "下午",
           "place": "Twelve Apostles",
           "activity": "十二使徒岩主观景台",
@@ -1311,12 +1340,12 @@
         },
         {
           "dayId": "d4",
-          "sortOrder": 40,
+          "sortOrder": 50,
           "period": "下午",
           "place": "Loch Ard Gorge",
-          "activity": "峡谷、海湾、海蚀地貌",
-          "highlight": "峡谷、海湾与沉船海岸故事",
-          "tip": "这里要认真留时间，不要只拍一张就走",
+          "activity": "在主观景区看峡湾与沉船故事，再接 Geology Walk。",
+          "highlight": "峡湾地貌、沉船历史与悬崖顶观景",
+          "tip": "至少预留 1 小时；海滩下行台阶关闭，按现场标识走崖顶步道。",
           "resources": [
             {
               "id": "loch-ard-map",
@@ -1331,7 +1360,7 @@
         },
         {
           "dayId": "d4",
-          "sortOrder": 50,
+          "sortOrder": 55,
           "period": "下午",
           "place": "Tom and Eva",
           "activity": "Loch Ard Gorge 附近短停",
@@ -1363,9 +1392,9 @@
           "sortOrder": 60,
           "period": "下午后段",
           "place": "The Razorback",
-          "activity": "看狭长海蚀岩脊",
-          "highlight": "形状特别，层次感强",
-          "tip": "适合短停拍照；风大时注意安全",
+          "activity": "从 Loch Ard Gorge 主停车场走 900 米往返 Geology Walk，经 Island Arch 到 The Razorback 观景台。",
+          "highlight": "同一景区内的狭长海蚀岩脊与悬崖顶视角",
+          "tip": "步行往返约 30–40 分钟；不需要另开一段车程。",
           "resources": [
             {
               "id": "razorback-map",
@@ -2867,8 +2896,8 @@
       "city": "悉尼市区",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "悉尼经典一日：歌剧院、The Rocks Weekend Market、植物园与 QVB",
-      "focus": "从歌剧院中文导览出发，逛 The Rocks 周末市集，再沿植物园走到经典海港机位与 QVB。",
+      "title": "悉尼经典一日：歌剧院、The Rocks Markets、植物园与 QVB",
+      "focus": "从歌剧院中文导览出发，逛 The Rocks Markets，再沿植物园走到经典海港机位与 QVB。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
       "climateNote": "悉尼冬季晴天概率较好，早晚凉。",
       "clothingNote": "薄羽绒或风衣，海港边风大时注意保暖。",
@@ -2987,7 +3016,7 @@
           "sortOrder": 40,
           "period": "10:30–10:50",
           "place": "Opera House → The Rocks",
-          "activity": "中文导览结束后沿 Circular Quay 步行前往 The Rocks Weekend Market",
+          "activity": "中文导览结束后沿 Circular Quay 步行前往 The Rocks Markets",
           "highlight": "海港步行衔接悉尼老城区",
           "tip": "步行约 15–20 分钟；沿途可拍 Ferry、Opera House 与 Harbour Bridge",
           "resources": [
@@ -3020,7 +3049,7 @@
             },
             {
               "id": "the-rocks-market-official",
-              "title": "The Rocks Weekend Market",
+              "title": "The Rocks Markets",
               "type": "official",
               "url": "https://therocks.com/whats-on/market-overview",
               "imageUrl": "",
@@ -3033,10 +3062,10 @@
           "dayId": "d12",
           "sortOrder": 50,
           "period": "10:50–11:50",
-          "place": "The Rocks Weekend Market",
-          "activity": "逛手作摊位、老街与周末市集",
-          "highlight": "悉尼老城区、手作市集、Harbour Bridge 背景和本地周末氛围",
-          "tip": "周日 10:00–17:00 开放；停留约 45–60 分钟，不必赶着逛完所有摊位",
+          "place": "The Rocks Markets",
+          "activity": "10:00–17:00 开放；中文导览结束后步行前往，停留约 45–60 分钟。",
+          "highlight": "悉尼老城区、手作市集、Harbour Bridge 背景与本地周末氛围",
+          "tip": "周日 10:00–17:00；导览后步行前往，停留 45–60 分钟。",
           "resources": [
             {
               "id": "the-rocks-map",
@@ -3049,7 +3078,7 @@
             },
             {
               "id": "the-rocks-market-official",
-              "title": "The Rocks Weekend Market",
+              "title": "The Rocks Markets",
               "type": "official",
               "url": "https://therocks.com/whats-on/market-overview",
               "imageUrl": "",
@@ -3078,7 +3107,7 @@
             },
             {
               "id": "the-rocks-market-official",
-              "title": "The Rocks Weekend Market",
+              "title": "The Rocks Markets",
               "type": "official",
               "url": "https://therocks.com/whats-on/market-overview",
               "imageUrl": "",
@@ -3223,7 +3252,7 @@
             },
             {
               "id": "the-rocks-market-official",
-              "title": "The Rocks Weekend Market",
+              "title": "The Rocks Markets",
               "type": "official",
               "url": "https://therocks.com/whats-on/market-overview",
               "imageUrl": "",
@@ -4835,7 +4864,7 @@
     },
     {
       "id": "the-rocks-market-official",
-      "title": "The Rocks Weekend Market",
+      "title": "The Rocks Markets",
       "type": "official",
       "url": "https://therocks.com/whats-on/market-overview",
       "imageUrl": "",
@@ -5615,6 +5644,138 @@
       "imageUrl": "",
       "imageAlt": "Barangaroo Reserve 地图",
       "sourceNote": "Google Maps"
+    },
+    {
+      "id": "redwoods-otways-map",
+      "title": "The Redwoods Otways",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=The+Redwoods+Otways+Beech+Forest+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Binns Road, Beech Forest"
+    },
+    {
+      "id": "redwoods-otways-official",
+      "title": "Aire Valley Reserve (Red Woods) · Parks Victoria",
+      "type": "official",
+      "url": "https://www.parks.vic.gov.au/places-to-see/sites/aire-valley-reserve-%28red-woods%29-day-visitor-area",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Parks Victoria · 行前查看开放、路况与安全提示"
+    }
+  ],
+  "priorities": [
+    {
+      "rank": 1,
+      "dayId": "d1",
+      "title": "QVM Winter Night Market",
+      "status": "必去",
+      "note": "周三限定夜市，晚餐边逛边吃",
+      "resource": {
+        "id": "qvm-winter-night-market-official",
+        "title": "QVM Winter Night Market 2026",
+        "type": "official",
+        "url": "https://whatson.melbourne.vic.gov.au/things-to-do/winter-night-market",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "City of Melbourne：2026-07-29 17:00-22:00，免费，免预约；QVM 官网确认每周三 6/3-8/26。"
+      }
+    },
+    {
+      "rank": 2,
+      "dayId": "d4",
+      "title": "The Redwoods Otways",
+      "status": "必去",
+      "note": "红杉林慢走 30–45 分钟",
+      "resource": {
+        "id": "redwoods-otways-map",
+        "title": "The Redwoods Otways",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=The+Redwoods+Otways+Beech+Forest+VIC",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps · Binns Road, Beech Forest"
+      }
+    },
+    {
+      "rank": 3,
+      "dayId": "d2",
+      "title": "Fitzroy",
+      "status": "备选",
+      "note": "半日团准时返城且体力合适再去",
+      "resource": {
+        "id": "fitzroy-map",
+        "title": "Fitzroy Brunswick Street / Gertrude Street",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Fitzroy+Brunswick+Street+Gertrude+Street+Melbourne",
+        "imageUrl": "",
+        "imageAlt": "Fitzroy Brunswick Street 与 Gertrude Street 地图",
+        "sourceNote": "Google Maps"
+      }
+    },
+    {
+      "rank": 4,
+      "dayId": "d10",
+      "title": "Palm Cove",
+      "status": "必去",
+      "note": "傍晚沿海滨散步、喝咖啡",
+      "resource": {
+        "id": "palm-cove-map",
+        "title": "Palm Cove",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Palm+Cove+Queensland",
+        "imageUrl": "",
+        "imageAlt": "Palm Cove 地图",
+        "sourceNote": "Google Maps"
+      }
+    },
+    {
+      "rank": 5,
+      "dayId": "d11",
+      "title": "Barangaroo Reserve",
+      "status": "必去",
+      "note": "转场日下午沿 Wulugul Walk 慢走",
+      "resource": {
+        "id": "barangaroo-reserve-map",
+        "title": "Barangaroo Reserve",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Barangaroo+Reserve+Sydney",
+        "imageUrl": "",
+        "imageAlt": "Barangaroo Reserve 地图",
+        "sourceNote": "Google Maps"
+      }
+    },
+    {
+      "rank": 6,
+      "dayId": "d12",
+      "title": "The Rocks Markets",
+      "status": "必去",
+      "note": "中文导览后步行前往，停留 45–60 分钟",
+      "resource": {
+        "id": "the-rocks-market-official",
+        "title": "The Rocks Markets",
+        "type": "official",
+        "url": "https://therocks.com/whats-on/market-overview",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "The Rocks 官方市场页"
+      }
+    },
+    {
+      "rank": 7,
+      "dayId": "d4",
+      "title": "The Razorback",
+      "status": "必去",
+      "note": "Loch Ard Gorge 景区内沿 Geology Walk 前往",
+      "resource": {
+        "id": "razorback-map",
+        "title": "The Razorback",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=The+Razorback+Port+Campbell",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      }
     }
   ]
 }
