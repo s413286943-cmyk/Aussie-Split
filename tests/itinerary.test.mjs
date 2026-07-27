@@ -254,10 +254,9 @@ describe("itinerary data", () => {
     assert.match(`${razorback.activity} ${razorback.tip}`, /Loch Ard Gorge|同一景区|步行/);
   });
 
-  it("shows the ranked list in the route overview and excludes backup stops from the compact summary", () => {
-    assert.match(itineraryUiSource, />旅程 Top 7</);
-    assert.match(itineraryUiSource, /priorities\.map/);
-    assert.match(itineraryUiSource, /备选\|可选/);
+  it("keeps the ranked list out of the route overview", () => {
+    assert.doesNotMatch(itineraryUiSource, />旅程 Top 7</);
+    assert.doesNotMatch(itineraryUiSource, /priorities\.map/);
   });
 
   it("keeps D3 visually before the Twelve Apostles route", () => {
