@@ -327,6 +327,35 @@
         },
         {
           "dayId": "d1",
+          "sortOrder": 65,
+          "period": "天气与体力备选",
+          "place": "Point Ormond Reserve / Lookout",
+          "activity": "16:00 查看雷达与云量；条件合适时四人 rideshare 前往 Elwood，沿既有步道与 lookout 看海湾黄昏，再直接去 QVM",
+          "highlight": "Port Phillip Bay 日落 + 墨尔本城市轮廓",
+          "tip": "约 16:20-16:30 从 CBD 出发，16:50-17:40 停留，18:15 左右抵达 QVM；阴雨、风大或落地疲惫时直接跳过，穿防风防水层并留在有照明的步道和观景区。",
+          "resources": [
+            {
+              "id": "point-ormond-map",
+              "title": "Point Ormond Reserve / Lookout",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Point+Ormond+Reserve+Elwood+Melbourne",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Marine Parade, Elwood"
+            },
+            {
+              "id": "point-ormond-official",
+              "title": "Point Ormond Reserve · City of Port Phillip",
+              "type": "official",
+              "url": "https://www.portphillip.vic.gov.au/explore-the-city/beaches-parks-and-playgrounds/find-parks-and-playgrounds/point-ormond-reserve/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "City of Port Phillip · location, paths and facilities"
+            }
+          ]
+        },
+        {
+          "dayId": "d1",
           "sortOrder": 70,
           "period": "傍晚",
           "place": "Queen Victoria Market",
@@ -1486,15 +1515,15 @@
       "city": "Port Campbell → 墨尔本机场",
       "lat": -37.669,
       "lon": 144.841,
-      "title": "告别大洋路：清晨海岸与内陆返程",
-      "focus": "清晨再看一眼海岸，经 Colac 走内陆线返回墨尔本机场。",
+      "title": "海岸地貌到野生动物：大洋路返程日",
+      "focus": "清晨补看海岸，再经 The Grotto、London Arch 与 Great Ocean Road Wildlife Park 走内陆线返回机场。",
       "lodging": "Holiday Inn Melbourne Airport",
       "climateNote": "早晨海边冷，回程时间长。",
       "clothingNote": "早上防风保暖，下午回机场前预留加油和还车时间。",
       "coverImageUrl": "/itinerary/d5-port-campbell-morning.png",
       "coverImageAlt": "Port Campbell 清晨海岸",
       "transport": "自驾 · 内陆回墨尔本机场",
-      "leaveBy": "08:00 前离开 Port Campbell，17:00 前还车更稳",
+      "leaveBy": "07:00 前退房；11:45 前离开 Wildlife Park，17:00 前还车",
       "lodgingResource": {
         "id": "holiday-inn-airport-map",
         "title": "Holiday Inn Melbourne Airport",
@@ -1505,32 +1534,52 @@
         "sourceNote": "Google Maps"
       },
       "primaryResource": {
-        "id": "twelve-apostles-map",
-        "title": "Twelve Apostles",
+        "id": "great-ocean-road-wildlife-park-map",
+        "title": "Great Ocean Road Wildlife Park",
         "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Twelve+Apostles+Victoria",
+        "url": "https://www.google.com/maps/search/?api=1&query=Great+Ocean+Road+Wildlife+Park+Gellibrand+Lower+VIC",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "Google Maps"
+        "sourceNote": "Google Maps · 29 The Boulevarde, Gellibrand Lower"
       },
       "ticketResource": {
-        "id": "no-fixed-ticket",
-        "title": "今天无需提前购票",
-        "type": "note",
-        "url": "",
+        "id": "great-ocean-road-wildlife-park-booking",
+        "title": "Great Ocean Road Wildlife Park · General Admission",
+        "type": "booking",
+        "url": "https://fareharbor.com/embeds/book/greatoceanroadwildlifepark/?flow=1586423&full-items=yes",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "当天以免费景点或灵活安排为主"
+        "sourceNote": "Official booking · general admission; prices and availability can change"
       },
       "blocks": [
         {
           "dayId": "d5",
           "sortOrder": 10,
-          "period": "早上",
+          "period": "07:00-07:30",
+          "place": "Port Campbell",
+          "activity": "退房、装车并简单早餐",
+          "highlight": "小镇清晨 + 返程准备",
+          "tip": "把行李装车、早餐和退房一次完成；07:30 左右驶离住宿。",
+          "resources": [
+            {
+              "id": "port-campbell-map",
+              "title": "Port Campbell",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Victoria",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d5",
+          "sortOrder": 20,
+          "period": "天气补拍备选 · 07:30-08:10",
           "place": "Twelve Apostles / Loch Ard Gorge",
-          "activity": "清晨再看一处海岸景点",
-          "highlight": "光线柔和，人相对少",
-          "tip": "若前一天下雨，可在十二使徒岩或 Loch Ard Gorge 中选一处重访；天气好则按时间择一。",
+          "activity": "若前一日受天气影响，在两处中只选一处清晨补拍；若已看够则直接前往 The Grotto",
+          "highlight": "柔和晨光 + 较少游客",
+          "tip": "只选一处，08:10 最晚离开；这段是天气补拍，不影响 10:00 后进入 Wildlife Park。",
           "resources": [
             {
               "id": "twelve-apostles-map",
@@ -1554,18 +1603,18 @@
         },
         {
           "dayId": "d5",
-          "sortOrder": 20,
-          "period": "上午",
-          "place": "Port Campbell",
-          "activity": "早餐、退房",
-          "highlight": "海边小镇慢节奏",
-          "tip": "不要拖太晚，今天还要回机场",
+          "sortOrder": 30,
+          "period": "08:35 左右",
+          "place": "The Grotto",
+          "activity": "看海蚀洞和海水窗口",
+          "highlight": "洞穴 + 海景构图",
+          "tip": "台阶上下，雨后注意湿滑；停留 20–30 分钟即可",
           "resources": [
             {
-              "id": "port-campbell-map",
-              "title": "Port Campbell",
+              "id": "grotto-map",
+              "title": "The Grotto",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Victoria",
+              "url": "https://www.google.com/maps/search/?api=1&query=The+Grotto+Port+Campbell",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -1574,8 +1623,8 @@
         },
         {
           "dayId": "d5",
-          "sortOrder": 30,
-          "period": "上午 / 中午",
+          "sortOrder": 40,
+          "period": "09:10 左右",
           "place": "London Bridge / London Arch",
           "activity": "看海蚀拱门",
           "highlight": "Port Campbell 以西经典点",
@@ -1603,41 +1652,39 @@
         },
         {
           "dayId": "d5",
-          "sortOrder": 40,
-          "period": "中午前后",
-          "place": "The Grotto",
-          "activity": "看海蚀洞和海水窗口",
-          "highlight": "洞穴 + 海景构图",
-          "tip": "台阶上下，雨后注意湿滑；停留 20–30 分钟即可",
-          "resources": [
-            {
-              "id": "grotto-map",
-              "title": "The Grotto",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=The+Grotto+Port+Campbell",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d5",
           "sortOrder": 50,
-          "period": "中午 / 下午",
-          "place": "Bay of Islands",
-          "activity": "时间充裕时延伸",
-          "highlight": "更开阔、更荒凉的海蚀柱群",
-          "tip": "天气好、时间宽裕再去；如果要赶机场就跳过",
+          "period": "10:15-11:30",
+          "place": "Great Ocean Road Wildlife Park",
+          "activity": "购买普通门票进入互动区和 sanctuary，近距离看袋鼠、沙袋鼠等澳洲本土动物；游园和可选购饲料喂食合计预留 60-75 分钟",
+          "highlight": "大洋路沿线的澳洲本土动物互动体验",
+          "tip": "普通门票建议提前在线购买；动物饲料和 close-up encounters 另付费。步道多为未铺装地面，穿防滑包脚鞋；11:45 前离园，为 Colac 午餐、加油和机场还车保留缓冲。",
           "resources": [
             {
-              "id": "bay-islands-map",
-              "title": "Bay of Islands",
+              "id": "great-ocean-road-wildlife-park-map",
+              "title": "Great Ocean Road Wildlife Park",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Bay+of+Islands+Victoria",
+              "url": "https://www.google.com/maps/search/?api=1&query=Great+Ocean+Road+Wildlife+Park+Gellibrand+Lower+VIC",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "Google Maps · 29 The Boulevarde, Gellibrand Lower"
+            },
+            {
+              "id": "great-ocean-road-wildlife-park-official",
+              "title": "Great Ocean Road Wildlife Park · Visitor Information",
+              "type": "official",
+              "url": "https://greatoceanroadwildlifepark.com.au/visitor-information/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Official · daily 10:00-17:00; recheck hours before travel"
+            },
+            {
+              "id": "great-ocean-road-wildlife-park-booking",
+              "title": "Great Ocean Road Wildlife Park · General Admission",
+              "type": "booking",
+              "url": "https://fareharbor.com/embeds/book/greatoceanroadwildlifepark/?flow=1586423&full-items=yes",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Official booking · general admission; prices and availability can change"
             }
           ]
         },
@@ -1715,33 +1762,24 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：Port Campbell café；午餐：Colac / Timboon Ice Cream；晚餐：机场酒店简餐",
-          "highlight": "当天餐食节奏",
-          "tip": "Timboon Ice Cream 可作为回程中的小惊喜；抵达机场后简单用餐并整理行李。",
+          "activity": "早餐：Port Campbell café；午餐：离开 Great Ocean Road Wildlife Park 后在 Colac 简餐；晚餐：机场酒店简餐",
+          "highlight": "野生动物体验 + 内陆返程补给",
+          "tip": "Colac 作为返程主休息点，把午餐、加油和休息一次完成；抵达机场后简单用餐并整理行李。",
           "resources": [
+            {
+              "id": "great-ocean-road-wildlife-park-map",
+              "title": "Great Ocean Road Wildlife Park",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Great+Ocean+Road+Wildlife+Park+Gellibrand+Lower+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 29 The Boulevarde, Gellibrand Lower"
+            },
             {
               "id": "colac-map",
               "title": "Colac",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Colac+Victoria",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "timboon-icecream-map",
-              "title": "Timboon Fine Ice Cream",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Timboon+Fine+Ice+Cream",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "port-campbell-map",
-              "title": "Port Campbell",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Victoria",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -5662,6 +5700,51 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Parks Victoria · 行前查看开放、路况与安全提示"
+    },
+    {
+      "id": "point-ormond-map",
+      "title": "Point Ormond Reserve / Lookout",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Point+Ormond+Reserve+Elwood+Melbourne",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Marine Parade, Elwood"
+    },
+    {
+      "id": "point-ormond-official",
+      "title": "Point Ormond Reserve · City of Port Phillip",
+      "type": "official",
+      "url": "https://www.portphillip.vic.gov.au/explore-the-city/beaches-parks-and-playgrounds/find-parks-and-playgrounds/point-ormond-reserve/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "City of Port Phillip · location, paths and facilities"
+    },
+    {
+      "id": "great-ocean-road-wildlife-park-map",
+      "title": "Great Ocean Road Wildlife Park",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Great+Ocean+Road+Wildlife+Park+Gellibrand+Lower+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 29 The Boulevarde, Gellibrand Lower"
+    },
+    {
+      "id": "great-ocean-road-wildlife-park-official",
+      "title": "Great Ocean Road Wildlife Park · Visitor Information",
+      "type": "official",
+      "url": "https://greatoceanroadwildlifepark.com.au/visitor-information/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Official · daily 10:00-17:00; recheck hours before travel"
+    },
+    {
+      "id": "great-ocean-road-wildlife-park-booking",
+      "title": "Great Ocean Road Wildlife Park · General Admission",
+      "type": "booking",
+      "url": "https://fareharbor.com/embeds/book/greatoceanroadwildlifepark/?flow=1586423&full-items=yes",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Official booking · general admission; prices and availability can change"
     }
   ],
   "priorities": [

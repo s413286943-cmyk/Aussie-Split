@@ -21,7 +21,7 @@ const expectedTitles = {
   d2: "墨尔本近郊：Puffing Billy 与 Sassafras",
   d3: "驶上大洋路：Torquay、Lorne 到 Apollo Bay",
   d4: "红杉林到海岸：The Redwoods、十二使徒岩与 Loch Ard Gorge",
-  d5: "告别大洋路：清晨海岸与内陆返程",
+  d5: "海岸地貌到野生动物：大洋路返程日",
   d6: "抵达凯恩斯：Esplanade Lagoon 与热带夜市",
   d7: "奔赴外礁：Reef Magic 大堡礁一日",
   d8: "深入丹翠：雨林、河流与 Cape Tribulation",
@@ -41,7 +41,7 @@ const expectedFocus = {
   d2: "上午乘 Puffing Billy 穿行山林；返城后若时间和体力合适，再去 Fitzroy 走走。",
   d3: "机场取车后沿海向西，途经 Torquay、Lorne，傍晚住进 Apollo Bay。",
   d4: "先走进 The Redwoods Otways，再回到海岸看十二使徒岩、Loch Ard Gorge 与 The Razorback。",
-  d5: "清晨再看一眼海岸，经 Colac 走内陆线返回墨尔本机场。",
+  d5: "清晨补看海岸，再经 The Grotto、London Arch 与 Great Ocean Road Wildlife Park 走内陆线返回机场。",
   d6: "从墨尔本飞到凯恩斯，下午在 Esplanade Lagoon 放松，晚上逛夜市。",
   d7: "在 Reef Magic 外礁平台体验浮潜、半潜艇与大堡礁海上风景。",
   d8: "沿丹翠河进入雨林，在 Cape Tribulation 看雨林与海相接。",
@@ -209,6 +209,20 @@ describe("itinerary data", () => {
     assert.ok(fitzroy.resources.some((resource) => resource.id === "fitzroy-map"));
   });
 
+  it("adds Point Ormond as a weather-and-energy backup before D1's QVM night market", () => {
+    const d1 = itinerary.days.find((day) => day.id === "d1");
+    const pointOrmond = d1.blocks.find((block) => /Point Ormond/.test(block.place));
+    const qvm = d1.blocks.find((block) => /Queen Victoria Market/.test(block.place));
+
+    assert.ok(pointOrmond, "D1 is missing Point Ormond");
+    assert.ok(qvm, "D1 is missing QVM");
+    assert.match(pointOrmond.period, /天气|体力|备选/);
+    assert.match(`${pointOrmond.activity} ${pointOrmond.tip}`, /雷达|云量|阴雨|风大|疲惫/);
+    assert.ok(pointOrmond.sortOrder < qvm.sortOrder);
+    assert.ok(pointOrmond.resources.some((resource) => resource.id === "point-ormond-map"));
+    assert.ok(pointOrmond.resources.some((resource) => resource.id === "point-ormond-official"));
+  });
+
   it("keeps the ranked Top 7 mapped to their itinerary days", () => {
     assert.deepEqual(
       itinerary.priorities.map(({ rank, dayId, title, status }) => ({ rank, dayId, title, status })),
@@ -252,6 +266,33 @@ describe("itinerary data", () => {
     assert.ok(razorback.sortOrder < portCampbell.sortOrder);
     assert.equal(dinner.sortOrder, 80);
     assert.match(`${razorback.activity} ${razorback.tip}`, /Loch Ard Gorge|同一景区|步行/);
+  });
+
+  it("routes D5 through Great Ocean Road Wildlife Park instead of Bay of Islands", () => {
+    const d5 = itinerary.days.find((day) => day.id === "d5");
+    const grotto = d5.blocks.find((block) => block.place === "The Grotto");
+    const londonArch = d5.blocks.find((block) => /London (Arch|Bridge)/.test(block.place));
+    const wildlifePark = d5.blocks.find((block) => block.place === "Great Ocean Road Wildlife Park");
+    const colac = d5.blocks.find((block) => block.place === "Colac");
+    const d5Text = d5.blocks
+      .map((block) => `${block.place} ${block.activity} ${block.tip}`)
+      .join(" ");
+
+    assert.ok(grotto, "D5 is missing The Grotto");
+    assert.ok(londonArch, "D5 is missing London Arch");
+    assert.ok(wildlifePark, "D5 is missing Great Ocean Road Wildlife Park");
+    assert.ok(colac, "D5 is missing Colac");
+    assert.ok(grotto.sortOrder < londonArch.sortOrder);
+    assert.ok(londonArch.sortOrder < wildlifePark.sortOrder);
+    assert.ok(wildlifePark.sortOrder < colac.sortOrder);
+    assert.equal(d5.primaryResource.id, "great-ocean-road-wildlife-park-map");
+    assert.equal(d5.ticketResource.id, "great-ocean-road-wildlife-park-booking");
+    assert.equal(d5.ticketResource.type, "booking");
+    assert.match(`${wildlifePark.activity} ${wildlifePark.tip}`, /60-75|饲料|另付费/);
+    assert.ok(
+      wildlifePark.resources.some((resource) => resource.id === "great-ocean-road-wildlife-park-official"),
+    );
+    assert.doesNotMatch(d5Text, /Bay of Islands/);
   });
 
   it("keeps the ranked list out of the route overview", () => {
