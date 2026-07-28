@@ -121,15 +121,15 @@
       "city": "墨尔本",
       "lat": -37.8136,
       "lon": 144.9631,
-      "title": "延误抵达墨尔本：QVM 冬季夜市",
-      "focus": "15:15 抵达 MEL；入境、进城并入住后，只安排 QVM Winter Night Market，夜市用餐后回酒店休息。",
+      "title": "初到墨尔本：QVM 冬季夜市",
+      "focus": "下午抵达墨尔本，入住稍作休整，晚上在 QVM Winter Night Market 边逛边吃，轻松开启南半球旅程。",
       "lodging": "Oaks Melbourne on Market Hotel",
       "climateNote": "墨尔本冬季约 6-14°C，早晚冷，多风，偶有阵雨。",
       "clothingNote": "羽绒服或防风外套、毛衣、长裤、防水鞋。",
       "coverImageUrl": "/itinerary/melbourne-city-morning.png",
-      "coverImageAlt": "墨尔本清晨城市街景",
-      "transport": "机场接送 + rideshare / 步行",
-      "leaveBy": "15:15 抵达；预计 18:15 左右前往 QVM",
+      "coverImageAlt": "墨尔本冬日城市街景",
+      "transport": "机场出租车 / Uber + 市区步行",
+      "leaveBy": "15:15 抵达 MEL；约 18:15 从酒店前往 QVM",
       "lodgingResource": {
         "id": "oaks-market-map",
         "title": "Oaks Melbourne on Market Hotel",
@@ -163,9 +163,9 @@
           "sortOrder": 10,
           "period": "15:15",
           "place": "墨尔本机场 (MEL)",
-          "activity": "航班延误后抵达墨尔本",
-          "highlight": "正式落地澳洲",
-          "tip": "预留 60–90 分钟办理入境、取行李和会合；流程更快时，把多出的时间留给酒店休息。",
+          "activity": "抵达墨尔本，办理入境并领取行李",
+          "highlight": "南半球旅程正式开始",
+          "tip": "预留 60–90 分钟办理入境、取行李并与同行人会合；落地日不必赶行程。",
           "resources": [
             {
               "id": "mel-airport-map",
@@ -192,9 +192,9 @@
           "sortOrder": 20,
           "period": "15:15–17:30 预计",
           "place": "MEL → Oaks Melbourne on Market Hotel",
-          "activity": "入境、取行李后四人打车 / Uber 进城",
-          "highlight": "减少延误后的转场消耗",
-          "tip": "4 人加多件行李，rideshare / taxi 最省力；CBD 城市步行集中放到 D2 上午。",
+          "activity": "乘出租车 / Uber 前往酒店",
+          "highlight": "从机场驶入冬日墨尔本",
+          "tip": "四人带多件行李，出租车 / Uber 更省心；车上看看窗外，让身体慢慢适应新的城市。",
           "resources": [
             {
               "id": "mel-airport-map",
@@ -230,9 +230,9 @@
           "sortOrder": 30,
           "period": "17:30–18:10 预计",
           "place": "Oaks Melbourne on Market Hotel",
-          "activity": "入住、放行李、换衣服，短暂休息",
-          "highlight": "夜市前快速恢复",
-          "tip": "如果到店较晚，就缩短夜市停留，保证睡眠。",
+          "activity": "入住、放下行李，换好保暖衣物后稍作休息",
+          "highlight": "在出门前缓一缓",
+          "tip": "如果到店稍晚，就少逛一会儿夜市，按照自己的状态安排。",
           "resources": [
             {
               "id": "oaks-market-map",
@@ -259,9 +259,9 @@
           "sortOrder": 40,
           "period": "18:15–20:30",
           "place": "Queen Victoria Market",
-          "activity": "QVM Winter Night Market：边逛边吃晚餐",
-          "highlight": "冬季周三限定夜市",
-          "tip": "周三 17:00–22:00，免费入场、免预约；实际到达可随入境与路况顺延。",
+          "activity": "逛 QVM Winter Night Market，边走边吃晚餐",
+          "highlight": "灯光、热食、现场音乐与墨尔本冬夜",
+          "tip": "周三 17:00–22:00，免费入场、免预约；入境或路况较慢也不用着急，夜市会营业到 22:00。",
           "resources": [
             {
               "id": "qvm-map",
@@ -288,9 +288,9 @@
           "sortOrder": 50,
           "period": "20:30–21:00",
           "place": "QVM → Oaks Melbourne on Market Hotel",
-          "activity": "返回酒店、洗漱休息",
-          "highlight": "给 D2 上午 city walk 留足体力",
-          "tip": "夜市结束后直接回酒店，早点休息。",
+          "activity": "散步或打车回酒店，洗漱休息",
+          "highlight": "冬夜里的轻松收尾",
+          "tip": "吃饱后直接回酒店，早点休息。",
           "resources": [
             {
               "id": "qvm-map",
@@ -326,9 +326,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐 / 午餐：航班与机场按实际情况；晚餐：QVM Winter Night Market 街头热食",
-          "highlight": "落地日餐食",
-          "tip": "不预订正式餐厅，夜市边逛边吃最轻松。",
+          "activity": "早餐 / 午餐：随航班安排；晚餐：QVM Winter Night Market 街头热食",
+          "highlight": "从一顿热腾腾的夜市晚餐开始",
+          "tip": "把胃口留给夜市，热食、甜点和热饮可以边走边选。",
           "resources": [
             {
               "id": "qvm-map",
@@ -357,18 +357,18 @@
       "label": "D2",
       "date": "2026-07-30",
       "weekday": "周四",
-      "city": "墨尔本 + Belgrave",
+      "city": "墨尔本 + Dandenong Ranges",
       "lat": -37.8136,
       "lon": 144.9631,
-      "title": "墨尔本 City Walk + Puffing Billy + Fitzroy",
-      "focus": "上午完成 Degraves Lane、Flinders Street、Hosier Lane 与 State Library 精华 city walk；11:30–17:00 参加 Puffing Billy + Sassafras 半日团，返城后去 Fitzroy 晚餐。",
+      "title": "从城市巷弄到山林：Puffing Billy 与 Fitzroy",
+      "focus": "上午走过 Degraves Street、Flinders Street 与 Hosier Lane，在州立图书馆俯瞰圆顶阅览室；午后乘 Puffing Billy 穿行山林，返城后去 Fitzroy 散步吃晚餐。",
       "lodging": "Oaks Melbourne on Market Hotel",
       "climateNote": "墨尔本冬季约 6-14°C，早晚冷，多风，偶有阵雨。",
       "clothingNote": "防风外套比单纯厚毛衣更实用，雨天鞋子尽量防水。",
       "coverImageUrl": "/itinerary/d2-puffing-billy-railway.png",
       "coverImageAlt": "Puffing Billy 蒸汽小火车穿过 Dandenong Ranges 森林",
-      "transport": "步行 + 半日团接驳车 + Puffing Billy + rideshare",
-      "leaveBy": "08:45 酒店出发；11:15 抵达 343 Russell Street",
+      "transport": "市区步行 + 半日团接驳 + Puffing Billy + Uber",
+      "leaveBy": "08:45 从酒店出发；11:15 抵达 343 Russell Street",
       "lodgingResource": {
         "id": "oaks-market-map",
         "title": "Oaks Melbourne on Market Hotel",
@@ -402,9 +402,9 @@
           "sortOrder": 10,
           "period": "08:45",
           "place": "Oaks Melbourne on Market → Degraves Street",
-          "activity": "步行出发，开始集合前的精华 city walk",
-          "highlight": "用一个上午补上墨尔本城市经典",
-          "tip": "随身只带轻便小包；各站按时间收口。",
+          "activity": "从酒店步行到 Degraves Street，开始上午的城市漫步",
+          "highlight": "墨尔本清晨的街道与巷弄",
+          "tip": "随身带轻便小包，城市漫步结束后直接步行去 Russell Street 集合。",
           "resources": [
             {
               "id": "oaks-market-map",
@@ -431,9 +431,9 @@
           "sortOrder": 20,
           "period": "09:00–09:20",
           "place": "Degraves Street",
-          "activity": "快速早餐 / Flat White + 巷弄短拍",
-          "highlight": "墨尔本 laneway 与 café culture",
-          "tip": "停留约 20 分钟，早餐以快速出餐为主。",
+          "activity": "在巷弄 café 吃早餐，点一杯 Flat White",
+          "highlight": "墨尔本巷弄与咖啡文化",
+          "tip": "选一家出餐快的店，边吃边感受巷子醒来的样子。",
           "resources": [
             {
               "id": "degraves-map",
@@ -451,9 +451,9 @@
           "sortOrder": 30,
           "period": "09:20–09:40",
           "place": "Flinders Street Station / Federation Square",
-          "activity": "拍车站外观和广场城市景观",
-          "highlight": "经典墨尔本地标",
-          "tip": "以外观和街景为主，09:40 前前往 Hosier Lane。",
+          "activity": "看看 Flinders Street Station 外观，顺路走过 Federation Square",
+          "highlight": "红砖钟楼与现代广场的城市对照",
+          "tip": "在车站对面拍一张全景，再沿 Flinders Street 走向 Hosier Lane。",
           "resources": [
             {
               "id": "flinders-street-map",
@@ -471,9 +471,9 @@
           "sortOrder": 40,
           "period": "09:40–10:00",
           "place": "Hosier Lane",
-          "activity": "涂鸦巷短停拍照",
-          "highlight": "街头艺术 + 文艺墨尔本",
-          "tip": "控制在 20 分钟，随后直接前往 State Library。",
+          "activity": "走进涂鸦巷，看看不断变化的墙面",
+          "highlight": "色彩密集的墨尔本街头艺术",
+          "tip": "停留约 20 分钟，选几面喜欢的墙拍照，再步行去州立图书馆。",
           "resources": [
             {
               "id": "hosier-map",
@@ -491,9 +491,9 @@
           "sortOrder": 50,
           "period": "10:10–10:45",
           "place": "State Library of Victoria",
-          "activity": "重点看 La Trobe Reading Room 与六楼俯拍视角",
-          "highlight": "历史建筑 + 圆顶阅览室",
-          "tip": "10:45 离开；遇到开馆或排队变化时，以 11:15 抵达集合点为准。",
+          "activity": "走进 La Trobe Reading Room，从六楼俯瞰圆顶阅览室",
+          "highlight": "白色书桌、穹顶与安静的阅读空间",
+          "tip": "10:45 左右离开，给步行到集合点和签到留足时间。",
           "resources": [
             {
               "id": "state-library-map",
@@ -511,9 +511,9 @@
           "sortOrder": 60,
           "period": "10:45–11:15",
           "place": "State Library → 343 Russell Street",
-          "activity": "步行到集合点，留出签到与洗手间时间",
-          "highlight": "提前 15 分钟到场",
-          "tip": "11:15 是硬截止；city walk 任一站超时，优先保证准时集合。",
+          "activity": "沿 Russell Street 步行到半日团集合点",
+          "highlight": "从城市漫步走向下一段旅程",
+          "tip": "建议 11:15 前抵达，可先使用洗手间并办理签到。",
           "resources": [
             {
               "id": "state-library-map",
@@ -549,9 +549,9 @@
           "sortOrder": 70,
           "period": "11:15",
           "place": "343 Russell Street",
-          "activity": "Klook / Oznara 半日团签到",
-          "highlight": "11:30 准时开始 Puffing Billy + Sassafras 行程",
-          "tip": "已确认团期 11:30–17:00；当天细节以 operator 通知为准。",
+          "activity": "与团队会合，办理签到",
+          "highlight": "Dandenong Ranges 山林之旅即将开始",
+          "tip": "团车 11:30 出发，当天细节以运营方通知为准。",
           "resources": [
             {
               "id": "russell-343-map",
@@ -578,9 +578,9 @@
           "sortOrder": 80,
           "period": "11:30–17:00",
           "place": "Puffing Billy + Sassafras 半日团",
-          "activity": "随团前往 Belgrave，乘 Puffing Billy，游览 Lakeside / Emerald Lake Park 与 Sassafras 后返城",
-          "highlight": "蒸汽火车、Dandenong Ranges 山林与小镇",
-          "tip": "11:30–17:00 为完整团期；注意保暖，团内节点以向导安排为准。",
+          "activity": "乘团车前往 Belgrave，搭乘 Puffing Billy，游览 Lakeside 与 Sassafras 后返回市区",
+          "highlight": "蒸汽火车、山林、湖畔与小镇",
+          "tip": "山里比市区更凉，防风外套放在手边；沿途留意向导的集合时间。",
           "resources": [
             {
               "id": "russell-343-map",
@@ -643,9 +643,9 @@
           "sortOrder": 90,
           "period": "团内",
           "place": "Puffing Billy Railway",
-          "activity": "Belgrave–Lakeside 往返蒸汽小火车体验",
-          "highlight": "复古蒸汽火车、森林与木桥",
-          "tip": "车厢和山林会冷，防风外套放在手边。",
+          "activity": "乘复古蒸汽火车从 Belgrave 穿行至 Lakeside",
+          "highlight": "开放式车厢、森林与木桥",
+          "tip": "靠窗能更贴近山林；注意防风保暖，并遵守现场安全提示。",
           "resources": [
             {
               "id": "puffing-billy-map",
@@ -681,9 +681,9 @@
           "sortOrder": 100,
           "period": "团内",
           "place": "Lakeside / Emerald Lake Park",
-          "activity": "湖边、游客中心与 café 短停",
-          "highlight": "火车站台与湖边公园氛围",
-          "tip": "沿湖轻松走走，跟随向导掌握集合时间。",
+          "activity": "在湖边散步，看看游客中心与火车站台",
+          "highlight": "湖水、树林与复古车站",
+          "tip": "轻松走一小段即可，留意向导通知的集合时间。",
           "resources": [
             {
               "id": "emerald-lake-park-map",
@@ -710,9 +710,9 @@
           "sortOrder": 110,
           "period": "团内",
           "place": "Sassafras",
-          "activity": "小镇短停，逛店或喝热饮",
-          "highlight": "Dandenong Ranges 小镇感",
-          "tip": "停留时长由团队安排，按时回到集合点。",
+          "activity": "逛一两家小店，喝杯热饮",
+          "highlight": "茶屋、糖果店与山间小镇气息",
+          "tip": "冬日下午适合慢慢看看橱窗，记得按集合时间返回。",
           "resources": [
             {
               "id": "sassafras-map",
@@ -730,9 +730,9 @@
           "sortOrder": 120,
           "period": "17:00 预计",
           "place": "返回 343 Russell Street",
-          "activity": "半日团结束，直接转场 Fitzroy",
-          "highlight": "从近郊自然切回本地街区",
-          "tip": "团车延误时缩短 Fitzroy 停留，保留回酒店整理行李的时间。",
+          "activity": "回到市区后，乘 Uber 前往 Fitzroy",
+          "highlight": "从山林切换到墨尔本街区夜色",
+          "tip": "如果返程稍晚，就把 Fitzroy 留给散步和晚餐，不必再赶更多地方。",
           "resources": [
             {
               "id": "russell-343-map",
@@ -759,9 +759,9 @@
           "sortOrder": 130,
           "period": "17:15–19:30",
           "place": "Fitzroy: Brunswick Street → Gertrude Street",
-          "activity": "rideshare 前往 Fitzroy，沿街散步并吃晚餐",
-          "highlight": "街头艺术、老建筑与本地生活版墨尔本",
-          "tip": "以街区漫步和晚餐为主；19:30 左右返程。",
+          "activity": "沿 Brunswick Street 走到 Gertrude Street，逛小店、看街头艺术并吃晚餐",
+          "highlight": "独立店铺、老建筑与本地街区氛围",
+          "tip": "不用逐店打卡，边走边选一家喜欢的餐厅即可。",
           "resources": [
             {
               "id": "fitzroy-map",
@@ -788,9 +788,9 @@
           "sortOrder": 140,
           "period": "19:30–21:00",
           "place": "Fitzroy → Oaks Melbourne on Market Hotel",
-          "activity": "回酒店整理大洋路登机箱和随身包",
-          "highlight": "为 D3 机场取车做好准备",
-          "tip": "21:00 前回酒店；大件行李寄存，只带登机箱和随身包上大洋路。",
+          "activity": "回酒店，整理大洋路随身行李",
+          "highlight": "把冬装和摄影设备装进登机箱",
+          "tip": "四个大箱留在酒店，只带登机箱和随身包上路；早点休息。",
           "resources": [
             {
               "id": "fitzroy-map",
@@ -818,8 +818,8 @@
           "period": "饮食",
           "place": "饮食安排",
           "activity": "早餐：Degraves Street café / Flat White；午餐：Lakeside / 团中简餐；晚餐：Fitzroy",
-          "highlight": "当天餐食节奏",
-          "tip": "早餐要快，午餐服从团内节奏；晚餐放在 Fitzroy，回酒店后只整理行李。",
+          "highlight": "从巷弄咖啡到街区晚餐",
+          "tip": "早餐简单一点，午餐跟随团队安排，晚餐留给 Fitzroy。",
           "resources": [
             {
               "id": "degraves-map",
@@ -5803,7 +5803,7 @@
       "dayId": "d2",
       "title": "Fitzroy",
       "status": "必去",
-      "note": "17:00 返城后前往；若团车延误则缩短停留，保留回酒店整理时间",
+      "note": "17:00 左右返城后前往，沿 Brunswick Street 与 Gertrude Street 散步吃晚餐",
       "resource": {
         "id": "fitzroy-map",
         "title": "Fitzroy Brunswick Street / Gertrude Street",

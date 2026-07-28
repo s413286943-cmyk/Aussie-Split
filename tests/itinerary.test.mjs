@@ -17,8 +17,8 @@ import { readWorkbook } from "../scripts/import-itinerary.mjs";
 
 const expectedTitles = {
   d0: "启程澳洲：香港转机，夜航墨尔本",
-  d1: "延误抵达墨尔本：QVM 冬季夜市",
-  d2: "墨尔本 City Walk + Puffing Billy + Fitzroy",
+  d1: "初到墨尔本：QVM 冬季夜市",
+  d2: "从城市巷弄到山林：Puffing Billy 与 Fitzroy",
   d3: "驶上大洋路：Torquay、Lorne 到 Apollo Bay",
   d4: "红杉林到海岸：The Redwoods、十二使徒岩与 Loch Ard Gorge",
   d5: "海岸地貌到野生动物：大洋路返程日",
@@ -37,8 +37,8 @@ const expectedTitles = {
 
 const expectedFocus = {
   d0: "经香港转机，夜航前往墨尔本。",
-  d1: "15:15 抵达 MEL；入境、进城并入住后，只安排 QVM Winter Night Market，夜市用餐后回酒店休息。",
-  d2: "上午完成 Degraves Lane、Flinders Street、Hosier Lane 与 State Library 精华 city walk；11:30–17:00 参加 Puffing Billy + Sassafras 半日团，返城后去 Fitzroy 晚餐。",
+  d1: "下午抵达墨尔本，入住稍作休整，晚上在 QVM Winter Night Market 边逛边吃，轻松开启南半球旅程。",
+  d2: "上午走过 Degraves Street、Flinders Street 与 Hosier Lane，在州立图书馆俯瞰圆顶阅览室；午后乘 Puffing Billy 穿行山林，返城后去 Fitzroy 散步吃晚餐。",
   d3: "机场取车后沿海向西，途经 Torquay、Lorne，傍晚住进 Apollo Bay。",
   d4: "先走进 The Redwoods Otways，再回到海岸看十二使徒岩、Loch Ard Gorge 与 The Razorback。",
   d5: "清晨补看海岸，再经 The Grotto、London Arch 与 Great Ocean Road Wildlife Park 走内陆线返回机场。",
@@ -105,6 +105,25 @@ describe("itinerary data", () => {
 
       assert.doesNotMatch(cardCopy, revisionLanguage, `${day.id} still uses planning-revision language`);
     }
+  });
+
+  it("keeps D1 and D2 in a traveller-facing voice", () => {
+    const backstageLanguage = /延误抵达|航班延误|减少延误|只安排|按时间收口|硬截止|已确认团期|完整团期|团内节点|直接转场|服从团内节奏|集中放到 D\d+|给 D\d+|为 D\d+/;
+    const copy = itinerary.days
+      .filter((day) => ["d1", "d2"].includes(day.id))
+      .flatMap((day) => [
+        day.title,
+        day.focus,
+        day.transport,
+        day.leaveBy,
+        ...day.blocks.flatMap((block) => [block.activity, block.highlight, block.tip]),
+      ])
+      .filter(Boolean)
+      .join(" ");
+
+    assert.doesNotMatch(copy, backstageLanguage);
+    assert.match(copy, /南半球旅程正式开始/);
+    assert.match(copy, /从山林切换到墨尔本街区夜色/);
   });
 
   it("labels the overview with traveller-facing language", () => {
@@ -209,13 +228,13 @@ describe("itinerary data", () => {
     assert.ok(fitzroy.resources.some((resource) => resource.id === "fitzroy-map"));
   });
 
-  it("replaces D1's city plan with the delayed arrival and QVM night market", () => {
+  it("keeps D1 focused on the afternoon arrival and QVM night market", () => {
     const d1 = itinerary.days.find((day) => day.id === "d1");
     const arrival = d1.blocks.find((block) => /墨尔本机场/.test(block.place));
     const qvm = d1.blocks.find((block) => /Queen Victoria Market/.test(block.place));
     const d1Text = [d1.title, d1.focus, d1.leaveBy, ...d1.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`)].join(" ");
 
-    assert.ok(arrival, "D1 is missing the delayed MEL arrival");
+    assert.ok(arrival, "D1 is missing the MEL arrival");
     assert.ok(qvm, "D1 is missing QVM");
     assert.match(d1Text, /15:15/);
     assert.ok(arrival.sortOrder < qvm.sortOrder);
