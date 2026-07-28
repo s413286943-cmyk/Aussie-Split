@@ -98,7 +98,7 @@ describe("ledger snapshot boundary", () => {
     );
   });
 
-  it("keeps the workbook plan aligned with the current D13-D15 decisions", () => {
+  it("keeps the workbook plan aligned with the current D1-D2 and D13-D15 decisions", () => {
     const workbook = JSON.parse(runPython([
       "scripts/itinerary_excel.py",
       "read_finance",
@@ -110,14 +110,18 @@ describe("ledger snapshot boundary", () => {
       foodMap: workbook.foodMap,
     });
     const d1 = workbook.foodMap.find((row) => row.day.startsWith("D1 "));
+    const d2 = workbook.foodMap.find((row) => row.day.startsWith("D2 "));
     const d13 = workbook.foodMap.find((row) => row.day.startsWith("D13 "));
     const d14 = workbook.foodMap.find((row) => row.day.startsWith("D14 "));
     const d15 = workbook.foodMap.find((row) => row.day.startsWith("D15 "));
     const taronga = workbook.activityPlan.find((row) => /Taronga Zoo/.test(row.item));
     const activities = workbook.budget.find((row) => /门票活动/.test(row.category));
 
-    assert.match(`${d1.dinner} ${d1.note}`, /Carlton/);
     assert.match(`${d1.dinner} ${d1.note}`, /QVM Winter Night Market/);
+    assert.match(`${d1.dinner} ${d1.note}`, /15:15/);
+    assert.doesNotMatch(`${d1.dinner} ${d1.note}`, /Carlton|Point Ormond/);
+    assert.match(`${d2.dinner} ${d2.note}`, /Fitzroy/);
+    assert.match(`${d2.dinner} ${d2.note}`, /11:30[–-]17:00/);
     assert.match(`${d13.day} ${d13.note}`, /南海岸|Sea Cliff Bridge/);
     assert.doesNotMatch(`${d13.day} ${d13.note}`, /蓝山|Blue Mountains/);
     assert.match(`${d14.day} ${d14.dinner} ${d14.note}`, /Taronga/);

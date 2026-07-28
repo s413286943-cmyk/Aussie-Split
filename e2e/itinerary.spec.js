@@ -61,17 +61,24 @@ test("an expanded desktop day owns the full row without stretching its sibling",
   await expect(page.locator("#d2 details")).not.toHaveAttribute("open", "");
 });
 
-test("Point Ormond and Great Ocean Road Wildlife Park render in their updated day plans", async ({ page }) => {
+test("the delayed D1 plan and Great Ocean Road Wildlife Park render in their updated day plans", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/itinerary");
 
   const d1 = page.locator("#d1");
   await d1.getByText("查看当天安排", { exact: true }).click();
+  await expect(d1.locator("h3")).toHaveText("延误抵达墨尔本：QVM 冬季夜市");
   await expect(d1.locator(".timeline").getByRole("heading", {
-    name: "Point Ormond Reserve / Lookout",
+    name: "墨尔本机场 (MEL)",
     level: 4,
   })).toBeVisible();
+  await expect(d1.locator(".timeline").getByRole("heading", {
+    name: "Queen Victoria Market",
+    level: 4,
+  })).toBeVisible();
+  await expect(d1.locator(".timeline")).not.toContainText("Point Ormond");
+  await expect(d1.locator(".timeline")).not.toContainText("Carlton");
 
   const d5 = page.locator("#d5");
   await d5.getByText("查看当天安排", { exact: true }).click();
@@ -91,7 +98,7 @@ test("mobile itinerary keeps controls and day text inside the viewport", async (
   const currentDay = page.locator("#d2");
   await expect(currentDay).toBeAttached();
   await currentDay.scrollIntoViewIfNeeded();
-  await expect(currentDay.locator("h3")).toHaveText("墨尔本近郊：Puffing Billy 与 Sassafras");
+  await expect(currentDay.locator("h3")).toHaveText("墨尔本 City Walk + Puffing Billy + Fitzroy");
   expect(await documentOverflowsHorizontally(page)).toBe(false);
   expect(await findClippedText(page)).toEqual([]);
 });

@@ -17,8 +17,8 @@ import { readWorkbook } from "../scripts/import-itinerary.mjs";
 
 const expectedTitles = {
   d0: "启程澳洲：香港转机，夜航墨尔本",
-  d1: "初到墨尔本：CBD、Carlton 与 QVM 冬季夜市",
-  d2: "墨尔本近郊：Puffing Billy 与 Sassafras",
+  d1: "延误抵达墨尔本：QVM 冬季夜市",
+  d2: "墨尔本 City Walk + Puffing Billy + Fitzroy",
   d3: "驶上大洋路：Torquay、Lorne 到 Apollo Bay",
   d4: "红杉林到海岸：The Redwoods、十二使徒岩与 Loch Ard Gorge",
   d5: "海岸地貌到野生动物：大洋路返程日",
@@ -37,8 +37,8 @@ const expectedTitles = {
 
 const expectedFocus = {
   d0: "经香港转机，夜航前往墨尔本。",
-  d1: "抵达后慢慢恢复，逛过 CBD 与 Carlton，晚上去 QVM 冬季夜市吃晚餐。",
-  d2: "上午乘 Puffing Billy 穿行山林；返城后若时间和体力合适，再去 Fitzroy 走走。",
+  d1: "15:15 抵达 MEL；入境、进城并入住后，只安排 QVM Winter Night Market，夜市用餐后回酒店休息。",
+  d2: "上午完成 Degraves Lane、Flinders Street、Hosier Lane 与 State Library 精华 city walk；11:30–17:00 参加 Puffing Billy + Sassafras 半日团，返城后去 Fitzroy 晚餐。",
   d3: "机场取车后沿海向西，途经 Torquay、Lorne，傍晚住进 Apollo Bay。",
   d4: "先走进 The Redwoods Otways，再回到海岸看十二使徒岩、Loch Ard Gorge 与 The Razorback。",
   d5: "清晨补看海岸，再经 The Grotto、London Arch 与 Great Ocean Road Wildlife Park 走内陆线返回机场。",
@@ -167,9 +167,9 @@ describe("itinerary data", () => {
     assert.ok(itinerary.days.every((day) => day.coverImageUrl.startsWith("/itinerary/")));
   });
 
-  it("keeps the three fixed city stops without replacing D1's QVM night market", () => {
+  it("keeps the rescheduled city stops and D1's QVM night market", () => {
     const expectations = [
-      { dayId: "d1", place: /Carlton/, detail: /Lygon Street|Little Italy/, resourceId: "carlton-lygon-map" },
+      { dayId: "d2", place: /State Library/, detail: /La Trobe|圆顶|六楼/, resourceId: "state-library-map" },
       { dayId: "d10", place: /Palm Cove/, detail: /棕榈|海滨|Esplanade/, resourceId: "palm-cove-map" },
       { dayId: "d11", place: /Barangaroo Reserve/, detail: /Wulugul Walk|海滨步道/, resourceId: "barangaroo-reserve-map" },
     ];
@@ -194,33 +194,32 @@ describe("itinerary data", () => {
 
     const d1 = itinerary.days.find((day) => day.id === "d1");
     const d1Text = [d1.focus, ...d1.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`)].join(" ");
-    assert.match(d1Text, /Carlton/);
     assert.match(d1Text, /QVM Winter Night Market/);
+    assert.doesNotMatch(d1Text, /Carlton|Point Ormond|State Library|Hosier Lane|Degraves Street/);
   });
 
-  it("keeps Fitzroy as D2 backup instead of a fixed stop", () => {
+  it("keeps Fitzroy as D2's fixed post-tour stop", () => {
     const d2 = itinerary.days.find((day) => day.id === "d2");
     const fitzroy = d2.blocks.find((block) => /Fitzroy/.test(block.place));
 
-    assert.doesNotMatch(d2.title, /Fitzroy/);
+    assert.match(d2.title, /Fitzroy/);
     assert.ok(fitzroy, "D2 is missing Fitzroy");
-    assert.match(fitzroy.period, /备选/);
-    assert.match(`${fitzroy.activity} ${fitzroy.tip}`, /若|如果|视时间|体力/);
+    assert.doesNotMatch(fitzroy.period, /备选|可选/);
+    assert.match(`${fitzroy.period} ${fitzroy.activity} ${fitzroy.tip}`, /17:15|晚餐|直接/);
     assert.ok(fitzroy.resources.some((resource) => resource.id === "fitzroy-map"));
   });
 
-  it("adds Point Ormond as a weather-and-energy backup before D1's QVM night market", () => {
+  it("replaces D1's city plan with the delayed arrival and QVM night market", () => {
     const d1 = itinerary.days.find((day) => day.id === "d1");
-    const pointOrmond = d1.blocks.find((block) => /Point Ormond/.test(block.place));
+    const arrival = d1.blocks.find((block) => /墨尔本机场/.test(block.place));
     const qvm = d1.blocks.find((block) => /Queen Victoria Market/.test(block.place));
+    const d1Text = [d1.title, d1.focus, d1.leaveBy, ...d1.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`)].join(" ");
 
-    assert.ok(pointOrmond, "D1 is missing Point Ormond");
+    assert.ok(arrival, "D1 is missing the delayed MEL arrival");
     assert.ok(qvm, "D1 is missing QVM");
-    assert.match(pointOrmond.period, /天气|体力|备选/);
-    assert.match(`${pointOrmond.activity} ${pointOrmond.tip}`, /雷达|云量|阴雨|风大|疲惫/);
-    assert.ok(pointOrmond.sortOrder < qvm.sortOrder);
-    assert.ok(pointOrmond.resources.some((resource) => resource.id === "point-ormond-map"));
-    assert.ok(pointOrmond.resources.some((resource) => resource.id === "point-ormond-official"));
+    assert.match(d1Text, /15:15/);
+    assert.ok(arrival.sortOrder < qvm.sortOrder);
+    assert.doesNotMatch(d1Text, /Point Ormond|Carlton|State Library|Hosier Lane|Degraves Street/);
   });
 
   it("keeps the ranked Top 7 mapped to their itinerary days", () => {
@@ -229,7 +228,7 @@ describe("itinerary data", () => {
       [
         { rank: 1, dayId: "d1", title: "QVM Winter Night Market", status: "必去" },
         { rank: 2, dayId: "d4", title: "The Redwoods Otways", status: "必去" },
-        { rank: 3, dayId: "d2", title: "Fitzroy", status: "备选" },
+        { rank: 3, dayId: "d2", title: "Fitzroy", status: "必去" },
         { rank: 4, dayId: "d10", title: "Palm Cove", status: "必去" },
         { rank: 5, dayId: "d11", title: "Barangaroo Reserve", status: "必去" },
         { rank: 6, dayId: "d12", title: "The Rocks Markets", status: "必去" },
@@ -410,9 +409,9 @@ describe("itinerary data", () => {
     const mealBlock = d1.blocks.find((block) => block.period === "饮食" && block.place === "饮食安排");
     const officialResource = marketBlock?.resources.find((resource) => resource.type === "official");
 
-    assert.match(d1.focus, /QVM 冬季夜市/);
+    assert.match(d1.focus, /QVM (?:冬季夜市|Winter Night Market)/);
     assert.ok(marketBlock);
-    assert.match(marketBlock.tip, /17:00-22:00/);
+    assert.match(marketBlock.tip, /17:00[–-]22:00/);
     assert.match(marketBlock.tip, /免费.*免预约/);
     assert.equal(
       officialResource?.url,
@@ -486,7 +485,7 @@ describe("itinerary data", () => {
 
     assert.ok(resources.some((resource) => resource.type === "map"));
     assert.ok(resources.some((resource) => resource.type === "booking"));
-    assert.ok(resources.some((resource) => resource.type === "restaurant"));
+    assert.ok(resources.some((resource) => resource.type === "official"));
     assert.ok(resources.every((resource) => ["map", "booking", "restaurant", "official"].includes(resource.type)));
     assert.equal(new Set(resources.map((resource) => resource.id)).size, resources.length);
   });

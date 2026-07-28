@@ -121,15 +121,15 @@
       "city": "墨尔本",
       "lat": -37.8136,
       "lon": 144.9631,
-      "title": "初到墨尔本：CBD、Carlton 与 QVM 冬季夜市",
-      "focus": "抵达后慢慢恢复，逛过 CBD 与 Carlton，晚上去 QVM 冬季夜市吃晚餐。",
+      "title": "延误抵达墨尔本：QVM 冬季夜市",
+      "focus": "15:15 抵达 MEL；入境、进城并入住后，只安排 QVM Winter Night Market，夜市用餐后回酒店休息。",
       "lodging": "Oaks Melbourne on Market Hotel",
       "climateNote": "墨尔本冬季约 6-14°C，早晚冷，多风，偶有阵雨。",
       "clothingNote": "羽绒服或防风外套、毛衣、长裤、防水鞋。",
       "coverImageUrl": "/itinerary/melbourne-city-morning.png",
       "coverImageAlt": "墨尔本清晨城市街景",
-      "transport": "机场接送 + 步行 / 市内交通",
-      "leaveBy": "05:55 抵达；入境后直接前往 CBD",
+      "transport": "机场接送 + rideshare / 步行",
+      "leaveBy": "15:15 抵达；预计 18:15 左右前往 QVM",
       "lodgingResource": {
         "id": "oaks-market-map",
         "title": "Oaks Melbourne on Market Hotel",
@@ -140,13 +140,13 @@
         "sourceNote": "Google Maps"
       },
       "primaryResource": {
-        "id": "mel-airport-map",
-        "title": "墨尔本机场",
-        "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Melbourne+Airport",
+        "id": "qvm-winter-night-market-official",
+        "title": "QVM Winter Night Market 2026",
+        "type": "official",
+        "url": "https://whatson.melbourne.vic.gov.au/things-to-do/winter-night-market",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "Google Maps"
+        "sourceNote": "City of Melbourne：2026-07-29 17:00-22:00，免费，免预约；QVM 官网确认每周三 6/3-8/26。"
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
@@ -161,11 +161,11 @@
         {
           "dayId": "d1",
           "sortOrder": 10,
-          "period": "早上",
-          "place": "墨尔本机场 → CBD",
-          "activity": "入境、取行李，打车 / Uber 或 SkyBus 进城",
-          "highlight": "初到澳洲，适应南半球冬天",
-          "tip": "4 人加行李较多，打车 / Uber 更舒服；从机场到 CBD 的沿途就是旅程的第一眼。",
+          "period": "15:15",
+          "place": "墨尔本机场 (MEL)",
+          "activity": "航班延误后抵达墨尔本",
+          "highlight": "正式落地澳洲",
+          "tip": "预留 60–90 分钟办理入境、取行李和会合；流程更快时，把多出的时间留给酒店休息。",
           "resources": [
             {
               "id": "mel-airport-map",
@@ -175,17 +175,64 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "flight-cathay",
+              "title": "国泰航空",
+              "type": "official",
+              "url": "https://www.cathaypacific.com/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "航司官网"
             }
           ]
         },
         {
           "dayId": "d1",
           "sortOrder": 20,
-          "period": "上午",
-          "place": "CBD / 酒店附近",
-          "activity": "酒店寄存行李 + 咖啡早餐",
-          "highlight": "墨尔本咖啡文化开场",
-          "tip": "先寄存行李，找一家街角 café 吃早餐，让身体慢慢进入墨尔本节奏。",
+          "period": "15:15–17:30 预计",
+          "place": "MEL → Oaks Melbourne on Market Hotel",
+          "activity": "入境、取行李后四人打车 / Uber 进城",
+          "highlight": "减少延误后的转场消耗",
+          "tip": "4 人加多件行李，rideshare / taxi 最省力；CBD 城市步行集中放到 D2 上午。",
+          "resources": [
+            {
+              "id": "mel-airport-map",
+              "title": "墨尔本机场",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Melbourne+Airport",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "oaks-market-map",
+              "title": "Oaks Melbourne on Market Hotel",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Melbourne+on+Market+Hotel",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "oaks-market-booking",
+              "title": "Oaks Melbourne on Market",
+              "type": "booking",
+              "url": "https://www.oakshotels.com/en/oaks-on-market",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "酒店官网"
+            }
+          ]
+        },
+        {
+          "dayId": "d1",
+          "sortOrder": 30,
+          "period": "17:30–18:10 预计",
+          "place": "Oaks Melbourne on Market Hotel",
+          "activity": "入住、放行李、换衣服，短暂休息",
+          "highlight": "夜市前快速恢复",
+          "tip": "如果到店较晚，就缩短夜市停留，保证睡眠。",
           "resources": [
             {
               "id": "oaks-market-map",
@@ -204,164 +251,17 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "酒店官网"
-            },
-            {
-              "id": "operator25-map",
-              "title": "Operator25",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Operator25+Melbourne",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d1",
-          "sortOrder": 30,
-          "period": "中午",
-          "place": "Degraves Lane / Flinders Street 一带",
-          "activity": "轻量午餐 / café / laneway walk",
-          "highlight": "墨尔本巷弄文化",
-          "tip": "体力一般时走 Degraves Lane 与 Flinders Street 已经很充实；有余力再继续。",
-          "resources": [
-            {
-              "id": "degraves-map",
-              "title": "Degraves Street",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Degraves+Street+Melbourne",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "flinders-street-map",
-              "title": "Flinders Street Station",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Flinders+Street+Station+Melbourne",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
             }
           ]
         },
         {
           "dayId": "d1",
           "sortOrder": 40,
-          "period": "下午",
-          "place": "State Library of Victoria",
-          "activity": "参观经典阅览室",
-          "highlight": "历史建筑 + 圆顶阅览室",
-          "tip": "在圆顶阅览室停留片刻即可，六楼俯拍视角最完整。",
-          "resources": [
-            {
-              "id": "state-library-map",
-              "title": "State Library of Victoria",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=State+Library+of+Victoria",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d1",
-          "sortOrder": 45,
-          "period": "下午",
-          "place": "Carlton / Lygon Street (Little Italy)",
-          "activity": "从 State Library 向北前往 Carlton，沿 Lygon Street 散步，安排咖啡或 gelato",
-          "highlight": "墨尔本意大利移民街区 + café culture",
-          "tip": "建议预留 60–90 分钟，在 Lygon Street 喝咖啡或吃 gelato；抵达较晚时可略过 NGV。",
-          "resources": [
-            {
-              "id": "carlton-lygon-map",
-              "title": "Carlton / Lygon Street Little Italy",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Carlton+Lygon+Street+Little+Italy+Melbourne",
-              "imageUrl": "",
-              "imageAlt": "Carlton Lygon Street Little Italy 地图",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d1",
-          "sortOrder": 50,
-          "period": "下午后段",
-          "place": "Hosier Lane",
-          "activity": "涂鸦巷拍照",
-          "highlight": "街头艺术 + 文艺墨尔本",
-          "tip": "预留 20–30 分钟，选一面喜欢的涂鸦墙慢慢拍。",
-          "resources": [
-            {
-              "id": "hosier-map",
-              "title": "Hosier Lane",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Hosier+Lane+Melbourne",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d1",
-          "sortOrder": 60,
-          "period": "可选",
-          "place": "NGV",
-          "activity": "天气冷 / 想室内休息时进入",
-          "highlight": "冬天避风避寒",
-          "tip": "天气冷或想在室内休息时再去；时间有限可直接前往 Carlton。",
-          "resources": [
-            {
-              "id": "ngv-map",
-              "title": "NGV",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=National+Gallery+of+Victoria",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d1",
-          "sortOrder": 65,
-          "period": "天气与体力备选",
-          "place": "Point Ormond Reserve / Lookout",
-          "activity": "16:00 查看雷达与云量；条件合适时四人 rideshare 前往 Elwood，沿既有步道与 lookout 看海湾黄昏，再直接去 QVM",
-          "highlight": "Port Phillip Bay 日落 + 墨尔本城市轮廓",
-          "tip": "约 16:20-16:30 从 CBD 出发，16:50-17:40 停留，18:15 左右抵达 QVM；阴雨、风大或落地疲惫时直接跳过，穿防风防水层并留在有照明的步道和观景区。",
-          "resources": [
-            {
-              "id": "point-ormond-map",
-              "title": "Point Ormond Reserve / Lookout",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Point+Ormond+Reserve+Elwood+Melbourne",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps · Marine Parade, Elwood"
-            },
-            {
-              "id": "point-ormond-official",
-              "title": "Point Ormond Reserve · City of Port Phillip",
-              "type": "official",
-              "url": "https://www.portphillip.vic.gov.au/explore-the-city/beaches-parks-and-playgrounds/find-parks-and-playgrounds/point-ormond-reserve/",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "City of Port Phillip · location, paths and facilities"
-            }
-          ]
-        },
-        {
-          "dayId": "d1",
-          "sortOrder": 70,
-          "period": "傍晚",
+          "period": "18:15–20:30",
           "place": "Queen Victoria Market",
-          "activity": "17:30-19:30 QVM Winter Night Market",
+          "activity": "QVM Winter Night Market：边逛边吃晚餐",
           "highlight": "冬季周三限定夜市",
-          "tip": "开放时间 17:00-22:00，免费入场、免预约；建议 17:30 左右到，按体力逛 30–120 分钟。",
+          "tip": "周三 17:00–22:00，免费入场、免预约；实际到达可随入境与路况顺延。",
           "resources": [
             {
               "id": "qvm-map",
@@ -385,12 +285,12 @@
         },
         {
           "dayId": "d1",
-          "sortOrder": 80,
-          "period": "晚上",
+          "sortOrder": 50,
+          "period": "20:30–21:00",
           "place": "QVM → Oaks Melbourne on Market Hotel",
-          "activity": "夜市用餐后直接回酒店休息",
-          "highlight": "落地日收尾",
-          "tip": "在夜市吃过晚餐就回酒店休息；体力有限时逛 30–60 分钟也很合适。",
+          "activity": "返回酒店、洗漱休息",
+          "highlight": "给 D2 上午 city walk 留足体力",
+          "tip": "夜市结束后直接回酒店，早点休息。",
           "resources": [
             {
               "id": "qvm-map",
@@ -426,9 +326,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：CBD café / Operator25（可选 Brunch）；午餐：Degraves Lane / CBD 简餐 / Pho Tùng（可选）；Carlton：咖啡或 gelato；晚餐：QVM Winter Night Market 街头热食（主）/ CBD 简餐（体力不足）",
-          "highlight": "当天餐食节奏",
-          "tip": "Carlton 适合用一杯咖啡或 gelato 稍作休息；晚餐就在 QVM 冬季夜市边逛边吃。",
+          "activity": "早餐 / 午餐：航班与机场按实际情况；晚餐：QVM Winter Night Market 街头热食",
+          "highlight": "落地日餐食",
+          "tip": "不预订正式餐厅，夜市边逛边吃最轻松。",
           "resources": [
             {
               "id": "qvm-map",
@@ -447,33 +347,6 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "City of Melbourne：2026-07-29 17:00-22:00，免费，免预约；QVM 官网确认每周三 6/3-8/26。"
-            },
-            {
-              "id": "operator25-map",
-              "title": "Operator25",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Operator25+Melbourne",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "pho-tung-map",
-              "title": "Pho Tùng Melbourne",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Pho+Tung+Melbourne",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "degraves-map",
-              "title": "Degraves Street",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Degraves+Street+Melbourne",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
             }
           ]
         }
@@ -487,15 +360,15 @@
       "city": "墨尔本 + Belgrave",
       "lat": -37.8136,
       "lon": 144.9631,
-      "title": "墨尔本近郊：Puffing Billy 与 Sassafras",
-      "focus": "上午乘 Puffing Billy 穿行山林；返城后若时间和体力合适，再去 Fitzroy 走走。",
+      "title": "墨尔本 City Walk + Puffing Billy + Fitzroy",
+      "focus": "上午完成 Degraves Lane、Flinders Street、Hosier Lane 与 State Library 精华 city walk；11:30–17:00 参加 Puffing Billy + Sassafras 半日团，返城后去 Fitzroy 晚餐。",
       "lodging": "Oaks Melbourne on Market Hotel",
       "climateNote": "墨尔本冬季约 6-14°C，早晚冷，多风，偶有阵雨。",
       "clothingNote": "防风外套比单纯厚毛衣更实用，雨天鞋子尽量防水。",
       "coverImageUrl": "/itinerary/d2-puffing-billy-railway.png",
       "coverImageAlt": "Puffing Billy 蒸汽小火车穿过 Dandenong Ranges 森林",
-      "transport": "半日团接驳车 + Puffing Billy 蒸汽火车",
-      "leaveBy": "按通知的集合时间，提前 15 分钟到 343 Russell Street",
+      "transport": "步行 + 半日团接驳车 + Puffing Billy + rideshare",
+      "leaveBy": "08:45 酒店出发；11:15 抵达 343 Russell Street",
       "lodgingResource": {
         "id": "oaks-market-map",
         "title": "Oaks Melbourne on Market Hotel",
@@ -527,11 +400,11 @@
         {
           "dayId": "d2",
           "sortOrder": 10,
-          "period": "早上",
-          "place": "Oaks Melbourne on Market → 343 Russell Street",
-          "activity": "前往 Klook / Oznara 集合点",
-          "highlight": "集合点在 CBD 内",
-          "tip": "从酒店打车约 7-12 分钟，步行约 20-25 分钟；建议打车",
+          "period": "08:45",
+          "place": "Oaks Melbourne on Market → Degraves Street",
+          "activity": "步行出发，开始集合前的精华 city walk",
+          "highlight": "用一个上午补上墨尔本城市经典",
+          "tip": "随身只带轻便小包；各站按时间收口。",
           "resources": [
             {
               "id": "oaks-market-map",
@@ -543,33 +416,142 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "russell-343-map",
-              "title": "343 Russell Street",
+              "id": "degraves-map",
+              "title": "Degraves Street",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=343+Russell+Street+Melbourne",
+              "url": "https://www.google.com/maps/search/?api=1&query=Degraves+Street+Melbourne",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            },
-            {
-              "id": "klook-oznara-puffing-billy-note",
-              "title": "Klook / Oznara Puffing Billy + Sassafras 半日团",
-              "type": "note",
-              "url": "",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "已订半日团；以出发前一天通知的 pickup 时间为准"
             }
           ]
         },
         {
           "dayId": "d2",
           "sortOrder": 20,
-          "period": "上午",
+          "period": "09:00–09:20",
+          "place": "Degraves Street",
+          "activity": "快速早餐 / Flat White + 巷弄短拍",
+          "highlight": "墨尔本 laneway 与 café culture",
+          "tip": "停留约 20 分钟，早餐以快速出餐为主。",
+          "resources": [
+            {
+              "id": "degraves-map",
+              "title": "Degraves Street",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Degraves+Street+Melbourne",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d2",
+          "sortOrder": 30,
+          "period": "09:20–09:40",
+          "place": "Flinders Street Station / Federation Square",
+          "activity": "拍车站外观和广场城市景观",
+          "highlight": "经典墨尔本地标",
+          "tip": "以外观和街景为主，09:40 前前往 Hosier Lane。",
+          "resources": [
+            {
+              "id": "flinders-street-map",
+              "title": "Flinders Street Station",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Flinders+Street+Station+Melbourne",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d2",
+          "sortOrder": 40,
+          "period": "09:40–10:00",
+          "place": "Hosier Lane",
+          "activity": "涂鸦巷短停拍照",
+          "highlight": "街头艺术 + 文艺墨尔本",
+          "tip": "控制在 20 分钟，随后直接前往 State Library。",
+          "resources": [
+            {
+              "id": "hosier-map",
+              "title": "Hosier Lane",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hosier+Lane+Melbourne",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d2",
+          "sortOrder": 50,
+          "period": "10:10–10:45",
+          "place": "State Library of Victoria",
+          "activity": "重点看 La Trobe Reading Room 与六楼俯拍视角",
+          "highlight": "历史建筑 + 圆顶阅览室",
+          "tip": "10:45 离开；遇到开馆或排队变化时，以 11:15 抵达集合点为准。",
+          "resources": [
+            {
+              "id": "state-library-map",
+              "title": "State Library of Victoria",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=State+Library+of+Victoria",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d2",
+          "sortOrder": 60,
+          "period": "10:45–11:15",
+          "place": "State Library → 343 Russell Street",
+          "activity": "步行到集合点，留出签到与洗手间时间",
+          "highlight": "提前 15 分钟到场",
+          "tip": "11:15 是硬截止；city walk 任一站超时，优先保证准时集合。",
+          "resources": [
+            {
+              "id": "state-library-map",
+              "title": "State Library of Victoria",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=State+Library+of+Victoria",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "russell-343-map",
+              "title": "343 Russell Street",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=343+Russell+Street+Melbourne",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "klook-oznara-puffing-billy-note",
+              "title": "Klook / Oznara Puffing Billy + Sassafras 半日团",
+              "type": "note",
+              "url": "",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "已订半日团；以出发前一天通知的 pickup 时间为准"
+            }
+          ]
+        },
+        {
+          "dayId": "d2",
+          "sortOrder": 70,
+          "period": "11:15",
           "place": "343 Russell Street",
-          "activity": "Klook / Oznara 半日团集合",
-          "highlight": "Puffing Billy + Sassafras 行程开始",
-          "tip": "具体 pickup 时间以前一天通知为准；提前 10-15 分钟到",
+          "activity": "Klook / Oznara 半日团签到",
+          "highlight": "11:30 准时开始 Puffing Billy + Sassafras 行程",
+          "tip": "已确认团期 11:30–17:00；当天细节以 operator 通知为准。",
           "resources": [
             {
               "id": "russell-343-map",
@@ -593,13 +575,22 @@
         },
         {
           "dayId": "d2",
-          "sortOrder": 30,
-          "period": "上午",
-          "place": "Melbourne CBD → Belgrave",
-          "activity": "乘团车前往 Puffing Billy Railway",
-          "highlight": "进入 Dandenong Ranges 近郊",
-          "tip": "路上可休息，不用自己研究公共交通",
+          "sortOrder": 80,
+          "period": "11:30–17:00",
+          "place": "Puffing Billy + Sassafras 半日团",
+          "activity": "随团前往 Belgrave，乘 Puffing Billy，游览 Lakeside / Emerald Lake Park 与 Sassafras 后返城",
+          "highlight": "蒸汽火车、Dandenong Ranges 山林与小镇",
+          "tip": "11:30–17:00 为完整团期；注意保暖，团内节点以向导安排为准。",
           "resources": [
+            {
+              "id": "russell-343-map",
+              "title": "343 Russell Street",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=343+Russell+Street+Melbourne",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
             {
               "id": "puffing-billy-map",
               "title": "Puffing Billy Railway Belgrave",
@@ -619,6 +610,24 @@
               "sourceNote": "Puffing Billy official site"
             },
             {
+              "id": "lakeside-station-map",
+              "title": "Lakeside Station",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Lakeside+Station+Puffing+Billy",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "sassafras-map",
+              "title": "Sassafras Village",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sassafras+Victoria",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
               "id": "klook-oznara-puffing-billy-note",
               "title": "Klook / Oznara Puffing Billy + Sassafras 半日团",
               "type": "note",
@@ -631,12 +640,12 @@
         },
         {
           "dayId": "d2",
-          "sortOrder": 40,
-          "period": "上午 / 中午",
+          "sortOrder": 90,
+          "period": "团内",
           "place": "Puffing Billy Railway",
-          "activity": "Belgrave-Lakeside 往返蒸汽小火车体验",
-          "highlight": "复古蒸汽火车、森林、木桥、Dandenong Ranges 山林氛围",
-          "tip": "注意保暖，车厢和山林会冷",
+          "activity": "Belgrave–Lakeside 往返蒸汽小火车体验",
+          "highlight": "复古蒸汽火车、森林与木桥",
+          "tip": "车厢和山林会冷，防风外套放在手边。",
           "resources": [
             {
               "id": "puffing-billy-map",
@@ -669,12 +678,12 @@
         },
         {
           "dayId": "d2",
-          "sortOrder": 50,
-          "period": "中午 / 下午",
+          "sortOrder": 100,
+          "period": "团内",
           "place": "Lakeside / Emerald Lake Park",
-          "activity": "湖边短停 / visitor centre / café / 简单休息",
-          "highlight": "湖边公园、游客中心、火车站台氛围",
-          "tip": "沿湖边和游客中心轻松走走，留出返程时间。",
+          "activity": "湖边、游客中心与 café 短停",
+          "highlight": "火车站台与湖边公园氛围",
+          "tip": "沿湖轻松走走，跟随向导掌握集合时间。",
           "resources": [
             {
               "id": "emerald-lake-park-map",
@@ -698,12 +707,12 @@
         },
         {
           "dayId": "d2",
-          "sortOrder": 60,
-          "period": "中午 / 下午",
+          "sortOrder": 110,
+          "period": "团内",
           "place": "Sassafras",
-          "activity": "小镇短停",
-          "highlight": "茶屋、糖果店、Dandenong Ranges 小镇感",
-          "tip": "逛一两家小店、喝杯热饮即可，注意返程集合时间。",
+          "activity": "小镇短停，逛店或喝热饮",
+          "highlight": "Dandenong Ranges 小镇感",
+          "tip": "停留时长由团队安排，按时回到集合点。",
           "resources": [
             {
               "id": "sassafras-map",
@@ -718,12 +727,12 @@
         },
         {
           "dayId": "d2",
-          "sortOrder": 70,
-          "period": "下午",
+          "sortOrder": 120,
+          "period": "17:00 预计",
           "place": "返回 343 Russell Street",
-          "activity": "半日团结束，回到 CBD",
-          "highlight": "返城后继续 Fitzroy 街区漫步",
-          "tip": "半日团结束后直接前往 Fitzroy；保持约 90 分钟街区时间",
+          "activity": "半日团结束，直接转场 Fitzroy",
+          "highlight": "从近郊自然切回本地街区",
+          "tip": "团车延误时缩短 Fitzroy 停留，保留回酒店整理行李的时间。",
           "resources": [
             {
               "id": "russell-343-map",
@@ -733,17 +742,26 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "fitzroy-map",
+              "title": "Fitzroy Brunswick Street / Gertrude Street",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Fitzroy+Brunswick+Street+Gertrude+Street+Melbourne",
+              "imageUrl": "",
+              "imageAlt": "Fitzroy Brunswick Street 与 Gertrude Street 地图",
+              "sourceNote": "Google Maps"
             }
           ]
         },
         {
           "dayId": "d2",
-          "sortOrder": 80,
-          "period": "备选 · 下午后段",
+          "sortOrder": 130,
+          "period": "17:15–19:30",
           "place": "Fitzroy: Brunswick Street → Gertrude Street",
-          "activity": "若半日团准时返城且体力充足，再沿 Brunswick Street / Gertrude Street 随意走走。",
-          "highlight": "街区小店、咖啡与旧工业街景",
-          "tip": "把 Fitzroy 当作加分项；返城较晚或需要休息时直接回酒店。",
+          "activity": "rideshare 前往 Fitzroy，沿街散步并吃晚餐",
+          "highlight": "街头艺术、老建筑与本地生活版墨尔本",
+          "tip": "以街区漫步和晚餐为主；19:30 左右返程。",
           "resources": [
             {
               "id": "fitzroy-map",
@@ -767,27 +785,27 @@
         },
         {
           "dayId": "d2",
-          "sortOrder": 90,
-          "period": "晚上",
-          "place": "酒店 / CBD",
-          "activity": "简单晚餐 + 整理大洋路行李",
-          "highlight": "为次日大洋路做好准备",
-          "tip": "大件行李寄存，只带登机箱和随身包上大洋路；早点睡",
+          "sortOrder": 140,
+          "period": "19:30–21:00",
+          "place": "Fitzroy → Oaks Melbourne on Market Hotel",
+          "activity": "回酒店整理大洋路登机箱和随身包",
+          "highlight": "为 D3 机场取车做好准备",
+          "tip": "21:00 前回酒店；大件行李寄存，只带登机箱和随身包上大洋路。",
           "resources": [
+            {
+              "id": "fitzroy-map",
+              "title": "Fitzroy Brunswick Street / Gertrude Street",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Fitzroy+Brunswick+Street+Gertrude+Street+Melbourne",
+              "imageUrl": "",
+              "imageAlt": "Fitzroy Brunswick Street 与 Gertrude Street 地图",
+              "sourceNote": "Google Maps"
+            },
             {
               "id": "oaks-market-map",
               "title": "Oaks Melbourne on Market Hotel",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Melbourne+on+Market+Hotel",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "southbank-map",
-              "title": "Southbank",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Southbank+Melbourne",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -799,15 +817,15 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：酒店附近 café / 集合前简单吃；午餐：Lakeside / Emerald Lake Park café 或团中简餐；晚餐：CBD / Southbank 轻松晚餐",
+          "activity": "早餐：Degraves Street café / Flat White；午餐：Lakeside / 团中简餐；晚餐：Fitzroy",
           "highlight": "当天餐食节奏",
-          "tip": "Fitzroy 仅作返城后的备选；不去时直接在 CBD 用餐。",
+          "tip": "早餐要快，午餐服从团内节奏；晚餐放在 Fitzroy，回酒店后只整理行李。",
           "resources": [
             {
-              "id": "russell-343-map",
-              "title": "343 Russell Street",
+              "id": "degraves-map",
+              "title": "Degraves Street",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=343+Russell+Street+Melbourne",
+              "url": "https://www.google.com/maps/search/?api=1&query=Degraves+Street+Melbourne",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -831,12 +849,12 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "southbank-map",
-              "title": "Southbank",
+              "id": "fitzroy-map",
+              "title": "Fitzroy Brunswick Street / Gertrude Street",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Southbank+Melbourne",
+              "url": "https://www.google.com/maps/search/?api=1&query=Fitzroy+Brunswick+Street+Gertrude+Street+Melbourne",
               "imageUrl": "",
-              "imageAlt": "",
+              "imageAlt": "Fitzroy Brunswick Street 与 Gertrude Street 地图",
               "sourceNote": "Google Maps"
             }
           ]
@@ -5784,8 +5802,8 @@
       "rank": 3,
       "dayId": "d2",
       "title": "Fitzroy",
-      "status": "备选",
-      "note": "半日团准时返城且体力合适再去",
+      "status": "必去",
+      "note": "17:00 返城后前往；若团车延误则缩短停留，保留回酒店整理时间",
       "resource": {
         "id": "fitzroy-map",
         "title": "Fitzroy Brunswick Street / Gertrude Street",
