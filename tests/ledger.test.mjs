@@ -8,7 +8,6 @@ import {
   expenseToEditableForm,
   expenseTemplates,
   formatCategoryLabel,
-  parseBankMessage,
   setExpenseSplitSettled,
   splitSettledLabel,
 } from "../src/lib/ledger.js";
@@ -194,22 +193,6 @@ describe("travel split ledger", () => {
     assert.equal(next.currency, "AUD");
     assert.equal(next.amount, "88.50");
     assert.equal(next.note, "机场到酒店");
-  });
-
-  it("turns a bank message into a draft expense", () => {
-    const draft = parseBankMessage("08/11 Captain Cook Whale Watching card purchase A$340.20");
-
-    assert.equal(draft.amount, 340.2);
-    assert.equal(draft.currency, "AUD");
-    assert.equal(draft.status, "draft");
-    assert.match(draft.item, /Captain Cook/);
-  });
-
-  it("classifies dinner messages as dining, not hotels", () => {
-    const draft = parseBankMessage("08/12 Dinner at Cafe Sydney card purchase A$220.50");
-
-    assert.equal(draft.category, "dining");
-    assert.equal(draft.item.startsWith("/"), false);
   });
 
   it("uses traveler-facing couple names", () => {

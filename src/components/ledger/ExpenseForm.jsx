@@ -11,7 +11,6 @@ import {
   createCapturedExpense,
   expenseTemplates,
   formatCategoryLabel,
-  parseBankMessage,
 } from "@/lib/ledger";
 import { findDuplicateExpense, validateExpense } from "@/lib/expenseValidation";
 import { formatPayerLabel } from "@/lib/couples";
@@ -22,7 +21,6 @@ const addDefaultsStorageKey = "aussie-chill-add-defaults-v1";
 
 export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
   const router = useRouter();
-  const [message, setMessage] = useState("");
   const [form, setForm] = useState(emptyForm());
   const [receipt, setReceipt] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -37,6 +35,8 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
     } catch {
       savedDefaults = {};
     }
+    const savedEntryDefaults = { ...savedDefaults };
+    delete savedEntryDefaults.currency;
 
     const params = new URLSearchParams(window.location.search);
     const queryDefaults = {
@@ -47,14 +47,8 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
       payer: params.get("payer") || "",
     };
 
-    setForm(emptyForm({ ...savedDefaults, ...removeEmptyValues(queryDefaults) }));
+    setForm(emptyForm({ ...savedEntryDefaults, ...removeEmptyValues(queryDefaults) }));
   }, []);
-
-  function useMessage() {
-    if (!message.trim()) return;
-    setForm({ ...emptyForm(), ...parseBankMessage(message) });
-    setSubmitted(false);
-  }
 
   async function submit() {
     setSubmitted(true);
@@ -89,7 +83,6 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
       const nextDefaults = {
         category: form.category,
         date: form.date,
-        currency: form.currency,
         payer: form.payer,
       };
       try {
@@ -98,7 +91,6 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
         // Saving defaults is optional; the committed expense must still complete.
       }
       setForm(emptyForm(nextDefaults));
-      setMessage("");
       setReceipt(null);
       setSubmitted(false);
       router.push(`/expenses?highlight=${encodeURIComponent(nextExpense.id)}`);
@@ -134,19 +126,6 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
             </button>
           ))}
         </div>
-        <details className="message-capture">
-          <summary>
-            <span>短信识别</span>
-            <small>粘贴银行短信生成草稿</small>
-          </summary>
-          <div className="message-capture-body">
-            <label>
-              银行短信
-              <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="例如：08/11 Harbour dinner card purchase A$86.50" />
-            </label>
-            <button className="button" type="button" onClick={useMessage}>生成待确认草稿</button>
-          </div>
-        </details>
         <div className="form-grid">
           <label className="full">
             项目
@@ -166,8 +145,8 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
           <label>
             币种
             <select value={form.currency} onChange={(event) => setForm({ ...form, currency: event.target.value })}>
+              <option value="AUD">A$</option>
               <option value="CNY">CNY</option>
-              <option value="AUD">AUD</option>
             </select>
           </label>
           <label>
@@ -221,7 +200,7 @@ function emptyForm(defaults = {}) {
     category: "dining",
     item: "",
     date: "",
-    currency: "CNY",
+    currency: "AUD",
     amount: "",
     payer: "us",
     status: "confirmed",

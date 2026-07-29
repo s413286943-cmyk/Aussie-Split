@@ -28,7 +28,6 @@ export async function findClippedText(page) {
       ".ledger-dock-actions a",
       ".filter-toolbar",
       ".settlement-category-row",
-      ".message-capture summary",
       ".stage-tabs button",
     ].join(",");
 

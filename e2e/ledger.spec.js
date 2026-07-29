@@ -125,14 +125,32 @@ test("mobile ledger exposes work before advanced controls", async ({ page }) => 
   expect(actionLayout.widthRatio).toBeGreaterThan(0.8);
 });
 
-test("mobile add keeps message recognition and templates compact", async ({ page }) => {
+test("mobile add defaults to A$ and keeps templates compact without SMS import", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/add");
 
-  await expect(page.locator(".message-capture")).toHaveCount(1);
-  await expect(page.locator(".message-capture[open]")).toHaveCount(0);
+  await expect(page.getByLabel("币种")).toHaveValue("AUD");
+  await expect(page.getByLabel("币种").locator("option:checked")).toHaveText("A$");
+  await expect(page.locator(".message-capture")).toHaveCount(0);
+  await expect(page.getByText("短信识别", { exact: true })).toHaveCount(0);
   const templateHeight = await page.locator(".quick-templates").evaluate((element) => element.getBoundingClientRect().height);
   expect(templateHeight).toBeLessThan(64);
+});
+
+test("new entries return to A$ while preserving other saved defaults", async ({ page }) => {
+  await page.goto("/add");
+  await page.evaluate(() => {
+    localStorage.setItem("aussie-chill-add-defaults-v1", JSON.stringify({
+      category: "交通",
+      currency: "CNY",
+      payer: "them",
+    }));
+  });
+  await page.reload();
+
+  await expect(page.getByLabel("币种")).toHaveValue("AUD");
+  await expect(page.getByLabel("类别")).toHaveValue("交通");
+  await expect(page.getByLabel("付款方")).toHaveValue("them");
 });
 
 test("primary navigation separates itinerary, ledger, and quick capture", async ({ page }) => {

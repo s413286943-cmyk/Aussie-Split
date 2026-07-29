@@ -1,5 +1,4 @@
 import { couples } from "./couples.js";
-import { createRecordId } from "./recordId.js";
 
 export const members = couples.map((couple) => ({
   id: couple.id,
@@ -84,35 +83,6 @@ export function calculateLedger(expenses) {
   return { currencies, categoriesByCurrency, pendingCategoriesByCurrency };
 }
 
-export function parseBankMessage(message) {
-  const text = message.trim().replace(/\s+/g, " ");
-  const currency = /A\$|AUD/i.test(text) ? "AUD" : "CNY";
-  const amountMatch =
-    text.match(/(?:A\$|AUD|¥|￥|CNY|RMB)\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)/i) ??
-    text.match(/([0-9][0-9,]*(?:\.[0-9]{1,2})?)/i);
-  const dateMatch = text.match(/(\d{1,2})[/-](\d{1,2})/);
-  const amount = amountMatch ? Number(amountMatch[1].replace(/,/g, "")) : 0;
-  const item = text
-    .replace(/^\d{1,2}[/-]\d{1,2}\s*/, "")
-    .replace(/(?:A\$|AUD|¥|￥|CNY|RMB)?\s*[0-9][0-9,]*(?:\.[0-9]{1,2})?/gi, "")
-    .replace(/\b(card purchase|purchase|消费|交易|支付|付款)\b/gi, "")
-    .trim() || "待确认消费";
-
-  return {
-    id: createRecordId("draft"),
-    category: guessCategory(item),
-    item,
-    date: dateMatch ? `2026-${dateMatch[1].padStart(2, "0")}-${dateMatch[2].padStart(2, "0")}` : "",
-    currency,
-    amount,
-    payer: "us",
-    status: "draft",
-    note: "由短信粘贴生成，确认后入账",
-    attachmentName: "",
-    splitSettled: false,
-  };
-}
-
 export function expenseToEditableForm(expense) {
   return {
     category: expense.category || "其他",
@@ -186,14 +156,6 @@ export function formatMoney(currency, amount) {
 
 export function roundMoney(value) {
   return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
-}
-
-function guessCategory(item) {
-  if (/\b(hotel|motel|apartment|apartments|villa|villas|inn)\b|oaks|酒店/i.test(item)) return "酒店";
-  if (/car|uber|taxi|ferry|train|租车|交通|停车|油费|toll/i.test(item)) return "交通";
-  if (/tour|reef|watching|opera|活动|一日游/i.test(item)) return "活动";
-  if (/dinner|lunch|cafe|restaurant|bbq|market|dining|餐|食材|咖啡/i.test(item)) return "dining";
-  return "其他";
 }
 
 function localDateInputValue(value) {

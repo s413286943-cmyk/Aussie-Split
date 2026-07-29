@@ -698,38 +698,6 @@ label {
   color: var(--accent-strong);
 }
 
-.message-capture {
-  overflow: hidden;
-  border: 1px solid rgba(16, 33, 31, 0.14);
-  border-radius: var(--radius);
-  background: rgba(252, 251, 245, 0.76);
-}
-
-.message-capture > summary {
-  min-height: 46px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 0 12px;
-  color: var(--accent-strong);
-  cursor: pointer;
-  font-weight: 900;
-}
-
-.message-capture > summary small {
-  color: var(--muted);
-  font-size: 0.75rem;
-  font-weight: 800;
-}
-
-.message-capture-body {
-  display: grid;
-  gap: 10px;
-  padding: 12px;
-  border-top: 1px solid rgba(16, 33, 31, 0.1);
-}
-
 .receipt-upload {
   padding: 12px;
   border: 1px dashed rgba(27, 96, 117, 0.28);
