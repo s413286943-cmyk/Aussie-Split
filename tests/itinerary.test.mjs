@@ -294,6 +294,7 @@ describe("itinerary data", () => {
     assert.equal(d3.city, "墨尔本 CBD → 墨尔本机场 → Apollo Bay");
     assert.equal(d3.transport, "Uber / Taxi 到机场 · 取车后自驾");
     assert.equal(d3.leaveBy, "08:00 从 Oaks 退房出发；09:30 从机场启程驶向 Torquay");
+    assert.equal(d3.primaryResource.id, "holiday-inn-airport-map");
 
     const holidayInn = blocks[1];
     const rental = blocks[2];

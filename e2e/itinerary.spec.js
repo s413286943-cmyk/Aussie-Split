@@ -119,6 +119,7 @@ test("D3 renders the airport luggage handoff, Torquay shop, and coastal drive in
 
   await expect(d3.locator(".timeline")).toContainText("4 个大箱");
   await expect(d3.locator(".food-brief")).toContainText("Seaview Motel BBQ");
+  await expect(d3.getByRole("region", { name: "每日地图快捷入口" }).getByRole("link", { name: "打开第一站" })).toHaveAttribute("href", /Holiday\+Inn\+Melbourne\+Airport/);
   await expect(d3.getByRole("link", { name: "地图 · Coles Torquay" }).first()).toHaveAttribute("href", /Coles\+Torquay\+41\+Bristol/);
   await expect(d3.getByRole("link", { name: "地图 · Grey River Road · Kennett River" }).first()).toHaveAttribute("href", /Grey\+River\+Road/);
 });

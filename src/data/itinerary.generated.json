@@ -888,10 +888,10 @@
         "sourceNote": "Google Maps"
       },
       "primaryResource": {
-        "id": "mel-airport-map",
-        "title": "墨尔本机场",
+        "id": "holiday-inn-airport-map",
+        "title": "Holiday Inn Melbourne Airport",
         "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Melbourne+Airport",
+        "url": "https://www.google.com/maps/search/?api=1&query=Holiday+Inn+Melbourne+Airport",
         "imageUrl": "",
         "imageAlt": "",
         "sourceNote": "Google Maps"
