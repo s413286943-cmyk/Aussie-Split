@@ -19,7 +19,7 @@ const expectedTitles = {
   d0: "启程澳洲：香港转机，夜航墨尔本",
   d1: "初到墨尔本：QVM 冬季夜市",
   d2: "从城市巷弄到山林：Puffing Billy 与 Fitzroy",
-  d3: "驶上大洋路：Torquay、Lorne 到 Apollo Bay",
+  d3: "驶上大洋路：从 Torquay 海岸到 Apollo Bay",
   d4: "红杉林到海岸：The Redwoods、十二使徒岩与 Loch Ard Gorge",
   d5: "海岸地貌到野生动物：大洋路返程日",
   d6: "抵达凯恩斯：Esplanade Lagoon 与热带夜市",
@@ -39,7 +39,7 @@ const expectedFocus = {
   d0: "经香港转机，夜航前往墨尔本。",
   d1: "下午抵达墨尔本，入住稍作休整，晚上在 QVM Winter Night Market 边逛边吃，轻松开启南半球旅程。",
   d2: "上午走过 Degraves Street、Flinders Street 与 Hosier Lane，在州立图书馆俯瞰圆顶阅览室；午后乘 Puffing Billy 穿行山林，返城后去 Fitzroy 散步吃晚餐。",
-  d3: "机场取车后沿海向西，途经 Torquay、Lorne，傍晚住进 Apollo Bay。",
+  d3: "把大箱寄存在机场，取车后到 Torquay 买好今晚的 BBQ 食材，再沿海经过 Bells Beach、Lorne 与 Kennett River，傍晚抵达 Apollo Bay。",
   d4: "先走进 The Redwoods Otways，再回到海岸看十二使徒岩、Loch Ard Gorge 与 The Razorback。",
   d5: "清晨补看海岸，再经 The Grotto、London Arch 与 Great Ocean Road Wildlife Park 走内陆线返回机场。",
   d6: "从墨尔本飞到凯恩斯，下午在 Esplanade Lagoon 放松，晚上逛夜市。",
@@ -263,6 +263,62 @@ describe("itinerary data", () => {
         `${priority.title} is not represented in ${priority.dayId}`,
       );
     }
+  });
+
+  it("runs D3 from luggage storage and car pickup through Torquay to Apollo Bay", () => {
+    const d3 = itinerary.days.find((day) => day.id === "d3");
+    const route = [
+      { place: /Oaks Melbourne on Market/, time: "08:00", resourceId: "oaks-market-map" },
+      { place: /Holiday Inn Melbourne Airport/, time: "08:40", resourceId: "holiday-inn-airport-map" },
+      { place: /Melbourne Airport Car Rental Branch/, time: "08:40–09:30", resourceId: "mel-airport-car-rental-map" },
+      { place: /Coles Torquay/, time: "10:45", resourceId: "coles-torquay-map" },
+      { place: /Bells Beach/, time: "11:20", resourceId: "bells-map" },
+      { place: /Split Point Lighthouse/, time: "12:00", resourceId: "split-point-map" },
+      { place: /Great Ocean Road Memorial Arch/, time: "12:40", resourceId: "memorial-arch-map" },
+      { place: /^Lorne$/, time: "13:00", resourceId: "lorne-map" },
+      { place: /Teddy's Lookout/, time: "14:15", resourceId: "teddys-map" },
+      { place: /Kennett River \/ Grey River Road/, time: "15:30", resourceId: "grey-river-road-map" },
+      { place: /Cape Patton Lookout/, time: "16:15", resourceId: "cape-patton-map" },
+      { place: /Seaview Motel & Apartments/, time: "17:00", resourceId: "seaview-motel-map" },
+    ];
+
+    const blocks = route.map(({ place, time, resourceId }) => {
+      const block = d3.blocks.find((item) => place.test(item.place));
+      assert.ok(block, `D3 is missing ${place}`);
+      assert.match(block.period, new RegExp(time));
+      assert.ok(block.resources.some((resource) => resource.id === resourceId));
+      return block;
+    });
+
+    assert.deepEqual(blocks.map((block) => block.sortOrder), [...blocks.map((block) => block.sortOrder)].sort((a, b) => a - b));
+    assert.equal(d3.city, "墨尔本 CBD → 墨尔本机场 → Apollo Bay");
+    assert.equal(d3.transport, "Uber / Taxi 到机场 · 取车后自驾");
+    assert.equal(d3.leaveBy, "08:00 从 Oaks 退房出发；09:30 从机场启程驶向 Torquay");
+
+    const holidayInn = blocks[1];
+    const rental = blocks[2];
+    const coles = blocks[3];
+    const splitPoint = blocks[5];
+    const lorne = blocks[7];
+    const kennettRiver = blocks[9];
+    const dinner = d3.blocks.find((block) => block.period === "晚上");
+    const d3Text = d3.blocks.map((block) => `${block.place} ${block.activity} ${block.highlight} ${block.tip}`).join(" ");
+
+    assert.match(`${holidayInn.activity} ${holidayInn.tip}`, /4 个大箱|四个大箱/);
+    assert.match(`${rental.activity} ${rental.tip}`, /车身划痕|轮毂|挡风玻璃|油量|Google Maps|右舵/);
+    assert.match(`${coles.activity} ${coles.highlight} ${coles.tip}`, /BBQ|牛排|香肠|蔬菜|饮料/);
+    assert.match(`${splitPoint.activity} ${splitPoint.highlight}`, /Eagle Rock/);
+    assert.match(`${lorne.activity} ${lorne.tip}`, /午餐|海边|咖啡/);
+    assert.match(`${kennettRiver.activity} ${kennettRiver.tip}`, /树冠|不喂/);
+    assert.ok(dinner, "D3 is missing its BBQ dinner");
+    assert.match(`${dinner.place} ${dinner.activity} ${dinner.highlight} ${dinner.tip}`, /Seaview Motel|BBQ/);
+    assert.doesNotMatch(d3Text, /Marriners Lookout|Fishermen's Co-op/);
+    assert.doesNotMatch(d3Text, /优先保留|可缩|时间目标|路线逻辑|开发|调整为|预计到达/);
+
+    const d2 = itinerary.days.find((day) => day.id === "d2");
+    const d2Text = d2.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`).join(" ");
+    assert.match(d2Text, /第二天一起带到机场/);
+    assert.doesNotMatch(d2Text, /四个大箱留在酒店/);
   });
 
   it("runs D4 through The Redwoods and The Razorback in route order", () => {

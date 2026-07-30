@@ -790,7 +790,7 @@
           "place": "Fitzroy → Oaks Melbourne on Market Hotel",
           "activity": "回酒店，整理大洋路随身行李",
           "highlight": "把冬装和摄影设备装进登机箱",
-          "tip": "四个大箱留在酒店，只带登机箱和随身包上路；早点休息。",
+          "tip": "把四个大箱与大洋路小箱分开整理，第二天一起带到机场；寄存后只带小箱上路。",
           "resources": [
             {
               "id": "fitzroy-map",
@@ -866,18 +866,18 @@
       "label": "D3",
       "date": "2026-07-31",
       "weekday": "周五",
-      "city": "墨尔本机场 → Apollo Bay",
+      "city": "墨尔本 CBD → 墨尔本机场 → Apollo Bay",
       "lat": -38.7599,
       "lon": 143.6692,
-      "title": "驶上大洋路：Torquay、Lorne 到 Apollo Bay",
-      "focus": "机场取车后沿海向西，途经 Torquay、Lorne，傍晚住进 Apollo Bay。",
+      "title": "驶上大洋路：从 Torquay 海岸到 Apollo Bay",
+      "focus": "把大箱寄存在机场，取车后到 Torquay 买好今晚的 BBQ 食材，再沿海经过 Bells Beach、Lorne 与 Kennett River，傍晚抵达 Apollo Bay。",
       "lodging": "Seaview Motel & Apartments",
       "climateNote": "维州南海岸冬季多风，体感比温度更冷。",
       "clothingNote": "防风外套、长裤、防滑鞋；车上备水和零食。",
       "coverImageUrl": "/itinerary/d3-great-ocean-road-lorne.png",
       "coverImageAlt": "大洋路早段海岸公路与灯塔",
-      "transport": "自驾 · 墨尔本机场取车",
-      "leaveBy": "08:00 前退房出发，预留机场取车时间",
+      "transport": "Uber / Taxi 到机场 · 取车后自驾",
+      "leaveBy": "08:00 从 Oaks 退房出发；09:30 从机场启程驶向 Torquay",
       "lodgingResource": {
         "id": "seaview-motel-map",
         "title": "Seaview Motel & Apartments",
@@ -909,12 +909,61 @@
         {
           "dayId": "d3",
           "sortOrder": 10,
-          "period": "上午",
-          "place": "墨尔本 CBD → 墨尔本机场",
-          "activity": "前往机场取车，确认车辆、保险、第二驾驶人、导航和行李安排",
-          "highlight": "从机场取车，正式驶上大洋路",
-          "tip": "从机场取车能避开 CBD 复杂路况；出发前先设置导航和语音提示，让右舵适应更从容。",
+          "period": "08:00",
+          "place": "Oaks Melbourne on Market Hotel",
+          "activity": "退房，把四个大箱与大洋路小箱分开，只带小箱上路",
+          "highlight": "轻装开启大洋路",
+          "tip": "出门前确认护照、驾照、租车订单与随身设备都已带齐。",
           "resources": [
+            {
+              "id": "oaks-market-map",
+              "title": "Oaks Melbourne on Market Hotel",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Melbourne+on+Market+Hotel",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d3",
+          "sortOrder": 20,
+          "period": "08:40 左右",
+          "place": "Holiday Inn Melbourne Airport",
+          "activity": "把 4 个大箱交给前台寄存，确认领取安排后整理随身物品",
+          "highlight": "大件行李留在机场酒店",
+          "tip": "把寄存标签和领取凭证拍照留存，再带着大洋路小箱前往租车门店。",
+          "resources": [
+            {
+              "id": "holiday-inn-airport-map",
+              "title": "Holiday Inn Melbourne Airport",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Holiday+Inn+Melbourne+Airport",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d3",
+          "sortOrder": 30,
+          "period": "08:40–09:30",
+          "place": "Melbourne Airport Car Rental Branch",
+          "activity": "办理取车，检查车身划痕、轮毂、挡风玻璃与油量",
+          "highlight": "设好 Google Maps，熟悉右舵车位",
+          "tip": "启程前拍一圈车辆视频，调整座椅、后视镜和导航语音，再确认第二驾驶人。",
+          "resources": [
+            {
+              "id": "mel-airport-car-rental-map",
+              "title": "Melbourne Airport Car Rental Branch",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Melbourne+Airport+Car+Rental",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 按租车订单确认具体门店与接驳方式"
+            },
             {
               "id": "mel-airport-map",
               "title": "墨尔本机场",
@@ -928,12 +977,12 @@
         },
         {
           "dayId": "d3",
-          "sortOrder": 20,
-          "period": "上午",
+          "sortOrder": 40,
+          "period": "09:30–10:45",
           "place": "墨尔本机场 → Torquay",
-          "activity": "从机场出发，经 Geelong Bypass 前往 Torquay",
-          "highlight": "右舵适应第一段",
-          "tip": "经过 Geelong 外围即可，刚开始适应右舵时把安全放在第一位。",
+          "activity": "经 M80、M1 与 Geelong Bypass 驶向 Torquay",
+          "highlight": "第一段以高速路为主，慢慢适应右舵",
+          "tip": "导航先设为 Coles Torquay；经过 Geelong 外围即可，不进市区。",
           "resources": [
             {
               "id": "mel-airport-map",
@@ -945,44 +994,44 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "torquay-map",
-              "title": "Torquay",
+              "id": "coles-torquay-map",
+              "title": "Coles Torquay",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Torquay+Victoria",
+              "url": "https://www.google.com/maps/search/?api=1&query=Coles+Torquay+41+Bristol+Road+Torquay+VIC+3228",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "Google Maps · 41 Bristol Road, Torquay VIC 3228"
             }
           ]
         },
         {
           "dayId": "d3",
-          "sortOrder": 30,
-          "period": "上午",
-          "place": "Torquay",
-          "activity": "咖啡 / 短暂停留 / 进入海岸线节奏",
-          "highlight": "大洋路氛围开始",
-          "tip": "把 Torquay 作为第一处完整休息点，喝杯咖啡再进入海岸线。",
+          "sortOrder": 50,
+          "period": "10:45–11:15",
+          "place": "Coles Torquay",
+          "activity": "采购 Apollo Bay BBQ 晚餐食材与车上饮水",
+          "highlight": "牛排、香肠或鸡腿，搭配玉米、蘑菇、彩椒与洋葱",
+          "tip": "再拿 Garlic Bread、Salad Kit、面包、酱料、啤酒或葡萄酒与饮用水；冷藏食材集中装好。",
           "resources": [
             {
-              "id": "torquay-map",
-              "title": "Torquay",
+              "id": "coles-torquay-map",
+              "title": "Coles Torquay",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Torquay+Victoria",
+              "url": "https://www.google.com/maps/search/?api=1&query=Coles+Torquay+41+Bristol+Road+Torquay+VIC+3228",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "Google Maps · 41 Bristol Road, Torquay VIC 3228"
             }
           ]
         },
         {
           "dayId": "d3",
-          "sortOrder": 40,
-          "period": "上午",
+          "sortOrder": 60,
+          "period": "11:20–11:45",
           "place": "Bells Beach",
-          "activity": "冲浪海岸停靠",
-          "highlight": "经典冲浪海滩 + 悬崖海浪",
-          "tip": "风大，10分钟左右即可",
+          "activity": "从观景台看冲浪海岸与悬崖海浪",
+          "highlight": "大洋路的第一段开阔海景",
+          "tip": "沿正式停车位步行到 Bells Beach Lookout，风大时在高处拍完就继续上路。",
           "resources": [
             {
               "id": "bells-map",
@@ -997,12 +1046,12 @@
         },
         {
           "dayId": "d3",
-          "sortOrder": 50,
-          "period": "上午",
+          "sortOrder": 70,
+          "period": "12:00–12:30",
           "place": "Split Point Lighthouse",
-          "activity": "Aireys Inlet 灯塔",
-          "highlight": "白色灯塔 + 海岸线开阔视野",
-          "tip": "建议停，是大洋路第一个清晰记忆点",
+          "activity": "步行看白色灯塔与 Eagle Rock Lookout",
+          "highlight": "灯塔、礁石与 Aireys Inlet 海岸线",
+          "tip": "留约 30 分钟，沿步道走到观景点再原路返回。",
           "resources": [
             {
               "id": "split-point-map",
@@ -1017,12 +1066,12 @@
         },
         {
           "dayId": "d3",
-          "sortOrder": 60,
-          "period": "上午 / 中午",
-          "place": "Memorial Arch",
-          "activity": "大洋路纪念拱门",
-          "highlight": "Great Ocean Road 标志入口",
-          "tip": "5–10分钟拍照即可",
+          "sortOrder": 80,
+          "period": "12:40–12:50",
+          "place": "Great Ocean Road Memorial Arch",
+          "activity": "在纪念拱门前合影，正式进入大洋路",
+          "highlight": "Great Ocean Road 标志性入口",
+          "tip": "停留约 10 分钟，拍完继续前往 Lorne 吃午餐。",
           "resources": [
             {
               "id": "memorial-arch-map",
@@ -1037,12 +1086,41 @@
         },
         {
           "dayId": "d3",
-          "sortOrder": 70,
-          "period": "中午前后",
+          "sortOrder": 90,
+          "period": "13:00–14:00",
+          "place": "Lorne",
+          "activity": "在海边小镇吃午餐，沿海边走一走，再喝杯咖啡",
+          "highlight": "在驾驶中段坐下来休息",
+          "tip": "留 45–60 分钟，吃饱但不过量，下午还有多段海岸弯道。",
+          "resources": [
+            {
+              "id": "lorne-map",
+              "title": "Lorne",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Lorne+Victoria",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "snow-monkey-ramen-map",
+              "title": "Snow Monkey Ramen Lorne",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Snow+Monkey+Ramen+Lorne",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d3",
+          "sortOrder": 100,
+          "period": "14:15–14:35",
           "place": "Teddy's Lookout",
-          "activity": "S型海岸 + 河口入海",
-          "highlight": "全路段最经典构图点之一",
-          "tip": "必停，但不需要久留",
+          "activity": "从高处看 Saint George River 入海与 S 形海岸公路",
+          "highlight": "Lorne 一带最经典的纵深视角",
+          "tip": "停车后步行到观景台，留 15–20 分钟。",
           "resources": [
             {
               "id": "teddys-map",
@@ -1057,33 +1135,22 @@
         },
         {
           "dayId": "d3",
-          "sortOrder": 80,
-          "period": "中午",
-          "place": "Lorne",
-          "activity": "午餐 + 补给",
-          "highlight": "最舒服海滨小镇之一",
-          "tip": "在 Lorne 慢慢吃午餐、补给并休息，不必赶时间。",
+          "sortOrder": 110,
+          "period": "15:30–16:00",
+          "place": "Kennett River / Grey River Road",
+          "activity": "沿 Grey River Road 慢慢找树冠里的野生考拉",
+          "highlight": "桉树林里的野生动物时刻",
+          "tip": "抬头观察树冠，也留意路边鸟类；保持距离，不喂食、不追逐。",
           "resources": [
             {
-              "id": "lorne-map",
-              "title": "Lorne",
+              "id": "grey-river-road-map",
+              "title": "Grey River Road · Kennett River",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Lorne+Victoria",
+              "url": "https://www.google.com/maps/search/?api=1&query=Grey+River+Road+Kennett+River+VIC",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d3",
-          "sortOrder": 90,
-          "period": "下午",
-          "place": "Kennett River",
-          "activity": "找考拉",
-          "highlight": "桉树 + 野生考拉体验",
-          "tip": "抬头看树，不保证但高概率；不要为拍照打扰动物",
-          "resources": [
+              "sourceNote": "Google Maps · Kennett River 野生考拉观察路段"
+            },
             {
               "id": "kennett-map",
               "title": "Kennett River",
@@ -1097,12 +1164,12 @@
         },
         {
           "dayId": "d3",
-          "sortOrder": 100,
-          "period": "下午",
+          "sortOrder": 120,
+          "period": "16:15–16:25",
           "place": "Cape Patton Lookout",
-          "activity": "海岸远景观景",
-          "highlight": "高位俯瞰 Apollo Bay 海岸线",
-          "tip": "顺路短停即可",
+          "activity": "从高处回望弯曲海岸，望向 Apollo Bay 方向",
+          "highlight": "抵达小镇前的最后一段海岸全景",
+          "tip": "停留 5–10 分钟，随后继续前往住宿。",
           "resources": [
             {
               "id": "cape-patton-map",
@@ -1126,62 +1193,22 @@
         },
         {
           "dayId": "d3",
-          "sortOrder": 110,
-          "period": "傍晚",
-          "place": "Marriners Lookout（可选）",
-          "activity": "Apollo Bay 俯瞰",
-          "highlight": "半月海湾 + 小镇全景",
-          "tip": "天气好、不累、时间够才去",
-          "resources": [
-            {
-              "id": "marriners-map",
-              "title": "Marriners Lookout",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Marriners+Lookout+Apollo+Bay",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "apollo-map",
-              "title": "Apollo Bay",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Apollo+Bay+Victoria",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d3",
-          "sortOrder": 120,
-          "period": "傍晚",
-          "place": "Apollo Bay",
-          "activity": "入住",
-          "highlight": "海边小镇节奏",
-          "tip": "日落前抵达最佳",
-          "resources": [
-            {
-              "id": "apollo-map",
-              "title": "Apollo Bay",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Apollo+Bay+Victoria",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d3",
           "sortOrder": 130,
-          "period": "晚上",
-          "place": "Apollo Bay",
-          "activity": "Fishermen's Co-op / seafood café 晚餐",
-          "highlight": "海边渔港氛围",
-          "tip": "到 Apollo Bay 后吃 fish & chips 或海鲜，早点休息。",
+          "period": "17:00",
+          "place": "Seaview Motel & Apartments",
+          "activity": "办理入住，把冷藏食材放好，稍作休息",
+          "highlight": "日落前住进 Apollo Bay",
+          "tip": "先确认 BBQ 设施位置与使用方式，再整理晚餐食材。",
           "resources": [
+            {
+              "id": "seaview-motel-map",
+              "title": "Seaview Motel & Apartments",
+              "type": "map",
+              "url": "https://www.google.com/maps?q=Seaview+Motel+Apollo+Bay",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
             {
               "id": "apollo-map",
               "title": "Apollo Bay",
@@ -1190,15 +1217,35 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            },
+            }
+          ]
+        },
+        {
+          "dayId": "d3",
+          "sortOrder": 140,
+          "period": "晚上",
+          "place": "Seaview Motel & Apartments",
+          "activity": "用上午采购的食材准备 BBQ 晚餐",
+          "highlight": "牛排、香肠与蔬菜，为第一天海岸自驾收尾",
+          "tip": "吃完把次日随身物品整理好，早点休息。",
+          "resources": [
             {
-              "id": "fishermens-coop-map",
-              "title": "Apollo Bay Fishermen's Co-op",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Apollo+Bay+Fishermens+Co-op",
+              "id": "seaview-motel-map",
+              "title": "Seaview Motel & Apartments",
+              "type": "map",
+              "url": "https://www.google.com/maps?q=Seaview+Motel+Apollo+Bay",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "coles-torquay-map",
+              "title": "Coles Torquay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Coles+Torquay+41+Bristol+Road+Torquay+VIC+3228",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 41 Bristol Road, Torquay VIC 3228"
             }
           ]
         },
@@ -1207,9 +1254,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：出发咖啡；午餐：Lorne café / Snow Monkey Ramen（备选）；晚餐：Apollo Bay Fishermen's Co-op / seafood café",
-          "highlight": "当天餐食节奏",
-          "tip": "海岸驾驶日以轻松好吃为主，Apollo Bay 的 fish & chips / 海鲜正合适。",
+          "activity": "早餐：出发咖啡；午餐：Lorne café / Snow Monkey Ramen；晚餐：Seaview Motel BBQ",
+          "highlight": "从海边午餐到住处 BBQ",
+          "tip": "上午在 Torquay 买好晚餐食材，Lorne 坐下来吃午餐，抵达 Apollo Bay 后在住处准备晚餐。",
           "resources": [
             {
               "id": "lorne-map",
@@ -1230,22 +1277,22 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "apollo-map",
-              "title": "Apollo Bay",
+              "id": "seaview-motel-map",
+              "title": "Seaview Motel & Apartments",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Apollo+Bay+Victoria",
+              "url": "https://www.google.com/maps?q=Seaview+Motel+Apollo+Bay",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
             },
             {
-              "id": "fishermens-coop-map",
-              "title": "Apollo Bay Fishermen's Co-op",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Apollo+Bay+Fishermens+Co-op",
+              "id": "coles-torquay-map",
+              "title": "Coles Torquay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Coles+Torquay+41+Bristol+Road+Torquay+VIC+3228",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "Google Maps · 41 Bristol Road, Torquay VIC 3228"
             }
           ]
         }
@@ -5763,6 +5810,33 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Official booking · general admission; prices and availability can change"
+    },
+    {
+      "id": "mel-airport-car-rental-map",
+      "title": "Melbourne Airport Car Rental Branch",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Melbourne+Airport+Car+Rental",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 按租车订单确认具体门店与接驳方式"
+    },
+    {
+      "id": "coles-torquay-map",
+      "title": "Coles Torquay",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Coles+Torquay+41+Bristol+Road+Torquay+VIC+3228",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 41 Bristol Road, Torquay VIC 3228"
+    },
+    {
+      "id": "grey-river-road-map",
+      "title": "Grey River Road · Kennett River",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Grey+River+Road+Kennett+River+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Kennett River 野生考拉观察路段"
     }
   ],
   "priorities": [

@@ -90,6 +90,39 @@ test("the polished D1 plan and Great Ocean Road Wildlife Park render in their up
   await expect(d5.locator(".timeline")).not.toContainText("Bay of Islands");
 });
 
+test("D3 renders the airport luggage handoff, Torquay shop, and coastal drive in order", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/itinerary#d3");
+
+  const d3 = page.locator("#d3");
+  await d3.getByText("查看当天安排", { exact: true }).click();
+  await expect(d3.locator("h3")).toHaveText("驶上大洋路：从 Torquay 海岸到 Apollo Bay");
+
+  const places = await d3.locator(".timeline .time-block h4").allTextContents();
+  expect(places.slice(0, 14)).toEqual([
+    "Oaks Melbourne on Market Hotel",
+    "Holiday Inn Melbourne Airport",
+    "Melbourne Airport Car Rental Branch",
+    "墨尔本机场 → Torquay",
+    "Coles Torquay",
+    "Bells Beach",
+    "Split Point Lighthouse",
+    "Great Ocean Road Memorial Arch",
+    "Lorne",
+    "Teddy's Lookout",
+    "Kennett River / Grey River Road",
+    "Cape Patton Lookout",
+    "Seaview Motel & Apartments",
+    "Seaview Motel & Apartments",
+  ]);
+
+  await expect(d3.locator(".timeline")).toContainText("4 个大箱");
+  await expect(d3.locator(".food-brief")).toContainText("Seaview Motel BBQ");
+  await expect(d3.getByRole("link", { name: "地图 · Coles Torquay" }).first()).toHaveAttribute("href", /Coles\+Torquay\+41\+Bristol/);
+  await expect(d3.getByRole("link", { name: "地图 · Grey River Road · Kennett River" }).first()).toHaveAttribute("href", /Grey\+River\+Road/);
+});
+
 test("mobile itinerary keeps controls and day text inside the viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/itinerary");
