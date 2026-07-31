@@ -1306,15 +1306,15 @@
       "city": "Apollo Bay → Port Campbell",
       "lat": -38.6191,
       "lon": 142.9956,
-      "title": "红杉林到海岸：The Redwoods、十二使徒岩与 Loch Ard Gorge",
-      "focus": "先走进 The Redwoods Otways，再回到海岸看十二使徒岩、Loch Ard Gorge 与 The Razorback。",
+      "title": "从雨林走向海岸：The Redwoods、十二使徒岩与 Loch Ard Gorge",
+      "focus": "上午从 Apollo Bay 补给出发，走进 Maits Rest 与 The Redwoods；下午回到 Gibson Steps、十二使徒岩和 Loch Ard Gorge 的海岸线，傍晚在 Port Campbell 收住这一天。",
       "lodging": "Southern Ocean Villas",
-      "climateNote": "海岸风大，步道和台阶雨后湿滑。",
-      "clothingNote": "防风外套、防水鞋；拍照时不要太靠近海浪。",
+      "climateNote": "林区早上湿冷，下午海岸风大；步道和台阶雨后容易湿滑。",
+      "clothingNote": "长袖打底、中层与防风防水外套；穿防滑鞋，帽子和薄手套放车里。",
       "coverImageUrl": "/itinerary/d4-twelve-apostles-gorge.png",
       "coverImageAlt": "十二使徒岩与峡谷海岸",
-      "transport": "自驾 · 大洋路海岸段",
-      "leaveBy": "07:45 前离开 Apollo Bay",
+      "transport": "自驾 · 雨林山路 + 大洋路海岸段",
+      "leaveBy": "08:30 退房启程；09:15 后离开 Apollo Bay 时，从 Maits Rest 直接前往 Castle Cove",
       "lodgingResource": {
         "id": "southern-ocean-villas-map",
         "title": "Southern Ocean Villas",
@@ -1325,13 +1325,13 @@
         "sourceNote": "Google Maps"
       },
       "primaryResource": {
-        "id": "redwoods-otways-map",
-        "title": "The Redwoods Otways",
+        "id": "d4-full-route-map",
+        "title": "D4 全程导航（含 The Redwoods）",
         "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=The+Redwoods+Otways+Beech+Forest+VIC",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=Seaview+Motel+%26+Apartments%2C+Apollo+Bay+VIC&destination=Southern+Ocean+Villas%2C+Port+Campbell+VIC&travelmode=driving&waypoints=FoodWorks+Apollo+Bay+VIC%7CMaits+Rest+Rainforest+Walk+VIC%7CThe+Redwoods+Otways%2C+Beech+Forest+VIC%7CCastle+Cove+Lookout+VIC%7CGibson+Steps+VIC%7CTwelve+Apostles+VIC%7CLoch+Ard+Gorge+VIC%7CPort+Campbell+Foreshore+VIC",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "Google Maps · Binns Road, Beech Forest"
+        "sourceNote": "Google Maps · Apollo Bay 至 Port Campbell"
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
@@ -1346,11 +1346,96 @@
         {
           "dayId": "d4",
           "sortOrder": 10,
-          "period": "备选 · 清晨",
+          "period": "08:30",
+          "place": "Seaview Motel & Apartments",
+          "activity": "早餐后退房，检查昨晚食材、垃圾与冰袋，带好水和零食",
+          "highlight": "从 Apollo Bay 开始雨林与海岸的一天",
+          "tip": "计划 08:30–09:00 离开；防风外套放在手边，停车下车时随时可穿。",
+          "resources": [
+            {
+              "id": "seaview-motel-map",
+              "title": "Seaview Motel & Apartments",
+              "type": "map",
+              "url": "https://www.google.com/maps?q=Seaview+Motel+Apollo+Bay",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d4-full-route-map",
+              "title": "D4 全程导航（含 The Redwoods）",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Seaview+Motel+%26+Apartments%2C+Apollo+Bay+VIC&destination=Southern+Ocean+Villas%2C+Port+Campbell+VIC&travelmode=driving&waypoints=FoodWorks+Apollo+Bay+VIC%7CMaits+Rest+Rainforest+Walk+VIC%7CThe+Redwoods+Otways%2C+Beech+Forest+VIC%7CCastle+Cove+Lookout+VIC%7CGibson+Steps+VIC%7CTwelve+Apostles+VIC%7CLoch+Ard+Gorge+VIC%7CPort+Campbell+Foreshore+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Apollo Bay 至 Port Campbell"
+            },
+            {
+              "id": "d4-direct-coast-route-map",
+              "title": "D4 沿海导航（跳过 The Redwoods）",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Seaview+Motel+%26+Apartments%2C+Apollo+Bay+VIC&destination=Southern+Ocean+Villas%2C+Port+Campbell+VIC&travelmode=driving&waypoints=FoodWorks+Apollo+Bay+VIC%7CMaits+Rest+Rainforest+Walk+VIC%7CCastle+Cove+Lookout+VIC%7CGibson+Steps+VIC%7CTwelve+Apostles+VIC%7CLoch+Ard+Gorge+VIC%7CPort+Campbell+Foreshore+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 09:15 后离开 Apollo Bay 时使用"
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 20,
+          "period": "08:45",
+          "place": "Apollo Bay 镇中心补给",
+          "activity": "在 FoodWorks 或 IGA 买咖啡、水、面包、三明治、水果和午间轻食",
+          "highlight": "离开小镇前完成当天补给",
+          "tip": "十二使徒岩一带餐饮选择少，午餐按轻食 / picnic 准备。",
+          "resources": [
+            {
+              "id": "foodworks-apollo-bay-map",
+              "title": "FoodWorks Apollo Bay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=FoodWorks+Apollo+Bay+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "apollo-bay-iga-map",
+              "title": "Apollo Bay IGA",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Apollo+Bay+IGA+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d4-full-route-map",
+              "title": "D4 全程导航（含 The Redwoods）",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Seaview+Motel+%26+Apartments%2C+Apollo+Bay+VIC&destination=Southern+Ocean+Villas%2C+Port+Campbell+VIC&travelmode=driving&waypoints=FoodWorks+Apollo+Bay+VIC%7CMaits+Rest+Rainforest+Walk+VIC%7CThe+Redwoods+Otways%2C+Beech+Forest+VIC%7CCastle+Cove+Lookout+VIC%7CGibson+Steps+VIC%7CTwelve+Apostles+VIC%7CLoch+Ard+Gorge+VIC%7CPort+Campbell+Foreshore+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Apollo Bay 至 Port Campbell"
+            },
+            {
+              "id": "d4-direct-coast-route-map",
+              "title": "D4 沿海导航（跳过 The Redwoods）",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Seaview+Motel+%26+Apartments%2C+Apollo+Bay+VIC&destination=Southern+Ocean+Villas%2C+Port+Campbell+VIC&travelmode=driving&waypoints=FoodWorks+Apollo+Bay+VIC%7CMaits+Rest+Rainforest+Walk+VIC%7CCastle+Cove+Lookout+VIC%7CGibson+Steps+VIC%7CTwelve+Apostles+VIC%7CLoch+Ard+Gorge+VIC%7CPort+Campbell+Foreshore+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 09:15 后离开 Apollo Bay 时使用"
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 30,
+          "period": "09:15–10:00",
           "place": "Maits Rest Rainforest Walk",
-          "activity": "若 07:45 前离开 Apollo Bay 且时间充裕，可先走一段雨林环线。",
-          "highlight": "冬日湿润雨林，非常有氛围",
-          "tip": "只有早出发且时间充裕时再停，约 30 分钟。",
+          "activity": "沿雨林环线走进树蕨、苔藓与高大古树之间",
+          "highlight": "阴天也很有层次的温带雨林",
+          "tip": "环线约 30–45 分钟；雨后木栈道湿滑，穿防滑鞋。",
           "resources": [
             {
               "id": "maits-rest-map",
@@ -1365,12 +1450,12 @@
         },
         {
           "dayId": "d4",
-          "sortOrder": 20,
-          "period": "上午",
+          "sortOrder": 40,
+          "period": "10:20–11:10",
           "place": "The Redwoods Otways",
-          "activity": "从北侧 Binns Road 进入红杉林，沿 Aire River 林间步道慢走约 30–45 分钟。",
-          "highlight": "高大的加州红杉、林下光影与安静的河谷氛围",
-          "tip": "林区无手机信号，地面可能湿滑；出发前查看 Parks Victoria 路况与现场标识。",
+          "activity": "沿 Binns Road 前往红杉林，在高大树干、小溪与苔藓间慢走拍照",
+          "highlight": "安静的红杉林与河谷光影",
+          "tip": "如果 09:15 后才离开 Apollo Bay，或走完 Maits Rest 已觉疲惫，就沿主路前往 Castle Cove，让下午的海岸段更从容；入林前查看 Parks Victoria 与现场标识。",
           "resources": [
             {
               "id": "redwoods-otways-map",
@@ -1389,17 +1474,46 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Parks Victoria · 行前查看开放、路况与安全提示"
+            },
+            {
+              "id": "d4-direct-coast-route-map",
+              "title": "D4 沿海导航（跳过 The Redwoods）",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Seaview+Motel+%26+Apartments%2C+Apollo+Bay+VIC&destination=Southern+Ocean+Villas%2C+Port+Campbell+VIC&travelmode=driving&waypoints=FoodWorks+Apollo+Bay+VIC%7CMaits+Rest+Rainforest+Walk+VIC%7CCastle+Cove+Lookout+VIC%7CGibson+Steps+VIC%7CTwelve+Apostles+VIC%7CLoch+Ard+Gorge+VIC%7CPort+Campbell+Foreshore+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 09:15 后离开 Apollo Bay 时使用"
             }
           ]
         },
         {
           "dayId": "d4",
-          "sortOrder": 30,
-          "period": "中午前后",
+          "sortOrder": 50,
+          "period": "12:10",
+          "place": "Castle Cove Lookout",
+          "activity": "从高处俯看海岸与悬崖，在离开森林后重新迎向南大洋",
+          "highlight": "雨林转回海岸的第一眼",
+          "tip": "停留 5–10 分钟，快速拍照后继续前往 Gibson Steps。",
+          "resources": [
+            {
+              "id": "castle-cove-lookout-map",
+              "title": "Castle Cove Lookout",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Castle+Cove+Lookout+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 60,
+          "period": "12:45–13:25",
           "place": "Gibson Steps",
-          "activity": "下到海滩看悬崖与海蚀柱",
-          "highlight": "人物比例感很强，比单纯观景台更有沉浸感",
-          "tip": "看开放情况和风浪；风大时不要太靠近海浪",
+          "activity": "从崖顶看海蚀柱；台阶开放且海况平稳时走到沙滩",
+          "highlight": "在海平面感受悬崖与岩柱的尺度",
+          "tip": "停留 25–40 分钟；遵守关闭标识，风浪大时留在上方观景。",
           "resources": [
             {
               "id": "gibson-steps-map",
@@ -1414,12 +1528,12 @@
         },
         {
           "dayId": "d4",
-          "sortOrder": 40,
-          "period": "下午",
+          "sortOrder": 70,
+          "period": "13:40–14:40",
           "place": "Twelve Apostles",
-          "activity": "十二使徒岩主观景台",
-          "highlight": "大洋路最具代表性的海岸地貌",
-          "tip": "左侧平台更适合拍海岸线纵深；如果人多，不要停太久",
+          "activity": "走过主观景台与木栈道，看十二使徒岩和海岸纵深",
+          "highlight": "大洋路最经典的南大洋画面",
+          "tip": "预留 45–60 分钟；下午光线好时慢一点，不必只拍一张就走。",
           "resources": [
             {
               "id": "twelve-apostles-map",
@@ -1434,12 +1548,12 @@
         },
         {
           "dayId": "d4",
-          "sortOrder": 50,
-          "period": "下午",
+          "sortOrder": 80,
+          "period": "15:00–15:50",
           "place": "Loch Ard Gorge",
-          "activity": "在主观景区看峡湾与沉船故事，再接 Geology Walk。",
-          "highlight": "峡湾地貌、沉船历史与悬崖顶观景",
-          "tip": "至少预留 1 小时；海滩下行台阶关闭，按现场标识走崖顶步道。",
+          "activity": "沿上方观景区看峡谷、海湾与沉船故事相关地貌",
+          "highlight": "峡湾、黄岩悬崖与沉船历史",
+          "tip": "海滩下行台阶目前因地质不稳定关闭；按现场标识走崖顶步道，预留 40–60 分钟。",
           "resources": [
             {
               "id": "loch-ard-map",
@@ -1449,17 +1563,26 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "loch-ard-official",
+              "title": "Loch Ard Gorge · Parks Victoria",
+              "type": "official",
+              "url": "https://www.parks.vic.gov.au/places-to-see/parks/port-campbell-national-park/things-to-do/loch-ard-gorge",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Parks Victoria · 行前查看开放与安全提示"
             }
           ]
         },
         {
           "dayId": "d4",
-          "sortOrder": 55,
-          "period": "下午",
-          "place": "Tom and Eva",
-          "activity": "Loch Ard Gorge 附近短停",
-          "highlight": "两个海蚀柱，和沉船故事相关",
-          "tip": "作为 Loch Ard Gorge 区域顺路点，不需要额外绕路",
+          "sortOrder": 90,
+          "period": "15:50–16:05",
+          "place": "Tom and Eva Lookout",
+          "activity": "沿 Loch Ard Gorge 步道看 Tom and Eva 两座海蚀柱",
+          "highlight": "沉船故事里的两座海蚀柱",
+          "tip": "停留 10–15 分钟，与 Loch Ard Gorge 连在一起步行完成。",
           "resources": [
             {
               "id": "tom-eva-map",
@@ -1483,12 +1606,12 @@
         },
         {
           "dayId": "d4",
-          "sortOrder": 60,
-          "period": "下午后段",
-          "place": "The Razorback",
-          "activity": "从 Loch Ard Gorge 主停车场走 900 米往返 Geology Walk，经 Island Arch 到 The Razorback 观景台。",
-          "highlight": "同一景区内的狭长海蚀岩脊与悬崖顶视角",
-          "tip": "步行往返约 30–40 分钟；不需要另开一段车程。",
+          "sortOrder": 100,
+          "period": "16:10–16:35",
+          "place": "The Razorback Lookout",
+          "activity": "沿 Loch Ard Gorge 同一景区步道前往观景台，看狭长岩脊与岩层纹理",
+          "highlight": "低角度光线下更有层次的海蚀岩脊",
+          "tip": "与 Tom and Eva、Loch Ard Gorge 同一片区域，实际步行按现场标识和体力安排。",
           "resources": [
             {
               "id": "razorback-map",
@@ -1498,17 +1621,66 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "loch-ard-map",
+              "title": "Loch Ard Gorge",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Loch+Ard+Gorge",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
             }
           ]
         },
         {
           "dayId": "d4",
-          "sortOrder": 70,
-          "period": "傍晚",
-          "place": "Port Campbell",
-          "activity": "抵达入住 Southern Ocean Villas",
-          "highlight": "方便第二天清晨补拍",
-          "tip": "不要天黑后还在海岸小路上赶",
+          "sortOrder": 110,
+          "period": "16:45",
+          "place": "Port Campbell Foreshore",
+          "activity": "到镇上后沿海湾短走，看看防波堤与傍晚海面",
+          "highlight": "用小镇海湾结束当天海岸线",
+          "tip": "停留 15–30 分钟；如果风冷或天色已暗，就先去办理入住。",
+          "resources": [
+            {
+              "id": "port-campbell-foreshore-map",
+              "title": "Port Campbell Foreshore",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Foreshore+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 120,
+          "period": "17:00",
+          "place": "Southern Ocean Villas",
+          "activity": "办理入住，洗澡换衣，稍作休息",
+          "highlight": "在 Port Campbell 安顿下来",
+          "tip": "放好行李后，于 18:00–18:30 前往晚餐。",
+          "resources": [
+            {
+              "id": "southern-ocean-villas-map",
+              "title": "Southern Ocean Villas",
+              "type": "map",
+              "url": "https://www.google.com/maps?q=Southern+Ocean+Villas+Port+Campbell",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 130,
+          "period": "18:00–18:30",
+          "place": "Port Campbell 晚餐",
+          "activity": "首选 Port Campbell Hotel；想吃海鲜可去 12 Rocks，想轻松外带可选 REAL Pizza，想配精酿啤酒可去 Sow & Piglets",
+          "highlight": "热餐、海鲜、披萨或精酿，按当晚状态选择",
+          "tip": "尽量 18:30 前开始晚餐；到镇前确认营业时间，需要时提前订位或下单。",
           "resources": [
             {
               "id": "port-campbell-map",
@@ -1518,23 +1690,39 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d4",
-          "sortOrder": 80,
-          "period": "晚上",
-          "place": "Port Campbell",
-          "activity": "抵达后按天气选择公共电烤炉 BBQ、villa 厨房自炊或附近餐厅",
-          "highlight": "灵活完成 BBQ-style dinner",
-          "tip": "Southern Ocean Villas 没有自带 BBQ，但附近有两处免费 electric BBQ；villa 厨房备有油、盐、胡椒和锡纸。",
-          "resources": [
+            },
             {
-              "id": "port-campbell-map",
-              "title": "Port Campbell",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Victoria",
+              "id": "port-campbell-hotel-map",
+              "title": "Port Campbell Hotel",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Hotel+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "twelve-rocks-map",
+              "title": "12 Rocks Beach Cafe & Bar",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=12+Rocks+Beach+Cafe+%26+Bar+Port+Campbell+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "real-pizza-port-campbell-map",
+              "title": "REAL Pizza Pasta Salads",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=REAL+Pizza+Pasta+Salads+Port+Campbell+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "sow-piglets-map",
+              "title": "Sow & Piglets Brew Pub",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sow+%26+Piglets+Brew+Pub+Port+Campbell+VIC",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -1546,24 +1734,60 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：Apollo Bay café；午餐：轻食 / picnic；晚餐：在 Apollo Bay 买好食材，抵达后按天气选择公共 electric BBQ 或 villa 厨房自炊",
+          "activity": "早餐：Apollo Bay café；午餐：提前准备的轻食 / picnic；晚餐：Port Campbell Hotel / 12 Rocks / REAL Pizza / Sow & Piglets",
           "highlight": "当天餐食节奏",
-          "tip": "食材尽量在 Apollo Bay 买齐；抵达后视天气选择公共 BBQ 或 villa 厨房。",
+          "tip": "咖啡、水和午间轻食离开 Apollo Bay 前买好；晚餐尽量 18:00–18:30 入座。",
           "resources": [
             {
-              "id": "apollo-map",
-              "title": "Apollo Bay",
+              "id": "foodworks-apollo-bay-map",
+              "title": "FoodWorks Apollo Bay",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Apollo+Bay+Victoria",
+              "url": "https://www.google.com/maps/search/?api=1&query=FoodWorks+Apollo+Bay+VIC",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
             },
             {
-              "id": "port-campbell-map",
-              "title": "Port Campbell",
+              "id": "apollo-bay-iga-map",
+              "title": "Apollo Bay IGA",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Victoria",
+              "url": "https://www.google.com/maps/search/?api=1&query=Apollo+Bay+IGA+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "port-campbell-hotel-map",
+              "title": "Port Campbell Hotel",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Hotel+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "twelve-rocks-map",
+              "title": "12 Rocks Beach Cafe & Bar",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=12+Rocks+Beach+Cafe+%26+Bar+Port+Campbell+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "real-pizza-port-campbell-map",
+              "title": "REAL Pizza Pasta Salads",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=REAL+Pizza+Pasta+Salads+Port+Campbell+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "sow-piglets-map",
+              "title": "Sow & Piglets Brew Pub",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sow+%26+Piglets+Brew+Pub+Port+Campbell+VIC",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -5219,9 +5443,9 @@
     },
     {
       "id": "twelve-rocks-map",
-      "title": "12 Rocks Cafe",
+      "title": "12 Rocks Beach Cafe & Bar",
       "type": "restaurant",
-      "url": "https://www.google.com/maps/search/?api=1&query=12+Rocks+Cafe+Port+Campbell",
+      "url": "https://www.google.com/maps/search/?api=1&query=12+Rocks+Beach+Cafe+%26+Bar+Port+Campbell+VIC",
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
@@ -5837,6 +6061,96 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps · Kennett River 野生考拉观察路段"
+    },
+    {
+      "id": "d4-full-route-map",
+      "title": "D4 全程导航（含 The Redwoods）",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Seaview+Motel+%26+Apartments%2C+Apollo+Bay+VIC&destination=Southern+Ocean+Villas%2C+Port+Campbell+VIC&travelmode=driving&waypoints=FoodWorks+Apollo+Bay+VIC%7CMaits+Rest+Rainforest+Walk+VIC%7CThe+Redwoods+Otways%2C+Beech+Forest+VIC%7CCastle+Cove+Lookout+VIC%7CGibson+Steps+VIC%7CTwelve+Apostles+VIC%7CLoch+Ard+Gorge+VIC%7CPort+Campbell+Foreshore+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Apollo Bay 至 Port Campbell"
+    },
+    {
+      "id": "d4-direct-coast-route-map",
+      "title": "D4 沿海导航（跳过 The Redwoods）",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Seaview+Motel+%26+Apartments%2C+Apollo+Bay+VIC&destination=Southern+Ocean+Villas%2C+Port+Campbell+VIC&travelmode=driving&waypoints=FoodWorks+Apollo+Bay+VIC%7CMaits+Rest+Rainforest+Walk+VIC%7CCastle+Cove+Lookout+VIC%7CGibson+Steps+VIC%7CTwelve+Apostles+VIC%7CLoch+Ard+Gorge+VIC%7CPort+Campbell+Foreshore+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 09:15 后离开 Apollo Bay 时使用"
+    },
+    {
+      "id": "foodworks-apollo-bay-map",
+      "title": "FoodWorks Apollo Bay",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=FoodWorks+Apollo+Bay+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "apollo-bay-iga-map",
+      "title": "Apollo Bay IGA",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Apollo+Bay+IGA+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "castle-cove-lookout-map",
+      "title": "Castle Cove Lookout",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Castle+Cove+Lookout+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "port-campbell-foreshore-map",
+      "title": "Port Campbell Foreshore",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Foreshore+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "loch-ard-official",
+      "title": "Loch Ard Gorge · Parks Victoria",
+      "type": "official",
+      "url": "https://www.parks.vic.gov.au/places-to-see/parks/port-campbell-national-park/things-to-do/loch-ard-gorge",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Parks Victoria · 行前查看开放与安全提示"
+    },
+    {
+      "id": "port-campbell-hotel-map",
+      "title": "Port Campbell Hotel",
+      "type": "restaurant",
+      "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Hotel+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "real-pizza-port-campbell-map",
+      "title": "REAL Pizza Pasta Salads",
+      "type": "restaurant",
+      "url": "https://www.google.com/maps/search/?api=1&query=REAL+Pizza+Pasta+Salads+Port+Campbell+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "sow-piglets-map",
+      "title": "Sow & Piglets Brew Pub",
+      "type": "restaurant",
+      "url": "https://www.google.com/maps/search/?api=1&query=Sow+%26+Piglets+Brew+Pub+Port+Campbell+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
     }
   ],
   "priorities": [
