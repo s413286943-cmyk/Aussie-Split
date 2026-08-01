@@ -1804,15 +1804,15 @@
       "city": "Port Campbell → 墨尔本机场",
       "lat": -37.669,
       "lon": 144.841,
-      "title": "海岸地貌到野生动物：大洋路返程日",
-      "focus": "清晨补看海岸，再经 The Grotto、London Arch 与 Great Ocean Road Wildlife Park 走内陆线返回机场。",
+      "title": "晨光中的海岸：十二使徒岩、Loch Ard Gorge 与野生动物",
+      "focus": "清晨沿十二使徒岩、Gibson Steps 与 Loch Ard Gorge 追着晨光看海岸，回别墅早餐退房后去 Wildlife Park，午后经 Colac 返回墨尔本机场。",
       "lodging": "Holiday Inn Melbourne Airport",
-      "climateNote": "早晨海边冷，回程时间长。",
-      "clothingNote": "早上防风保暖，下午回机场前预留加油和还车时间。",
+      "climateNote": "清晨海岸寒冷多风，午后内陆相对温和；沿途天气变化快。",
+      "clothingNote": "清晨穿轻薄羽绒和防风外套，帽子、手套随身；动物园穿防滑包脚鞋。",
       "coverImageUrl": "/itinerary/d5-port-campbell-morning.png",
       "coverImageAlt": "Port Campbell 清晨海岸",
-      "transport": "自驾 · 内陆回墨尔本机场",
-      "leaveBy": "07:00 前退房；11:45 前离开 Wildlife Park，17:00 前还车",
+      "transport": "自驾 · 清晨海岸环线 + 内陆返回墨尔本机场",
+      "leaveBy": "06:45 离开别墅看晨光；10:30 前退房；13:30–14:30 经 Colac 开始返程",
       "lodgingResource": {
         "id": "holiday-inn-airport-map",
         "title": "Holiday Inn Melbourne Airport",
@@ -1823,13 +1823,13 @@
         "sourceNote": "Google Maps"
       },
       "primaryResource": {
-        "id": "great-ocean-road-wildlife-park-map",
-        "title": "Great Ocean Road Wildlife Park",
+        "id": "d5-sunrise-route-map",
+        "title": "D5 晨光海岸路线",
         "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Great+Ocean+Road+Wildlife+Park+Gellibrand+Lower+VIC",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=Southern+Ocean+Villas%2C+Port+Campbell+VIC&destination=Loch+Ard+Gorge%2C+VIC&travelmode=driving&waypoints=Twelve+Apostles%2C+VIC%7CGibson+Steps%2C+VIC",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "Google Maps · 29 The Boulevarde, Gellibrand Lower"
+        "sourceNote": "Google Maps · Southern Ocean Villas → Twelve Apostles → Gibson Steps → Loch Ard Gorge"
       },
       "ticketResource": {
         "id": "great-ocean-road-wildlife-park-booking",
@@ -1844,37 +1844,151 @@
         {
           "dayId": "d5",
           "sortOrder": 10,
-          "period": "07:00-07:30",
-          "place": "Port Campbell",
-          "activity": "退房、装车并简单早餐",
-          "highlight": "小镇清晨 + 返程准备",
-          "tip": "把行李装车、早餐和退房一次完成；07:30 左右驶离住宿。",
+          "period": "06:30–06:45",
+          "place": "Southern Ocean Villas",
+          "activity": "换好防风保暖层，带上随身小包，06:45 驾车出发",
+          "highlight": "天亮前驶向十二使徒岩",
+          "tip": "清晨只带手机、相机和保温杯；出门前先设置好第一段导航。",
           "resources": [
             {
-              "id": "port-campbell-map",
-              "title": "Port Campbell",
+              "id": "southern-ocean-villas-map",
+              "title": "Southern Ocean Villas",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Victoria",
+              "url": "https://www.google.com/maps?q=Southern+Ocean+Villas+Port+Campbell",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d5-sunrise-route-map",
+              "title": "D5 晨光海岸路线",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Southern+Ocean+Villas%2C+Port+Campbell+VIC&destination=Loch+Ard+Gorge%2C+VIC&travelmode=driving&waypoints=Twelve+Apostles%2C+VIC%7CGibson+Steps%2C+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Southern Ocean Villas → Twelve Apostles → Gibson Steps → Loch Ard Gorge"
             }
           ]
         },
         {
           "dayId": "d5",
           "sortOrder": 20,
-          "period": "天气补拍备选 · 07:30-08:10",
-          "place": "Twelve Apostles / Loch Ard Gorge",
-          "activity": "若前一日受天气影响，在两处中只选一处清晨补拍；若已看够则直接前往 The Grotto",
-          "highlight": "柔和晨光 + 较少游客",
-          "tip": "只选一处，08:10 最晚离开；这段是天气补拍，不影响 10:00 后进入 Wildlife Park。",
+          "period": "07:05–07:45",
+          "place": "Twelve Apostles",
+          "activity": "沿主观景台看晨光落在海蚀柱与海岸线上",
+          "highlight": "07:29 左右日出 + 清晨人少",
+          "tip": "07:05–07:15 抵达较从容；风口体感冷，拍完后直接前往 Gibson Steps。",
           "resources": [
             {
               "id": "twelve-apostles-map",
               "title": "Twelve Apostles",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Twelve+Apostles+Victoria",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d5-sunrise-route-map",
+              "title": "D5 晨光海岸路线",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Southern+Ocean+Villas%2C+Port+Campbell+VIC&destination=Loch+Ard+Gorge%2C+VIC&travelmode=driving&waypoints=Twelve+Apostles%2C+VIC%7CGibson+Steps%2C+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Southern Ocean Villas → Twelve Apostles → Gibson Steps → Loch Ard Gorge"
+            }
+          ]
+        },
+        {
+          "dayId": "d5",
+          "sortOrder": 30,
+          "period": "07:50–08:10",
+          "place": "Gibson Steps",
+          "activity": "从上方观景台看悬崖与 Gog and Magog；开放且海况安全时再下台阶",
+          "highlight": "海平面视角下的巨大尺度",
+          "tip": "海滩入口会受潮位与海浪影响，以现场标识为准；关闭时在上方短停即可。",
+          "resources": [
+            {
+              "id": "gibson-steps-map",
+              "title": "Gibson Steps",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Gibson+Steps",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d5-sunrise-route-map",
+              "title": "D5 晨光海岸路线",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Southern+Ocean+Villas%2C+Port+Campbell+VIC&destination=Loch+Ard+Gorge%2C+VIC&travelmode=driving&waypoints=Twelve+Apostles%2C+VIC%7CGibson+Steps%2C+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Southern Ocean Villas → Twelve Apostles → Gibson Steps → Loch Ard Gorge"
+            }
+          ]
+        },
+        {
+          "dayId": "d5",
+          "sortOrder": 40,
+          "period": "08:20–08:40",
+          "place": "Loch Ard Gorge",
+          "activity": "沿上方步道看峡谷、海湾与沉船海岸",
+          "highlight": "晨光中的峡谷轮廓",
+          "tip": "海滩入口台阶目前因地质不稳定关闭；留在上方开放步道和观景台。",
+          "resources": [
+            {
+              "id": "loch-ard-map",
+              "title": "Loch Ard Gorge",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Loch+Ard+Gorge",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "loch-ard-official",
+              "title": "Loch Ard Gorge · Parks Victoria",
+              "type": "official",
+              "url": "https://www.parks.vic.gov.au/places-to-see/parks/port-campbell-national-park/things-to-do/loch-ard-gorge",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Parks Victoria · 行前查看开放与安全提示"
+            },
+            {
+              "id": "d5-sunrise-route-map",
+              "title": "D5 晨光海岸路线",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Southern+Ocean+Villas%2C+Port+Campbell+VIC&destination=Loch+Ard+Gorge%2C+VIC&travelmode=driving&waypoints=Twelve+Apostles%2C+VIC%7CGibson+Steps%2C+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Southern Ocean Villas → Twelve Apostles → Gibson Steps → Loch Ard Gorge"
+            },
+            {
+              "id": "d5-west-coast-loop-route-map",
+              "title": "D5 西侧海岸环线",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Loch+Ard+Gorge%2C+VIC&destination=Southern+Ocean+Villas%2C+Port+Campbell+VIC&travelmode=driving&waypoints=London+Arch%2C+VIC%7CThe+Grotto%2C+Port+Campbell+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Loch Ard Gorge → London Arch → The Grotto → Southern Ocean Villas"
+            }
+          ]
+        },
+        {
+          "dayId": "d5",
+          "sortOrder": 50,
+          "period": "08:40–08:50",
+          "place": "Tom and Eva Lookout",
+          "activity": "步行到观景台看两座海蚀柱与外海",
+          "highlight": "Loch Ard 沉船故事中的幸存者之名",
+          "tip": "与 Loch Ard Gorge 在同一景区内，沿开放步道顺路完成。",
+          "resources": [
+            {
+              "id": "tom-eva-map",
+              "title": "Tom and Eva Lookout",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Tom+and+Eva+Lookout+Loch+Ard+Gorge",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -1892,18 +2006,27 @@
         },
         {
           "dayId": "d5",
-          "sortOrder": 30,
-          "period": "08:35 左右",
-          "place": "The Grotto",
-          "activity": "看海蚀洞和海水窗口",
-          "highlight": "洞穴 + 海景构图",
-          "tip": "台阶上下，雨后注意湿滑；停留 20–30 分钟即可",
+          "sortOrder": 60,
+          "period": "08:50–09:00",
+          "place": "The Razorback Lookout",
+          "activity": "看狭长岩脊、层理与南大洋海浪",
+          "highlight": "最有雕塑感的海蚀地貌",
+          "tip": "继续沿 Loch Ard Gorge 景区步道前往，不需要重新驾车找入口。",
           "resources": [
             {
-              "id": "grotto-map",
-              "title": "The Grotto",
+              "id": "razorback-map",
+              "title": "The Razorback",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=The+Grotto+Port+Campbell",
+              "url": "https://www.google.com/maps/search/?api=1&query=The+Razorback+Port+Campbell",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "loch-ard-map",
+              "title": "Loch Ard Gorge",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Loch+Ard+Gorge",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -1912,12 +2035,12 @@
         },
         {
           "dayId": "d5",
-          "sortOrder": 40,
-          "period": "09:10 左右",
-          "place": "London Bridge / London Arch",
-          "activity": "看海蚀拱门",
-          "highlight": "Port Campbell 以西经典点",
-          "tip": "顺路短停，很适合加",
+          "sortOrder": 70,
+          "period": "09:15–09:25",
+          "place": "London Arch",
+          "activity": "在观景台看断开的海蚀拱门与开阔海面",
+          "highlight": "曾被称为 London Bridge 的经典地貌",
+          "tip": "停留约 10 分钟，随后继续前往 The Grotto。",
           "resources": [
             {
               "id": "london-arch-map",
@@ -1929,24 +2052,91 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "port-campbell-map",
-              "title": "Port Campbell",
+              "id": "d5-west-coast-loop-route-map",
+              "title": "D5 西侧海岸环线",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Port+Campbell+Victoria",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Loch+Ard+Gorge%2C+VIC&destination=Southern+Ocean+Villas%2C+Port+Campbell+VIC&travelmode=driving&waypoints=London+Arch%2C+VIC%7CThe+Grotto%2C+Port+Campbell+VIC",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "Google Maps · Loch Ard Gorge → London Arch → The Grotto → Southern Ocean Villas"
             }
           ]
         },
         {
           "dayId": "d5",
-          "sortOrder": 50,
-          "period": "10:15-11:30",
+          "sortOrder": 80,
+          "period": "09:30–09:40",
+          "place": "The Grotto",
+          "activity": "走下观景步道，看海蚀洞框住海面",
+          "highlight": "洞穴、岩池与海景同框",
+          "tip": "台阶雨后可能湿滑；拍完即返回别墅吃早餐。",
+          "resources": [
+            {
+              "id": "grotto-map",
+              "title": "The Grotto",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=The+Grotto+Port+Campbell",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d5-west-coast-loop-route-map",
+              "title": "D5 西侧海岸环线",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Loch+Ard+Gorge%2C+VIC&destination=Southern+Ocean+Villas%2C+Port+Campbell+VIC&travelmode=driving&waypoints=London+Arch%2C+VIC%7CThe+Grotto%2C+Port+Campbell+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Loch Ard Gorge → London Arch → The Grotto → Southern Ocean Villas"
+            }
+          ]
+        },
+        {
+          "dayId": "d5",
+          "sortOrder": 90,
+          "period": "09:55–10:30",
+          "place": "Southern Ocean Villas",
+          "activity": "回到别墅吃早餐、洗漱、整理行李并退房",
+          "highlight": "清晨海岸环线后的休整",
+          "tip": "前一晚把退房物品集中好；具体退房时间以订单或前台确认信息为准。",
+          "resources": [
+            {
+              "id": "southern-ocean-villas-map",
+              "title": "Southern Ocean Villas",
+              "type": "map",
+              "url": "https://www.google.com/maps?q=Southern+Ocean+Villas+Port+Campbell",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d5-west-coast-loop-route-map",
+              "title": "D5 西侧海岸环线",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Loch+Ard+Gorge%2C+VIC&destination=Southern+Ocean+Villas%2C+Port+Campbell+VIC&travelmode=driving&waypoints=London+Arch%2C+VIC%7CThe+Grotto%2C+Port+Campbell+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Loch Ard Gorge → London Arch → The Grotto → Southern Ocean Villas"
+            },
+            {
+              "id": "d5-return-route-map",
+              "title": "D5 Wildlife Park 与机场返程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Southern+Ocean+Villas%2C+Port+Campbell+VIC&destination=Holiday+Inn+Melbourne+Airport&travelmode=driving&waypoints=Great+Ocean+Road+Wildlife+Park%2C+Gellibrand+Lower+VIC%7CColac%2C+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Southern Ocean Villas → Great Ocean Road Wildlife Park → Colac → Holiday Inn Melbourne Airport"
+            }
+          ]
+        },
+        {
+          "dayId": "d5",
+          "sortOrder": 100,
+          "period": "10:50–12:20",
           "place": "Great Ocean Road Wildlife Park",
-          "activity": "购买普通门票进入互动区和 sanctuary，近距离看袋鼠、沙袋鼠等澳洲本土动物；游园和可选购饲料喂食合计预留 60-75 分钟",
-          "highlight": "大洋路沿线的澳洲本土动物互动体验",
-          "tip": "普通门票建议提前在线购买；动物饲料和 close-up encounters 另付费。步道多为未铺装地面，穿防滑包脚鞋；11:45 前离园，为 Colac 午餐、加油和机场还车保留缓冲。",
+          "activity": "在互动区近距离观察袋鼠和沙袋鼠，再沿 sanctuary 步道寻找考拉、袋熊与澳洲野犬",
+          "highlight": "大洋路沿线的本土动物体验",
+          "tip": "园区 10:00–17:00，通常 45–60 分钟可走完；这里留 75–90 分钟，动物饲料和 close-up encounters 另付费。",
           "resources": [
             {
               "id": "great-ocean-road-wildlife-park-map",
@@ -1974,17 +2164,26 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Official booking · general admission; prices and availability can change"
+            },
+            {
+              "id": "d5-return-route-map",
+              "title": "D5 Wildlife Park 与机场返程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Southern+Ocean+Villas%2C+Port+Campbell+VIC&destination=Holiday+Inn+Melbourne+Airport&travelmode=driving&waypoints=Great+Ocean+Road+Wildlife+Park%2C+Gellibrand+Lower+VIC%7CColac%2C+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Southern Ocean Villas → Great Ocean Road Wildlife Park → Colac → Holiday Inn Melbourne Airport"
             }
           ]
         },
         {
           "dayId": "d5",
-          "sortOrder": 60,
-          "period": "下午",
+          "sortOrder": 110,
+          "period": "13:40–14:25 预计",
           "place": "Colac",
-          "activity": "午餐、加油、休息",
-          "highlight": "内陆牧场风光",
-          "tip": "回程中段休息点",
+          "activity": "午餐、加油和短休，把返程补给一次完成",
+          "highlight": "内陆回程的中段休息站",
+          "tip": "14:00–14:30 左右重新上路，最后一段直达墨尔本机场区域。",
           "resources": [
             {
               "id": "colac-map",
@@ -1994,47 +2193,27 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d5",
-          "sortOrder": 70,
-          "period": "傍晚",
-          "place": "墨尔本机场",
-          "activity": "抵达机场、还车、取回寄存大件行李",
-          "highlight": "大洋路自驾收尾",
-          "tip": "预留加油、找还车点、整理车内物品和取行李时间",
-          "resources": [
-            {
-              "id": "mel-airport-map",
-              "title": "墨尔本机场",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Melbourne+Airport",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d5",
-          "sortOrder": 80,
-          "period": "晚上",
-          "place": "Holiday Inn Melbourne Airport",
-          "activity": "入住、整理行李",
-          "highlight": "为次日早班机准备",
-          "tip": "厚衣服收好，准备凯恩斯热带段；早睡",
-          "resources": [
-            {
-              "id": "mel-airport-map",
-              "title": "墨尔本机场",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Melbourne+Airport",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
             },
+            {
+              "id": "d5-return-route-map",
+              "title": "D5 Wildlife Park 与机场返程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Southern+Ocean+Villas%2C+Port+Campbell+VIC&destination=Holiday+Inn+Melbourne+Airport&travelmode=driving&waypoints=Great+Ocean+Road+Wildlife+Park%2C+Gellibrand+Lower+VIC%7CColac%2C+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Southern Ocean Villas → Great Ocean Road Wildlife Park → Colac → Holiday Inn Melbourne Airport"
+            }
+          ]
+        },
+        {
+          "dayId": "d5",
+          "sortOrder": 120,
+          "period": "16:15–17:00 预计",
+          "place": "Holiday Inn Melbourne Airport",
+          "activity": "取回寄存的 4 个大箱，按租车指引完成还车，再办理入住",
+          "highlight": "大洋路自驾顺利收尾",
+          "tip": "进入机场区域前检查油量、车内物品和还车入口；晚上只做简单用餐和行李整理。",
+          "resources": [
             {
               "id": "holiday-inn-airport-map",
               "title": "Holiday Inn Melbourne Airport",
@@ -2043,6 +2222,24 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "mel-airport-car-rental-map",
+              "title": "Melbourne Airport Car Rental Branch",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Melbourne+Airport+Car+Rental",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 按租车订单确认具体门店与接驳方式"
+            },
+            {
+              "id": "d5-return-route-map",
+              "title": "D5 Wildlife Park 与机场返程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Southern+Ocean+Villas%2C+Port+Campbell+VIC&destination=Holiday+Inn+Melbourne+Airport&travelmode=driving&waypoints=Great+Ocean+Road+Wildlife+Park%2C+Gellibrand+Lower+VIC%7CColac%2C+VIC",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Southern Ocean Villas → Great Ocean Road Wildlife Park → Colac → Holiday Inn Melbourne Airport"
             }
           ]
         },
@@ -2051,10 +2248,19 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：Port Campbell café；午餐：离开 Great Ocean Road Wildlife Park 后在 Colac 简餐；晚餐：机场酒店简餐",
-          "highlight": "野生动物体验 + 内陆返程补给",
-          "tip": "Colac 作为返程主休息点，把午餐、加油和休息一次完成；抵达机场后简单用餐并整理行李。",
+          "activity": "早餐：回 Southern Ocean Villas 后用餐；午餐：Wildlife Park 轻食或 Colac 简餐；晚餐：机场酒店简餐",
+          "highlight": "清晨看景、午后返程的轻量餐食",
+          "tip": "早餐食材前一晚整理好；Colac 可把午餐、加油和休息一次完成。",
           "resources": [
+            {
+              "id": "southern-ocean-villas-map",
+              "title": "Southern Ocean Villas",
+              "type": "map",
+              "url": "https://www.google.com/maps?q=Southern+Ocean+Villas+Port+Campbell",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
             {
               "id": "great-ocean-road-wildlife-park-map",
               "title": "Great Ocean Road Wildlife Park",
@@ -6151,6 +6357,33 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
+    },
+    {
+      "id": "d5-sunrise-route-map",
+      "title": "D5 晨光海岸路线",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Southern+Ocean+Villas%2C+Port+Campbell+VIC&destination=Loch+Ard+Gorge%2C+VIC&travelmode=driving&waypoints=Twelve+Apostles%2C+VIC%7CGibson+Steps%2C+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Southern Ocean Villas → Twelve Apostles → Gibson Steps → Loch Ard Gorge"
+    },
+    {
+      "id": "d5-west-coast-loop-route-map",
+      "title": "D5 西侧海岸环线",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Loch+Ard+Gorge%2C+VIC&destination=Southern+Ocean+Villas%2C+Port+Campbell+VIC&travelmode=driving&waypoints=London+Arch%2C+VIC%7CThe+Grotto%2C+Port+Campbell+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Loch Ard Gorge → London Arch → The Grotto → Southern Ocean Villas"
+    },
+    {
+      "id": "d5-return-route-map",
+      "title": "D5 Wildlife Park 与机场返程",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Southern+Ocean+Villas%2C+Port+Campbell+VIC&destination=Holiday+Inn+Melbourne+Airport&travelmode=driving&waypoints=Great+Ocean+Road+Wildlife+Park%2C+Gellibrand+Lower+VIC%7CColac%2C+VIC",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Southern Ocean Villas → Great Ocean Road Wildlife Park → Colac → Holiday Inn Melbourne Airport"
     }
   ],
   "priorities": [

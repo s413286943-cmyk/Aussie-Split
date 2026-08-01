@@ -82,9 +82,21 @@ test("the polished D1 plan and Great Ocean Road Wildlife Park render in their up
 
   const d5 = page.locator("#d5");
   await d5.getByText("查看当天安排", { exact: true }).click();
-  await expect(d5.locator("h3")).toHaveText("海岸地貌到野生动物：大洋路返程日");
+  await expect(d5.locator("h3")).toHaveText("晨光中的海岸：十二使徒岩、Loch Ard Gorge 与野生动物");
+  await expect(d5.locator(".timeline").getByRole("heading", {
+    name: "Twelve Apostles",
+    level: 4,
+  })).toBeVisible();
+  await expect(d5.locator(".timeline").getByRole("heading", {
+    name: "The Grotto",
+    level: 4,
+  })).toBeVisible();
   await expect(d5.locator(".timeline").getByRole("heading", {
     name: "Great Ocean Road Wildlife Park",
+    level: 4,
+  })).toBeVisible();
+  await expect(d5.locator(".timeline").getByRole("heading", {
+    name: "Holiday Inn Melbourne Airport",
     level: 4,
   })).toBeVisible();
   await expect(d5.locator(".timeline")).not.toContainText("Bay of Islands");

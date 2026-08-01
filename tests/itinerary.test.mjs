@@ -22,7 +22,7 @@ const expectedTitles = {
   d2: "从城市巷弄到山林：Puffing Billy 与 Fitzroy",
   d3: "驶上大洋路：从 Torquay 海岸到 Apollo Bay",
   d4: "从雨林走向海岸：The Redwoods、十二使徒岩与 Loch Ard Gorge",
-  d5: "海岸地貌到野生动物：大洋路返程日",
+  d5: "晨光中的海岸：十二使徒岩、Loch Ard Gorge 与野生动物",
   d6: "抵达凯恩斯：Esplanade Lagoon 与热带夜市",
   d7: "奔赴外礁：Reef Magic 大堡礁一日",
   d8: "深入丹翠：雨林、河流与 Cape Tribulation",
@@ -42,7 +42,7 @@ const expectedFocus = {
   d2: "上午走过 Degraves Street、Flinders Street 与 Hosier Lane，在州立图书馆俯瞰圆顶阅览室；午后乘 Puffing Billy 穿行山林，返城后去 Fitzroy 散步吃晚餐。",
   d3: "把大箱寄存在机场，取车后到 Torquay 买好今晚的 BBQ 食材，再沿海经过 Bells Beach、Lorne 与 Kennett River，傍晚抵达 Apollo Bay。",
   d4: "上午从 Apollo Bay 补给出发，走进 Maits Rest 与 The Redwoods；下午回到 Gibson Steps、十二使徒岩和 Loch Ard Gorge 的海岸线，傍晚在 Port Campbell 收住这一天。",
-  d5: "清晨补看海岸，再经 The Grotto、London Arch 与 Great Ocean Road Wildlife Park 走内陆线返回机场。",
+  d5: "清晨沿十二使徒岩、Gibson Steps 与 Loch Ard Gorge 追着晨光看海岸，回别墅早餐退房后去 Wildlife Park，午后经 Colac 返回墨尔本机场。",
   d6: "从墨尔本飞到凯恩斯，下午在 Esplanade Lagoon 放松，晚上逛夜市。",
   d7: "在 Reef Magic 外礁平台体验浮潜、半潜艇与大堡礁海上风景。",
   d8: "沿丹翠河进入雨林，在 Cape Tribulation 看雨林与海相接。",
@@ -371,38 +371,75 @@ describe("itinerary data", () => {
     assert.doesNotMatch(d4Text, /删减顺序|优先保留|可缩|执行规则|开发|调整为|版本/);
   });
 
-  it("keeps D5 through D16 byte-for-byte stable while D4 changes", () => {
-    const laterDays = itinerary.days.filter((day) => Number(day.id.slice(1)) >= 5);
+  it("keeps D6 through D16 byte-for-byte stable while D5 changes", () => {
+    const laterDays = itinerary.days.filter((day) => Number(day.id.slice(1)) >= 6);
     const digest = createHash("sha256").update(JSON.stringify(laterDays)).digest("hex");
 
-    assert.equal(digest, "296c858fe73f0b8f44a19b0937ca2a1c4e779a74c5e5a28ebe585376170f4643");
+    assert.equal(digest, "a36c344778d7f482d69fa3417261d4cec6309601a2c4292a0c4d771bc607b12c");
   });
 
-  it("routes D5 through Great Ocean Road Wildlife Park instead of Bay of Islands", () => {
+  it("runs the complete D5 sunrise loop and airport return with direct Google Maps entries", () => {
     const d5 = itinerary.days.find((day) => day.id === "d5");
-    const grotto = d5.blocks.find((block) => block.place === "The Grotto");
-    const londonArch = d5.blocks.find((block) => /London (Arch|Bridge)/.test(block.place));
-    const wildlifePark = d5.blocks.find((block) => block.place === "Great Ocean Road Wildlife Park");
-    const colac = d5.blocks.find((block) => block.place === "Colac");
+    const routeBlocks = d5.blocks.filter((block) => block.period !== "饮食");
+    const expectedPlaces = [
+      "Southern Ocean Villas",
+      "Twelve Apostles",
+      "Gibson Steps",
+      "Loch Ard Gorge",
+      "Tom and Eva Lookout",
+      "The Razorback Lookout",
+      "London Arch",
+      "The Grotto",
+      "Southern Ocean Villas",
+      "Great Ocean Road Wildlife Park",
+      "Colac",
+      "Holiday Inn Melbourne Airport",
+    ];
     const d5Text = d5.blocks
-      .map((block) => `${block.place} ${block.activity} ${block.tip}`)
+      .map((block) => `${block.place} ${block.activity} ${block.highlight} ${block.tip}`)
       .join(" ");
 
-    assert.ok(grotto, "D5 is missing The Grotto");
-    assert.ok(londonArch, "D5 is missing London Arch");
-    assert.ok(wildlifePark, "D5 is missing Great Ocean Road Wildlife Park");
-    assert.ok(colac, "D5 is missing Colac");
-    assert.ok(grotto.sortOrder < londonArch.sortOrder);
-    assert.ok(londonArch.sortOrder < wildlifePark.sortOrder);
-    assert.ok(wildlifePark.sortOrder < colac.sortOrder);
-    assert.equal(d5.primaryResource.id, "great-ocean-road-wildlife-park-map");
+    assert.deepEqual(routeBlocks.map((block) => block.place), expectedPlaces);
+    assert.equal(d5.primaryResource.id, "d5-sunrise-route-map");
+    assert.match(d5.primaryResource.url, /google\.com\/maps\/dir/);
     assert.equal(d5.ticketResource.id, "great-ocean-road-wildlife-park-booking");
     assert.equal(d5.ticketResource.type, "booking");
-    assert.match(`${wildlifePark.activity} ${wildlifePark.tip}`, /60-75|饲料|另付费/);
+    assert.match(d5.leaveBy, /06:45|13:30|14:30/);
+
+    for (const block of routeBlocks) {
+      assert.ok(
+        block.resources.some((resource) =>
+          resource.type === "map" && /google\.com\/maps/.test(resource.url),
+        ),
+        `${block.place} is missing a direct Google Maps entry`,
+      );
+    }
+
+    const lochArd = routeBlocks.find((block) => block.place === "Loch Ard Gorge");
+    const wildlifePark = routeBlocks.find((block) => block.place === "Great Ocean Road Wildlife Park");
+    const colac = routeBlocks.find((block) => block.place === "Colac");
+    const returnToVilla = routeBlocks.filter((block) => block.place === "Southern Ocean Villas")[1];
+
+    assert.match(`${lochArd.activity} ${lochArd.tip}`, /台阶|关闭|上方|崖顶/);
+    assert.match(`${returnToVilla.activity} ${returnToVilla.tip}`, /早餐|退房/);
+    assert.match(`${wildlifePark.activity} ${wildlifePark.tip}`, /45–60|75–90|饲料|另付费/);
+    assert.match(`${colac.activity} ${colac.tip}`, /午餐|加油|14:00|14:30/);
     assert.ok(
       wildlifePark.resources.some((resource) => resource.id === "great-ocean-road-wildlife-park-official"),
     );
-    assert.doesNotMatch(d5Text, /Bay of Islands/);
+    assert.ok(
+      routeBlocks.slice(8).some((block) =>
+        block.resources.some((resource) => resource.id === "d5-return-route-map"),
+      ),
+      "D5 is missing the direct return route to Melbourne Airport",
+    );
+    assert.ok(
+      routeBlocks.slice(3, 9).some((block) =>
+        block.resources.some((resource) => resource.id === "d5-west-coast-loop-route-map"),
+      ),
+      "D5 is missing the direct western coast loop back to the villa",
+    );
+    assert.doesNotMatch(d5Text, /Bay of Islands|Timboon|补拍备选|只选一处|执行规则|优先保留|可缩|开发|调整为|版本/);
   });
 
   it("keeps the ranked list out of the route overview", () => {
