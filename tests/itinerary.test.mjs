@@ -23,7 +23,7 @@ const expectedTitles = {
   d3: "驶上大洋路：从 Torquay 海岸到 Apollo Bay",
   d4: "从雨林走向海岸：The Redwoods、十二使徒岩与 Loch Ard Gorge",
   d5: "晨光中的海岸：十二使徒岩、Loch Ard Gorge 与野生动物",
-  d6: "抵达凯恩斯：Esplanade Lagoon 与热带夜市",
+  d6: "初到凯恩斯：热带花园、海滨与夜市",
   d7: "奔赴外礁：Reef Magic 大堡礁一日",
   d8: "深入丹翠：雨林、河流与 Cape Tribulation",
   d9: "阿瑟顿高原：火山湖、巨树与瀑布",
@@ -43,11 +43,11 @@ const expectedFocus = {
   d3: "把大箱寄存在机场，取车后到 Torquay 买好今晚的 BBQ 食材，再沿海经过 Bells Beach、Lorne 与 Kennett River，傍晚抵达 Apollo Bay。",
   d4: "上午从 Apollo Bay 补给出发，走进 Maits Rest 与 The Redwoods；下午回到 Gibson Steps、十二使徒岩和 Loch Ard Gorge 的海岸线，傍晚在 Port Campbell 收住这一天。",
   d5: "清晨沿十二使徒岩、Gibson Steps 与 Loch Ard Gorge 追着晨光看海岸，回别墅早餐退房后去 Wildlife Park，午后经 Colac 返回墨尔本机场。",
-  d6: "从墨尔本飞到凯恩斯，下午在 Esplanade Lagoon 放松，晚上逛夜市。",
-  d7: "在 Reef Magic 外礁平台体验浮潜、半潜艇与大堡礁海上风景。",
-  d8: "沿丹翠河进入雨林，在 Cape Tribulation 看雨林与海相接。",
-  d9: "自驾串联 Lake Eacham、Curtain Fig Tree、高原小镇与瀑布。",
-  d10: "上午逛 Rusty's Market，午后休整，傍晚去 Palm Cove 看海。",
+  d6: "早班机抵达凯恩斯后先寄存行李与休息，午后视体力走进热带花园，再沿 Esplanade 到 Marina，晚上在 Night Markets 边逛边吃。",
+  d7: "在 Reef Magic 外礁平台体验浮潜、半潜艇与大堡礁海上风景，返港后到码头边吃一顿海鲜晚餐。",
+  d8: "清晨从酒店出发，沿丹翠河进入雨林，在 Cape Tribulation 看雨林与海相接，傍晚回城后简单用餐。",
+  d9: "从 Cairns 自驾上高原，串联 Lake Eacham、Curtain Fig Tree、Yungaburra、Gallo Dairyland 与 Millaa Millaa Falls，傍晚还车回城。",
+  d10: "上午逛 Rusty's Market，午间回酒店洗衣打包，下午沿 Palm Cove 海滨与 Jetty 散步，在蓝调时刻用一顿早晚餐收尾。",
   d11: "飞抵悉尼后休息片刻，沿 Barangaroo、The Rocks 走到 Circular Quay 夜景。",
   d12: "从歌剧院中文导览出发，逛 The Rocks Markets，再沿植物园走到经典海港机位与 QVB。",
   d13: "沿 Grand Pacific Drive 南下，经过 Sea Cliff Bridge、Kiama 与 Gerringong，视情况延伸袋鼠谷。",
@@ -371,11 +371,137 @@ describe("itinerary data", () => {
     assert.doesNotMatch(d4Text, /删减顺序|优先保留|可缩|执行规则|开发|调整为|版本/);
   });
 
-  it("keeps D6 through D16 byte-for-byte stable while D5 changes", () => {
-    const laterDays = itinerary.days.filter((day) => Number(day.id.slice(1)) >= 6);
-    const digest = createHash("sha256").update(JSON.stringify(laterDays)).digest("hex");
+  it("keeps D0-D5 and D11-D16 stable while the Cairns stage changes", () => {
+    const beforeCairns = itinerary.days.filter((day) => Number(day.id.slice(1)) <= 5);
+    const afterCairns = itinerary.days.filter((day) => Number(day.id.slice(1)) >= 11);
+    const overview = {
+      trip: itinerary.trip,
+      stages: itinerary.stages,
+      priorities: itinerary.priorities,
+    };
 
-    assert.equal(digest, "a36c344778d7f482d69fa3417261d4cec6309601a2c4292a0c4d771bc607b12c");
+    assert.equal(
+      createHash("sha256").update(JSON.stringify(beforeCairns)).digest("hex"),
+      "ccfce9afd625f1b8f5eab2fe65b3cb63299f4f86ff602ac4c0eb32a38882e5ad",
+    );
+    assert.equal(
+      createHash("sha256").update(JSON.stringify(afterCairns)).digest("hex"),
+      "99e50dd1f2bb4adb2aec20125972cff282bd6b5e7e628dfebe3aee432054bc15",
+    );
+    assert.equal(
+      createHash("sha256").update(JSON.stringify(overview)).digest("hex"),
+      "13867e90f78e913045981de3cdf6ec6031869183c28613a76daab45a8c07c895",
+    );
+  });
+
+  it("updates D6 for the Lagoon closure and a relaxed Cairns arrival", () => {
+    const d6 = itinerary.days.find((day) => day.id === "d6");
+    const d6Text = [d6.title, d6.focus, d6.leaveBy, ...d6.blocks.flatMap((block) => [block.period, block.place, block.activity, block.highlight, block.tip])].join(" ");
+    assert.match(d6Text, /06:25/);
+    assert.match(d6Text, /09:50/);
+    assert.match(d6Text, /Cairns Botanic Gardens/);
+    assert.match(d6Text, /Esplanade Boardwalk/);
+    assert.match(d6Text, /Marina/);
+    assert.match(d6Text, /Night Markets/);
+    assert.match(d6Text, /7 月 13 日至 8 月 16 日.*维护关闭/);
+    assert.doesNotMatch(d6Text, /免费泻湖泳池|Esplanade Lagoon 放松/);
+    const resourceIds = new Set(d6.blocks.flatMap((block) => block.resources.map((resource) => resource.id)));
+    for (const resourceId of ["cairns-lagoon-closure-official", "cairns-botanic-gardens-map", "cairns-esplanade-boardwalk-map"]) {
+      assert.ok(resourceIds.has(resourceId), `d6 is missing ${resourceId}`);
+    }
+  });
+
+  it("uses the official Reef Magic timetable on D7", () => {
+    const d7 = itinerary.days.find((day) => day.id === "d7");
+    const d7Text = [d7.focus, d7.leaveBy, ...d7.blocks.flatMap((block) => [block.period, block.place, block.activity, block.tip])].join(" ");
+    assert.match(d7Text, /08:15/);
+    assert.match(d7Text, /08:45/);
+    assert.match(d7Text, /09:00/);
+    assert.match(d7Text, /10:30/);
+    assert.match(d7Text, /15:30/);
+    assert.match(d7Text, /17:00/);
+    assert.match(d7Text, /Prawn Star/);
+    assert.match(d7Text, /Salt House/);
+    assert.ok(
+      d7.blocks.some((block) => block.resources.some((resource) => resource.id === "reef-magic-schedule-official")),
+    );
+  });
+
+  it("keeps the booked Billy Tea pickup and an easy D8 evening", () => {
+    const d8 = itinerary.days.find((day) => day.id === "d8");
+    const d8Text = [d8.focus, d8.leaveBy, ...d8.blocks.flatMap((block) => [block.period, block.place, block.activity, block.tip])].join(" ");
+    assert.match(d8Text, /06:55/);
+    assert.match(d8Text, /18:30/);
+    assert.match(d8Text, /Daintree River Cruise/);
+    assert.match(d8Text, /Cape Tribulation/);
+    assert.match(d8Text, /冰淇淋/);
+    assert.match(d8Text, /酒店附近简餐|Night Markets 外带/);
+    assert.ok(
+      d8.blocks.some((block) => block.resources.some((resource) => resource.id === "billy-tea-official")),
+    );
+  });
+
+  it("gives D9 an executable Atherton Tablelands timeline", () => {
+    const d9 = itinerary.days.find((day) => day.id === "d9");
+    const d9Places = d9.blocks.filter((block) => block.period !== "饮食").map((block) => block.place);
+    assert.deepEqual(d9Places, [
+      "凯恩斯取车点",
+      "Lake Eacham",
+      "Curtain Fig Tree",
+      "Yungaburra",
+      "Gallo Dairyland",
+      "Millaa Millaa Falls / Ellinjaa Falls（可选）",
+      "返回 Cairns / 凯恩斯还车点",
+    ]);
+    assert.equal(d9.primaryResource.id, "d9-tablelands-route-map");
+    assert.match(d9.leaveBy, /08:30/);
+    assert.match(d9.blocks.find((block) => /Ellinjaa Falls/.test(block.place)).tip, /15:15/);
+    assert.match(d9.blocks.find((block) => /还车点/.test(block.place)).period, /15:15–17:45/);
+    const resourceIds = new Set(d9.blocks.flatMap((block) => block.resources.map((resource) => resource.id)));
+    for (const resourceId of ["d9-tablelands-route-map", "lake-eacham-map", "curtain-fig-map", "yungaburra-map", "gallo-map", "millaa-map"]) {
+      assert.ok(resourceIds.has(resourceId), `d9 is missing ${resourceId}`);
+    }
+  });
+
+  it("uses D10 for Rusty's Market, packing, and Palm Cove", () => {
+    const d10 = itinerary.days.find((day) => day.id === "d10");
+    const d10Text = [d10.focus, d10.leaveBy, ...d10.blocks.flatMap((block) => [block.period, block.place, block.activity, block.highlight, block.tip])].join(" ");
+    assert.match(d10Text, /08:30–10:30/);
+    assert.match(d10Text, /10:45–14:30/);
+    assert.match(d10Text, /15:00/);
+    assert.match(d10Text, /15:40–17:30/);
+    assert.match(d10Text, /17:30–18:45/);
+    assert.match(d10Text, /19:30–19:45/);
+    assert.match(d10Text, /Williams Esplanade/);
+    assert.match(d10Text, /Palm Cove Jetty/);
+    assert.match(d10Text, /行李|称重|在线值机/);
+    assert.doesNotMatch(d10Text, /Cairns Night Markets|Esplanade Lagoon/);
+    const resourceIds = new Set(d10.blocks.flatMap((block) => block.resources.map((resource) => resource.id)));
+    for (const resourceId of ["rustys-official", "williams-esplanade-map", "palm-cove-jetty-map"]) {
+      assert.ok(resourceIds.has(resourceId), `d10 is missing ${resourceId}`);
+    }
+  });
+
+  it("adds only the Cairns resources required by the new stage", () => {
+    const newResourceIds = new Set([
+      "cairns-lagoon-closure-official",
+      "cairns-botanic-gardens-map",
+      "cairns-botanic-gardens-official",
+      "cairns-cbd-map",
+      "cairns-esplanade-boardwalk-map",
+      "cairns-marlin-marina-map",
+      "cairns-night-markets-official",
+      "reef-magic-schedule-official",
+      "d9-tablelands-route-map",
+      "rustys-official",
+      "williams-esplanade-map",
+      "palm-cove-jetty-map",
+    ]);
+    const unchangedResources = itinerary.resources.filter((resource) => !newResourceIds.has(resource.id));
+    assert.equal(
+      createHash("sha256").update(JSON.stringify(unchangedResources)).digest("hex"),
+      "772c0c1bc516c6f1c5ed909de3a1665a7f8d3db95a77a60fb4dbddaa8417e2ad",
+    );
   });
 
   it("runs the complete D5 sunrise loop and airport return with direct Google Maps entries", () => {

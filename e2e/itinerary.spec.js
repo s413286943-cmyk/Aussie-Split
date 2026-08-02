@@ -102,6 +102,46 @@ test("the polished D1 plan and Great Ocean Road Wildlife Park render in their up
   await expect(d5.locator(".timeline")).not.toContainText("Bay of Islands");
 });
 
+test("the Cairns stage renders its booked times, highland drive, and Palm Cove finish", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/itinerary");
+
+  await page.getByRole("region", { name: "当前行程阶段" })
+    .getByRole("tab", { name: "凯恩斯热带暖冬" })
+    .click();
+
+  const d6 = page.locator("#d6");
+  await d6.getByText("查看当天安排", { exact: true }).click();
+  await expect(d6.locator("h3")).toHaveText("初到凯恩斯：热带花园、海滨与夜市");
+  await expect(d6.locator(".timeline")).toContainText("Cairns Botanic Gardens");
+  await expect(d6.locator(".timeline")).toContainText("Esplanade Boardwalk");
+  await expect(d6.locator(".timeline")).toContainText("7 月 13 日至 8 月 16 日因维护关闭");
+  await expect(d6.locator(".timeline")).not.toContainText("免费泻湖泳池");
+
+  const d7 = page.locator("#d7");
+  await d7.getByText("查看当天安排", { exact: true }).click();
+  await expect(d7.locator(".timeline")).toContainText("08:15 开始登船");
+  await expect(d7.locator(".timeline")).toContainText("约 17:00 回到凯恩斯");
+
+  const d8 = page.locator("#d8");
+  await d8.getByText("查看当天安排", { exact: true }).click();
+  await expect(d8.locator(".timeline")).toContainText("订单集合时间 06:55");
+  await expect(d8.locator(".timeline")).toContainText("Daintree River Cruise");
+
+  const d9 = page.locator("#d9");
+  await d9.getByText("查看当天安排", { exact: true }).click();
+  await expect(d9.locator(".timeline").getByRole("heading", { name: "Gallo Dairyland", level: 4 })).toBeVisible();
+  await expect(d9.locator(".timeline")).toContainText("15:15–17:45");
+
+  const d10 = page.locator("#d10");
+  await d10.getByText("查看当天安排", { exact: true }).click();
+  await expect(d10.locator(".timeline")).toContainText("Williams Esplanade");
+  await expect(d10.locator(".timeline")).toContainText("Palm Cove Jetty");
+  await expect(d10.locator(".timeline")).toContainText("Jetstar 在线值机");
+  await expect(d10.locator(".timeline")).not.toContainText("Esplanade Lagoon");
+});
+
 test("D3 renders the airport luggage handoff, Torquay shop, and coastal drive in order", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.emulateMedia({ reducedMotion: "reduce" });
