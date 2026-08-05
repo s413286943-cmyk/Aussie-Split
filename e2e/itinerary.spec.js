@@ -131,8 +131,12 @@ test("the Cairns stage renders its booked times, highland drive, and Palm Cove f
 
   const d9 = page.locator("#d9");
   await d9.getByText("查看当天安排", { exact: true }).click();
+  await expect(d9.locator("h3")).toHaveText("穿行阿瑟顿高原：火山湖、巨树与瀑布");
+  await expect(d9.locator(".timeline")).toContainText("Lake Eacham Day Use Area");
+  await expect(d9.locator(".timeline")).toContainText("Platypus Viewing Platform Yungaburra（可选）");
   await expect(d9.locator(".timeline").getByRole("heading", { name: "Gallo Dairyland", level: 4 })).toBeVisible();
-  await expect(d9.locator(".timeline")).toContainText("15:15–17:45");
+  await expect(d9.locator(".timeline")).toContainText("Millaa Millaa Public Toilets");
+  await expect(d9.locator(".timeline")).toContainText("15:35–18:00");
 
   const d10 = page.locator("#d10");
   await d10.getByText("查看当天安排", { exact: true }).click();

@@ -3091,15 +3091,15 @@
       "city": "阿瑟顿高原",
       "lat": -17.2706,
       "lon": 145.5831,
-      "title": "阿瑟顿高原：火山湖、巨树与瀑布",
-      "focus": "从 Cairns 自驾上高原，串联 Lake Eacham、Curtain Fig Tree、Yungaburra、Gallo Dairyland 与 Millaa Millaa Falls，傍晚还车回城。",
+      "title": "穿行阿瑟顿高原：火山湖、巨树与瀑布",
+      "focus": "从 Cairns 驶上阿瑟顿高原，在 Lake Eacham 看火山湖，沿 Yungaburra 与 Curtain Fig Tree 走进高原风景，午后到 Gallo Dairyland 吃午餐，再以 Millaa Millaa Falls 收尾。",
       "lodging": "Southern Cross Atrium Apartments",
-      "climateNote": "高原比凯恩斯海边更清凉。",
-      "clothingNote": "短袖加薄外套，瀑布和雨林步道注意防滑。",
+      "climateNote": "高原清晨约 10–15°C，中午约 22–26°C；天气与体感会随海拔变化。",
+      "clothingNote": "短袖打底 + 薄外套 + 轻薄长裤 + 防滑运动鞋；车里备雨衣、帽子、墨镜与防晒。",
       "coverImageUrl": "/itinerary/d9-atherton-tablelands-waterfall.png",
       "coverImageAlt": "阿瑟顿高原瀑布",
-      "transport": "自驾 · 阿瑟顿高原",
-      "leaveBy": "08:00–08:30 取车；08:30 启程上高原",
+      "transport": "自驾 · 阿瑟顿高原环线（约 230–260 km；纯驾驶约 4–4.5 小时；全天约 9 小时）",
+      "leaveBy": "07:45 前往取车点；08:30 前驶离 Cairns；13:15 离开 Gallo；15:35 开始返程",
       "lodgingResource": {
         "id": "southern-cross-map",
         "title": "Southern Cross Atrium Apartments",
@@ -3110,13 +3110,13 @@
         "sourceNote": "Google Maps"
       },
       "primaryResource": {
-        "id": "d9-tablelands-route-map",
-        "title": "D9 阿瑟顿高原完整路线",
+        "id": "d9-core-route-map",
+        "title": "D9 阿瑟顿高原核心环线",
         "type": "map",
-        "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham%7CCurtain+Fig+Tree%7CYungaburra%7CGallo+Dairyland%7CMillaa+Millaa+Falls",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "Google Maps · Cairns → Lake Eacham → Curtain Fig Tree → Yungaburra → Gallo Dairyland → Millaa Millaa Falls → Cairns"
+        "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
@@ -3131,60 +3131,194 @@
         {
           "dayId": "d9",
           "sortOrder": 10,
-          "period": "08:00–08:30",
-          "place": "凯恩斯取车点",
-          "activity": "办理取车、拍下车身与轮毂状况，设置整日导航后向 Atherton Tablelands 出发",
-          "highlight": "从热带海边城市切换到清凉高原",
-          "tip": "确认油量、还车时间与第二驾驶人；08:30 左右启程，山路保持从容车距。",
+          "period": "07:15–07:45",
+          "place": "Southern Cross Atrium Apartments",
+          "activity": "吃早餐、装好饮用水，检查驾照、租车订单与充电线，并把当天区域下载到 Google Maps 离线地图",
+          "highlight": "从一段从容准备开启高原自驾",
+          "tip": "每人带约 1L 水和一份小零食；薄外套、轻薄雨衣、帽子、墨镜、防晒与纸巾放在随手可取的位置。",
           "resources": [
             {
-              "id": "d9-tablelands-route-map",
-              "title": "D9 阿瑟顿高原完整路线",
+              "id": "southern-cross-map",
+              "title": "Southern Cross Atrium Apartments",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham%7CCurtain+Fig+Tree%7CYungaburra%7CGallo+Dairyland%7CMillaa+Millaa+Falls",
+              "url": "https://www.google.com/maps/search/?api=1&query=Southern+Cross+Atrium+Apartments+Cairns",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Cairns → Lake Eacham → Curtain Fig Tree → Yungaburra → Gallo Dairyland → Millaa Millaa Falls → Cairns"
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d9-core-route-map",
+              "title": "D9 阿瑟顿高原核心环线",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
             }
           ]
         },
         {
           "dayId": "d9",
           "sortOrder": 20,
-          "period": "09:45–10:30",
-          "place": "Lake Eacham",
-          "activity": "沿湖边走一小段，看火山湖、雨林倒影与清晨水色",
-          "highlight": "被雨林包围的安静火山湖",
-          "tip": "不必完整绕湖；以现场游泳警示和水况为准，今天以散步看湖为主。",
+          "period": "07:45–08:30",
+          "place": "凯恩斯取车点",
+          "activity": "前往租车订单上的准确门店，取车后拍下车身四角、轮毂、挡风玻璃与油表，再调好座椅、后视镜和手机支架",
+          "highlight": "在驶入 Gillies Highway 前熟悉车辆",
+          "tip": "导航以订单中的准确 branch 为准；离店前再次确认还车地点、油量规则与时间，08:30 前驶离 Cairns。",
           "resources": [
             {
-              "id": "lake-eacham-map",
-              "title": "Lake Eacham",
+              "id": "cairns-car-rental-search-map",
+              "title": "Cairns 租车门店搜索",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Lake+Eacham",
+              "url": "https://www.google.com/maps/search/?api=1&query=Car+Rental+Cairns+QLD",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "Google Maps · 准确门店以租车订单为准"
             },
             {
-              "id": "d9-tablelands-route-map",
-              "title": "D9 阿瑟顿高原完整路线",
+              "id": "d9-core-route-map",
+              "title": "D9 阿瑟顿高原核心环线",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham%7CCurtain+Fig+Tree%7CYungaburra%7CGallo+Dairyland%7CMillaa+Millaa+Falls",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Cairns → Lake Eacham → Curtain Fig Tree → Yungaburra → Gallo Dairyland → Millaa Millaa Falls → Cairns"
+              "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
             }
           ]
         },
         {
           "dayId": "d9",
           "sortOrder": 30,
-          "period": "10:50–11:20",
+          "period": "08:30–09:40",
+          "place": "Cairns → Lake Eacham",
+          "activity": "经 Gordonvale 与 Gillies Highway 驶上高原，沿铺装道路前往 Lake Eacham Day Use Area",
+          "highlight": "海边城市逐渐切换成清凉高原",
+          "tip": "Gillies Highway 弯道密集，保持舒服车距；只在安全让车区让快车通过，不跟着后车加速。",
+          "resources": [
+            {
+              "id": "d9-cairns-lake-eacham-route-map",
+              "title": "Cairns → Lake Eacham",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Lake+Eacham+Day+Use+Area&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 经 Gordonvale 与 Gillies Highway"
+            },
+            {
+              "id": "lake-eacham-official",
+              "title": "Lake Eacham Day Use Area 官方信息",
+              "type": "official",
+              "url": "https://parks.qld.gov.au/parks/crater-lakes/attractions/lake-eacham-day-use-area",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Queensland Parks · 距 Cairns 约 68 km，铺装路适合普通车辆，全天开放"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 40,
+          "period": "09:40–10:20",
+          "place": "Lake Eacham Day Use Area",
+          "activity": "到湖边观景台看火山湖与雨林倒影，再沿湖边步道轻松走一小段",
+          "highlight": "被雨林环抱的清澈火山湖",
+          "tip": "今天不完整环湖，也不安排游泳；沿成形步道行走，10:20 左右继续前往 Yungaburra。",
+          "resources": [
+            {
+              "id": "lake-eacham-day-use-map",
+              "title": "Lake Eacham Day Use Area",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Lake+Eacham+Day+Use+Area%2C+Lakes+Drive%2C+Lake+Eacham+QLD",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Lakes Drive, Lake Eacham"
+            },
+            {
+              "id": "lake-eacham-official",
+              "title": "Lake Eacham Day Use Area 官方信息",
+              "type": "official",
+              "url": "https://parks.qld.gov.au/parks/crater-lakes/attractions/lake-eacham-day-use-area",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Queensland Parks · 距 Cairns 约 68 km，铺装路适合普通车辆，全天开放"
+            },
+            {
+              "id": "d9-core-route-map",
+              "title": "D9 阿瑟顿高原核心环线",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 50,
+          "period": "10:30–10:55",
+          "place": "Yungaburra Village",
+          "activity": "沿老街短走，看看历史木屋、高原小店与街景，需要时买一杯咖啡",
+          "highlight": "高原小镇的安静生活感",
+          "tip": "这里留给散步与咖啡，不安排长早餐；10:55 左右继续前往鸭嘴兽平台或 Curtain Fig Tree。",
+          "resources": [
+            {
+              "id": "yungaburra-village-map",
+              "title": "Yungaburra Village",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Yungaburra+Village+QLD",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Yungaburra Village"
+            },
+            {
+              "id": "d9-core-route-map",
+              "title": "D9 阿瑟顿高原核心环线",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 60,
+          "period": "10:55–11:05 · 可选",
+          "place": "Platypus Viewing Platform Yungaburra（可选）",
+          "activity": "在平台安静观察水面约 10 分钟，看看是否有鸭嘴兽浮出水面",
+          "highlight": "一段看运气的高原动物小插曲",
+          "tip": "平台仍可使用，但通往 Other Side 的连接步道关闭；没有发现就轻松离开，不沿关闭路段继续走。",
+          "resources": [
+            {
+              "id": "platypus-viewing-platform-map",
+              "title": "Platypus Viewing Platform Yungaburra",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Platypus+Viewing+Platform+Yungaburra",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Peterson Creek Platypus Viewing Platform"
+            },
+            {
+              "id": "peterson-creek-tracks-official",
+              "title": "Peterson Creek 步道与平台信息",
+              "type": "official",
+              "url": "https://petersoncreek.org.au/walking-tracks/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Yungaburra Landcare Group · 平台可用，平台至 Other Side 的连接步道关闭"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 70,
+          "period": "11:15–11:35",
           "place": "Curtain Fig Tree",
-          "activity": "沿短步道走到巨型帘状无花果树下，观察垂落根系与森林尺度",
+          "activity": "沿短木栈道走到巨型帘状无花果树下，观察垂落气根并拍下人与巨树的尺度",
           "highlight": "像天然装置艺术般的高原巨树",
-          "tip": "木栈道雨后可能湿滑，停留约 20–30 分钟即可。",
+          "tip": "木栈道雨后可能湿滑；慢慢绕一圈即可，11:35 左右前往 Gallo Dairyland。",
           "resources": [
             {
               "id": "curtain-fig-map",
@@ -3196,53 +3330,33 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "d9-tablelands-route-map",
-              "title": "D9 阿瑟顿高原完整路线",
-              "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham%7CCurtain+Fig+Tree%7CYungaburra%7CGallo+Dairyland%7CMillaa+Millaa+Falls",
+              "id": "curtain-fig-official",
+              "title": "Curtain Fig National Park 官方信息",
+              "type": "official",
+              "url": "https://parks.qld.gov.au/parks/curtain-fig",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Cairns → Lake Eacham → Curtain Fig Tree → Yungaburra → Gallo Dairyland → Millaa Millaa Falls → Cairns"
-            }
-          ]
-        },
-        {
-          "dayId": "d9",
-          "sortOrder": 40,
-          "period": "11:30–12:00",
-          "place": "Yungaburra",
-          "activity": "在高原小镇老街散步，看看木屋、咖啡馆与乡村街景",
-          "highlight": "高原生活节奏的短暂停靠",
-          "tip": "先散步再前往 Gallo Dairyland 用餐，午间节奏会更顺。",
-          "resources": [
-            {
-              "id": "yungaburra-map",
-              "title": "Yungaburra",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Yungaburra",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "Queensland Parks · 高架木栈道环绕 Curtain Fig Tree"
             },
             {
-              "id": "d9-tablelands-route-map",
-              "title": "D9 阿瑟顿高原完整路线",
+              "id": "d9-core-route-map",
+              "title": "D9 阿瑟顿高原核心环线",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham%7CCurtain+Fig+Tree%7CYungaburra%7CGallo+Dairyland%7CMillaa+Millaa+Falls",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Cairns → Lake Eacham → Curtain Fig Tree → Yungaburra → Gallo Dairyland → Millaa Millaa Falls → Cairns"
+              "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
             }
           ]
         },
         {
           "dayId": "d9",
-          "sortOrder": 50,
-          "period": "12:15–13:15",
+          "sortOrder": 80,
+          "period": "11:55–13:15",
           "place": "Gallo Dairyland",
-          "activity": "在牧场享用午餐，尝试本地奶酪、巧克力或奶制品",
-          "highlight": "阿瑟顿高原的农场味道",
-          "tip": "留意厨房与品鉴供应时间；午餐后在 13:15 左右继续前往瀑布。",
+          "activity": "在 BB's Café 吃午餐，分享一份奶酪拼盘，再逛逛手工巧克力与农场商店",
+          "highlight": "牧场风景、奶酪与巧克力组成的高原午间",
+          "tip": "工作日厨房热餐通常供应至 14:00；留出点单和用餐时间，13:15 左右继续向 Millaa Millaa 出发。",
           "resources": [
             {
               "id": "gallo-map",
@@ -3254,24 +3368,71 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "d9-tablelands-route-map",
-              "title": "D9 阿瑟顿高原完整路线",
-              "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham%7CCurtain+Fig+Tree%7CYungaburra%7CGallo+Dairyland%7CMillaa+Millaa+Falls",
+              "id": "gallo-hours-official",
+              "title": "Gallo Dairyland 午餐信息",
+              "type": "official",
+              "url": "https://www.athertontablelands.com.au/travel-directory/gallo-dairyland/",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Cairns → Lake Eacham → Curtain Fig Tree → Yungaburra → Gallo Dairyland → Millaa Millaa Falls → Cairns"
+              "sourceNote": "Tourism Atherton Tablelands · 工作日厨房热餐通常 09:30–14:00"
+            },
+            {
+              "id": "d9-waterfall-route-map",
+              "title": "Gallo → Millaa Millaa 瀑布段",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Gallo+Dairyland&destination=Ellinjaa+Falls&travelmode=driving&waypoints=Millaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Gallo → 镇中心厕所 → Millaa Millaa Falls → Ellinjaa Falls"
             }
           ]
         },
         {
           "dayId": "d9",
-          "sortOrder": 60,
-          "period": "14:00–15:15",
-          "place": "Millaa Millaa Falls / Ellinjaa Falls（可选）",
-          "activity": "14:00–14:40 欣赏 Millaa Millaa Falls；路况与状态都合适时，14:50–15:15 再到 Ellinjaa Falls 短停",
-          "highlight": "高原瀑布与热带绿意",
-          "tip": "Millaa Millaa Falls 是这一段的完整停留；无论是否去 Ellinjaa Falls，都在 15:15 开始返回凯恩斯。",
+          "sortOrder": 90,
+          "period": "13:55–14:10",
+          "place": "Millaa Millaa Public Toilets",
+          "activity": "先在镇中心使用公共厕所、补水并短暂舒展，再前往瀑布",
+          "highlight": "在进入 Waterfall Circuit 前完成实用停靠",
+          "tip": "Millaa Millaa Falls 现场厕所因升级施工关闭；替代公共厕所位于镇中心、Millaa Millaa Hotel 对面。",
+          "resources": [
+            {
+              "id": "millaa-public-toilets-map",
+              "title": "Millaa Millaa Public Toilets",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Millaa+Millaa+Public+Toilets%2C+Main+Street%2C+Millaa+Millaa+QLD",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 镇中心，Millaa Millaa Hotel 对面"
+            },
+            {
+              "id": "millaa-upgrade-official",
+              "title": "Millaa Millaa Falls 施工更新",
+              "type": "official",
+              "url": "https://www.trc.qld.gov.au/our-council/projects/millaa-millaa-falls-upgrade/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Tablelands Regional Council · 2026 年 7 月起施工，停车和步行区域受影响，现场厕所停用"
+            },
+            {
+              "id": "d9-waterfall-route-map",
+              "title": "Gallo → Millaa Millaa 瀑布段",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Gallo+Dairyland&destination=Ellinjaa+Falls&travelmode=driving&waypoints=Millaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Gallo → 镇中心厕所 → Millaa Millaa Falls → Ellinjaa Falls"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 100,
+          "period": "14:15–15:00",
+          "place": "Millaa Millaa Falls",
+          "activity": "从主观景面欣赏经典单落差瀑布，沿草坪与水潭边取景，在雨林绿意中慢慢走一圈",
+          "highlight": "阿瑟顿高原最经典的瀑布画面",
+          "tip": "停车与步行区域正在升级施工，按现场标志使用开放区域；若在这里下水，下午直接返回 Cairns 会更从容。",
           "resources": [
             {
               "id": "millaa-map",
@@ -3283,6 +3444,53 @@
               "sourceNote": "Google Maps"
             },
             {
+              "id": "millaa-falls-official",
+              "title": "Millaa Millaa Falls 官方旅游信息",
+              "type": "official",
+              "url": "https://www.queensland.com/au/en/things-to-do/attractions/p-56b25fd67b935fbe730df3b1-millaa-millaa-falls",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Tourism and Events Queensland · Waterfalls Circuit"
+            },
+            {
+              "id": "millaa-upgrade-official",
+              "title": "Millaa Millaa Falls 施工更新",
+              "type": "official",
+              "url": "https://www.trc.qld.gov.au/our-council/projects/millaa-millaa-falls-upgrade/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Tablelands Regional Council · 2026 年 7 月起施工，停车和步行区域受影响，现场厕所停用"
+            },
+            {
+              "id": "d9-waterfall-route-map",
+              "title": "Gallo → Millaa Millaa 瀑布段",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Gallo+Dairyland&destination=Ellinjaa+Falls&travelmode=driving&waypoints=Millaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Gallo → 镇中心厕所 → Millaa Millaa Falls → Ellinjaa Falls"
+            },
+            {
+              "id": "d9-return-from-millaa-map",
+              "title": "Millaa Millaa Falls → Cairns",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Millaa+Millaa+Falls&destination=Cairns+QLD&travelmode=driving&waypoints=Malanda+QLD%7CGordonvale+QLD",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 经 Malanda、Gillies Highway 与 Gordonvale 返回"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 110,
+          "period": "15:10–15:35 · 可选",
+          "place": "Ellinjaa Falls（可选）",
+          "activity": "从停车与野餐区沿短步道下到瀑布底部，感受更贴近雨林的水声与绿意",
+          "highlight": "比主瀑布更安静的第二段雨林瀑布",
+          "tip": "只有在 15:00 前离开 Millaa Millaa Falls、路面与驾驶状态都舒服时前往；15:35 开始返回 Cairns。",
+          "resources": [
+            {
               "id": "ellinjaa-map",
               "title": "Ellinjaa Falls",
               "type": "map",
@@ -3292,33 +3500,69 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "d9-tablelands-route-map",
-              "title": "D9 阿瑟顿高原完整路线",
-              "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham%7CCurtain+Fig+Tree%7CYungaburra%7CGallo+Dairyland%7CMillaa+Millaa+Falls",
+              "id": "ellinjaa-falls-official",
+              "title": "Ellinjaa Falls 步道信息",
+              "type": "official",
+              "url": "https://www.athertontablelands.com.au/travel-directory/elinjaa-falls-millaa-millaa/",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Cairns → Lake Eacham → Curtain Fig Tree → Yungaburra → Gallo Dairyland → Millaa Millaa Falls → Cairns"
+              "sourceNote": "Tourism Atherton Tablelands · 从停车与野餐区沿步道下到瀑布底部"
+            },
+            {
+              "id": "d9-return-from-ellinjaa-map",
+              "title": "Ellinjaa Falls → Cairns",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Ellinjaa+Falls&destination=Cairns+QLD&travelmode=driving&waypoints=Malanda+QLD%7CGordonvale+QLD",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 经 Malanda、Gillies Highway 与 Gordonvale 返回"
             }
           ]
         },
         {
           "dayId": "d9",
-          "sortOrder": 70,
-          "period": "15:15–17:45",
+          "sortOrder": 120,
+          "period": "15:35–18:00",
           "place": "返回 Cairns / 凯恩斯还车点",
-          "activity": "沿山路返回凯恩斯，途中补满油并按订单时间完成还车",
-          "highlight": "在天黑前结束高原自驾",
-          "tip": "15:15 开始返程，预计 17:00–17:45 完成加油与还车；下山路段留意弯道和野生动物。",
+          "activity": "经 Malanda、Gillies Highway 与 Gordonvale 返回 Cairns，进城后补满油并按订单地点完成还车",
+          "highlight": "在日落前后结束高原自驾",
+          "tip": "从 Millaa Millaa Falls 或 Ellinjaa Falls 选择对应返程地图，始终走铺装主路，不接受导航推荐的无铺装林道。Cairns 当日日落约 18:05。",
           "resources": [
             {
-              "id": "d9-tablelands-route-map",
-              "title": "D9 阿瑟顿高原完整路线",
+              "id": "d9-return-from-millaa-map",
+              "title": "Millaa Millaa Falls → Cairns",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham%7CCurtain+Fig+Tree%7CYungaburra%7CGallo+Dairyland%7CMillaa+Millaa+Falls",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Millaa+Millaa+Falls&destination=Cairns+QLD&travelmode=driving&waypoints=Malanda+QLD%7CGordonvale+QLD",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Cairns → Lake Eacham → Curtain Fig Tree → Yungaburra → Gallo Dairyland → Millaa Millaa Falls → Cairns"
+              "sourceNote": "Google Maps · 经 Malanda、Gillies Highway 与 Gordonvale 返回"
+            },
+            {
+              "id": "d9-return-from-ellinjaa-map",
+              "title": "Ellinjaa Falls → Cairns",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Ellinjaa+Falls&destination=Cairns+QLD&travelmode=driving&waypoints=Malanda+QLD%7CGordonvale+QLD",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 经 Malanda、Gillies Highway 与 Gordonvale 返回"
+            },
+            {
+              "id": "cairns-car-rental-search-map",
+              "title": "Cairns 租车门店搜索",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Car+Rental+Cairns+QLD",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 准确门店以租车订单为准"
+            },
+            {
+              "id": "cairns-sunset-august-2026",
+              "title": "Cairns 2026 年 8 月日落时间",
+              "type": "note",
+              "url": "https://www.timeanddate.com/sun/australia/cairns?month=8",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Timeanddate · 2026 年 8 月 6 日日落约 18:05"
             }
           ]
         },
@@ -3327,9 +3571,9 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：公寓或咖啡馆；午餐：Gallo Dairyland；晚餐：18:30 左右在 Salt House 或公寓附近简餐",
-          "highlight": "农场午餐与回城晚餐",
-          "tip": "午餐留给高原风味，晚餐按还车后的状态轻松选择。",
+          "activity": "早餐：公寓；午餐：Gallo Dairyland；晚餐：18:30 后在 Salt House 或公寓附近简餐",
+          "highlight": "农场午餐与回城后的轻松晚餐",
+          "tip": "还车后先回房洗澡休息，晚上不再安排 Night Markets 或 Palm Cove。",
           "resources": [
             {
               "id": "gallo-map",
@@ -6914,6 +7158,168 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps · Palm Cove Jetty"
+    },
+    {
+      "id": "cairns-car-rental-search-map",
+      "title": "Cairns 租车门店搜索",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Car+Rental+Cairns+QLD",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 准确门店以租车订单为准"
+    },
+    {
+      "id": "d9-core-route-map",
+      "title": "D9 阿瑟顿高原核心环线",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
+    },
+    {
+      "id": "d9-cairns-lake-eacham-route-map",
+      "title": "Cairns → Lake Eacham",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Lake+Eacham+Day+Use+Area&travelmode=driving",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 经 Gordonvale 与 Gillies Highway"
+    },
+    {
+      "id": "d9-waterfall-route-map",
+      "title": "Gallo → Millaa Millaa 瀑布段",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Gallo+Dairyland&destination=Ellinjaa+Falls&travelmode=driving&waypoints=Millaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Gallo → 镇中心厕所 → Millaa Millaa Falls → Ellinjaa Falls"
+    },
+    {
+      "id": "d9-return-from-millaa-map",
+      "title": "Millaa Millaa Falls → Cairns",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Millaa+Millaa+Falls&destination=Cairns+QLD&travelmode=driving&waypoints=Malanda+QLD%7CGordonvale+QLD",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 经 Malanda、Gillies Highway 与 Gordonvale 返回"
+    },
+    {
+      "id": "d9-return-from-ellinjaa-map",
+      "title": "Ellinjaa Falls → Cairns",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Ellinjaa+Falls&destination=Cairns+QLD&travelmode=driving&waypoints=Malanda+QLD%7CGordonvale+QLD",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 经 Malanda、Gillies Highway 与 Gordonvale 返回"
+    },
+    {
+      "id": "lake-eacham-day-use-map",
+      "title": "Lake Eacham Day Use Area",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Lake+Eacham+Day+Use+Area%2C+Lakes+Drive%2C+Lake+Eacham+QLD",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Lakes Drive, Lake Eacham"
+    },
+    {
+      "id": "lake-eacham-official",
+      "title": "Lake Eacham Day Use Area 官方信息",
+      "type": "official",
+      "url": "https://parks.qld.gov.au/parks/crater-lakes/attractions/lake-eacham-day-use-area",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Queensland Parks · 距 Cairns 约 68 km，铺装路适合普通车辆，全天开放"
+    },
+    {
+      "id": "yungaburra-village-map",
+      "title": "Yungaburra Village",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Yungaburra+Village+QLD",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Yungaburra Village"
+    },
+    {
+      "id": "platypus-viewing-platform-map",
+      "title": "Platypus Viewing Platform Yungaburra",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Platypus+Viewing+Platform+Yungaburra",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Peterson Creek Platypus Viewing Platform"
+    },
+    {
+      "id": "peterson-creek-tracks-official",
+      "title": "Peterson Creek 步道与平台信息",
+      "type": "official",
+      "url": "https://petersoncreek.org.au/walking-tracks/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Yungaburra Landcare Group · 平台可用，平台至 Other Side 的连接步道关闭"
+    },
+    {
+      "id": "curtain-fig-official",
+      "title": "Curtain Fig National Park 官方信息",
+      "type": "official",
+      "url": "https://parks.qld.gov.au/parks/curtain-fig",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Queensland Parks · 高架木栈道环绕 Curtain Fig Tree"
+    },
+    {
+      "id": "gallo-hours-official",
+      "title": "Gallo Dairyland 午餐信息",
+      "type": "official",
+      "url": "https://www.athertontablelands.com.au/travel-directory/gallo-dairyland/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Tourism Atherton Tablelands · 工作日厨房热餐通常 09:30–14:00"
+    },
+    {
+      "id": "millaa-public-toilets-map",
+      "title": "Millaa Millaa Public Toilets",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Millaa+Millaa+Public+Toilets%2C+Main+Street%2C+Millaa+Millaa+QLD",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 镇中心，Millaa Millaa Hotel 对面"
+    },
+    {
+      "id": "millaa-upgrade-official",
+      "title": "Millaa Millaa Falls 施工更新",
+      "type": "official",
+      "url": "https://www.trc.qld.gov.au/our-council/projects/millaa-millaa-falls-upgrade/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Tablelands Regional Council · 2026 年 7 月起施工，停车和步行区域受影响，现场厕所停用"
+    },
+    {
+      "id": "millaa-falls-official",
+      "title": "Millaa Millaa Falls 官方旅游信息",
+      "type": "official",
+      "url": "https://www.queensland.com/au/en/things-to-do/attractions/p-56b25fd67b935fbe730df3b1-millaa-millaa-falls",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Tourism and Events Queensland · Waterfalls Circuit"
+    },
+    {
+      "id": "ellinjaa-falls-official",
+      "title": "Ellinjaa Falls 步道信息",
+      "type": "official",
+      "url": "https://www.athertontablelands.com.au/travel-directory/elinjaa-falls-millaa-millaa/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Tourism Atherton Tablelands · 从停车与野餐区沿步道下到瀑布底部"
+    },
+    {
+      "id": "cairns-sunset-august-2026",
+      "title": "Cairns 2026 年 8 月日落时间",
+      "type": "note",
+      "url": "https://www.timeanddate.com/sun/australia/cairns?month=8",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Timeanddate · 2026 年 8 月 6 日日落约 18:05"
     }
   ],
   "priorities": [
