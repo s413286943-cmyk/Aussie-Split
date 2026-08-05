@@ -26,7 +26,7 @@ const expectedTitles = {
   d6: "初到凯恩斯：热带花园、海滨与夜市",
   d7: "奔赴外礁：Reef Magic 大堡礁一日",
   d8: "深入丹翠：雨林、河流与 Cape Tribulation",
-  d9: "穿行阿瑟顿高原：火山湖、巨树与瀑布",
+  d9: "从雨林小镇到高原瀑布：Kuranda、Skybury 与 Millaa Millaa",
   d10: "慢享凯恩斯：Rusty's Market 与 Palm Cove",
   d11: "初到悉尼：Barangaroo、The Rocks 与海港夜景",
   d12: "悉尼经典一日：歌剧院、The Rocks Markets、植物园与 QVB",
@@ -46,7 +46,7 @@ const expectedFocus = {
   d6: "早班机抵达凯恩斯后先寄存行李与休息，午后视体力走进热带花园，再沿 Esplanade 到 Marina，晚上在 Night Markets 边逛边吃。",
   d7: "在 Reef Magic 外礁平台体验浮潜、半潜艇与大堡礁海上风景，返港后到码头边吃一顿海鲜晚餐。",
   d8: "清晨从酒店出发，沿丹翠河进入雨林，在 Cape Tribulation 看雨林与海相接，傍晚回城后简单用餐。",
-  d9: "从 Cairns 驶上阿瑟顿高原，在 Lake Eacham 看火山湖，沿 Yungaburra 与 Curtain Fig Tree 走进高原风景，午后到 Gallo Dairyland 吃午餐，再以 Millaa Millaa Falls 收尾。",
+  d9: "从 Cairns 沿 Kuranda Range 北上，经过 Kuranda 与 Mareeba，在 Skybury 看咖啡园景并享用早午餐；下午走过 Lake Eacham、Yungaburra 与 Curtain Fig Tree，最后以 Millaa Millaa Falls 收尾。",
   d10: "上午逛 Rusty's Market，午间回酒店洗衣打包，下午沿 Palm Cove 海滨与 Jetty 散步，在蓝调时刻用一顿早晚餐收尾。",
   d11: "飞抵悉尼后休息片刻，沿 Barangaroo、The Rocks 走到 Circular Quay 夜景。",
   d12: "从歌剧院中文导览出发，逛 The Rocks Markets，再沿植物园走到经典海港机位与 QVB。",
@@ -436,45 +436,52 @@ describe("itinerary data", () => {
     );
   });
 
-  it("gives D9 an executable Atherton Tablelands timeline", () => {
+  it("gives D9 an executable Kuranda, Skybury, and Atherton Tablelands timeline", () => {
     const d9 = itinerary.days.find((day) => day.id === "d9");
     const d9Places = d9.blocks.filter((block) => block.period !== "饮食").map((block) => block.place);
     assert.deepEqual(d9Places, [
       "Southern Cross Atrium Apartments",
       "凯恩斯取车点",
-      "Cairns → Lake Eacham",
+      "Cairns → Kuranda Village",
+      "Kuranda Village",
+      "Kuranda → Mareeba",
+      "Mareeba",
+      "Mareeba → Skybury",
+      "Skybury Cafe & Roastery",
+      "Skybury → Lake Eacham",
       "Lake Eacham Day Use Area",
+      "Lake Eacham → Yungaburra",
       "Yungaburra Village",
-      "Platypus Viewing Platform Yungaburra（可选）",
+      "Yungaburra → Curtain Fig Tree",
       "Curtain Fig Tree",
-      "Gallo Dairyland",
+      "Curtain Fig Tree → Millaa Millaa",
       "Millaa Millaa Public Toilets",
       "Millaa Millaa Falls",
-      "Ellinjaa Falls（可选）",
       "返回 Cairns / 凯恩斯还车点",
     ]);
     assert.equal(d9.primaryResource.id, "d9-core-route-map");
-    assert.match(d9.transport, /230–260 km/);
-    assert.match(d9.leaveBy, /08:30.*13:15.*15:35/);
-    assert.match(d9.blocks.find((block) => block.place === "Gallo Dairyland").period, /11:55–13:15/);
+    assert.match(d9.transport, /约 285 km/);
+    assert.match(d9.leaveBy, /08:00.*11:30.*15:35/);
+    assert.match(d9.blocks.find((block) => block.place === "Skybury Cafe & Roastery").period, /10:20–11:30/);
+    assert.match(d9.blocks.find((block) => block.place === "Mareeba").tip, /短停|20 分钟/);
     assert.match(d9.blocks.find((block) => block.place === "Millaa Millaa Public Toilets").tip, /瀑布.*厕所.*关闭|厕所.*关闭/);
     assert.match(d9.blocks.find((block) => block.place === "Millaa Millaa Falls").tip, /施工|停车/);
-    assert.match(d9.blocks.find((block) => block.place === "Ellinjaa Falls（可选）").tip, /15:00/);
     assert.match(d9.blocks.find((block) => /还车点/.test(block.place)).period, /15:35–18:00/);
     const resourceIds = new Set(d9.blocks.flatMap((block) => block.resources.map((resource) => resource.id)));
     for (const resourceId of [
       "d9-core-route-map",
-      "d9-cairns-lake-eacham-route-map",
+      "d9-north-route-map",
+      "d9-highlands-route-map",
+      "kuranda-village-map",
+      "mareeba-town-map",
+      "skybury-map",
+      "skybury-official",
       "lake-eacham-day-use-map",
       "yungaburra-village-map",
-      "platypus-viewing-platform-map",
       "curtain-fig-map",
-      "gallo-map",
       "millaa-public-toilets-map",
       "millaa-map",
-      "ellinjaa-map",
       "d9-return-from-millaa-map",
-      "d9-return-from-ellinjaa-map",
     ]) {
       assert.ok(resourceIds.has(resourceId), `d9 is missing ${resourceId}`);
     }
@@ -485,8 +492,9 @@ describe("itinerary data", () => {
       );
     }
     const d9Text = [d9.title, d9.focus, d9.transport, d9.leaveBy, ...d9.blocks.flatMap((block) => [block.activity, block.highlight, block.tip])].join(" ");
-    assert.match(d9Text, /4–4\.5 小时/);
-    assert.match(d9Text, /约 9 小时/);
+    assert.match(d9Text, /约 5 小时/);
+    assert.match(d9Text, /9\.5–10 小时/);
+    assert.doesNotMatch(d9Text, /Gallo Dairyland|Platypus Viewing Platform|Ellinjaa Falls|Skyberry/);
     assert.doesNotMatch(d9Text, /硬节点|硬目标|执行原则|直接取消|落后时|先删|不删|D9.*成立|开发|版本/);
   });
 
@@ -522,6 +530,12 @@ describe("itinerary data", () => {
       "d9-tablelands-route-map",
       "cairns-car-rental-search-map",
       "d9-core-route-map",
+      "d9-north-route-map",
+      "d9-highlands-route-map",
+      "kuranda-village-map",
+      "mareeba-town-map",
+      "skybury-map",
+      "skybury-official",
       "d9-cairns-lake-eacham-route-map",
       "d9-waterfall-route-map",
       "d9-return-from-millaa-map",
@@ -531,9 +545,11 @@ describe("itinerary data", () => {
       "yungaburra-village-map",
       "platypus-viewing-platform-map",
       "peterson-creek-tracks-official",
+      "curtain-fig-map",
       "curtain-fig-official",
       "gallo-hours-official",
       "millaa-public-toilets-map",
+      "millaa-map",
       "millaa-upgrade-official",
       "millaa-falls-official",
       "ellinjaa-falls-official",
@@ -545,7 +561,7 @@ describe("itinerary data", () => {
     const unchangedResources = itinerary.resources.filter((resource) => !newResourceIds.has(resource.id));
     assert.equal(
       createHash("sha256").update(JSON.stringify(unchangedResources)).digest("hex"),
-      "772c0c1bc516c6f1c5ed909de3a1665a7f8d3db95a77a60fb4dbddaa8417e2ad",
+      "66d55644da1d35176312aaf12b141de7e8fc1e0053178ae7e1f62f87d24844d1",
     );
   });
 

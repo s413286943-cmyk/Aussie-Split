@@ -3088,18 +3088,18 @@
       "label": "D9",
       "date": "2026-08-06",
       "weekday": "周四",
-      "city": "阿瑟顿高原",
+      "city": "Kuranda + 阿瑟顿高原",
       "lat": -17.2706,
       "lon": 145.5831,
-      "title": "穿行阿瑟顿高原：火山湖、巨树与瀑布",
-      "focus": "从 Cairns 驶上阿瑟顿高原，在 Lake Eacham 看火山湖，沿 Yungaburra 与 Curtain Fig Tree 走进高原风景，午后到 Gallo Dairyland 吃午餐，再以 Millaa Millaa Falls 收尾。",
+      "title": "从雨林小镇到高原瀑布：Kuranda、Skybury 与 Millaa Millaa",
+      "focus": "从 Cairns 沿 Kuranda Range 北上，经过 Kuranda 与 Mareeba，在 Skybury 看咖啡园景并享用早午餐；下午走过 Lake Eacham、Yungaburra 与 Curtain Fig Tree，最后以 Millaa Millaa Falls 收尾。",
       "lodging": "Southern Cross Atrium Apartments",
-      "climateNote": "高原清晨约 10–15°C，中午约 22–26°C；天气与体感会随海拔变化。",
+      "climateNote": "Kuranda 与高原清晨偏凉，Mareeba 白天较暖；天气和体感会随海拔与林区变化。",
       "clothingNote": "短袖打底 + 薄外套 + 轻薄长裤 + 防滑运动鞋；车里备雨衣、帽子、墨镜与防晒。",
       "coverImageUrl": "/itinerary/d9-atherton-tablelands-waterfall.png",
       "coverImageAlt": "阿瑟顿高原瀑布",
-      "transport": "自驾 · 阿瑟顿高原环线（约 230–260 km；纯驾驶约 4–4.5 小时；全天约 9 小时）",
-      "leaveBy": "07:45 前往取车点；08:30 前驶离 Cairns；13:15 离开 Gallo；15:35 开始返程",
+      "transport": "自驾 · Kuranda / Mareeba / 阿瑟顿高原环线（约 285 km；纯驾驶约 5 小时；全天约 9.5–10 小时）",
+      "leaveBy": "08:00 左右驶离 Cairns；11:30 离开 Skybury；15:35 从 Millaa Millaa Falls 返程",
       "lodgingResource": {
         "id": "southern-cross-map",
         "title": "Southern Cross Atrium Apartments",
@@ -3111,12 +3111,12 @@
       },
       "primaryResource": {
         "id": "d9-core-route-map",
-        "title": "D9 阿瑟顿高原核心环线",
+        "title": "D9 Kuranda 与阿瑟顿高原完整环线",
         "type": "map",
-        "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Kuranda+Village%7CMareeba+QLD%7CSkybury+Cafe+and+Roastery%7CLake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
+        "sourceNote": "Google Maps · Cairns → Kuranda → Mareeba → Skybury → Lake Eacham → Yungaburra → Curtain Fig → Millaa Millaa → Cairns"
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
@@ -3131,10 +3131,10 @@
         {
           "dayId": "d9",
           "sortOrder": 10,
-          "period": "07:15–07:45",
+          "period": "07:15–07:35",
           "place": "Southern Cross Atrium Apartments",
           "activity": "吃早餐、装好饮用水，检查驾照、租车订单与充电线，并把当天区域下载到 Google Maps 离线地图",
-          "highlight": "从一段从容准备开启高原自驾",
+          "highlight": "从一段从容准备开启高原环线",
           "tip": "每人带约 1L 水和一份小零食；薄外套、轻薄雨衣、帽子、墨镜、防晒与纸巾放在随手可取的位置。",
           "resources": [
             {
@@ -3148,23 +3148,23 @@
             },
             {
               "id": "d9-core-route-map",
-              "title": "D9 阿瑟顿高原核心环线",
+              "title": "D9 Kuranda 与阿瑟顿高原完整环线",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Kuranda+Village%7CMareeba+QLD%7CSkybury+Cafe+and+Roastery%7CLake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
+              "sourceNote": "Google Maps · Cairns → Kuranda → Mareeba → Skybury → Lake Eacham → Yungaburra → Curtain Fig → Millaa Millaa → Cairns"
             }
           ]
         },
         {
           "dayId": "d9",
           "sortOrder": 20,
-          "period": "07:45–08:30",
+          "period": "07:35–08:00 · 按订单时间",
           "place": "凯恩斯取车点",
           "activity": "前往租车订单上的准确门店，取车后拍下车身四角、轮毂、挡风玻璃与油表，再调好座椅、后视镜和手机支架",
-          "highlight": "在驶入 Gillies Highway 前熟悉车辆",
-          "tip": "导航以订单中的准确 branch 为准；离店前再次确认还车地点、油量规则与时间，08:30 前驶离 Cairns。",
+          "highlight": "在驶入 Kuranda Range 前熟悉车辆",
+          "tip": "实际取车时间以订单为准；能在 08:00 左右驶离 Cairns 最从容，若稍晚出发，就把 Kuranda 与 Mareeba 各控制在 15–20 分钟。",
           "resources": [
             {
               "id": "cairns-car-rental-search-map",
@@ -3176,59 +3176,242 @@
               "sourceNote": "Google Maps · 准确门店以租车订单为准"
             },
             {
-              "id": "d9-core-route-map",
-              "title": "D9 阿瑟顿高原核心环线",
+              "id": "d9-north-route-map",
+              "title": "Cairns → Kuranda → Mareeba → Skybury",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&travelmode=driving&waypoints=Kuranda+Village%7CMareeba+QLD",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
+              "sourceNote": "Google Maps · 北上段，依次经过 Kuranda 与 Mareeba"
             }
           ]
         },
         {
           "dayId": "d9",
           "sortOrder": 30,
-          "period": "08:30–09:40",
-          "place": "Cairns → Lake Eacham",
-          "activity": "经 Gordonvale 与 Gillies Highway 驶上高原，沿铺装道路前往 Lake Eacham Day Use Area",
-          "highlight": "海边城市逐渐切换成清凉高原",
-          "tip": "Gillies Highway 弯道密集，保持舒服车距；只在安全让车区让快车通过，不跟着后车加速。",
+          "period": "08:00–08:40",
+          "place": "Cairns → Kuranda Village",
+          "activity": "沿 Kennedy Highway 驶上 Kuranda Range，穿过雨林山路前往 Kuranda Village",
+          "highlight": "从海边城市缓缓进入雨林高地",
+          "tip": "山路弯道较多，保持舒服车距，只在安全让车区让快车通过；司机专心驾驶，副驾负责导航。",
           "resources": [
             {
-              "id": "d9-cairns-lake-eacham-route-map",
-              "title": "Cairns → Lake Eacham",
+              "id": "d9-north-route-map",
+              "title": "Cairns → Kuranda → Mareeba → Skybury",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Lake+Eacham+Day+Use+Area&travelmode=driving",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&travelmode=driving&waypoints=Kuranda+Village%7CMareeba+QLD",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · 经 Gordonvale 与 Gillies Highway"
+              "sourceNote": "Google Maps · 北上段，依次经过 Kuranda 与 Mareeba"
             },
             {
-              "id": "lake-eacham-official",
-              "title": "Lake Eacham Day Use Area 官方信息",
-              "type": "official",
-              "url": "https://parks.qld.gov.au/parks/crater-lakes/attractions/lake-eacham-day-use-area",
+              "id": "kuranda-village-map",
+              "title": "Kuranda Village",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Kuranda+Village%2C+Coondoo+Street%2C+Kuranda+QLD+4881&travelmode=driving",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Queensland Parks · 距 Cairns 约 68 km，铺装路适合普通车辆，全天开放"
+              "sourceNote": "Google Maps · Coondoo Street, Kuranda"
             }
           ]
         },
         {
           "dayId": "d9",
           "sortOrder": 40,
-          "period": "09:40–10:20",
+          "period": "08:40–09:15",
+          "place": "Kuranda Village",
+          "activity": "沿 Coondoo Street 一带短走，看看雨林小镇街景、老建筑与清晨开门的小店",
+          "highlight": "雨林包围的小镇清晨",
+          "tip": "今天不安排缆车或长时间逛市场；停留约 35 分钟，把咖啡与正式用餐留给 Skybury。",
+          "resources": [
+            {
+              "id": "kuranda-village-map",
+              "title": "Kuranda Village",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Kuranda+Village%2C+Coondoo+Street%2C+Kuranda+QLD+4881&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Coondoo Street, Kuranda"
+            },
+            {
+              "id": "d9-north-route-map",
+              "title": "Cairns → Kuranda → Mareeba → Skybury",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&travelmode=driving&waypoints=Kuranda+Village%7CMareeba+QLD",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 北上段，依次经过 Kuranda 与 Mareeba"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 50,
+          "period": "09:15–09:45",
+          "place": "Kuranda → Mareeba",
+          "activity": "沿 Kennedy Highway 继续向西北行驶，从湿润雨林逐渐进入开阔高原",
+          "highlight": "沿途景观从雨林切换为热带草原",
+          "tip": "这一段约 28 分钟；不临时驶入小路，把 Mareeba 作为轻松的中途短停。",
+          "resources": [
+            {
+              "id": "d9-north-route-map",
+              "title": "Cairns → Kuranda → Mareeba → Skybury",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&travelmode=driving&waypoints=Kuranda+Village%7CMareeba+QLD",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 北上段，依次经过 Kuranda 与 Mareeba"
+            },
+            {
+              "id": "mareeba-town-map",
+              "title": "Mareeba",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Mareeba+QLD+4880&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Mareeba 镇中心"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 60,
+          "period": "09:45–10:05",
+          "place": "Mareeba",
+          "activity": "在镇中心短走、使用洗手间并舒展一下，再确认油量和下一段导航",
+          "highlight": "咖啡产区入口的一段小镇停靠",
+          "tip": "这里以 20 分钟短停为主，不再安排完整早餐；10:05 左右继续前往 Skybury。",
+          "resources": [
+            {
+              "id": "mareeba-town-map",
+              "title": "Mareeba",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Mareeba+QLD+4880&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Mareeba 镇中心"
+            },
+            {
+              "id": "d9-north-route-map",
+              "title": "Cairns → Kuranda → Mareeba → Skybury",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&travelmode=driving&waypoints=Kuranda+Village%7CMareeba+QLD",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 北上段，依次经过 Kuranda 与 Mareeba"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 70,
+          "period": "10:05–10:20",
+          "place": "Mareeba → Skybury",
+          "activity": "从 Mareeba 驶向 Paddys Green，沿 Ivicevic Road 前往 Skybury Cafe & Roastery",
+          "highlight": "从高原小镇进入咖啡农场风景",
+          "tip": "最后一段约 12 分钟；接近农场后放慢车速，按现场标志进入停车区。",
+          "resources": [
+            {
+              "id": "d9-north-route-map",
+              "title": "Cairns → Kuranda → Mareeba → Skybury",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&travelmode=driving&waypoints=Kuranda+Village%7CMareeba+QLD",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 北上段，依次经过 Kuranda 与 Mareeba"
+            },
+            {
+              "id": "skybury-map",
+              "title": "Skybury Cafe & Roastery",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 136 Ivicevic Road, Paddys Green QLD 4880"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 80,
+          "period": "10:20–11:30",
+          "place": "Skybury Cafe & Roastery",
+          "activity": "坐下来喝一杯本地咖啡，享用早午餐，再看看农场与高原景观",
+          "highlight": "咖啡产区最有地方感的一餐",
+          "tip": "官网列周一至周五 09:00–16:00；今天留约 70 分钟，用餐后可买少量咖啡豆或木瓜产品，11:30 左右离开。",
+          "resources": [
+            {
+              "id": "skybury-map",
+              "title": "Skybury Cafe & Roastery",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 136 Ivicevic Road, Paddys Green QLD 4880"
+            },
+            {
+              "id": "skybury-official",
+              "title": "Skybury Cafe & Roastery 官网",
+              "type": "official",
+              "url": "https://skybury.com.au/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Skybury · 周一至周五 09:00–16:00，公共假日关闭"
+            },
+            {
+              "id": "d9-north-route-map",
+              "title": "Cairns → Kuranda → Mareeba → Skybury",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&travelmode=driving&waypoints=Kuranda+Village%7CMareeba+QLD",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 北上段，依次经过 Kuranda 与 Mareeba"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 90,
+          "period": "11:30–12:20",
+          "place": "Skybury → Lake Eacham",
+          "activity": "沿高原主路向南前往 Lake Eacham Day Use Area",
+          "highlight": "从开阔农场回到雨林火山湖",
+          "tip": "这一段约 50 分钟；午后还有多个短停点，途中不再临时增加绕路景点。",
+          "resources": [
+            {
+              "id": "d9-highlands-route-map",
+              "title": "Skybury → Lake Eacham → Millaa Millaa Falls",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&destination=Millaa+Millaa+Falls&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CMillaa+Millaa+Public+Toilets",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 高原段，依次经过火山湖、小镇、巨树与镇中心厕所"
+            },
+            {
+              "id": "lake-eacham-day-use-map",
+              "title": "Lake Eacham Day Use Area",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Lake+Eacham+Day+Use+Area%2C+Lakes+Drive%2C+Lake+Eacham+QLD+4884&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Lakes Drive, Lake Eacham"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 100,
+          "period": "12:20–13:00",
           "place": "Lake Eacham Day Use Area",
           "activity": "到湖边观景台看火山湖与雨林倒影，再沿湖边步道轻松走一小段",
           "highlight": "被雨林环抱的清澈火山湖",
-          "tip": "今天不完整环湖，也不安排游泳；沿成形步道行走，10:20 左右继续前往 Yungaburra。",
+          "tip": "今天不完整环湖，也不安排游泳；沿成形步道散步，13:00 左右继续前往 Yungaburra。",
           "resources": [
             {
               "id": "lake-eacham-day-use-map",
               "title": "Lake Eacham Day Use Area",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Lake+Eacham+Day+Use+Area%2C+Lakes+Drive%2C+Lake+Eacham+QLD",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Lake+Eacham+Day+Use+Area%2C+Lakes+Drive%2C+Lake+Eacham+QLD+4884&travelmode=driving",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps · Lakes Drive, Lake Eacham"
@@ -3243,91 +3426,120 @@
               "sourceNote": "Queensland Parks · 距 Cairns 约 68 km，铺装路适合普通车辆，全天开放"
             },
             {
-              "id": "d9-core-route-map",
-              "title": "D9 阿瑟顿高原核心环线",
+              "id": "d9-highlands-route-map",
+              "title": "Skybury → Lake Eacham → Millaa Millaa Falls",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&destination=Millaa+Millaa+Falls&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CMillaa+Millaa+Public+Toilets",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
+              "sourceNote": "Google Maps · 高原段，依次经过火山湖、小镇、巨树与镇中心厕所"
             }
           ]
         },
         {
           "dayId": "d9",
-          "sortOrder": 50,
-          "period": "10:30–10:55",
+          "sortOrder": 110,
+          "period": "13:00–13:10",
+          "place": "Lake Eacham → Yungaburra",
+          "activity": "沿 Lakes Drive 与高原道路短途前往 Yungaburra",
+          "highlight": "火山湖与小镇之间的轻松转场",
+          "tip": "车程约 9 分钟；抵达后把车停稳，再沿老街短走。",
+          "resources": [
+            {
+              "id": "d9-highlands-route-map",
+              "title": "Skybury → Lake Eacham → Millaa Millaa Falls",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&destination=Millaa+Millaa+Falls&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CMillaa+Millaa+Public+Toilets",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 高原段，依次经过火山湖、小镇、巨树与镇中心厕所"
+            },
+            {
+              "id": "yungaburra-village-map",
+              "title": "Yungaburra Village",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Yungaburra+QLD+4884&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Yungaburra Village"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 120,
+          "period": "13:10–13:35",
           "place": "Yungaburra Village",
-          "activity": "沿老街短走，看看历史木屋、高原小店与街景，需要时买一杯咖啡",
-          "highlight": "高原小镇的安静生活感",
-          "tip": "这里留给散步与咖啡，不安排长早餐；10:55 左右继续前往鸭嘴兽平台或 Curtain Fig Tree。",
+          "activity": "沿老街看看历史木屋、高原小店与街景，需要时补一杯咖啡或带走小点心",
+          "highlight": "高原小镇安静而缓慢的午后",
+          "tip": "这里停留约 25 分钟，专心看看老街与历史木屋；13:35 左右继续去 Curtain Fig Tree。",
           "resources": [
             {
               "id": "yungaburra-village-map",
               "title": "Yungaburra Village",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Yungaburra+Village+QLD",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Yungaburra+QLD+4884&travelmode=driving",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps · Yungaburra Village"
             },
             {
-              "id": "d9-core-route-map",
-              "title": "D9 阿瑟顿高原核心环线",
+              "id": "d9-highlands-route-map",
+              "title": "Skybury → Lake Eacham → Millaa Millaa Falls",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&destination=Millaa+Millaa+Falls&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CMillaa+Millaa+Public+Toilets",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
+              "sourceNote": "Google Maps · 高原段，依次经过火山湖、小镇、巨树与镇中心厕所"
             }
           ]
         },
         {
           "dayId": "d9",
-          "sortOrder": 60,
-          "period": "10:55–11:05 · 可选",
-          "place": "Platypus Viewing Platform Yungaburra（可选）",
-          "activity": "在平台安静观察水面约 10 分钟，看看是否有鸭嘴兽浮出水面",
-          "highlight": "一段看运气的高原动物小插曲",
-          "tip": "平台仍可使用，但通往 Other Side 的连接步道关闭；没有发现就轻松离开，不沿关闭路段继续走。",
+          "sortOrder": 130,
+          "period": "13:35–13:40",
+          "place": "Yungaburra → Curtain Fig Tree",
+          "activity": "沿短途高原道路前往 Curtain Fig National Park",
+          "highlight": "小镇与雨林巨树之间只隔一小段车程",
+          "tip": "车程约 5 分钟；按停车区标志停好车，不在路肩临时停车。",
           "resources": [
             {
-              "id": "platypus-viewing-platform-map",
-              "title": "Platypus Viewing Platform Yungaburra",
+              "id": "d9-highlands-route-map",
+              "title": "Skybury → Lake Eacham → Millaa Millaa Falls",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Platypus+Viewing+Platform+Yungaburra",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&destination=Millaa+Millaa+Falls&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CMillaa+Millaa+Public+Toilets",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Peterson Creek Platypus Viewing Platform"
+              "sourceNote": "Google Maps · 高原段，依次经过火山湖、小镇、巨树与镇中心厕所"
             },
             {
-              "id": "peterson-creek-tracks-official",
-              "title": "Peterson Creek 步道与平台信息",
-              "type": "official",
-              "url": "https://petersoncreek.org.au/walking-tracks/",
+              "id": "curtain-fig-map",
+              "title": "Curtain Fig Tree",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Curtain+Fig+Tree%2C+Fig+Tree+Road%2C+East+Barron+QLD+4883&travelmode=driving",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Yungaburra Landcare Group · 平台可用，平台至 Other Side 的连接步道关闭"
+              "sourceNote": "Google Maps · Fig Tree Road, East Barron"
             }
           ]
         },
         {
           "dayId": "d9",
-          "sortOrder": 70,
-          "period": "11:15–11:35",
+          "sortOrder": 140,
+          "period": "13:40–14:05",
           "place": "Curtain Fig Tree",
           "activity": "沿短木栈道走到巨型帘状无花果树下，观察垂落气根并拍下人与巨树的尺度",
           "highlight": "像天然装置艺术般的高原巨树",
-          "tip": "木栈道雨后可能湿滑；慢慢绕一圈即可，11:35 左右前往 Gallo Dairyland。",
+          "tip": "木栈道雨后可能湿滑；慢慢绕一圈即可，14:05 左右继续向 Millaa Millaa 出发。",
           "resources": [
             {
               "id": "curtain-fig-map",
               "title": "Curtain Fig Tree",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Curtain+Fig+Tree",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Curtain+Fig+Tree%2C+Fig+Tree+Road%2C+East+Barron+QLD+4883&travelmode=driving",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "Google Maps · Fig Tree Road, East Barron"
             },
             {
               "id": "curtain-fig-official",
@@ -3339,68 +3551,59 @@
               "sourceNote": "Queensland Parks · 高架木栈道环绕 Curtain Fig Tree"
             },
             {
-              "id": "d9-core-route-map",
-              "title": "D9 阿瑟顿高原核心环线",
+              "id": "d9-highlands-route-map",
+              "title": "Skybury → Lake Eacham → Millaa Millaa Falls",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&destination=Millaa+Millaa+Falls&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CMillaa+Millaa+Public+Toilets",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
+              "sourceNote": "Google Maps · 高原段，依次经过火山湖、小镇、巨树与镇中心厕所"
             }
           ]
         },
         {
           "dayId": "d9",
-          "sortOrder": 80,
-          "period": "11:55–13:15",
-          "place": "Gallo Dairyland",
-          "activity": "在 BB's Café 吃午餐，分享一份奶酪拼盘，再逛逛手工巧克力与农场商店",
-          "highlight": "牧场风景、奶酪与巧克力组成的高原午间",
-          "tip": "工作日厨房热餐通常供应至 14:00；留出点单和用餐时间，13:15 左右继续向 Millaa Millaa 出发。",
+          "sortOrder": 150,
+          "period": "14:05–14:35",
+          "place": "Curtain Fig Tree → Millaa Millaa",
+          "activity": "沿 Atherton–Malanda Road 与高原主路前往 Millaa Millaa 镇",
+          "highlight": "农场、雨林与高原道路交替展开",
+          "tip": "继续使用铺装主路；先到镇中心使用公共厕所，再前往瀑布。",
           "resources": [
             {
-              "id": "gallo-map",
-              "title": "Gallo Dairyland",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Gallo+Dairyland",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "gallo-hours-official",
-              "title": "Gallo Dairyland 午餐信息",
-              "type": "official",
-              "url": "https://www.athertontablelands.com.au/travel-directory/gallo-dairyland/",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Tourism Atherton Tablelands · 工作日厨房热餐通常 09:30–14:00"
-            },
-            {
-              "id": "d9-waterfall-route-map",
-              "title": "Gallo → Millaa Millaa 瀑布段",
+              "id": "d9-highlands-route-map",
+              "title": "Skybury → Lake Eacham → Millaa Millaa Falls",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Gallo+Dairyland&destination=Ellinjaa+Falls&travelmode=driving&waypoints=Millaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&destination=Millaa+Millaa+Falls&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CMillaa+Millaa+Public+Toilets",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Gallo → 镇中心厕所 → Millaa Millaa Falls → Ellinjaa Falls"
+              "sourceNote": "Google Maps · 高原段，依次经过火山湖、小镇、巨树与镇中心厕所"
+            },
+            {
+              "id": "millaa-public-toilets-map",
+              "title": "Millaa Millaa Public Toilets",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Millaa+Millaa+Public+Toilets%2C+Main+Street%2C+Millaa+Millaa+QLD&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 镇中心，Millaa Millaa Hotel 对面"
             }
           ]
         },
         {
           "dayId": "d9",
-          "sortOrder": 90,
-          "period": "13:55–14:10",
+          "sortOrder": 160,
+          "period": "14:35–14:45",
           "place": "Millaa Millaa Public Toilets",
-          "activity": "先在镇中心使用公共厕所、补水并短暂舒展，再前往瀑布",
-          "highlight": "在进入 Waterfall Circuit 前完成实用停靠",
+          "activity": "在镇中心使用公共厕所、补水并短暂舒展，再前往瀑布",
+          "highlight": "在最后一处主景点前完成实用停靠",
           "tip": "Millaa Millaa Falls 现场厕所因升级施工关闭；替代公共厕所位于镇中心、Millaa Millaa Hotel 对面。",
           "resources": [
             {
               "id": "millaa-public-toilets-map",
               "title": "Millaa Millaa Public Toilets",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Millaa+Millaa+Public+Toilets%2C+Main+Street%2C+Millaa+Millaa+QLD",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Millaa+Millaa+Public+Toilets%2C+Main+Street%2C+Millaa+Millaa+QLD&travelmode=driving",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps · 镇中心，Millaa Millaa Hotel 对面"
@@ -3415,33 +3618,33 @@
               "sourceNote": "Tablelands Regional Council · 2026 年 7 月起施工，停车和步行区域受影响，现场厕所停用"
             },
             {
-              "id": "d9-waterfall-route-map",
-              "title": "Gallo → Millaa Millaa 瀑布段",
+              "id": "d9-highlands-route-map",
+              "title": "Skybury → Lake Eacham → Millaa Millaa Falls",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Gallo+Dairyland&destination=Ellinjaa+Falls&travelmode=driving&waypoints=Millaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&destination=Millaa+Millaa+Falls&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CMillaa+Millaa+Public+Toilets",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Gallo → 镇中心厕所 → Millaa Millaa Falls → Ellinjaa Falls"
+              "sourceNote": "Google Maps · 高原段，依次经过火山湖、小镇、巨树与镇中心厕所"
             }
           ]
         },
         {
           "dayId": "d9",
-          "sortOrder": 100,
-          "period": "14:15–15:00",
+          "sortOrder": 170,
+          "period": "14:50–15:35",
           "place": "Millaa Millaa Falls",
           "activity": "从主观景面欣赏经典单落差瀑布，沿草坪与水潭边取景，在雨林绿意中慢慢走一圈",
           "highlight": "阿瑟顿高原最经典的瀑布画面",
-          "tip": "停车与步行区域正在升级施工，按现场标志使用开放区域；若在这里下水，下午直接返回 Cairns 会更从容。",
+          "tip": "停车与步行区域正在升级施工，按现场标志使用开放区域；15:35 左右离开，给回 Cairns 的山路留足天光。",
           "resources": [
             {
               "id": "millaa-map",
               "title": "Millaa Millaa Falls",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Millaa+Millaa+Falls",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Millaa+Millaa+Falls%2C+Falls+Road%2C+Millaa+Millaa+QLD+4886&travelmode=driving",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "Google Maps · Falls Road, Millaa Millaa"
             },
             {
               "id": "millaa-falls-official",
@@ -3462,89 +3665,42 @@
               "sourceNote": "Tablelands Regional Council · 2026 年 7 月起施工，停车和步行区域受影响，现场厕所停用"
             },
             {
-              "id": "d9-waterfall-route-map",
-              "title": "Gallo → Millaa Millaa 瀑布段",
+              "id": "d9-highlands-route-map",
+              "title": "Skybury → Lake Eacham → Millaa Millaa Falls",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Gallo+Dairyland&destination=Ellinjaa+Falls&travelmode=driving&waypoints=Millaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&destination=Millaa+Millaa+Falls&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CMillaa+Millaa+Public+Toilets",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · Gallo → 镇中心厕所 → Millaa Millaa Falls → Ellinjaa Falls"
+              "sourceNote": "Google Maps · 高原段，依次经过火山湖、小镇、巨树与镇中心厕所"
             },
             {
               "id": "d9-return-from-millaa-map",
               "title": "Millaa Millaa Falls → Cairns",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Millaa+Millaa+Falls&destination=Cairns+QLD&travelmode=driving&waypoints=Malanda+QLD%7CGordonvale+QLD",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Millaa+Millaa+Falls&destination=Cairns+QLD&travelmode=driving",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · 经 Malanda、Gillies Highway 与 Gordonvale 返回"
+              "sourceNote": "Google Maps · 返程前重新打开，按实时路况使用铺装主路"
             }
           ]
         },
         {
           "dayId": "d9",
-          "sortOrder": 110,
-          "period": "15:10–15:35 · 可选",
-          "place": "Ellinjaa Falls（可选）",
-          "activity": "从停车与野餐区沿短步道下到瀑布底部，感受更贴近雨林的水声与绿意",
-          "highlight": "比主瀑布更安静的第二段雨林瀑布",
-          "tip": "只有在 15:00 前离开 Millaa Millaa Falls、路面与驾驶状态都舒服时前往；15:35 开始返回 Cairns。",
-          "resources": [
-            {
-              "id": "ellinjaa-map",
-              "title": "Ellinjaa Falls",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Ellinjaa+Falls",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "ellinjaa-falls-official",
-              "title": "Ellinjaa Falls 步道信息",
-              "type": "official",
-              "url": "https://www.athertontablelands.com.au/travel-directory/elinjaa-falls-millaa-millaa/",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Tourism Atherton Tablelands · 从停车与野餐区沿步道下到瀑布底部"
-            },
-            {
-              "id": "d9-return-from-ellinjaa-map",
-              "title": "Ellinjaa Falls → Cairns",
-              "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Ellinjaa+Falls&destination=Cairns+QLD&travelmode=driving&waypoints=Malanda+QLD%7CGordonvale+QLD",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps · 经 Malanda、Gillies Highway 与 Gordonvale 返回"
-            }
-          ]
-        },
-        {
-          "dayId": "d9",
-          "sortOrder": 120,
+          "sortOrder": 180,
           "period": "15:35–18:00",
           "place": "返回 Cairns / 凯恩斯还车点",
-          "activity": "经 Malanda、Gillies Highway 与 Gordonvale 返回 Cairns，进城后补满油并按订单地点完成还车",
-          "highlight": "在日落前后结束高原自驾",
-          "tip": "从 Millaa Millaa Falls 或 Ellinjaa Falls 选择对应返程地图，始终走铺装主路，不接受导航推荐的无铺装林道。Cairns 当日日落约 18:05。",
+          "activity": "按 Google Maps 的铺装主路返回 Cairns，进城后补满油并按订单地点完成还车",
+          "highlight": "在傍晚前后结束完整高原环线",
+          "tip": "Millaa Millaa Falls 到 Cairns 约 1 小时 40 分钟；出发前再看一次实时路况，不接受导航推荐的无铺装林道。",
           "resources": [
             {
               "id": "d9-return-from-millaa-map",
               "title": "Millaa Millaa Falls → Cairns",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Millaa+Millaa+Falls&destination=Cairns+QLD&travelmode=driving&waypoints=Malanda+QLD%7CGordonvale+QLD",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Millaa+Millaa+Falls&destination=Cairns+QLD&travelmode=driving",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps · 经 Malanda、Gillies Highway 与 Gordonvale 返回"
-            },
-            {
-              "id": "d9-return-from-ellinjaa-map",
-              "title": "Ellinjaa Falls → Cairns",
-              "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Ellinjaa+Falls&destination=Cairns+QLD&travelmode=driving&waypoints=Malanda+QLD%7CGordonvale+QLD",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps · 经 Malanda、Gillies Highway 与 Gordonvale 返回"
+              "sourceNote": "Google Maps · 返程前重新打开，按实时路况使用铺装主路"
             },
             {
               "id": "cairns-car-rental-search-map",
@@ -3571,27 +3727,27 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：公寓；午餐：Gallo Dairyland；晚餐：18:30 后在 Salt House 或公寓附近简餐",
-          "highlight": "农场午餐与回城后的轻松晚餐",
-          "tip": "还车后先回房洗澡休息，晚上不再安排 Night Markets 或 Palm Cove。",
+          "activity": "早餐：公寓；早午餐：Skybury Cafe & Roastery；下午：Yungaburra 小点心可选；晚餐：回 Cairns 后在酒店附近简单吃",
+          "highlight": "农场咖啡早午餐与回城后的轻松晚餐",
+          "tip": "Skybury 是今天的正式用餐站；回城后先洗澡休息，晚上不再安排长距离活动。",
           "resources": [
             {
-              "id": "gallo-map",
-              "title": "Gallo Dairyland",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Gallo+Dairyland",
+              "id": "skybury-map",
+              "title": "Skybury Cafe & Roastery",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&travelmode=driving",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "Google Maps · 136 Ivicevic Road, Paddys Green QLD 4880"
             },
             {
-              "id": "salt-house-map",
-              "title": "Salt House",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Salt+House+Cairns",
+              "id": "skybury-official",
+              "title": "Skybury Cafe & Roastery 官网",
+              "type": "official",
+              "url": "https://skybury.com.au/",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "Skybury · 周一至周五 09:00–16:00，公共假日关闭"
             },
             {
               "id": "southern-cross-map",
@@ -5993,10 +6149,10 @@
       "id": "curtain-fig-map",
       "title": "Curtain Fig Tree",
       "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Curtain+Fig+Tree",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Curtain+Fig+Tree%2C+Fig+Tree+Road%2C+East+Barron+QLD+4883&travelmode=driving",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "Google Maps"
+      "sourceNote": "Google Maps · Fig Tree Road, East Barron"
     },
     {
       "id": "yungaburra-map",
@@ -6020,10 +6176,10 @@
       "id": "millaa-map",
       "title": "Millaa Millaa Falls",
       "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Millaa+Millaa+Falls",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Millaa+Millaa+Falls%2C+Falls+Road%2C+Millaa+Millaa+QLD+4886&travelmode=driving",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "Google Maps"
+      "sourceNote": "Google Maps · Falls Road, Millaa Millaa"
     },
     {
       "id": "rustys-map",
@@ -7170,12 +7326,12 @@
     },
     {
       "id": "d9-core-route-map",
-      "title": "D9 阿瑟顿高原核心环线",
+      "title": "D9 Kuranda 与阿瑟顿高原完整环线",
       "type": "map",
-      "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CGallo+Dairyland%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Cairns+QLD&travelmode=driving&waypoints=Kuranda+Village%7CMareeba+QLD%7CSkybury+Cafe+and+Roastery%7CLake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CMillaa+Millaa+Public+Toilets%7CMillaa+Millaa+Falls",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "Google Maps · Cairns → Lake Eacham → Yungaburra → Curtain Fig → Gallo → Millaa Millaa 镇 → 主瀑布 → Cairns"
+      "sourceNote": "Google Maps · Cairns → Kuranda → Mareeba → Skybury → Lake Eacham → Yungaburra → Curtain Fig → Millaa Millaa → Cairns"
     },
     {
       "id": "d9-cairns-lake-eacham-route-map",
@@ -7199,10 +7355,10 @@
       "id": "d9-return-from-millaa-map",
       "title": "Millaa Millaa Falls → Cairns",
       "type": "map",
-      "url": "https://www.google.com/maps/dir/?api=1&origin=Millaa+Millaa+Falls&destination=Cairns+QLD&travelmode=driving&waypoints=Malanda+QLD%7CGordonvale+QLD",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Millaa+Millaa+Falls&destination=Cairns+QLD&travelmode=driving",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "Google Maps · 经 Malanda、Gillies Highway 与 Gordonvale 返回"
+      "sourceNote": "Google Maps · 返程前重新打开，按实时路况使用铺装主路"
     },
     {
       "id": "d9-return-from-ellinjaa-map",
@@ -7217,7 +7373,7 @@
       "id": "lake-eacham-day-use-map",
       "title": "Lake Eacham Day Use Area",
       "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Lake+Eacham+Day+Use+Area%2C+Lakes+Drive%2C+Lake+Eacham+QLD",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Lake+Eacham+Day+Use+Area%2C+Lakes+Drive%2C+Lake+Eacham+QLD+4884&travelmode=driving",
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps · Lakes Drive, Lake Eacham"
@@ -7235,7 +7391,7 @@
       "id": "yungaburra-village-map",
       "title": "Yungaburra Village",
       "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Yungaburra+Village+QLD",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Yungaburra+QLD+4884&travelmode=driving",
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps · Yungaburra Village"
@@ -7280,7 +7436,7 @@
       "id": "millaa-public-toilets-map",
       "title": "Millaa Millaa Public Toilets",
       "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Millaa+Millaa+Public+Toilets%2C+Main+Street%2C+Millaa+Millaa+QLD",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Millaa+Millaa+Public+Toilets%2C+Main+Street%2C+Millaa+Millaa+QLD&travelmode=driving",
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps · 镇中心，Millaa Millaa Hotel 对面"
@@ -7320,6 +7476,60 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Timeanddate · 2026 年 8 月 6 日日落约 18:05"
+    },
+    {
+      "id": "d9-north-route-map",
+      "title": "Cairns → Kuranda → Mareeba → Skybury",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Cairns+QLD&destination=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&travelmode=driving&waypoints=Kuranda+Village%7CMareeba+QLD",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 北上段，依次经过 Kuranda 与 Mareeba"
+    },
+    {
+      "id": "d9-highlands-route-map",
+      "title": "Skybury → Lake Eacham → Millaa Millaa Falls",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&destination=Millaa+Millaa+Falls&travelmode=driving&waypoints=Lake+Eacham+Day+Use+Area%7CYungaburra+Village%7CCurtain+Fig+Tree%7CMillaa+Millaa+Public+Toilets",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 高原段，依次经过火山湖、小镇、巨树与镇中心厕所"
+    },
+    {
+      "id": "kuranda-village-map",
+      "title": "Kuranda Village",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Kuranda+Village%2C+Coondoo+Street%2C+Kuranda+QLD+4881&travelmode=driving",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Coondoo Street, Kuranda"
+    },
+    {
+      "id": "mareeba-town-map",
+      "title": "Mareeba",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Mareeba+QLD+4880&travelmode=driving",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Mareeba 镇中心"
+    },
+    {
+      "id": "skybury-map",
+      "title": "Skybury Cafe & Roastery",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Skybury+Cafe+and+Roastery%2C+136+Ivicevic+Road%2C+Paddys+Green+QLD+4880&travelmode=driving",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 136 Ivicevic Road, Paddys Green QLD 4880"
+    },
+    {
+      "id": "skybury-official",
+      "title": "Skybury Cafe & Roastery 官网",
+      "type": "official",
+      "url": "https://skybury.com.au/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Skybury · 周一至周五 09:00–16:00，公共假日关闭"
     }
   ],
   "priorities": [

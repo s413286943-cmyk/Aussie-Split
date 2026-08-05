@@ -102,7 +102,7 @@ test("the polished D1 plan and Great Ocean Road Wildlife Park render in their up
   await expect(d5.locator(".timeline")).not.toContainText("Bay of Islands");
 });
 
-test("the Cairns stage renders its booked times, highland drive, and Palm Cove finish", async ({ page }) => {
+test("the Cairns stage renders its booked times, Kuranda highland drive, and Palm Cove finish", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/itinerary");
@@ -131,12 +131,19 @@ test("the Cairns stage renders its booked times, highland drive, and Palm Cove f
 
   const d9 = page.locator("#d9");
   await d9.getByText("查看当天安排", { exact: true }).click();
-  await expect(d9.locator("h3")).toHaveText("穿行阿瑟顿高原：火山湖、巨树与瀑布");
+  await expect(d9.locator("h3")).toHaveText("从雨林小镇到高原瀑布：Kuranda、Skybury 与 Millaa Millaa");
+  await expect(d9.locator(".timeline")).toContainText("Kuranda Village");
+  await expect(d9.locator(".timeline").getByRole("heading", { name: "Mareeba", exact: true, level: 4 })).toBeVisible();
+  await expect(d9.locator(".timeline").getByRole("heading", { name: "Skybury Cafe & Roastery", level: 4 })).toBeVisible();
   await expect(d9.locator(".timeline")).toContainText("Lake Eacham Day Use Area");
-  await expect(d9.locator(".timeline")).toContainText("Platypus Viewing Platform Yungaburra（可选）");
-  await expect(d9.locator(".timeline").getByRole("heading", { name: "Gallo Dairyland", level: 4 })).toBeVisible();
+  await expect(d9.locator(".timeline")).toContainText("Yungaburra Village");
+  await expect(d9.locator(".timeline")).toContainText("Curtain Fig Tree");
   await expect(d9.locator(".timeline")).toContainText("Millaa Millaa Public Toilets");
   await expect(d9.locator(".timeline")).toContainText("15:35–18:00");
+  await expect(d9.locator(".timeline")).not.toContainText("Gallo Dairyland");
+  await expect(d9.locator(".timeline")).not.toContainText("Platypus Viewing Platform");
+  await expect(d9.locator(".timeline")).not.toContainText("Ellinjaa Falls");
+  await expect(d9.getByRole("link", { name: "地图 · Skybury Cafe & Roastery" }).first()).toHaveAttribute("href", /136\+Ivicevic/);
 
   const d10 = page.locator("#d10");
   await d10.getByText("查看当天安排", { exact: true }).click();
