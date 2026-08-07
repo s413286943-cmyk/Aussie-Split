@@ -4036,15 +4036,15 @@
       "city": "凯恩斯 → 悉尼",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "初到悉尼：Barangaroo、The Rocks 与海港夜景",
-      "focus": "飞抵悉尼后休息片刻，沿 Barangaroo、The Rocks 走到 Circular Quay 夜景。",
+      "title": "从热带飞抵海港：Barangaroo、The Rocks 与 Circular Quay",
+      "focus": "清晨从凯恩斯飞抵悉尼，午后充分休息，再沿 Barangaroo 与 Wulugul Walk 走进 The Rocks，在 Circular Quay 看日落与蓝调。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
-      "climateNote": "悉尼约 9-18°C，早晚凉，海边防风。",
-      "clothingNote": "薄羽绒、风衣或卫衣；从凯恩斯上飞机随身带外套。",
+      "climateNote": "悉尼约 9–18°C，午后海港步道和日落时段都有风。",
+      "clothingNote": "从凯恩斯登机时把薄外套放在随身包里；海港边按长袖加防风外层穿。",
       "coverImageUrl": "/itinerary/d11-sydney-arrival-rocks.png",
       "coverImageAlt": "悉尼 The Rocks 夜景",
-      "transport": "航班 / 机场转场 + 步行",
-      "leaveBy": "按 JQ953 起飞时间，提前 2 小时到凯恩斯机场 T2",
+      "transport": "JQ953 + Uber / Taxi + 海港步行",
+      "leaveBy": "04:40–04:50 抵达凯恩斯机场 T2；15:00 左右从酒店前往 Barangaroo Reserve",
       "lodgingResource": {
         "id": "oaks-sydney-map",
         "title": "Oaks Sydney Goldsbrough Suites",
@@ -4055,13 +4055,13 @@
         "sourceNote": "Google Maps"
       },
       "primaryResource": {
-        "id": "cairns-airport-map",
-        "title": "凯恩斯机场",
+        "id": "d11-harbour-walk-map",
+        "title": "Barangaroo → The Rocks → Circular Quay",
         "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Cairns+Airport",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=Barangaroo+Reserve%2C+Hickson+Road%2C+Barangaroo+NSW+2000&destination=Circular+Quay%2C+Sydney+NSW+2000&travelmode=walking&waypoints=The+Rocks%2C+Sydney+NSW+2000",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "Google Maps"
+        "sourceNote": "Google Maps · D11 海港单向步行"
       },
       "ticketResource": {
         "id": "jetstar-official",
@@ -4076,11 +4076,11 @@
         {
           "dayId": "d11",
           "sortOrder": 10,
-          "period": "清晨",
-          "place": "凯恩斯酒店 → 凯恩斯机场 T2",
-          "activity": "早起退房，打车 / Uber 前往机场",
-          "highlight": "从凯恩斯启程前往悉尼",
-          "tip": "前一晚必须完成打包；Jetstar 行李按 20kg 控制",
+          "period": "04:40–04:50",
+          "place": "凯恩斯机场 T2",
+          "activity": "抵达机场，办理托运、安检与登机手续",
+          "highlight": "从热带清晨启程前往悉尼",
+          "tip": "前一晚完成打包；Jetstar 托运行李按订单额度分装，薄外套留在随身包。",
           "resources": [
             {
               "id": "cairns-airport-map",
@@ -4090,27 +4090,142 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "jetstar-official",
+              "title": "Jetstar JQ953",
+              "type": "official",
+              "url": "https://www.jetstar.com/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "航司官网"
             }
           ]
         },
         {
           "dayId": "d11",
           "sortOrder": 20,
-          "period": "上午",
+          "period": "06:45–09:45",
           "place": "凯恩斯 → 悉尼",
-          "activity": "JQ953 飞往悉尼",
-          "highlight": "从热带切换回冬季海港城市",
-          "tip": "随身带薄外套，悉尼比凯恩斯凉",
-          "resources": []
+          "activity": "搭乘 JQ953 飞往悉尼",
+          "highlight": "从热带暖冬切换到冬季海港",
+          "tip": "起降时间以 Jetstar App 与登机牌为准；落地前把外套穿好。",
+          "resources": [
+            {
+              "id": "cairns-airport-map",
+              "title": "凯恩斯机场",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Cairns+Airport",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "sydney-airport-map",
+              "title": "悉尼机场",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Airport",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "jetstar-official",
+              "title": "Jetstar JQ953",
+              "type": "official",
+              "url": "https://www.jetstar.com/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "航司官网"
+            }
+          ]
         },
         {
           "dayId": "d11",
           "sortOrder": 30,
-          "period": "上午 / 中午",
-          "place": "悉尼 T2 → 酒店",
-          "activity": "抵达后打车 / Uber 前往 Oaks Sydney Goldsbrough Suites",
-          "highlight": "4人 + 行李，打车最省心",
-          "tip": "如不能入住，先寄存行李",
+          "period": "09:45–10:35",
+          "place": "悉尼机场 T2",
+          "activity": "下机、取行李并集合",
+          "highlight": "旅程进入悉尼阶段",
+          "tip": "取齐四人的行李后再叫车，避免司机到达后等待。",
+          "resources": [
+            {
+              "id": "sydney-airport-map",
+              "title": "悉尼机场",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Airport",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d11",
+          "sortOrder": 40,
+          "period": "10:35–11:15",
+          "place": "悉尼机场 T2 → 酒店",
+          "activity": "4 人带行李，搭 Uber / Taxi 前往 Oaks Sydney Goldsbrough Suites",
+          "highlight": "一次完成机场到酒店转场",
+          "tip": "不能提前入住时先寄存行李；车程按当天交通为准。",
+          "resources": [
+            {
+              "id": "sydney-airport-map",
+              "title": "悉尼机场",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Airport",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d11",
+          "sortOrder": 50,
+          "period": "11:15–12:30",
+          "place": "酒店 / Darling Harbour",
+          "activity": "寄存行李并在附近简单午餐",
+          "highlight": "先把转场后的体力补回来",
+          "tip": "午餐就近解决，不为餐厅专程绕路。",
+          "resources": [
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "darling-harbour-map",
+              "title": "Darling Harbour",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Darling+Harbour+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d11",
+          "sortOrder": 60,
+          "period": "12:30–14:45",
+          "place": "酒店",
+          "activity": "入住后洗澡、补觉与整理随身物品",
+          "highlight": "用完整休息换一个舒服的海港傍晚",
+          "tip": "午后不增加景点；15:00 左右再出发。",
           "resources": [
             {
               "id": "oaks-sydney-map",
@@ -4125,32 +4240,41 @@
         },
         {
           "dayId": "d11",
-          "sortOrder": 40,
-          "period": "下午",
-          "place": "Darling Harbour / 酒店周边",
-          "activity": "轻松适应，简单午餐或休息",
-          "highlight": "在 Darling Harbour 缓一缓",
-          "tip": "先休息、吃点东西，再开始海港散步。",
+          "sortOrder": 70,
+          "period": "15:00–15:15",
+          "place": "酒店 → Barangaroo Reserve",
+          "activity": "体力一般时搭 Uber / Taxi 到 Barangaroo Reserve 起步",
+          "highlight": "从安静的海港公园开始第一段悉尼步行",
+          "tip": "不必从 Pyrmont 全程步行过去，把脚力留给海港沿线。",
           "resources": [
             {
-              "id": "darling-harbour-map",
-              "title": "Darling Harbour",
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Darling+Harbour+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
               "imageUrl": "",
               "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "barangaroo-reserve-map",
+              "title": "Barangaroo Reserve",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Barangaroo+Reserve+Sydney",
+              "imageUrl": "",
+              "imageAlt": "Barangaroo Reserve 地图",
               "sourceNote": "Google Maps"
             }
           ]
         },
         {
           "dayId": "d11",
-          "sortOrder": 45,
-          "period": "下午后段",
+          "sortOrder": 80,
+          "period": "15:15–16:15",
           "place": "Barangaroo Reserve / Wulugul Walk",
-          "activity": "从 Darling Harbour 沿海滨前往 Barangaroo Reserve，再衔接 The Rocks",
-          "highlight": "原生植物、砂岩海岸与悉尼港步行线",
-          "tip": "预留 45–60 分钟沿海滨慢慢走，转场日下午以看景和恢复为主。",
+          "activity": "沿海港步道单向走向 The Rocks",
+          "highlight": "原生植物、砂岩海岸与城市天际线",
+          "tip": "沿水边慢走，途中看体力短停；这段不用赶速度。",
           "resources": [
             {
               "id": "barangaroo-reserve-map",
@@ -4162,6 +4286,140 @@
               "sourceNote": "Google Maps"
             },
             {
+              "id": "the-rocks-map",
+              "title": "The Rocks",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d11-harbour-walk-map",
+              "title": "Barangaroo → The Rocks → Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Barangaroo+Reserve%2C+Hickson+Road%2C+Barangaroo+NSW+2000&destination=Circular+Quay%2C+Sydney+NSW+2000&travelmode=walking&waypoints=The+Rocks%2C+Sydney+NSW+2000",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · D11 海港单向步行"
+            }
+          ]
+        },
+        {
+          "dayId": "d11",
+          "sortOrder": 90,
+          "period": "16:15–16:55",
+          "place": "The Rocks",
+          "activity": "走过砂岩老街与海港巷弄",
+          "highlight": "悉尼老城区的傍晚质感",
+          "tip": "以短走和拍照为主，晚餐放在日落之后。",
+          "resources": [
+            {
+              "id": "the-rocks-map",
+              "title": "The Rocks",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d11-harbour-walk-map",
+              "title": "Barangaroo → The Rocks → Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Barangaroo+Reserve%2C+Hickson+Road%2C+Barangaroo+NSW+2000&destination=Circular+Quay%2C+Sydney+NSW+2000&travelmode=walking&waypoints=The+Rocks%2C+Sydney+NSW+2000",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · D11 海港单向步行"
+            }
+          ]
+        },
+        {
+          "dayId": "d11",
+          "sortOrder": 100,
+          "period": "17:00–17:45",
+          "place": "Circular Quay",
+          "activity": "看歌剧院、海港大桥与日落后的蓝调",
+          "highlight": "悉尼第一组完整海港画面",
+          "tip": "8 月 8 日日落约 17:20；先看日落与亮灯，再去吃晚餐。",
+          "resources": [
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "opera-house-map",
+              "title": "Sydney Opera House",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d11-harbour-walk-map",
+              "title": "Barangaroo → The Rocks → Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Barangaroo+Reserve%2C+Hickson+Road%2C+Barangaroo+NSW+2000&destination=Circular+Quay%2C+Sydney+NSW+2000&travelmode=walking&waypoints=The+Rocks%2C+Sydney+NSW+2000",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · D11 海港单向步行"
+            }
+          ]
+        },
+        {
+          "dayId": "d11",
+          "sortOrder": 110,
+          "period": "18:00 之后",
+          "place": "The Rocks / Circular Quay",
+          "activity": "找一家舒服的餐厅或 pub 吃晚餐，饭后回酒店",
+          "highlight": "用轻松的一餐结束转场日",
+          "tip": "不增加游船或正式大餐，吃完按体力打车或搭市内交通回酒店。",
+          "resources": [
+            {
+              "id": "the-rocks-map",
+              "title": "The Rocks",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d11",
+          "sortOrder": 900,
+          "period": "饮食",
+          "place": "饮食安排",
+          "activity": "早餐：机场 / 飞机简餐；午餐：Darling Harbour 就近解决；晚餐：The Rocks 或 Circular Quay",
+          "highlight": "当天餐食节奏",
+          "tip": "转场日不追餐厅，先休息，再把晚餐接在海港日落之后。",
+          "resources": [
+            {
               "id": "darling-harbour-map",
               "title": "Darling Harbour",
               "type": "map",
@@ -4178,63 +4436,12 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d11",
-          "sortOrder": 50,
-          "period": "傍晚",
-          "place": "The Rocks",
-          "activity": "岩石区散步、晚餐",
-          "highlight": "砂岩老街与海港傍晚",
-          "tip": "在 The Rocks 边走边找晚餐，感受悉尼老城区的第一晚。",
-          "resources": [
-            {
-              "id": "the-rocks-map",
-              "title": "The Rocks",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d11",
-          "sortOrder": 60,
-          "period": "晚上",
-          "place": "Circular Quay",
-          "activity": "歌剧院、海港大桥夜景",
-          "highlight": "悉尼开场画面",
-          "tip": "看完歌剧院与海港大桥夜景后轻松回酒店。",
-          "resources": [
+            },
             {
               "id": "circular-quay-map",
               "title": "Circular Quay",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d11",
-          "sortOrder": 900,
-          "period": "饮食",
-          "place": "饮食安排",
-          "activity": "早餐：café / A.P Bakery（可选）；午餐：飞机/机场 / mezze feast；晚餐：The Rocks pub",
-          "highlight": "当天餐食节奏",
-          "tip": "转场日不赶餐厅，晚上在 The Rocks 找一家舒服的 pub 收尾。",
-          "resources": [
-            {
-              "id": "the-rocks-map",
-              "title": "The Rocks",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -4251,15 +4458,15 @@
       "city": "悉尼市区",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "悉尼经典一日：歌剧院、The Rocks Markets、植物园与 QVB",
-      "focus": "从歌剧院中文导览出发，逛 The Rocks Markets，再沿植物园走到经典海港机位与 QVB。",
+      "title": "海港晨光与城市经典：Mrs Macquarie's Chair、歌剧院与 QVB",
+      "focus": "清晨先到 Mrs Macquarie's Chair 拍下歌剧院与海港桥同框，再穿过皇家植物园参加 09:30 中文导览，午后在 QVB 与 CBD 从容逛街。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
-      "climateNote": "悉尼冬季晴天概率较好，早晚凉。",
-      "clothingNote": "薄羽绒或风衣，海港边风大时注意保暖。",
+      "climateNote": "上午后段起阵雨机会增多，海港户外机位尽量前置；下午以室内行程为主。",
+      "clothingNote": "薄外套与轻便雨具随身，穿适合植物园步行和歌剧院台阶的鞋。",
       "coverImageUrl": "/itinerary/d12-sydney-opera-garden.png",
       "coverImageAlt": "悉尼歌剧院与植物园",
-      "transport": "步行 + 市内交通",
-      "leaveBy": "08:45 前出门，09:15 前到 Sydney Opera House",
+      "transport": "Uber / Taxi + 步行 + 市内交通",
+      "leaveBy": "07:30–07:45 离开酒店；09:05 前抵达 Sydney Opera House 集合区",
       "lodgingResource": {
         "id": "oaks-sydney-map",
         "title": "Oaks Sydney Goldsbrough Suites",
@@ -4270,13 +4477,13 @@
         "sourceNote": "Google Maps"
       },
       "primaryResource": {
-        "id": "opera-house-map",
-        "title": "Sydney Opera House",
+        "id": "d12-harbour-morning-walk-map",
+        "title": "Mrs Macquarie's Chair → 植物园 → 歌剧院",
         "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=Mrs+Macquarie%27s+Chair%2C+Mrs+Macquaries+Road%2C+Sydney+NSW+2000&destination=Sydney+Opera+House%2C+Bennelong+Point%2C+Sydney+NSW+2000&travelmode=walking&waypoints=Royal+Botanic+Garden+Sydney%2C+Mrs+Macquaries+Road%2C+Sydney+NSW+2000",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "Google Maps"
+        "sourceNote": "Google Maps · D12 早晨单向步行"
       },
       "ticketResource": {
         "id": "opera-house-official",
@@ -4291,17 +4498,84 @@
         {
           "dayId": "d12",
           "sortOrder": 10,
-          "period": "08:15–08:30",
-          "place": "Circular Quay",
-          "activity": "抵达海港区",
-          "highlight": "Ferry、海港桥、歌剧院远景",
-          "tip": "早到人少，光线舒服；可拍 Circular Quay 低机位 + Ferry + Opera House",
+          "period": "07:30–07:45",
+          "place": "酒店 → Mrs Macquarie's Chair",
+          "activity": "早餐后搭 Uber / Taxi 前往海港东侧",
+          "highlight": "把最重要的户外机位放在清晨",
+          "tip": "若 08:00 前已经明显下雨，就直接前往歌剧院，在附近喝咖啡等候导览。",
           "resources": [
             {
-              "id": "circular-quay-map",
-              "title": "Circular Quay",
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "mrs-macquarie-map",
+              "title": "Mrs Macquarie's Chair",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Mrs+Macquarie%27s+Chair",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d12-hotel-to-mrs-map",
+              "title": "酒店 → Mrs Macquarie's Chair",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Oaks+Sydney+Goldsbrough+Suites%2C+243+Pyrmont+Street%2C+Darling+Harbour+NSW+2009&destination=Mrs+Macquarie%27s+Chair%2C+Mrs+Macquaries+Road%2C+Sydney+NSW+2000&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · D12 清晨打车前往海港机位"
+            }
+          ]
+        },
+        {
+          "dayId": "d12",
+          "sortOrder": 20,
+          "period": "08:00–08:25",
+          "place": "Mrs Macquarie's Chair",
+          "activity": "拍歌剧院与海港大桥同框",
+          "highlight": "清晨人少的悉尼明信片机位",
+          "tip": "在石椅左侧与海港边各取一组构图；有雨或大风时缩短停留。",
+          "resources": [
+            {
+              "id": "mrs-macquarie-map",
+              "title": "Mrs Macquarie's Chair",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Mrs+Macquarie%27s+Chair",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d12-harbour-morning-walk-map",
+              "title": "Mrs Macquarie's Chair → 植物园 → 歌剧院",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Mrs+Macquarie%27s+Chair%2C+Mrs+Macquaries+Road%2C+Sydney+NSW+2000&destination=Sydney+Opera+House%2C+Bennelong+Point%2C+Sydney+NSW+2000&travelmode=walking&waypoints=Royal+Botanic+Garden+Sydney%2C+Mrs+Macquaries+Road%2C+Sydney+NSW+2000",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · D12 早晨单向步行"
+            }
+          ]
+        },
+        {
+          "dayId": "d12",
+          "sortOrder": 30,
+          "period": "08:25–09:05",
+          "place": "Royal Botanic Garden",
+          "activity": "沿 Farm Cove 穿过植物园，单向步行前往歌剧院",
+          "highlight": "晨光、草坪与海港一路相连",
+          "tip": "沿水边主步道前进，不在支线花园停太久；09:05 左右到歌剧院。",
+          "resources": [
+            {
+              "id": "botanic-garden-map",
+              "title": "Royal Botanic Garden Sydney",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Royal+Botanic+Garden+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -4314,37 +4588,26 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d12",
-          "sortOrder": 20,
-          "period": "08:30–09:10",
-          "place": "Opera House 外观",
-          "activity": "歌剧院外观、台阶、Man O'War Steps 初拍",
-          "highlight": "悉尼核心地标",
-          "tip": "导览前先拍外观，避免后面人多；重点拍帆形结构、台阶、侧面海港机位",
-          "resources": [
+            },
             {
-              "id": "opera-house-map",
-              "title": "Sydney Opera House",
+              "id": "d12-harbour-morning-walk-map",
+              "title": "Mrs Macquarie's Chair → 植物园 → 歌剧院",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Mrs+Macquarie%27s+Chair%2C+Mrs+Macquaries+Road%2C+Sydney+NSW+2000&destination=Sydney+Opera+House%2C+Bennelong+Point%2C+Sydney+NSW+2000&travelmode=walking&waypoints=Royal+Botanic+Garden+Sydney%2C+Mrs+Macquaries+Road%2C+Sydney+NSW+2000",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Google Maps"
+              "sourceNote": "Google Maps · D12 早晨单向步行"
             }
           ]
         },
         {
           "dayId": "d12",
-          "sortOrder": 30,
-          "period": "09:30–10:30",
+          "sortOrder": 40,
+          "period": "09:05–09:20",
           "place": "Sydney Opera House",
-          "activity": "中文内部导览已订",
-          "highlight": "建筑故事、内部空间、剧院结构",
-          "tip": "提前到集合点；导览需步行和上下台阶；允许拍摄的空间再拍，不要影响团队",
+          "activity": "找到中文导览集合点、签到并上洗手间",
+          "highlight": "为已订导览留出从容缓冲",
+          "tip": "把电子票和订单提前打开；09:20 前完成签到。",
           "resources": [
             {
               "id": "opera-house-map",
@@ -4368,12 +4631,41 @@
         },
         {
           "dayId": "d12",
-          "sortOrder": 40,
-          "period": "10:30–10:50",
-          "place": "Opera House → The Rocks",
-          "activity": "中文导览结束后沿 Circular Quay 步行前往 The Rocks Markets",
-          "highlight": "海港步行衔接悉尼老城区",
-          "tip": "步行约 15–20 分钟；沿途可拍 Ferry、Opera House 与 Harbour Bridge",
+          "sortOrder": 50,
+          "period": "09:30–10:30",
+          "place": "Sydney Opera House",
+          "activity": "参加中文内部导览（已订）",
+          "highlight": "走进建筑内部与剧院空间",
+          "tip": "导览包含步行与台阶；只在允许拍摄的区域取景。",
+          "resources": [
+            {
+              "id": "opera-house-map",
+              "title": "Sydney Opera House",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "opera-house-official",
+              "title": "Sydney Opera House Tour",
+              "type": "official",
+              "url": "https://www.sydneyoperahouse.com/tours-and-experiences",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "官网"
+            }
+          ]
+        },
+        {
+          "dayId": "d12",
+          "sortOrder": 60,
+          "period": "10:30–11:00",
+          "place": "Opera House 周边",
+          "activity": "按天气补拍外观，或在附近喝咖啡休息",
+          "highlight": "给海港地标留一段自由时间",
+          "tip": "天气转雨时不继续露天久走，直接进入午餐与 CBD 行程。",
           "resources": [
             {
               "id": "opera-house-map",
@@ -4392,83 +4684,18 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            },
-            {
-              "id": "the-rocks-map",
-              "title": "The Rocks",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "the-rocks-market-official",
-              "title": "The Rocks Markets",
-              "type": "official",
-              "url": "https://therocks.com/whats-on/market-overview",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "The Rocks 官方市场页"
             }
           ]
         },
         {
           "dayId": "d12",
-          "sortOrder": 50,
-          "period": "10:50–11:50",
-          "place": "The Rocks Markets",
-          "activity": "10:00–17:00 开放；中文导览结束后步行前往，停留约 45–60 分钟。",
-          "highlight": "悉尼老城区、手作市集、Harbour Bridge 背景与本地周末氛围",
-          "tip": "周日 10:00–17:00；导览后步行前往，停留 45–60 分钟。",
+          "sortOrder": 70,
+          "period": "11:00–12:00",
+          "place": "Circular Quay / CBD",
+          "activity": "就近吃一顿简单午餐",
+          "highlight": "不为餐厅增加折返",
+          "tip": "午餐后直接前往 QVB / Westfield；下午主要在室内活动。",
           "resources": [
-            {
-              "id": "the-rocks-map",
-              "title": "The Rocks",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "the-rocks-market-official",
-              "title": "The Rocks Markets",
-              "type": "official",
-              "url": "https://therocks.com/whats-on/market-overview",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "The Rocks 官方市场页"
-            }
-          ]
-        },
-        {
-          "dayId": "d12",
-          "sortOrder": 60,
-          "period": "11:50–12:40",
-          "place": "The Rocks / Circular Quay",
-          "activity": "市集小吃或简单午餐 / 咖啡",
-          "highlight": "就地补体力，不为午餐绕路",
-          "tip": "若市集已吃饱，这里只补咖啡；给下午植物园和 QVB 留节奏",
-          "resources": [
-            {
-              "id": "the-rocks-map",
-              "title": "The Rocks",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "the-rocks-market-official",
-              "title": "The Rocks Markets",
-              "type": "official",
-              "url": "https://therocks.com/whats-on/market-overview",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "The Rocks 官方市场页"
-            },
             {
               "id": "circular-quay-map",
               "title": "Circular Quay",
@@ -4477,58 +4704,7 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d12",
-          "sortOrder": 70,
-          "period": "12:40–14:10",
-          "place": "Royal Botanic Garden",
-          "activity": "植物园海港步道",
-          "highlight": "海港景观非常好",
-          "tip": "沿海港步道慢慢走向 Mrs Macquarie's Chair，途中可从草坪远望歌剧院与海港桥。",
-          "resources": [
-            {
-              "id": "botanic-garden-map",
-              "title": "Royal Botanic Garden Sydney",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Royal+Botanic+Garden+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d12",
-          "sortOrder": 80,
-          "period": "14:10–15:10",
-          "place": "Mrs Macquarie's Chair",
-          "activity": "歌剧院 + 海港大桥同框",
-          "highlight": "悉尼最经典机位",
-          "tip": "晴天很好看，风大注意保暖；可在石椅机位左侧 45° 构图",
-          "resources": [
-            {
-              "id": "mrs-macquarie-map",
-              "title": "Mrs Macquarie's Chair",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Mrs+Macquarie%27s+Chair",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d12",
-          "sortOrder": 90,
-          "period": "15:30–17:00",
-          "place": "QVB / Westfield / CBD",
-          "activity": "购物、室内休息",
-          "highlight": "建筑漂亮，适合逛",
-          "tip": "商店关门较早，别拖太晚；QVB 穹顶适合仰拍对称构图",
-          "resources": [
+            },
             {
               "id": "qvb-map",
               "title": "QVB",
@@ -4542,12 +4718,61 @@
         },
         {
           "dayId": "d12",
+          "sortOrder": 80,
+          "period": "12:15–15:30",
+          "place": "QVB / Westfield / CBD",
+          "activity": "逛 QVB 建筑与商场，并提前完成大部分药妆和伴手礼采购",
+          "highlight": "用室内城市漫步避开午后阵雨",
+          "tip": "先看 QVB 穹顶与长廊，再按购物清单集中采购；保留 tax invoice。",
+          "resources": [
+            {
+              "id": "qvb-map",
+              "title": "QVB",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Building+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "chemist-warehouse-map",
+              "title": "Chemist Warehouse Sydney CBD",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Chemist+Warehouse+Sydney+CBD",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d12",
+          "sortOrder": 90,
+          "period": "15:30–17:00",
+          "place": "酒店",
+          "activity": "放下购物、休息并整理当天物品",
+          "highlight": "在晚餐前留一段真正的空白",
+          "tip": "下午购物完成后直接回酒店，不再临时增加长距离景点。",
+          "resources": [
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d12",
           "sortOrder": 100,
           "period": "晚上",
-          "place": "CBD / Darling Harbour",
-          "activity": "Hello Auntie / CBD 晚餐",
-          "highlight": "城市核心日收尾",
-          "tip": "在 CBD / Darling Harbour 轻松收尾；达令港夜景按体力决定。",
+          "place": "Darling Harbour / CBD",
+          "activity": "在 Hello Auntie 或酒店附近轻松吃晚餐",
+          "highlight": "用一顿舒服的城市晚餐收尾",
+          "tip": "按大家体力选择餐厅；饭后可在 Darling Harbour 短走。",
           "resources": [
             {
               "id": "darling-harbour-map",
@@ -4566,6 +4791,15 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
             }
           ]
         },
@@ -4574,46 +4808,10 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：bills / Toby's Estate；午餐：The Rocks Markets / Circular Quay 简餐；晚餐：Hello Auntie",
+          "activity": "早餐：酒店附近 café；午餐：Circular Quay / CBD 简餐；晚餐：Hello Auntie 或酒店附近",
           "highlight": "当天餐食节奏",
-          "tip": "市集可边逛边吃；若只简单垫一口，晚上再去 Hello Auntie。",
+          "tip": "上午围绕 09:30 导览安排，午餐不绕路，晚上按体力轻松选择。",
           "resources": [
-            {
-              "id": "bills-sydney-map",
-              "title": "bills Sydney",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=bills+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "tobys-estate-map",
-              "title": "Toby's Estate Sydney",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Toby%27s+Estate+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "the-rocks-map",
-              "title": "The Rocks",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=The+Rocks+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "the-rocks-market-official",
-              "title": "The Rocks Markets",
-              "type": "official",
-              "url": "https://therocks.com/whats-on/market-overview",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "The Rocks 官方市场页"
-            },
             {
               "id": "circular-quay-map",
               "title": "Circular Quay",
@@ -4631,6 +4829,15 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
             }
           ]
         }
@@ -4641,404 +4848,18 @@
       "label": "D13",
       "date": "2026-08-10",
       "weekday": "周一",
-      "city": "悉尼南海岸",
+      "city": "悉尼｜Taronga + Bondi",
       "lat": -34.6713,
       "lon": 150.8565,
-      "title": "悉尼南海岸：Sea Cliff Bridge、Kiama 与 Gerringong",
-      "focus": "沿 Grand Pacific Drive 南下，经过 Sea Cliff Bridge、Kiama 与 Gerringong，视情况延伸袋鼠谷。",
+      "title": "动物园与海岸：Taronga、Bondi 与 Totti's",
+      "focus": "上午搭 F2 渡轮前往 Taronga；下午视天气直接前往 Bondi，若风雨仍大则回酒店休息，17:30 到 Totti's Bondi 用餐。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
-      "climateNote": "南海岸晴天最出片；沿海有风，袋鼠谷山区傍晚更凉。",
-      "clothingNote": "海边防风，穿舒适步行鞋；出发前检查 Royal National Park 道路警报。",
-      "coverImageUrl": "/itinerary/d13-south-coast-kiama-gerringong.png",
-      "coverImageAlt": "Kiama 与 Gerringong 南海岸公路",
-      "transport": "自驾（南海岸）",
-      "leaveBy": "08:00 出发；14:40 在 Gerringong 决定是否延伸袋鼠谷",
-      "lodgingResource": {
-        "id": "oaks-sydney-map",
-        "title": "Oaks Sydney Goldsbrough Suites",
-        "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
-        "imageUrl": "",
-        "imageAlt": "",
-        "sourceNote": "Google Maps"
-      },
-      "primaryResource": {
-        "id": "sea-cliff-map",
-        "title": "Sea Cliff Bridge",
-        "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Sea+Cliff+Bridge",
-        "imageUrl": "",
-        "imageAlt": "",
-        "sourceNote": "Google Maps"
-      },
-      "ticketResource": {
-        "id": "no-fixed-ticket",
-        "title": "今天无需提前购票",
-        "type": "note",
-        "url": "",
-        "imageUrl": "",
-        "imageAlt": "",
-        "sourceNote": "当天以免费景点或灵活安排为主"
-      },
-      "blocks": [
-        {
-          "dayId": "d13",
-          "sortOrder": 10,
-          "period": "08:00",
-          "place": "悉尼 → Royal National Park / Bald Hill",
-          "activity": "自驾南下，进入 Grand Pacific Drive",
-          "highlight": "城市切换到南海岸",
-          "tip": "出发前查看 Royal National Park alerts，遇临时关闭按导航绕行。",
-          "resources": [
-            {
-              "id": "royal-national-park-map",
-              "title": "Royal National Park",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Royal+National+Park+NSW",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "bald-hill-map",
-              "title": "Bald Hill Lookout",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Bald+Hill+Lookout+Stanwell+Tops",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 20,
-          "period": "09:15",
-          "place": "Bald Hill Lookout",
-          "activity": "俯瞰海岸线和 Sea Cliff Bridge",
-          "highlight": "南海岸第一处全景",
-          "tip": "风大时缩短停留，优先保证后续 Kiama 与 Gerringong 时间",
-          "resources": [
-            {
-              "id": "bald-hill-map",
-              "title": "Bald Hill Lookout",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Bald+Hill+Lookout+Stanwell+Tops",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "sea-cliff-map",
-              "title": "Sea Cliff Bridge",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Sea+Cliff+Bridge",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 30,
-          "period": "10:00",
-          "place": "Sea Cliff Bridge",
-          "activity": "驶过海崖桥并在合法位置短停拍照",
-          "highlight": "贴着太平洋的公路画面",
-          "tip": "不要在桥上或路肩危险停车",
-          "resources": [
-            {
-              "id": "sea-cliff-map",
-              "title": "Sea Cliff Bridge",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Sea+Cliff+Bridge",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 40,
-          "period": "11:15",
-          "place": "Wollongong / 南海岸补给",
-          "activity": "短停咖啡或直接通过",
-          "highlight": "为 Kiama 留出完整窗口",
-          "tip": "在 Wollongong 喝杯咖啡即可，把完整午餐和散步留给 Kiama。",
-          "resources": [
-            {
-              "id": "wollongong-map",
-              "title": "Wollongong",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Wollongong+NSW",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 50,
-          "period": "12:00",
-          "place": "Kiama Blowhole",
-          "activity": "看喷潮洞、灯塔与海边",
-          "highlight": "Kiama 代表性海岸地貌",
-          "tip": "海况决定喷潮效果；没有大浪也不必等待太久",
-          "resources": [
-            {
-              "id": "kiama-map",
-              "title": "Kiama Blowhole",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Kiama+Blowhole",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 60,
-          "period": "12:30–13:30",
-          "place": "Kiama",
-          "activity": "午餐与短暂休息",
-          "highlight": "海边小镇节奏",
-          "tip": "午餐控制在一小时左右，下午还要去 Gerringong",
-          "resources": [
-            {
-              "id": "kiama-map",
-              "title": "Kiama Blowhole",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Kiama+Blowhole",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "kiama-hungry-monkey-map",
-              "title": "Hungry Monkey Kiama",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Hungry+Monkey+Kiama",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 70,
-          "period": "13:30",
-          "place": "Kiama → Gerringong",
-          "activity": "沿海继续南下",
-          "highlight": "海岸逐渐转为农场与小镇",
-          "tip": "从 Kiama 很快就能到 Gerringong，沿海公路和农场景色会自然切换。",
-          "resources": [
-            {
-              "id": "kiama-map",
-              "title": "Kiama Blowhole",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Kiama+Blowhole",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "gerringong-map",
-              "title": "Gerringong / Werri Beach",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Gerringong+Werri+Beach+NSW",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 80,
-          "period": "13:45–14:40",
-          "place": "Gerringong / Werri Beach",
-          "activity": "看海岸、草坡与小镇，短停咖啡或散步",
-          "highlight": "南海岸与乡村景观同框",
-          "tip": "预留约 55 分钟看海、喝咖啡；14:40 左右再决定是否前往袋鼠谷。",
-          "resources": [
-            {
-              "id": "gerringong-map",
-              "title": "Gerringong / Werri Beach",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Gerringong+Werri+Beach+NSW",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 90,
-          "period": "14:40",
-          "place": "Gerringong",
-          "activity": "判断是否延伸 Kangaroo Valley",
-          "highlight": "时间、天气与体力闸门",
-          "tip": "若已晚于 14:45、天气转差或驾驶疲劳，直接返回悉尼",
-          "resources": [
-            {
-              "id": "gerringong-map",
-              "title": "Gerringong / Werri Beach",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Gerringong+Werri+Beach+NSW",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "kangaroo-valley-map",
-              "title": "Kangaroo Valley",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Kangaroo+Valley+NSW",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 100,
-          "period": "可选 15:30–16:15",
-          "place": "Kangaroo Valley / Hampden Bridge",
-          "activity": "看历史桥、山谷与小镇",
-          "highlight": "海岸日的乡村加餐",
-          "tip": "若前往袋鼠谷，只安排 Hampden Bridge 与小镇短停，16:15 前返程。",
-          "resources": [
-            {
-              "id": "kangaroo-valley-map",
-              "title": "Kangaroo Valley",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Kangaroo+Valley+NSW",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "hampden-bridge-map",
-              "title": "Hampden Bridge, Kangaroo Valley",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Hampden+Bridge+Kangaroo+Valley+NSW",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 110,
-          "period": "16:15 前",
-          "place": "Kangaroo Valley / Gerringong → Sydney",
-          "activity": "返程；去了袋鼠谷优先走内陆 M31，未去则从 Gerringong 直接北返",
-          "highlight": "环线收束",
-          "tip": "目标 18:30 左右回城，晚餐保持简单",
-          "resources": [
-            {
-              "id": "kangaroo-valley-map",
-              "title": "Kangaroo Valley",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Kangaroo+Valley+NSW",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "gerringong-map",
-              "title": "Gerringong / Werri Beach",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Gerringong+Werri+Beach+NSW",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "oaks-sydney-map",
-              "title": "Oaks Sydney Goldsbrough Suites",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d13",
-          "sortOrder": 900,
-          "period": "饮食",
-          "place": "饮食安排",
-          "activity": "早餐：café；午餐：Kiama Hungry Monkey / Kiama 简餐；晚餐：回城后 CBD / 酒店附近简餐",
-          "highlight": "当天餐食节奏",
-          "tip": "午餐留在 Kiama，返城后就近用餐，把时间留给海岸和小镇。",
-          "resources": [
-            {
-              "id": "kiama-map",
-              "title": "Kiama Blowhole",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Kiama+Blowhole",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "kiama-hungry-monkey-map",
-              "title": "Hungry Monkey Kiama",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Hungry+Monkey+Kiama",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "gerringong-map",
-              "title": "Gerringong / Werri Beach",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Gerringong+Werri+Beach+NSW",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "oaks-sydney-map",
-              "title": "Oaks Sydney Goldsbrough Suites",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "d14",
-      "label": "D14",
-      "date": "2026-08-11",
-      "weekday": "周二",
-      "city": "悉尼",
-      "lat": -33.8688,
-      "lon": 151.2093,
-      "title": "动物园到海岸：Taronga、Bondi 与 Totti's",
-      "focus": "搭渡轮看 Taronga 的澳洲动物，下午走 Bondi 海岸，晚上在 Totti's 用餐。",
-      "lodging": "Oaks Sydney Goldsbrough Suites",
-      "climateNote": "悉尼冬季早晚凉，渡轮甲板、动物园高处和 Bondi 海边都有风。",
-      "clothingNote": "穿舒适步行鞋，薄外套随身；Bondi 海岸步道只走短段。",
+      "climateNote": "动物园高处、渡轮甲板和 Bondi 海边都有风；下午是否走海岸以当天降雨和风力为准。",
+      "clothingNote": "穿舒适步行鞋，薄外套与轻便雨具随身；Bondi 只走到 Tamarama 的短段。",
       "coverImageUrl": "/itinerary/d14-taronga-bondi.png",
       "coverImageAlt": "Taronga Zoo、悉尼港与 Bondi 海岸",
-      "transport": "F2 Ferry + 打车 / 市内交通 + 步行",
-      "leaveBy": "08:30–09:00 出门前往 Circular Quay；18:15 前抵达 Totti's",
+      "transport": "F2 Ferry + Uber / Taxi + 步行",
+      "leaveBy": "08:45 左右出门；14:00 从 Taronga Zoo 正门离开；17:20 前抵达 Totti's Bondi",
       "lodgingResource": {
         "id": "oaks-sydney-map",
         "title": "Oaks Sydney Goldsbrough Suites",
@@ -5068,13 +4889,13 @@
       },
       "blocks": [
         {
-          "dayId": "d14",
+          "dayId": "d13",
           "sortOrder": 10,
-          "period": "08:30–09:00",
+          "period": "08:45–09:15",
           "place": "酒店 → Circular Quay",
           "activity": "前往公共 F2 Taronga Zoo Ferry 码头",
-          "highlight": "悉尼港开启动物与海岸日",
-          "tip": "提前查看当天 Trip Planner，建议在开园前后抵达",
+          "highlight": "沿悉尼港开启动物与海岸日",
+          "tip": "提前查看当天 F2 船班；建议在 09:15 左右抵达码头。",
           "resources": [
             {
               "id": "oaks-sydney-map",
@@ -5106,13 +4927,13 @@
           ]
         },
         {
-          "dayId": "d14",
+          "dayId": "d13",
           "sortOrder": 20,
-          "period": "09:15 左右",
+          "period": "09:20–09:45",
           "place": "Circular Quay → Taronga Zoo Wharf",
           "activity": "搭乘公共 F2 Ferry 前往 Taronga Zoo",
-          "highlight": "Opera House + Harbour Bridge + Skyline",
-          "tip": "Opal / contactless 即可；建议坐上层甲板",
+          "highlight": "从水上看歌剧院、海港桥与城市天际线",
+          "tip": "Opal / contactless 即可；到站后沿指示进入动物园。",
           "resources": [
             {
               "id": "circular-quay-map",
@@ -5144,13 +4965,13 @@
           ]
         },
         {
-          "dayId": "d14",
+          "dayId": "d13",
           "sortOrder": 30,
-          "period": "09:30–13:30",
+          "period": "10:00–14:00",
           "place": "Taronga Zoo",
           "activity": "优先游览 Australian Wildlife 区域与悉尼港景观",
-          "highlight": "澳洲本土动物 + Harbour view",
-          "tip": "优先 Australian Wildlife 区域与海港景观，再按当天 keeper talk 调整顺序。",
+          "highlight": "澳洲本土动物与 Harbour view",
+          "tip": "先看最想看的澳洲动物，再按当天 keeper talk 调整；午餐在园内简单解决。",
           "resources": [
             {
               "id": "taronga-zoo-map",
@@ -5173,28 +4994,28 @@
           ]
         },
         {
-          "dayId": "d14",
+          "dayId": "d13",
           "sortOrder": 40,
-          "period": "13:30–14:30",
-          "place": "Taronga Zoo Wharf → Circular Quay → Bondi",
-          "activity": "F2 返回市区后前往 Bondi",
-          "highlight": "动物园切换到悉尼海岸",
-          "tip": "午餐保持轻量；回到 Circular Quay 后打车去 Bondi 更省时间",
+          "period": "14:00",
+          "place": "Taronga Zoo 正门",
+          "activity": "根据海边风雨决定下一站",
+          "highlight": "把 Bondi 留给真正舒服的天气",
+          "tip": "天气转好就从正门直接 Uber / Taxi 去 Bondi，不再搭船绕回 Circular Quay；若仍有明显风雨，就回酒店休息。",
           "resources": [
             {
-              "id": "taronga-ferry-official",
-              "title": "F2 Taronga Zoo Ferry",
-              "type": "official",
-              "url": "https://transportnsw.info/routes/details/sydney-ferries/f2/090f2",
+              "id": "d13-taronga-to-bondi-map",
+              "title": "Taronga Zoo 正门 → Bondi Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Taronga+Zoo+Sydney%2C+Bradleys+Head+Road%2C+Mosman+NSW+2088&destination=Bondi+Beach%2C+NSW+2026&travelmode=driving",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Transport for NSW"
+              "sourceNote": "Google Maps · 天气好时从动物园正门直接前往 Bondi"
             },
             {
-              "id": "circular-quay-map",
-              "title": "Circular Quay",
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -5211,13 +5032,13 @@
           ]
         },
         {
-          "dayId": "d14",
+          "dayId": "d13",
           "sortOrder": 50,
-          "period": "14:30–17:45",
+          "period": "天气好 · 14:30–16:50",
           "place": "Bondi Beach → Icebergs → Tamarama",
-          "activity": "海滩散步并走一段 Coastal Walk",
-          "highlight": "泳池、海浪、悬崖海岸线",
-          "tip": "走 Bondi–Tamarama 短段即可，17:45 左右离开海边，从容前往晚餐。",
+          "activity": "沿海滩与 Coastal Walk 走一段短线",
+          "highlight": "泳池、海浪与悬崖海岸线",
+          "tip": "只走 Bondi–Tamarama 短段；16:50 左右离开海边，给晚餐留出转场时间。",
           "resources": [
             {
               "id": "bondi-map",
@@ -5245,17 +5066,102 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d13-taronga-to-bondi-map",
+              "title": "Taronga Zoo 正门 → Bondi Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Taronga+Zoo+Sydney%2C+Bradleys+Head+Road%2C+Mosman+NSW+2088&destination=Bondi+Beach%2C+NSW+2026&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 天气好时从动物园正门直接前往 Bondi"
             }
           ]
         },
         {
-          "dayId": "d14",
+          "dayId": "d13",
           "sortOrder": 60,
-          "period": "18:30",
+          "period": "天气欠佳 · 14:30–16:30",
+          "place": "酒店休息",
+          "activity": "回房间休息、换装，再直接前往 Totti's Bondi",
+          "highlight": "雨天也保留一顿从容晚餐",
+          "tip": "若今天没有完成 Bondi，把它留到 D15 上午，D15 的 Manly 随之取消。",
+          "resources": [
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d15-bondi-fallback-route-map",
+              "title": "酒店 → Bondi → Icebergs → Tamarama",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Oaks+Sydney+Goldsbrough+Suites%2C+243+Pyrmont+Street%2C+Darling+Harbour+NSW+2009&destination=Tamarama+Beach%2C+NSW+2026&travelmode=driving&waypoints=Bondi+Beach%2C+NSW+2026%7CBondi+Icebergs%2C+1+Notts+Avenue%2C+Bondi+Beach+NSW+2026",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 仅在 8/10 未完成 Bondi 时使用"
+            },
+            {
+              "id": "tottis-bondi-map",
+              "title": "Totti's Bondi",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Totti%27s+Bondi",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d13",
+          "sortOrder": 70,
+          "period": "16:50–17:20",
+          "place": "Bondi Beach / 酒店 → Totti's Bondi",
+          "activity": "按当天所在位置前往餐厅",
+          "highlight": "从海岸或酒店从容转入晚餐",
+          "tip": "餐厅在 Bondi Road，不在沙滩第一排；预留叫车和堵车时间。",
+          "resources": [
+            {
+              "id": "bondi-map",
+              "title": "Bondi Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Beach",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "tottis-bondi-map",
+              "title": "Totti's Bondi",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Totti%27s+Bondi",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d13",
+          "sortOrder": 80,
+          "period": "17:30",
           "place": "Totti's Bondi",
           "activity": "分享式 Italian 晚餐（已订）",
           "highlight": "puffy bread + shared plates",
-          "tip": "餐厅在 Bondi Road，不在沙滩第一排；建议 18:15 前抵达",
+          "tip": "按 17:30 的预订入座；结束后直接回酒店休息。",
           "resources": [
             {
               "id": "tottis-bondi-map",
@@ -5278,28 +5184,19 @@
           ]
         },
         {
-          "dayId": "d14",
+          "dayId": "d13",
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：CBD café；午餐：Taronga Zoo 轻食 / Circular Quay 简餐；晚餐：Totti's Bondi 18:30（已订）",
+          "activity": "早餐：CBD café；午餐：Taronga Zoo 轻食；晚餐：Totti's Bondi 17:30（已订）",
           "highlight": "当天餐食节奏",
-          "tip": "动物园午餐简单些，海边散步结束后从容前往 18:30 的 Totti's。",
+          "tip": "动物园午餐简单些；无论下午是否走 Bondi，都按 17:30 的预订前往 Totti's。",
           "resources": [
             {
               "id": "taronga-zoo-map",
               "title": "Taronga Zoo Sydney",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Taronga+Zoo+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "circular-quay-map",
-              "title": "Circular Quay",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -5336,6 +5233,611 @@
       ]
     },
     {
+      "id": "d14",
+      "label": "D14",
+      "date": "2026-08-11",
+      "weekday": "周二",
+      "city": "悉尼南海岸",
+      "lat": -33.8688,
+      "lon": 151.2093,
+      "title": "南海岸环线：Sea Cliff Bridge、Kiama 与 Kangaroo Valley",
+      "focus": "08:00 取车后沿海岸南下，经过 Bald Hill、Sea Cliff Bridge、Kiama 与 Werri Beach，再由 Kangaroo Valley 内陆返回悉尼。",
+      "lodging": "Oaks Sydney Goldsbrough Suites",
+      "climateNote": "沿海观景点风大，袋鼠谷山区傍晚更凉；出发前再次查看实时道路与天气。",
+      "clothingNote": "穿防风外套与舒适步行鞋，车里备雨具、水和零食；驾驶员避免在返程前过度停留。",
+      "coverImageUrl": "/itinerary/d13-south-coast-kiama-gerringong.png",
+      "coverImageAlt": "Sea Cliff Bridge、Kiama 与 Kangaroo Valley 南海岸环线",
+      "transport": "SIXT 自驾 · 沿海去 / 内陆回（08:00–19:00，约 330–360 km）",
+      "leaveBy": "07:25 离开酒店；14:00 离开 Werri Beach；15:30 离开 Kangaroo Valley；18:50 前还车",
+      "lodgingResource": {
+        "id": "oaks-sydney-map",
+        "title": "Oaks Sydney Goldsbrough Suites",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "d14-south-coast-loop-map",
+        "title": "8/11 南海岸完整环线",
+        "type": "map",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving&waypoints=Bald+Hill+Lookout%2C+Otford+NSW%7CSea+Cliff+Bridge%2C+Clifton+NSW%7CKiama+Blowhole%2C+Kiama+NSW%7CWerri+Beach%2C+Gerringong+NSW%7CHampden+Bridge%2C+Kangaroo+Valley+NSW",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps · SIXT → Bald Hill → Sea Cliff Bridge → Kiama → Werri Beach → Hampden Bridge → SIXT"
+      },
+      "ticketResource": {
+        "id": "no-fixed-ticket",
+        "title": "今天无需提前购票",
+        "type": "note",
+        "url": "",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "当天以免费景点或灵活安排为主"
+      },
+      "blocks": [
+        {
+          "dayId": "d14",
+          "sortOrder": 10,
+          "period": "07:25–07:45",
+          "place": "Oaks Sydney Goldsbrough Suites → SIXT Sydney City",
+          "activity": "打车前往 Domain Car Park 内的 SIXT 门店",
+          "highlight": "在早高峰前抵达取车点",
+          "tip": "门店地址为 52 Sir John Young Crescent；直接把完整地址交给司机。",
+          "resources": [
+            {
+              "id": "d14-hotel-to-sixt-map",
+              "title": "酒店 → SIXT Sydney City",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Oaks+Sydney+Goldsbrough+Suites%2C+243+Pyrmont+Street%2C+Darling+Harbour+NSW+2009&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 07:25 从酒店打车前往取车点"
+            },
+            {
+              "id": "sixt-sydney-city-map",
+              "title": "SIXT Sydney City",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Domain Car Park, 52 Sir John Young Crescent"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 20,
+          "period": "07:45–08:20",
+          "place": "SIXT Sydney City",
+          "activity": "办理取车并检查车身、轮毂、挡风玻璃、油量与 CarPlay",
+          "highlight": "08:00–19:00 的自驾窗口正式开始",
+          "tip": "门店工作日 07:30–16:00，晚间使用 after-hours return；取车时确认还车车位和钥匙投递位置。",
+          "resources": [
+            {
+              "id": "sixt-sydney-city-map",
+              "title": "SIXT Sydney City",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Domain Car Park, 52 Sir John Young Crescent"
+            },
+            {
+              "id": "sixt-sydney-city-official",
+              "title": "SIXT Sydney City 门店",
+              "type": "official",
+              "url": "https://www.sixt.com.au/car-hire/au/sydney/sydney-city/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "SIXT 官网 · 工作日 07:30–16:00，提供 24 小时还车"
+            },
+            {
+              "id": "d14-south-coast-loop-map",
+              "title": "8/11 南海岸完整环线",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving&waypoints=Bald+Hill+Lookout%2C+Otford+NSW%7CSea+Cliff+Bridge%2C+Clifton+NSW%7CKiama+Blowhole%2C+Kiama+NSW%7CWerri+Beach%2C+Gerringong+NSW%7CHampden+Bridge%2C+Kangaroo+Valley+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · SIXT → Bald Hill → Sea Cliff Bridge → Kiama → Werri Beach → Hampden Bridge → SIXT"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 30,
+          "period": "08:20–09:25",
+          "place": "SIXT Sydney City → Bald Hill Lookout",
+          "activity": "沿主路驶向 Otford，开始 Grand Pacific Drive",
+          "highlight": "城市道路逐渐切换到南海岸",
+          "tip": "副驾负责导航；途中不临时增加 Royal National Park 支线。",
+          "resources": [
+            {
+              "id": "d14-coastal-route-map",
+              "title": "8/11 沿海去程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&destination=Werri+Beach%2C+Gerringong+NSW&travelmode=driving&waypoints=Bald+Hill+Lookout%2C+Otford+NSW%7CSea+Cliff+Bridge%2C+Clifton+NSW%7CKiama+Blowhole%2C+Kiama+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · SIXT → Bald Hill → Sea Cliff Bridge → Kiama → Werri Beach"
+            },
+            {
+              "id": "bald-hill-map",
+              "title": "Bald Hill Lookout",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Bald+Hill+Lookout%2C+Otford+NSW+2508&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Bald Hill Lookout, Otford"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 40,
+          "period": "09:25–09:50",
+          "place": "Bald Hill Lookout",
+          "activity": "俯瞰海岸线与远处的 Sea Cliff Bridge",
+          "highlight": "南海岸第一处开阔全景",
+          "tip": "风大时缩短停留；09:50 左右继续出发。",
+          "resources": [
+            {
+              "id": "bald-hill-map",
+              "title": "Bald Hill Lookout",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Bald+Hill+Lookout%2C+Otford+NSW+2508&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Bald Hill Lookout, Otford"
+            },
+            {
+              "id": "d14-coastal-route-map",
+              "title": "8/11 沿海去程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&destination=Werri+Beach%2C+Gerringong+NSW&travelmode=driving&waypoints=Bald+Hill+Lookout%2C+Otford+NSW%7CSea+Cliff+Bridge%2C+Clifton+NSW%7CKiama+Blowhole%2C+Kiama+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · SIXT → Bald Hill → Sea Cliff Bridge → Kiama → Werri Beach"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 50,
+          "period": "09:50–10:05",
+          "place": "Bald Hill → Sea Cliff Bridge",
+          "activity": "沿 Lawrence Hargrave Drive 继续南下",
+          "highlight": "贴近太平洋的短途转场",
+          "tip": "按导航通过 Stanwell Park 与 Clifton，不在弯道或路肩临时停车。",
+          "resources": [
+            {
+              "id": "d14-coastal-route-map",
+              "title": "8/11 沿海去程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&destination=Werri+Beach%2C+Gerringong+NSW&travelmode=driving&waypoints=Bald+Hill+Lookout%2C+Otford+NSW%7CSea+Cliff+Bridge%2C+Clifton+NSW%7CKiama+Blowhole%2C+Kiama+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · SIXT → Bald Hill → Sea Cliff Bridge → Kiama → Werri Beach"
+            },
+            {
+              "id": "sea-cliff-map",
+              "title": "Sea Cliff Bridge",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Sea+Cliff+Bridge%2C+Clifton+NSW+2515&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Sea Cliff Bridge, Clifton"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 60,
+          "period": "10:05–10:40",
+          "place": "Sea Cliff Bridge",
+          "activity": "先驶过海崖桥，再在合法停车位置停好车，步行体验一小段",
+          "highlight": "公路悬在海岸与山崖之间",
+          "tip": "桥上不能停车；只在合法位置上下车，10:40 左右继续前往 Kiama。",
+          "resources": [
+            {
+              "id": "sea-cliff-map",
+              "title": "Sea Cliff Bridge",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Sea+Cliff+Bridge%2C+Clifton+NSW+2515&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Sea Cliff Bridge, Clifton"
+            },
+            {
+              "id": "d14-coastal-route-map",
+              "title": "8/11 沿海去程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&destination=Werri+Beach%2C+Gerringong+NSW&travelmode=driving&waypoints=Bald+Hill+Lookout%2C+Otford+NSW%7CSea+Cliff+Bridge%2C+Clifton+NSW%7CKiama+Blowhole%2C+Kiama+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · SIXT → Bald Hill → Sea Cliff Bridge → Kiama → Werri Beach"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 70,
+          "period": "10:40–11:30",
+          "place": "Sea Cliff Bridge → Kiama",
+          "activity": "沿海岸主路直接前往 Kiama",
+          "highlight": "把完整午间窗口留给喷潮洞与小镇",
+          "tip": "今天不在 Wollongong 停留；按主路继续南下。",
+          "resources": [
+            {
+              "id": "d14-coastal-route-map",
+              "title": "8/11 沿海去程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&destination=Werri+Beach%2C+Gerringong+NSW&travelmode=driving&waypoints=Bald+Hill+Lookout%2C+Otford+NSW%7CSea+Cliff+Bridge%2C+Clifton+NSW%7CKiama+Blowhole%2C+Kiama+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · SIXT → Bald Hill → Sea Cliff Bridge → Kiama → Werri Beach"
+            },
+            {
+              "id": "kiama-map",
+              "title": "Kiama Blowhole",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Kiama+Blowhole%2C+Blowhole+Point+Road%2C+Kiama+NSW+2533&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Blowhole Point, Kiama"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 80,
+          "period": "11:30–12:05",
+          "place": "Kiama Blowhole / Lighthouse",
+          "activity": "看喷潮洞、灯塔与海岸线",
+          "highlight": "Kiama 最具代表性的海边画面",
+          "tip": "喷潮效果取决于海况；无大浪时看完主视角即可，不为等待浪花拖延午餐。",
+          "resources": [
+            {
+              "id": "kiama-map",
+              "title": "Kiama Blowhole",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Kiama+Blowhole%2C+Blowhole+Point+Road%2C+Kiama+NSW+2533&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Blowhole Point, Kiama"
+            },
+            {
+              "id": "kiama-lighthouse-map",
+              "title": "Kiama Lighthouse",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Kiama+Lighthouse%2C+Blowhole+Point+Road%2C+Kiama+NSW+2533&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 与 Kiama Blowhole 同一区域"
+            },
+            {
+              "id": "d14-coastal-route-map",
+              "title": "8/11 沿海去程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&destination=Werri+Beach%2C+Gerringong+NSW&travelmode=driving&waypoints=Bald+Hill+Lookout%2C+Otford+NSW%7CSea+Cliff+Bridge%2C+Clifton+NSW%7CKiama+Blowhole%2C+Kiama+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · SIXT → Bald Hill → Sea Cliff Bridge → Kiama → Werri Beach"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 90,
+          "period": "12:05–13:00",
+          "place": "Kiama",
+          "activity": "午餐与短暂休息",
+          "highlight": "在海边小镇补充体力",
+          "tip": "午餐控制在一小时内，13:00 准时继续去 Werri Beach。",
+          "resources": [
+            {
+              "id": "kiama-map",
+              "title": "Kiama Blowhole",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Kiama+Blowhole%2C+Blowhole+Point+Road%2C+Kiama+NSW+2533&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Blowhole Point, Kiama"
+            },
+            {
+              "id": "kiama-hungry-monkey-map",
+              "title": "Hungry Monkey Kiama",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hungry+Monkey+Kiama",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 100,
+          "period": "13:00–13:15",
+          "place": "Kiama → Gerringong / Werri Beach",
+          "activity": "沿海短途前往 Werri Beach",
+          "highlight": "海岸逐渐切换为草坡与农场",
+          "tip": "这一段不加停靠，按导航直达海边停车区。",
+          "resources": [
+            {
+              "id": "d14-coastal-route-map",
+              "title": "8/11 沿海去程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&destination=Werri+Beach%2C+Gerringong+NSW&travelmode=driving&waypoints=Bald+Hill+Lookout%2C+Otford+NSW%7CSea+Cliff+Bridge%2C+Clifton+NSW%7CKiama+Blowhole%2C+Kiama+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · SIXT → Bald Hill → Sea Cliff Bridge → Kiama → Werri Beach"
+            },
+            {
+              "id": "gerringong-map",
+              "title": "Gerringong / Werri Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Werri+Beach%2C+Pacific+Avenue%2C+Gerringong+NSW+2534&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Werri Beach, Gerringong"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 110,
+          "period": "13:15–14:00",
+          "place": "Gerringong / Werri Beach",
+          "activity": "看海岸、草坡与小镇，沿海边短走",
+          "highlight": "海岸与乡村景观同框",
+          "tip": "14:00 是第一个时间闸门；无论停留状态如何，都按时转向 Kangaroo Valley。",
+          "resources": [
+            {
+              "id": "gerringong-map",
+              "title": "Gerringong / Werri Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Werri+Beach%2C+Pacific+Avenue%2C+Gerringong+NSW+2534&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Werri Beach, Gerringong"
+            },
+            {
+              "id": "d14-inland-return-map",
+              "title": "8/11 袋鼠谷内陆返程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Werri+Beach%2C+Gerringong+NSW&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving&waypoints=Hampden+Bridge%2C+Kangaroo+Valley+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Werri Beach → Hampden Bridge → SIXT Sydney City"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 120,
+          "period": "14:00–14:40",
+          "place": "Werri Beach → Kangaroo Valley",
+          "activity": "从海岸转入山谷道路，前往 Hampden Bridge",
+          "highlight": "从海边进入安静的绿色谷地",
+          "tip": "弯道较多，保持舒服车距；不临时加入 Fitzroy Falls。",
+          "resources": [
+            {
+              "id": "d14-inland-return-map",
+              "title": "8/11 袋鼠谷内陆返程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Werri+Beach%2C+Gerringong+NSW&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving&waypoints=Hampden+Bridge%2C+Kangaroo+Valley+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Werri Beach → Hampden Bridge → SIXT Sydney City"
+            },
+            {
+              "id": "hampden-bridge-map",
+              "title": "Hampden Bridge",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Hampden+Bridge%2C+Moss+Vale+Road%2C+Kangaroo+Valley+NSW+2577&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Moss Vale Road, Kangaroo Valley"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 130,
+          "period": "14:40–15:25",
+          "place": "Kangaroo Valley / Hampden Bridge",
+          "activity": "看历史悬索桥，并在村镇短走",
+          "highlight": "砂岩桥塔与山谷小镇",
+          "tip": "把停车、桥边观景与村镇散步合计控制在 45 分钟内。",
+          "resources": [
+            {
+              "id": "hampden-bridge-map",
+              "title": "Hampden Bridge",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Hampden+Bridge%2C+Moss+Vale+Road%2C+Kangaroo+Valley+NSW+2577&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Moss Vale Road, Kangaroo Valley"
+            },
+            {
+              "id": "kangaroo-valley-map",
+              "title": "Kangaroo Valley",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Kangaroo+Valley+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d14-inland-return-map",
+              "title": "8/11 袋鼠谷内陆返程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Werri+Beach%2C+Gerringong+NSW&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving&waypoints=Hampden+Bridge%2C+Kangaroo+Valley+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Werri Beach → Hampden Bridge → SIXT Sydney City"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 140,
+          "period": "15:25–15:30",
+          "place": "Kangaroo Valley",
+          "activity": "完成上车与导航确认，正式返回悉尼",
+          "highlight": "第二个时间闸门",
+          "tip": "15:30 前驶离袋鼠谷；不再增加沿途景点。",
+          "resources": [
+            {
+              "id": "d14-inland-return-map",
+              "title": "8/11 袋鼠谷内陆返程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Werri+Beach%2C+Gerringong+NSW&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving&waypoints=Hampden+Bridge%2C+Kangaroo+Valley+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Werri Beach → Hampden Bridge → SIXT Sydney City"
+            },
+            {
+              "id": "sixt-sydney-city-map",
+              "title": "SIXT Sydney City",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Domain Car Park, 52 Sir John Young Crescent"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 150,
+          "period": "15:30–17:45",
+          "place": "Kangaroo Valley → Sydney",
+          "activity": "沿内陆主路与 M31 返回悉尼",
+          "highlight": "用较稳定的内陆路线收束环线",
+          "tip": "途中按实时路况行驶；司机需要休息时，只在服务区做短停。",
+          "resources": [
+            {
+              "id": "d14-inland-return-map",
+              "title": "8/11 袋鼠谷内陆返程",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Werri+Beach%2C+Gerringong+NSW&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving&waypoints=Hampden+Bridge%2C+Kangaroo+Valley+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Werri Beach → Hampden Bridge → SIXT Sydney City"
+            },
+            {
+              "id": "sixt-sydney-city-map",
+              "title": "SIXT Sydney City",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Domain Car Park, 52 Sir John Young Crescent"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 160,
+          "period": "17:45–18:20",
+          "place": "Sydney / SIXT 门店附近",
+          "activity": "按租车规则补满油，清点随身物品并拍下油表",
+          "highlight": "还车前完成最后检查",
+          "tip": "加油站按当时位置搜索，避免为了指定品牌绕路。",
+          "resources": [
+            {
+              "id": "sixt-sydney-city-map",
+              "title": "SIXT Sydney City",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Domain Car Park, 52 Sir John Young Crescent"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 170,
+          "period": "18:20–18:50",
+          "place": "SIXT Sydney City",
+          "activity": "驶入指定还车区并完成 after-hours return",
+          "highlight": "在 19:00 租期结束前交还车辆",
+          "tip": "按早上确认的车位停车、拍照并投递钥匙；18:50 前完成。",
+          "resources": [
+            {
+              "id": "sixt-sydney-city-map",
+              "title": "SIXT Sydney City",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Domain Car Park, 52 Sir John Young Crescent"
+            },
+            {
+              "id": "sixt-sydney-city-official",
+              "title": "SIXT Sydney City 门店",
+              "type": "official",
+              "url": "https://www.sixt.com.au/car-hire/au/sydney/sydney-city/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "SIXT 官网 · 工作日 07:30–16:00，提供 24 小时还车"
+            },
+            {
+              "id": "d14-south-coast-loop-map",
+              "title": "8/11 南海岸完整环线",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving&waypoints=Bald+Hill+Lookout%2C+Otford+NSW%7CSea+Cliff+Bridge%2C+Clifton+NSW%7CKiama+Blowhole%2C+Kiama+NSW%7CWerri+Beach%2C+Gerringong+NSW%7CHampden+Bridge%2C+Kangaroo+Valley+NSW",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · SIXT → Bald Hill → Sea Cliff Bridge → Kiama → Werri Beach → Hampden Bridge → SIXT"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 900,
+          "period": "饮食",
+          "place": "饮食安排",
+          "activity": "早餐：酒店附近 café；午餐：Kiama 简餐；晚餐：还车后在 CBD / 酒店附近简单吃",
+          "highlight": "把时间留给海岸与安全返程",
+          "tip": "车里备水和零食；午餐控制在一小时内，晚餐不提前锁死。",
+          "resources": [
+            {
+              "id": "kiama-map",
+              "title": "Kiama Blowhole",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&destination=Kiama+Blowhole%2C+Blowhole+Point+Road%2C+Kiama+NSW+2533&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · Blowhole Point, Kiama"
+            },
+            {
+              "id": "kiama-hungry-monkey-map",
+              "title": "Hungry Monkey Kiama",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hungry+Monkey+Kiama",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "d15",
       "label": "D15",
       "date": "2026-08-12",
@@ -5343,15 +5845,15 @@
       "city": "悉尼",
       "lat": -33.8688,
       "lon": 151.2093,
-      "title": "悉尼告别日：可选 Manly、最后采购与 Cafe Sydney",
-      "focus": "上午悠闲安排 Manly 或 CBD，下午采购并整理行李，傍晚在 Cafe Sydney 告别。",
+      "title": "悉尼告别日：Bondi 补位、Manly 备选与 Cafe Sydney",
+      "focus": "若 8/10 未完成 Bondi，上午优先补走 Bondi；若已完成且天气与体力都好，再选 Manly，否则留在 CBD 慢慢收尾。下午采购、整理 TRS，17:30 在 Cafe Sydney 告别。",
       "lodging": "Oaks Sydney Goldsbrough Suites",
-      "climateNote": "悉尼早晚凉，若去 Manly，渡轮甲板和海边风更明显。",
-      "clothingNote": "薄外套随身；晚餐换 smart casual，并给回酒店整理行李留足时间。",
+      "climateNote": "Bondi 与 Manly 都受海风影响；上午路线按 8/10 的实际完成情况与当天体感决定。",
+      "clothingNote": "薄外套随身；晚餐换 smart casual，并把发票、TRS 商品与返程行李提前整理好。",
       "coverImageUrl": "/itinerary/d15-manly-flex-farewell.png",
-      "coverImageAlt": "Manly 渡轮与悉尼港告别黄昏",
-      "transport": "F1 Ferry（可选） + 步行 / 市内交通",
-      "leaveBy": "上午按状态决定；去 Manly 则 13:00–13:30 返程；16:40 前往 Cafe Sydney",
+      "coverImageAlt": "悉尼海岸、渡轮与海港告别黄昏",
+      "transport": "Uber / 市内交通；F1 Ferry 仅在选择 Manly 时使用",
+      "leaveBy": "上午按 8/10 实际完成情况决定；13:30 前回到 CBD；16:15 离开酒店前往 Circular Quay",
       "lodgingResource": {
         "id": "oaks-sydney-map",
         "title": "Oaks Sydney Goldsbrough Suites",
@@ -5383,17 +5885,35 @@
         {
           "dayId": "d15",
           "sortOrder": 10,
-          "period": "上午",
-          "place": "酒店 / 悉尼市区",
-          "activity": "慢早餐，结合睡眠、天气和体力决定 Manly 或 CBD",
-          "highlight": "告别日从容开场",
-          "tip": "睡饱、天气好就去 Manly；否则留在 CBD 慢慢吃早餐。",
+          "period": "08:30 左右",
+          "place": "酒店",
+          "activity": "先回看 8/10 是否完成 Bondi，再结合天气与体力决定上午路线",
+          "highlight": "告别日上午只完成一个方向",
+          "tip": "若 8/10 没去成 Bondi，今天优先补 Bondi并取消 Manly；若已经完成 Bondi，再从 Manly 或 CBD 中二选一。",
           "resources": [
             {
               "id": "oaks-sydney-map",
               "title": "Oaks Sydney Goldsbrough Suites",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "d15-bondi-fallback-route-map",
+              "title": "酒店 → Bondi → Icebergs → Tamarama",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Oaks+Sydney+Goldsbrough+Suites%2C+243+Pyrmont+Street%2C+Darling+Harbour+NSW+2009&destination=Tamarama+Beach%2C+NSW+2026&travelmode=driving&waypoints=Bondi+Beach%2C+NSW+2026%7CBondi+Icebergs%2C+1+Notts+Avenue%2C+Bondi+Beach+NSW+2026",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 仅在 8/10 未完成 Bondi 时使用"
+            },
+            {
+              "id": "manly-ferry-map",
+              "title": "Manly Ferry",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Ferry+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -5412,26 +5932,44 @@
         {
           "dayId": "d15",
           "sortOrder": 20,
-          "period": "可选 09:30 左右",
-          "place": "Circular Quay → Manly",
-          "activity": "搭乘公共 F1 Manly Ferry",
-          "highlight": "悉尼港经典渡轮体验",
-          "tip": "确认能在 13:00–13:30 前返程再出发，并查看当天船班。",
+          "period": "Bondi 补位 · 09:00–12:30",
+          "place": "Bondi Beach → Icebergs → Tamarama",
+          "activity": "补走 8/10 因天气未完成的 Bondi 短线",
+          "highlight": "把悉尼海岸的缺口补完整",
+          "tip": "只在 8/10 未完成 Bondi 时使用；12:30 左右返程，Manly 不再安排。",
           "resources": [
             {
-              "id": "circular-quay-map",
-              "title": "Circular Quay",
+              "id": "d15-bondi-fallback-route-map",
+              "title": "酒店 → Bondi → Icebergs → Tamarama",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Oaks+Sydney+Goldsbrough+Suites%2C+243+Pyrmont+Street%2C+Darling+Harbour+NSW+2009&destination=Tamarama+Beach%2C+NSW+2026&travelmode=driving&waypoints=Bondi+Beach%2C+NSW+2026%7CBondi+Icebergs%2C+1+Notts+Avenue%2C+Bondi+Beach+NSW+2026",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 仅在 8/10 未完成 Bondi 时使用"
+            },
+            {
+              "id": "bondi-map",
+              "title": "Bondi Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Beach",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
             },
             {
-              "id": "manly-ferry-map",
-              "title": "Manly Ferry",
+              "id": "icebergs-map",
+              "title": "Bondi Icebergs",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Icebergs",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "tamarama-map",
+              "title": "Tamarama Beach",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Ferry+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Tamarama+Beach",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -5441,50 +5979,21 @@
         {
           "dayId": "d15",
           "sortOrder": 30,
-          "period": "可选 10:00–12:45",
-          "place": "Manly Beach / The Corso",
-          "activity": "海边散步、咖啡或早午餐",
-          "highlight": "比 Bondi 更松弛",
-          "tip": "在海边散步、喝咖啡，12:45 左右准备返程。",
+          "period": "Manly 备选 · 09:00–12:30",
+          "place": "Circular Quay → Manly",
+          "activity": "若 Bondi 已完成且天气、体力都好，搭 F1 Ferry 去 Manly 短走",
+          "highlight": "渡轮本身就是一次海港巡游",
+          "tip": "只在 Bondi 已完成时选择；逛 The Corso 与海边后，12:30 左右准备返程。",
           "resources": [
             {
-              "id": "manly-beach-map",
-              "title": "Manly Beach",
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Beach+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
             },
-            {
-              "id": "hugos-manly-map",
-              "title": "Hugos Manly",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Hugos+Manly",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "felons-manly-map",
-              "title": "Felons Manly",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Felons+Manly",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d15",
-          "sortOrder": 40,
-          "period": "13:00–13:30",
-          "place": "Manly → Circular Quay / CBD",
-          "activity": "最晚搭船回市区",
-          "highlight": "给采购、TRS 和晚餐留余量",
-          "tip": "若上午留在 CBD，这段时间可喝咖啡或提前开始采购。",
-          "resources": [
             {
               "id": "manly-ferry-map",
               "title": "Manly Ferry",
@@ -5495,10 +6004,86 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "circular-quay-map",
-              "title": "Circular Quay",
+              "id": "manly-beach-map",
+              "title": "Manly Beach",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Beach+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d15",
+          "sortOrder": 40,
+          "period": "CBD 慢行 · 上午",
+          "place": "CBD / 酒店附近",
+          "activity": "若不去海边，就慢早餐、喝咖啡并在市区轻松收尾",
+          "highlight": "给最后一天留一点真正空白",
+          "tip": "上午不再临时加长线，午后仍按固定节奏采购和整理。",
+          "resources": [
+            {
+              "id": "oaks-sydney-map",
+              "title": "Oaks Sydney Goldsbrough Suites",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Oaks+Sydney+Goldsbrough+Suites",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "qvb-map",
+              "title": "QVB",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Building+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "single-o-map",
+              "title": "Single O Sydney",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Single+O+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "tobys-estate-map",
+              "title": "Toby's Estate Sydney",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Toby%27s+Estate+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d15",
+          "sortOrder": 50,
+          "period": "12:30–13:30",
+          "place": "Bondi / Manly → CBD",
+          "activity": "从上午路线返回市区",
+          "highlight": "给最后采购与 TRS 留足余量",
+          "tip": "最晚 13:30 回到 CBD；若上午留在市区，可以直接开始采购。",
+          "resources": [
+            {
+              "id": "d15-bondi-fallback-route-map",
+              "title": "酒店 → Bondi → Icebergs → Tamarama",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Oaks+Sydney+Goldsbrough+Suites%2C+243+Pyrmont+Street%2C+Darling+Harbour+NSW+2009&destination=Tamarama+Beach%2C+NSW+2026&travelmode=driving&waypoints=Bondi+Beach%2C+NSW+2026%7CBondi+Icebergs%2C+1+Notts+Avenue%2C+Bondi+Beach+NSW+2026",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps · 仅在 8/10 未完成 Bondi 时使用"
+            },
+            {
+              "id": "manly-ferry-map",
+              "title": "Manly Ferry",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Manly+Ferry+Sydney",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -5516,12 +6101,12 @@
         },
         {
           "dayId": "d15",
-          "sortOrder": 50,
-          "period": "14:00–15:30",
+          "sortOrder": 60,
+          "period": "13:30–15:15",
           "place": "QVB / Chemist Warehouse / CBD",
-          "activity": "最后采购",
-          "highlight": "药妆、保健品、伴手礼",
-          "tip": "只补漏买；保留 tax invoice 并核对 TRS 条件",
+          "activity": "完成最后采购",
+          "highlight": "药妆、保健品与伴手礼一次买齐",
+          "tip": "只补漏买；保留 tax invoice，并核对 TRS 商品与支付凭证。",
           "resources": [
             {
               "id": "qvb-map",
@@ -5545,12 +6130,12 @@
         },
         {
           "dayId": "d15",
-          "sortOrder": 60,
-          "period": "15:30–16:20",
+          "sortOrder": 70,
+          "period": "15:15–16:00",
           "place": "酒店",
-          "activity": "整理 TRS 物品和返程行李",
-          "highlight": "为 D16 机场退税做准备",
-          "tip": "发票、商品、护照和支付卡集中整理；完成换装",
+          "activity": "整理 TRS 物品、返程行李并换装",
+          "highlight": "把 D16 机场手续提前准备好",
+          "tip": "发票、商品、护照和支付卡集中放好；16:00 前完成整理。",
           "resources": [
             {
               "id": "oaks-sydney-map",
@@ -5574,12 +6159,12 @@
         },
         {
           "dayId": "d15",
-          "sortOrder": 70,
-          "period": "16:40",
+          "sortOrder": 80,
+          "period": "16:15–16:50",
           "place": "酒店 → Circular Quay",
-          "activity": "前往 Cafe Sydney",
-          "highlight": "避免迟到",
-          "tip": "Outdoor Terrace 晚上有风，带外套；17:15 左右开始餐厅签到",
+          "activity": "前往 Cafe Sydney 一带",
+          "highlight": "给海港黄昏与签到留余量",
+          "tip": "Outdoor Terrace 晚上有风，外套随身；不要等到 17:00 后才出发。",
           "resources": [
             {
               "id": "oaks-sydney-map",
@@ -5612,12 +6197,50 @@
         },
         {
           "dayId": "d15",
-          "sortOrder": 80,
+          "sortOrder": 90,
+          "period": "16:50–17:15",
+          "place": "Circular Quay / 海港边",
+          "activity": "在餐前看海港黄昏并拍照，随后到 Cafe Sydney 签到",
+          "highlight": "最后一次看歌剧院与海港桥亮灯",
+          "tip": "17:15 左右进入餐厅签到，不为拍照压缩预订时间。",
+          "resources": [
+            {
+              "id": "circular-quay-map",
+              "title": "Circular Quay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Circular+Quay+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "opera-house-map",
+              "title": "Sydney Opera House",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "cafe-sydney-map",
+              "title": "Cafe Sydney",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Cafe+Sydney",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d15",
+          "sortOrder": 100,
           "period": "17:30",
           "place": "Cafe Sydney",
           "activity": "Outdoor Terrace Dining 告别晚餐（已订）",
-          "highlight": "海港景观 + 澳洲最后一晚",
-          "tip": "按预订时间入座；晚餐后回酒店做最终检查",
+          "highlight": "海港景观与澳洲最后一晚",
+          "tip": "按预订时间入座；晚餐后回酒店做最终检查。",
           "resources": [
             {
               "id": "cafe-sydney-map",
@@ -5644,24 +6267,15 @@
           "sortOrder": 900,
           "period": "饮食",
           "place": "饮食安排",
-          "activity": "早餐：café / Single O / Toby's Estate；午餐：若去 Manly 则 fish & chips / café，否则 CBD 简餐；晚餐：Cafe Sydney 17:30 Outdoor Terrace Dining（已订）",
+          "activity": "早餐：按 Bondi / Manly / CBD 路线解决；午餐：海边 café 或 CBD 简餐；晚餐：Cafe Sydney 17:30 Outdoor Terrace Dining（已订）",
           "highlight": "当天餐食节奏",
-          "tip": "无论上午在哪，14:00 后都回到 CBD 采购、整理 TRS，最后去 Cafe Sydney。",
+          "tip": "上午只选一条路线，13:30 前回 CBD；下午采购、整理 TRS，再去 Cafe Sydney。",
           "resources": [
             {
-              "id": "single-o-map",
-              "title": "Single O Sydney",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Single+O+Sydney",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "tobys-estate-map",
-              "title": "Toby's Estate Sydney",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Toby%27s+Estate+Sydney",
+              "id": "bondi-map",
+              "title": "Bondi Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Beach",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -6284,19 +6898,19 @@
       "id": "sea-cliff-map",
       "title": "Sea Cliff Bridge",
       "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Sea+Cliff+Bridge",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Sea+Cliff+Bridge%2C+Clifton+NSW+2515&travelmode=driving",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "Google Maps"
+      "sourceNote": "Google Maps · Sea Cliff Bridge, Clifton"
     },
     {
       "id": "kiama-map",
       "title": "Kiama Blowhole",
       "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Kiama+Blowhole",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Kiama+Blowhole%2C+Blowhole+Point+Road%2C+Kiama+NSW+2533&travelmode=driving",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "Google Maps"
+      "sourceNote": "Google Maps · Blowhole Point, Kiama"
     },
     {
       "id": "bondi-map",
@@ -6554,10 +7168,10 @@
       "id": "bald-hill-map",
       "title": "Bald Hill Lookout",
       "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Bald+Hill+Lookout+Stanwell+Tops",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Bald+Hill+Lookout%2C+Otford+NSW+2508&travelmode=driving",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "Google Maps"
+      "sourceNote": "Google Maps · Bald Hill Lookout, Otford"
     },
     {
       "id": "wollongong-map",
@@ -6914,10 +7528,10 @@
       "id": "gerringong-map",
       "title": "Gerringong / Werri Beach",
       "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Gerringong+Werri+Beach+NSW",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Werri+Beach%2C+Pacific+Avenue%2C+Gerringong+NSW+2534&travelmode=driving",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "Google Maps"
+      "sourceNote": "Google Maps · Werri Beach, Gerringong"
     },
     {
       "id": "felons-manly-map",
@@ -6957,12 +7571,12 @@
     },
     {
       "id": "hampden-bridge-map",
-      "title": "Hampden Bridge, Kangaroo Valley",
+      "title": "Hampden Bridge",
       "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Hampden+Bridge+Kangaroo+Valley+NSW",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Hampden+Bridge%2C+Moss+Vale+Road%2C+Kangaroo+Valley+NSW+2577&travelmode=driving",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "Google Maps"
+      "sourceNote": "Google Maps · Moss Vale Road, Kangaroo Valley"
     },
     {
       "id": "carlton-lygon-map",
@@ -7530,6 +8144,114 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Skybury · 周一至周五 09:00–16:00，公共假日关闭"
+    },
+    {
+      "id": "d13-taronga-to-bondi-map",
+      "title": "Taronga Zoo 正门 → Bondi Beach",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Taronga+Zoo+Sydney%2C+Bradleys+Head+Road%2C+Mosman+NSW+2088&destination=Bondi+Beach%2C+NSW+2026&travelmode=driving",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 天气好时从动物园正门直接前往 Bondi"
+    },
+    {
+      "id": "d15-bondi-fallback-route-map",
+      "title": "酒店 → Bondi → Icebergs → Tamarama",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Oaks+Sydney+Goldsbrough+Suites%2C+243+Pyrmont+Street%2C+Darling+Harbour+NSW+2009&destination=Tamarama+Beach%2C+NSW+2026&travelmode=driving&waypoints=Bondi+Beach%2C+NSW+2026%7CBondi+Icebergs%2C+1+Notts+Avenue%2C+Bondi+Beach+NSW+2026",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 仅在 8/10 未完成 Bondi 时使用"
+    },
+    {
+      "id": "sixt-sydney-city-map",
+      "title": "SIXT Sydney City",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Domain Car Park, 52 Sir John Young Crescent"
+    },
+    {
+      "id": "sixt-sydney-city-official",
+      "title": "SIXT Sydney City 门店",
+      "type": "official",
+      "url": "https://www.sixt.com.au/car-hire/au/sydney/sydney-city/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "SIXT 官网 · 工作日 07:30–16:00，提供 24 小时还车"
+    },
+    {
+      "id": "d14-hotel-to-sixt-map",
+      "title": "酒店 → SIXT Sydney City",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Oaks+Sydney+Goldsbrough+Suites%2C+243+Pyrmont+Street%2C+Darling+Harbour+NSW+2009&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 07:25 从酒店打车前往取车点"
+    },
+    {
+      "id": "d14-south-coast-loop-map",
+      "title": "8/11 南海岸完整环线",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving&waypoints=Bald+Hill+Lookout%2C+Otford+NSW%7CSea+Cliff+Bridge%2C+Clifton+NSW%7CKiama+Blowhole%2C+Kiama+NSW%7CWerri+Beach%2C+Gerringong+NSW%7CHampden+Bridge%2C+Kangaroo+Valley+NSW",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · SIXT → Bald Hill → Sea Cliff Bridge → Kiama → Werri Beach → Hampden Bridge → SIXT"
+    },
+    {
+      "id": "d14-coastal-route-map",
+      "title": "8/11 沿海去程",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&destination=Werri+Beach%2C+Gerringong+NSW&travelmode=driving&waypoints=Bald+Hill+Lookout%2C+Otford+NSW%7CSea+Cliff+Bridge%2C+Clifton+NSW%7CKiama+Blowhole%2C+Kiama+NSW",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · SIXT → Bald Hill → Sea Cliff Bridge → Kiama → Werri Beach"
+    },
+    {
+      "id": "d14-inland-return-map",
+      "title": "8/11 袋鼠谷内陆返程",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Werri+Beach%2C+Gerringong+NSW&destination=SIXT+Car+Hire+Sydney+City%2C+Domain+Car+Park%2C+52+Sir+John+Young+Crescent%2C+Woolloomooloo+NSW+2011&travelmode=driving&waypoints=Hampden+Bridge%2C+Kangaroo+Valley+NSW",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · Werri Beach → Hampden Bridge → SIXT Sydney City"
+    },
+    {
+      "id": "kiama-lighthouse-map",
+      "title": "Kiama Lighthouse",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&destination=Kiama+Lighthouse%2C+Blowhole+Point+Road%2C+Kiama+NSW+2533&travelmode=driving",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · 与 Kiama Blowhole 同一区域"
+    },
+    {
+      "id": "d11-harbour-walk-map",
+      "title": "Barangaroo → The Rocks → Circular Quay",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Barangaroo+Reserve%2C+Hickson+Road%2C+Barangaroo+NSW+2000&destination=Circular+Quay%2C+Sydney+NSW+2000&travelmode=walking&waypoints=The+Rocks%2C+Sydney+NSW+2000",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · D11 海港单向步行"
+    },
+    {
+      "id": "d12-hotel-to-mrs-map",
+      "title": "酒店 → Mrs Macquarie's Chair",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Oaks+Sydney+Goldsbrough+Suites%2C+243+Pyrmont+Street%2C+Darling+Harbour+NSW+2009&destination=Mrs+Macquarie%27s+Chair%2C+Mrs+Macquaries+Road%2C+Sydney+NSW+2000&travelmode=driving",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · D12 清晨打车前往海港机位"
+    },
+    {
+      "id": "d12-harbour-morning-walk-map",
+      "title": "Mrs Macquarie's Chair → 植物园 → 歌剧院",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Mrs+Macquarie%27s+Chair%2C+Mrs+Macquaries+Road%2C+Sydney+NSW+2000&destination=Sydney+Opera+House%2C+Bennelong+Point%2C+Sydney+NSW+2000&travelmode=walking&waypoints=Royal+Botanic+Garden+Sydney%2C+Mrs+Macquaries+Road%2C+Sydney+NSW+2000",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps · D12 早晨单向步行"
     }
   ],
   "priorities": [
@@ -7600,33 +8322,33 @@
     {
       "rank": 5,
       "dayId": "d11",
-      "title": "Barangaroo Reserve",
+      "title": "Barangaroo 至 Circular Quay 海港步行",
       "status": "必去",
-      "note": "转场日下午沿 Wulugul Walk 慢走",
+      "note": "15:00 后从 Barangaroo 起步，经 The Rocks 在 Circular Quay 看日落",
       "resource": {
-        "id": "barangaroo-reserve-map",
-        "title": "Barangaroo Reserve",
+        "id": "d11-harbour-walk-map",
+        "title": "Barangaroo → The Rocks → Circular Quay",
         "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Barangaroo+Reserve+Sydney",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=Barangaroo+Reserve%2C+Hickson+Road%2C+Barangaroo+NSW+2000&destination=Circular+Quay%2C+Sydney+NSW+2000&travelmode=walking&waypoints=The+Rocks%2C+Sydney+NSW+2000",
         "imageUrl": "",
-        "imageAlt": "Barangaroo Reserve 地图",
-        "sourceNote": "Google Maps"
+        "imageAlt": "",
+        "sourceNote": "Google Maps · D11 海港单向步行"
       }
     },
     {
       "rank": 6,
       "dayId": "d12",
-      "title": "The Rocks Markets",
+      "title": "Mrs Macquarie's Chair + 歌剧院中文导览",
       "status": "必去",
-      "note": "中文导览后步行前往，停留 45–60 分钟",
+      "note": "清晨先走海港机位与植物园，09:30 参加已订中文导览",
       "resource": {
-        "id": "the-rocks-market-official",
-        "title": "The Rocks Markets",
-        "type": "official",
-        "url": "https://therocks.com/whats-on/market-overview",
+        "id": "d12-harbour-morning-walk-map",
+        "title": "Mrs Macquarie's Chair → 植物园 → 歌剧院",
+        "type": "map",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=Mrs+Macquarie%27s+Chair%2C+Mrs+Macquaries+Road%2C+Sydney+NSW+2000&destination=Sydney+Opera+House%2C+Bennelong+Point%2C+Sydney+NSW+2000&travelmode=walking&waypoints=Royal+Botanic+Garden+Sydney%2C+Mrs+Macquaries+Road%2C+Sydney+NSW+2000",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "The Rocks 官方市场页"
+        "sourceNote": "Google Maps · D12 早晨单向步行"
       }
     },
     {

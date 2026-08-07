@@ -28,11 +28,11 @@ const expectedTitles = {
   d8: "深入丹翠：雨林、河流与 Cape Tribulation",
   d9: "从雨林小镇到高原瀑布：Kuranda、Skybury 与 Millaa Millaa",
   d10: "慢享凯恩斯：Rusty's Market 与 Palm Cove",
-  d11: "初到悉尼：Barangaroo、The Rocks 与海港夜景",
-  d12: "悉尼经典一日：歌剧院、The Rocks Markets、植物园与 QVB",
-  d13: "悉尼南海岸：Sea Cliff Bridge、Kiama 与 Gerringong",
-  d14: "动物园到海岸：Taronga、Bondi 与 Totti's",
-  d15: "悉尼告别日：可选 Manly、最后采购与 Cafe Sydney",
+  d11: "从热带飞抵海港：Barangaroo、The Rocks 与 Circular Quay",
+  d12: "海港晨光与城市经典：Mrs Macquarie's Chair、歌剧院与 QVB",
+  d13: "动物园与海岸：Taronga、Bondi 与 Totti's",
+  d14: "南海岸环线：Sea Cliff Bridge、Kiama 与 Kangaroo Valley",
+  d15: "悉尼告别日：Bondi 补位、Manly 备选与 Cafe Sydney",
   d16: "告别澳洲：TRS 退税与返程",
 };
 
@@ -48,11 +48,11 @@ const expectedFocus = {
   d8: "清晨从酒店出发，沿丹翠河进入雨林，在 Cape Tribulation 看雨林与海相接，傍晚回城后简单用餐。",
   d9: "从 Cairns 沿 Kuranda Range 北上，经过 Kuranda 与 Mareeba，在 Skybury 看咖啡园景并享用早午餐；下午走过 Lake Eacham、Yungaburra 与 Curtain Fig Tree，最后以 Millaa Millaa Falls 收尾。",
   d10: "上午逛 Rusty's Market，午间回酒店洗衣打包，下午沿 Palm Cove 海滨与 Jetty 散步，在蓝调时刻用一顿早晚餐收尾。",
-  d11: "飞抵悉尼后休息片刻，沿 Barangaroo、The Rocks 走到 Circular Quay 夜景。",
-  d12: "从歌剧院中文导览出发，逛 The Rocks Markets，再沿植物园走到经典海港机位与 QVB。",
-  d13: "沿 Grand Pacific Drive 南下，经过 Sea Cliff Bridge、Kiama 与 Gerringong，视情况延伸袋鼠谷。",
-  d14: "搭渡轮看 Taronga 的澳洲动物，下午走 Bondi 海岸，晚上在 Totti's 用餐。",
-  d15: "上午悠闲安排 Manly 或 CBD，下午采购并整理行李，傍晚在 Cafe Sydney 告别。",
+  d11: "清晨从凯恩斯飞抵悉尼，午后充分休息，再沿 Barangaroo 与 Wulugul Walk 走进 The Rocks，在 Circular Quay 看日落与蓝调。",
+  d12: "清晨先到 Mrs Macquarie's Chair 拍下歌剧院与海港桥同框，再穿过皇家植物园参加 09:30 中文导览，午后在 QVB 与 CBD 从容逛街。",
+  d13: "上午搭 F2 渡轮前往 Taronga；下午视天气直接前往 Bondi，若风雨仍大则回酒店休息，17:30 到 Totti's Bondi 用餐。",
+  d14: "08:00 取车后沿海岸南下，经过 Bald Hill、Sea Cliff Bridge、Kiama 与 Werri Beach，再由 Kangaroo Valley 内陆返回悉尼。",
+  d15: "若 8/10 未完成 Bondi，上午优先补走 Bondi；若已完成且天气与体力都好，再选 Manly，否则留在 CBD 慢慢收尾。下午采购、整理 TRS，17:30 在 Cafe Sydney 告别。",
   d16: "完成 TRS 与机场手续，带着旅程回家。",
 };
 
@@ -250,8 +250,8 @@ describe("itinerary data", () => {
         { rank: 2, dayId: "d4", title: "The Redwoods Otways", status: "必去" },
         { rank: 3, dayId: "d2", title: "Fitzroy", status: "必去" },
         { rank: 4, dayId: "d10", title: "Palm Cove", status: "必去" },
-        { rank: 5, dayId: "d11", title: "Barangaroo Reserve", status: "必去" },
-        { rank: 6, dayId: "d12", title: "The Rocks Markets", status: "必去" },
+        { rank: 5, dayId: "d11", title: "Barangaroo 至 Circular Quay 海港步行", status: "必去" },
+        { rank: 6, dayId: "d12", title: "Mrs Macquarie's Chair + 歌剧院中文导览", status: "必去" },
         { rank: 7, dayId: "d4", title: "The Razorback", status: "必去" },
       ],
     );
@@ -371,21 +371,21 @@ describe("itinerary data", () => {
     assert.doesNotMatch(d4Text, /删减顺序|优先保留|可缩|执行规则|开发|调整为|版本/);
   });
 
-  it("keeps every day except D9 stable during the Atherton update", () => {
-    const unchangedDays = itinerary.days.filter((day) => day.id !== "d9");
+  it("keeps unaffected days stable during the D11-D15 Sydney update", () => {
+    const unchangedDays = itinerary.days.filter((day) => !["d9", "d11", "d12", "d13", "d14", "d15"].includes(day.id));
     const overview = {
       trip: itinerary.trip,
       stages: itinerary.stages,
-      priorities: itinerary.priorities,
+      priorities: itinerary.priorities.filter((priority) => !["d11", "d12"].includes(priority.dayId)),
     };
 
     assert.equal(
       createHash("sha256").update(JSON.stringify(unchangedDays)).digest("hex"),
-      "6ebdb986f8993cf16d854235e33862529206ca3ce51fc01d379867236bbe5a12",
+      "25ec30b7f916a7dc85f9e808e7b0c22aa2979e7b5bc1ca284274c0d615d47035",
     );
     assert.equal(
       createHash("sha256").update(JSON.stringify(overview)).digest("hex"),
-      "13867e90f78e913045981de3cdf6ec6031869183c28613a76daab45a8c07c895",
+      "9dafa8bab31098b004dca08d125128b7becf54f8c725072bbd4917d094678377",
     );
   });
 
@@ -517,8 +517,8 @@ describe("itinerary data", () => {
     }
   });
 
-  it("adds only the Cairns resources required by the new stage", () => {
-    const newResourceIds = new Set([
+  it("keeps resources outside the Cairns and Sydney updates stable", () => {
+    const changedResourceIds = new Set([
       "cairns-lagoon-closure-official",
       "cairns-botanic-gardens-map",
       "cairns-botanic-gardens-official",
@@ -557,11 +557,28 @@ describe("itinerary data", () => {
       "rustys-official",
       "williams-esplanade-map",
       "palm-cove-jetty-map",
+      "d11-harbour-walk-map",
+      "d12-hotel-to-mrs-map",
+      "d12-harbour-morning-walk-map",
+      "d13-taronga-to-bondi-map",
+      "d15-bondi-fallback-route-map",
+      "sixt-sydney-city-map",
+      "sixt-sydney-city-official",
+      "d14-hotel-to-sixt-map",
+      "d14-south-coast-loop-map",
+      "d14-coastal-route-map",
+      "d14-inland-return-map",
+      "bald-hill-map",
+      "sea-cliff-map",
+      "kiama-map",
+      "kiama-lighthouse-map",
+      "gerringong-map",
+      "hampden-bridge-map",
     ]);
-    const unchangedResources = itinerary.resources.filter((resource) => !newResourceIds.has(resource.id));
+    const unchangedResources = itinerary.resources.filter((resource) => !changedResourceIds.has(resource.id));
     assert.equal(
       createHash("sha256").update(JSON.stringify(unchangedResources)).digest("hex"),
-      "66d55644da1d35176312aaf12b141de7e8fc1e0053178ae7e1f62f87d24844d1",
+      "c4807496d3942183f4d57817829d98010dc7c5652f86627d020a51fa4375bb66",
     );
   });
 
@@ -644,7 +661,7 @@ describe("itinerary data", () => {
     assert.match(d3.coverImageAlt, /Lorne|Apollo Bay|灯塔|大洋路早段/);
   });
 
-  it("uses the fixed South Coast plan on D13 without Blue Mountains leftovers", () => {
+  it("uses Taronga, the weather-triggered Bondi leg, and Totti's on D13", () => {
     const d13 = itinerary.days.find((day) => day.id === "d13");
     const d13Text = [
       d13.title,
@@ -652,18 +669,20 @@ describe("itinerary data", () => {
       ...d13.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`),
     ].join(" ");
 
-    assert.equal(d13.coverImageUrl, "/itinerary/d13-south-coast-kiama-gerringong.png");
-    assert.match(d13.coverImageAlt, /南海岸|Kiama|Gerringong/);
-    assert.match(d13.transport, /自驾/);
-    assert.match(d13.primaryResource.title, /Sea Cliff Bridge/);
-    assert.match(d13Text, /Kiama/);
-    assert.match(d13Text, /Gerringong/);
-    assert.match(d13Text, /Kangaroo Valley/);
-    assert.match(d13Text, /可选|允许|视时间|判断/);
-    assert.doesNotMatch(d13Text, /Blue Mountains|蓝山|Scenic World/i);
+    assert.equal(d13.coverImageUrl, "/itinerary/d14-taronga-bondi.png");
+    assert.match(d13.coverImageAlt, /Taronga|Bondi|悉尼港/);
+    assert.match(d13.primaryResource.title, /Taronga Zoo/);
+    assert.match(d13.ticketResource.title, /Taronga Zoo/);
+    assert.match(d13Text, /F2|公共渡轮|Ferry/);
+    assert.match(d13Text, /Taronga.*(?:正门|上门).*Bondi|Bondi.*天气/s);
+    assert.match(d13Text, /风雨|天气/);
+    assert.match(d13Text, /Tamarama/);
+    assert.match(d13Text, /Totti/);
+    assert.match(d13Text, /17:30/);
+    assert.doesNotMatch(d13Text, /Captain Cook|观鲸|whale/i);
   });
 
-  it("uses Taronga and Bondi on D14 without whale-watching leftovers", () => {
+  it("uses the booked full South Coast loop on D14", () => {
     const d14 = itinerary.days.find((day) => day.id === "d14");
     const d14Text = [
       d14.title,
@@ -671,26 +690,32 @@ describe("itinerary data", () => {
       ...d14.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`),
     ].join(" ");
 
-    assert.equal(d14.coverImageUrl, "/itinerary/d14-taronga-bondi.png");
-    assert.match(d14.coverImageAlt, /Taronga|Bondi|悉尼港/);
-    assert.match(d14.primaryResource.title, /Taronga Zoo/);
-    assert.match(d14.ticketResource.title, /Taronga Zoo/);
-    assert.match(d14Text, /Taronga Zoo/);
-    assert.match(d14Text, /F2|公共渡轮|Ferry/);
-    assert.match(d14Text, /Bondi/);
-    assert.match(d14Text, /Tamarama/);
-    assert.match(d14Text, /Totti/);
-    assert.match(d14Text, /18:30/);
-    assert.doesNotMatch(d14Text, /Captain Cook|观鲸|whale/i);
+    assert.equal(d14.coverImageUrl, "/itinerary/d13-south-coast-kiama-gerringong.png");
+    assert.match(d14.coverImageAlt, /南海岸|Kiama|Kangaroo Valley/);
+    assert.match(d14.transport, /SIXT|自驾/);
+    assert.match(d14.primaryResource.title, /完整环线|南海岸环线/);
+    assert.match(d14.primaryResource.url, /waypoints=.*Bald.*Sea.*Kiama.*Werri.*Hampden/i);
+    assert.match(d14Text, /SIXT Sydney City/);
+    assert.match(d14Text, /Bald Hill/);
+    assert.match(d14Text, /Sea Cliff Bridge/);
+    assert.match(d14Text, /Kiama/);
+    assert.match(d14Text, /Werri Beach/);
+    assert.match(d14Text, /Kangaroo Valley/);
+    assert.match(d14Text, /Hampden Bridge/);
+    assert.match(d14Text, /14:00/);
+    assert.match(d14Text, /15:30/);
+    assert.match(d14Text, /18:50/);
+    assert.equal(d14.blocks.some((block) => /Wollongong|Fitzroy Falls/.test(block.place)), false);
+    assert.doesNotMatch(d14Text, /可选|视情况延伸/);
   });
 
-  it("does not let a cancelled same-day activity override the D14 Taronga ticket", () => {
-    const d14 = itinerary.days.find((day) => day.id === "d14");
-    const docket = buildDayDocket(d14, [{
+  it("does not let a cancelled same-day activity override the D13 Taronga ticket", () => {
+    const d13 = itinerary.days.find((day) => day.id === "d13");
+    const docket = buildDayDocket(d13, [{
       id: "cancelled-whale-tour",
       category: "活动",
       item: "Captain Cook Whale Watching",
-      date: d14.date,
+      date: d13.date,
       currency: "AUD",
       amount: 340.2,
       status: "confirmed",
@@ -702,7 +727,7 @@ describe("itinerary data", () => {
     assert.doesNotMatch(`${ticket.title} ${ticket.detail}`, /Captain Cook|观鲸|whale/i);
   });
 
-  it("keeps Manly optional on D15 before shopping and Cafe Sydney", () => {
+  it("uses Bondi as the D15 fallback before optional Manly, shopping, and Cafe Sydney", () => {
     const d15 = itinerary.days.find((day) => day.id === "d15");
     const d15Text = [
       d15.title,
@@ -711,12 +736,13 @@ describe("itinerary data", () => {
     ].join(" ");
 
     assert.equal(d15.coverImageUrl, "/itinerary/d15-manly-flex-farewell.png");
-    assert.match(d15.coverImageAlt, /Manly|悉尼港|告别/);
-    assert.match(d15.transport, /可选/);
+    assert.match(d15.coverImageAlt, /海岸|悉尼港|告别/);
+    assert.match(d15.transport, /F1 Ferry.*(?:可选|仅在选择)/);
     assert.match(d15.primaryResource.title, /QVB/);
     assert.equal(d15.ticketResource.id, "no-fixed-ticket");
     assert.match(d15Text, /Manly/);
-    assert.match(d15Text, /状态|体力|可选/);
+    assert.match(d15Text, /8\/10.*未完成.*Bondi|Bondi.*补/);
+    assert.match(d15Text, /已完成.*Manly|Manly.*备选/);
     assert.match(d15Text, /QVB/);
     assert.match(d15Text, /Chemist Warehouse/);
     assert.match(d15Text, /TRS/);
@@ -725,16 +751,16 @@ describe("itinerary data", () => {
     assert.doesNotMatch(d15Text, /Taronga Zoo/);
   });
 
-  it("keeps Totti's on D14 and Cafe Sydney on D15 in the meal plan", () => {
-    const d14Text = itinerary.days.find((day) => day.id === "d14").blocks
+  it("keeps Totti's on D13 and Cafe Sydney on D15 in the meal plan", () => {
+    const d13Text = itinerary.days.find((day) => day.id === "d13").blocks
       .map((block) => `${block.place} ${block.activity} ${block.tip}`)
       .join(" ");
     const d15Text = itinerary.days.find((day) => day.id === "d15").blocks
       .map((block) => `${block.place} ${block.activity} ${block.tip}`)
       .join(" ");
 
-    assert.match(d14Text, /Totti/);
-    assert.match(d14Text, /Bondi/);
+    assert.match(d13Text, /Totti/);
+    assert.match(d13Text, /Bondi/);
     assert.match(d15Text, /Cafe Sydney/);
   });
 
@@ -755,31 +781,38 @@ describe("itinerary data", () => {
     assert.match(mealBlock.activity, /QVM Winter Night Market/);
   });
 
-  it("adds The Rocks Markets after the D12 Opera House tour", () => {
+  it("uses a rested D11 harbor walk and puts D12 outdoor stops before the Opera House tour", () => {
+    const d11 = itinerary.days.find((day) => day.id === "d11");
     const d12 = itinerary.days.find((day) => day.id === "d12");
+    const d11Text = [d11.focus, d11.leaveBy, ...d11.blocks.flatMap((block) => [block.period, block.place, block.activity, block.tip])].join(" ");
+    const d12Text = [d12.focus, d12.leaveBy, ...d12.blocks.flatMap((block) => [block.period, block.place, block.activity, block.tip])].join(" ");
+    const restIndex = d11.blocks.findIndex((block) => block.place === "酒店" && /补觉/.test(block.activity));
+    const barangarooIndex = d11.blocks.findIndex((block) => /Barangaroo Reserve \/ Wulugul Walk/.test(block.place));
+    const rocksIndex = d11.blocks.findIndex((block) => block.place === "The Rocks");
+    const quayIndex = d11.blocks.findIndex((block) => block.place === "Circular Quay");
+    const chairIndex = d12.blocks.findIndex((block) => block.place === "Mrs Macquarie's Chair");
+    const gardenIndex = d12.blocks.findIndex((block) => block.place === "Royal Botanic Garden");
     const tourIndex = d12.blocks.findIndex((block) => /中文内部导览/.test(block.activity));
-    const walkIndex = d12.blocks.findIndex((block) => /Opera House → The Rocks/.test(block.place));
-    const marketIndex = d12.blocks.findIndex((block) => block.place === "The Rocks Markets");
-    const marketBlock = d12.blocks[marketIndex];
-    const mealBlock = d12.blocks.find((block) => block.period === "饮食" && block.place === "饮食安排");
-    const officialResource = marketBlock?.resources.find((resource) => resource.type === "official");
 
-    assert.match(d12.title, /The Rocks Markets/);
-    assert.match(d12.focus, /The Rocks Markets/);
-    assert.equal(walkIndex, tourIndex + 1);
-    assert.equal(marketIndex, walkIndex + 1);
-    assert.match(d12.blocks[walkIndex].activity, /导览结束后.*步行前往/);
-    assert.match(marketBlock.tip, /10:00–17:00/);
-    assert.match(marketBlock.tip, /45–60 分钟/);
-    assert.match(marketBlock.highlight, /悉尼老城区/);
-    assert.match(marketBlock.highlight, /手作市集/);
-    assert.match(marketBlock.highlight, /Harbour Bridge/);
-    assert.match(marketBlock.highlight, /本地周末氛围/);
-    assert.equal(
-      officialResource?.url,
-      "https://therocks.com/whats-on/market-overview",
-    );
-    assert.match(mealBlock.activity, /The Rocks Markets/);
+    assert.match(d11Text, /06:45–09:45/);
+    assert.match(d11Text, /12:30–14:45/);
+    assert.match(d11Text, /17:00–17:45/);
+    assert.ok(restIndex < barangarooIndex);
+    assert.ok(barangarooIndex < rocksIndex);
+    assert.ok(rocksIndex < quayIndex);
+    assert.equal(d11.primaryResource.id, "d11-harbour-walk-map");
+    assert.match(d11.primaryResource.url, /google\.com\/maps\/dir/);
+
+    assert.ok(chairIndex < gardenIndex);
+    assert.ok(gardenIndex < tourIndex);
+    assert.match(d12Text, /07:30–07:45/);
+    assert.match(d12Text, /09:30–10:30/);
+    assert.match(d12Text, /12:15–15:30/);
+    assert.match(d12Text, /明显下雨.*歌剧院/);
+    assert.match(d12Text, /QVB/);
+    assert.match(d12Text, /Westfield/);
+    assert.equal(d12.primaryResource.id, "d12-harbour-morning-walk-map");
+    assert.doesNotMatch(d12Text, /The Rocks Markets|IMAX|Odyssey/);
   });
 
   it("includes a daily meal-map block from D1 through D16", () => {
@@ -850,7 +883,7 @@ describe("itinerary data", () => {
   it("links dinner actions to the dinner plan instead of breakfast or lunch resources", () => {
     const actionsFor = (dayId) => collectMapActions(itinerary.days.find((day) => day.id === dayId));
     assert.equal(actionsFor("d5").some((action) => action.label === "打开晚餐"), false);
-    assert.match(actionsFor("d14").find((action) => action.label === "打开晚餐").title, /Totti/);
+    assert.match(actionsFor("d13").find((action) => action.label === "打开晚餐").title, /Totti/);
     assert.match(actionsFor("d15").find((action) => action.label === "打开晚餐").title, /Cafe Sydney/);
     assert.equal(actionsFor("d16").find((action) => action.label === "打开第一站").title, "悉尼机场");
   });
@@ -864,7 +897,7 @@ describe("itinerary data", () => {
   });
 
   it("parses daily meal plans into breakfast, lunch, and dinner", () => {
-    const meals = parseMealPlan(itinerary.days.find((item) => item.id === "d14"));
+    const meals = parseMealPlan(itinerary.days.find((item) => item.id === "d13"));
 
     assert.match(meals.dinner, /Totti|Icebergs|Bondi/);
     assert.ok(meals.breakfast.length > 0);

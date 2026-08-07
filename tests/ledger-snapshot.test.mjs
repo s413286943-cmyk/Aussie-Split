@@ -98,7 +98,7 @@ describe("ledger snapshot boundary", () => {
     );
   });
 
-  it("keeps the workbook plan aligned with the current D1-D2 and D13-D15 decisions", () => {
+  it("keeps the workbook plan aligned with the current D1-D2 and D11-D15 decisions", () => {
     const workbook = JSON.parse(runPython([
       "scripts/itinerary_excel.py",
       "read_finance",
@@ -111,6 +111,8 @@ describe("ledger snapshot boundary", () => {
     });
     const d1 = workbook.foodMap.find((row) => row.day.startsWith("D1 "));
     const d2 = workbook.foodMap.find((row) => row.day.startsWith("D2 "));
+    const d11 = workbook.foodMap.find((row) => row.day.startsWith("D11 "));
+    const d12 = workbook.foodMap.find((row) => row.day.startsWith("D12 "));
     const d13 = workbook.foodMap.find((row) => row.day.startsWith("D13 "));
     const d14 = workbook.foodMap.find((row) => row.day.startsWith("D14 "));
     const d15 = workbook.foodMap.find((row) => row.day.startsWith("D15 "));
@@ -122,14 +124,24 @@ describe("ledger snapshot boundary", () => {
     assert.doesNotMatch(`${d1.dinner} ${d1.note}`, /Carlton|Point Ormond/);
     assert.match(`${d2.dinner} ${d2.note}`, /Fitzroy/);
     assert.match(`${d2.dinner} ${d2.note}`, /11:30[–-]17:00/);
-    assert.match(`${d13.day} ${d13.note}`, /南海岸|Sea Cliff Bridge/);
-    assert.doesNotMatch(`${d13.day} ${d13.note}`, /蓝山|Blue Mountains/);
-    assert.match(`${d14.day} ${d14.dinner} ${d14.note}`, /Taronga/);
-    assert.match(`${d14.day} ${d14.dinner} ${d14.note}`, /Totti/);
-    assert.doesNotMatch(`${d14.day} ${d14.note}`, /观鲸|whale/i);
+    assert.match(`${d11.day} ${d11.note}`, /Barangaroo/);
+    assert.match(`${d11.day} ${d11.note}`, /Circular Quay/);
+    assert.match(`${d11.day} ${d11.note}`, /日落/);
+    assert.match(`${d12.day} ${d12.note}`, /Mrs Macquarie/);
+    assert.match(`${d12.day} ${d12.note}`, /09:30/);
+    assert.match(`${d12.day} ${d12.note}`, /QVB|Westfield/);
+    assert.doesNotMatch(`${d12.day} ${d12.note}`, /The Rocks Markets|IMAX|Odyssey/);
+    assert.match(`${d13.day} ${d13.dinner} ${d13.note}`, /Taronga/);
+    assert.match(`${d13.day} ${d13.dinner} ${d13.note}`, /Totti/);
+    assert.match(`${d13.day} ${d13.dinner} ${d13.note}`, /17:30/);
+    assert.doesNotMatch(`${d13.day} ${d13.note}`, /观鲸|whale/i);
+    assert.match(`${d14.day} ${d14.note}`, /南海岸|Sea Cliff Bridge/);
+    assert.match(`${d14.day} ${d14.note}`, /Kangaroo Valley|袋鼠谷/);
+    assert.doesNotMatch(`${d14.day} ${d14.note}`, /蓝山|Blue Mountains|可选/);
+    assert.match(`${d15.day} ${d15.note}`, /Bondi/);
     assert.match(`${d15.day} ${d15.note}`, /Manly/);
     assert.match(`${d15.dinner} ${d15.note}`, /Cafe Sydney/);
-    assert.match(`${taronga.note}`, /D14/);
+    assert.match(`${taronga.note}`, /D13/);
     assert.match(`${taronga.note}`, /F2/);
     assert.match(`${activities.note}`, /Puffing Billy/);
     assert.doesNotMatch(planText, /Captain Cook|出海观鲸/);

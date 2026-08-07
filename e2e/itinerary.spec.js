@@ -153,6 +153,55 @@ test("the Cairns stage renders its booked times, Kuranda highland drive, and Pal
   await expect(d10.locator(".timeline")).not.toContainText("Esplanade Lagoon");
 });
 
+test("the Sydney stage renders the revised D11-D15 plan", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/itinerary");
+
+  await page.getByRole("region", { name: "当前行程阶段" })
+    .getByRole("tab", { name: "悉尼 + 南海岸" })
+    .click();
+
+  const d11 = page.locator("#d11");
+  await d11.getByText("查看当天安排", { exact: true }).click();
+  await expect(d11.locator("h3")).toHaveText("从热带飞抵海港：Barangaroo、The Rocks 与 Circular Quay");
+  await expect(d11.locator(".timeline")).toContainText("12:30–14:45");
+  await expect(d11.locator(".timeline")).toContainText("Barangaroo Reserve / Wulugul Walk");
+  await expect(d11.locator(".timeline")).toContainText("17:00–17:45");
+
+  const d12 = page.locator("#d12");
+  await d12.getByText("查看当天安排", { exact: true }).click();
+  await expect(d12.locator("h3")).toHaveText("海港晨光与城市经典：Mrs Macquarie's Chair、歌剧院与 QVB");
+  await expect(d12.locator(".timeline")).toContainText("Mrs Macquarie's Chair");
+  await expect(d12.locator(".timeline")).toContainText("09:30–10:30");
+  await expect(d12.locator(".timeline")).toContainText("QVB / Westfield / CBD");
+  await expect(d12.locator(".timeline")).not.toContainText("The Rocks Markets");
+  await expect(d12.locator(".timeline")).not.toContainText("IMAX");
+
+  const d13 = page.locator("#d13");
+  await d13.getByText("查看当天安排", { exact: true }).click();
+  await expect(d13.locator("h3")).toHaveText("动物园与海岸：Taronga、Bondi 与 Totti's");
+  await expect(d13.locator(".timeline")).toContainText("Taronga Zoo 正门");
+  await expect(d13.locator(".timeline")).toContainText("天气好 · 14:30–16:50");
+  await expect(d13.locator(".timeline")).toContainText("Totti's Bondi 17:30（已订）");
+
+  const d14 = page.locator("#d14");
+  await d14.getByText("查看当天安排", { exact: true }).click();
+  await expect(d14.locator("h3")).toHaveText("南海岸环线：Sea Cliff Bridge、Kiama 与 Kangaroo Valley");
+  await expect(d14.locator(".timeline")).toContainText("SIXT Sydney City");
+  await expect(d14.locator(".timeline")).toContainText("Werri Beach");
+  await expect(d14.locator(".timeline")).toContainText("15:30 前驶离袋鼠谷");
+  await expect(d14.locator(".timeline")).toContainText("18:50 前完成");
+  await expect(d14.getByRole("region", { name: "每日地图快捷入口" }).getByRole("link", { name: "打开第一站" })).toHaveAttribute("href", /waypoints=.*Bald.*Sea.*Kiama.*Werri.*Hampden/i);
+
+  const d15 = page.locator("#d15");
+  await d15.getByText("查看当天安排", { exact: true }).click();
+  await expect(d15.locator("h3")).toHaveText("悉尼告别日：Bondi 补位、Manly 备选与 Cafe Sydney");
+  await expect(d15.locator(".timeline")).toContainText("若 8/10 没去成 Bondi");
+  await expect(d15.locator(".timeline")).toContainText("Manly 不再安排");
+  await expect(d15.locator(".timeline")).toContainText("Cafe Sydney");
+});
+
 test("D3 renders the airport luggage handoff, Torquay shop, and coastal drive in order", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -237,7 +286,7 @@ test("mobile direct D15 link keeps the offscreen stage inside the viewport", asy
 
   const d15 = page.locator("#d15");
   await expect(d15).toBeAttached();
-  await expect(d15.locator("h3")).toHaveText("悉尼告别日：可选 Manly、最后采购与 Cafe Sydney");
+  await expect(d15.locator("h3")).toHaveText("悉尼告别日：Bondi 补位、Manly 备选与 Cafe Sydney");
   const bounds = await d15.evaluate((element) => {
     const rect = element.getBoundingClientRect();
     return { left: rect.left, right: rect.right, viewport: window.innerWidth };
