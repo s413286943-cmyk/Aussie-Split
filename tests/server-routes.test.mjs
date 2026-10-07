@@ -184,9 +184,9 @@ function createSupabaseFetch(requestedUrls) {
       return Response.json([
         expenseRow("expense-visible", null),
         expenseRow("expense-deleted", "2026-07-10T00:00:01.000Z"),
-      ]);
+      ], { headers: { "Content-Range": "0-1/2" } });
     }
-    if (requestedUrl.includes("/attachments?")) return Response.json([]);
+    if (requestedUrl.includes("/attachments?")) return Response.json([], { headers: { "Content-Range": "*/0" } });
     if (requestedUrl.includes("/expense_activity?")) {
       return Response.json([{
         id: "activity-one",

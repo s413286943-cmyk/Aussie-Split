@@ -81,10 +81,11 @@ describe("server-only Supabase transport", () => {
             updated_at: "2026-07-10T00:00:01.000Z",
             deleted_at: "2026-07-10T00:00:01.000Z",
           },
-        ]);
+        ], { headers: { "Content-Range": "0-1/2" } });
       }
       return Response.json([
         {
+          id: "attachment-id",
           expense_id: "expense-visible",
           receipt_id: "receipt-id",
           original_name: "receipt.jpg",
@@ -94,7 +95,7 @@ describe("server-only Supabase transport", () => {
           finalized_at: "2026-07-10T00:00:02.000Z",
           created_at: "2026-07-10T00:00:02.000Z",
         },
-      ]);
+      ], { headers: { "Content-Range": "0-0/1" } });
     };
 
     const expenses = await fetchLedgerSnapshot();
@@ -126,7 +127,7 @@ describe("server-only Supabase transport", () => {
     assert.equal(expenses[1].receiptId, "");
     assert.equal(expenses[1].attachmentStatus, "none");
     assert.equal(calls.length, 2);
-    assert.equal(calls.some((call) => /\/expenses\?select=\*&order=date\.asc$/.test(call.url)), true);
+    assert.equal(calls.some((call) => /\/expenses\?select=\*&order=date\.asc,id\.asc&limit=500&offset=0$/.test(call.url)), true);
     const attachmentCall = calls.find((call) => call.url.includes("/attachments?"));
     assert.match(attachmentCall.url, /finalized_at=not\.is\.null/);
     assert.match(attachmentCall.url, /deleted_at=is\.null/);
@@ -135,8 +136,68 @@ describe("server-only Supabase transport", () => {
       assert.equal(call.options.headers.apikey, "service-role-test-secret");
       assert.equal(call.options.headers.Authorization, "Bearer service-role-test-secret");
       assert.equal(call.options.cache, "no-store");
+      assert.equal(call.options.headers.Prefer, "count=exact");
     }
   });
+
+  it("reads beyond 1,000 expenses and attachments even when the API cap is smaller than the requested page", async () => {
+    const expenseRows = Array.from({ length: 1002 }, (_, i) => ({
+      id: `expense-${i}`, amount: "10", date: "2026-08-01",
+      mutation_version: "1780000000000-000001-browser-a",
+      deleted_at: i === 1001 ? "2026-07-10T00:00:01.000Z" : null,
+    }));
+    const attachmentRows = expenseRows.map((row, i) => ({
+      id: `attachment-${i}`, expense_id: row.id, receipt_id: `receipt-${i}`,
+      original_name: `${i}.jpg`, storage_path: `receipts/${i}.jpg`,
+    }));
+    const offsets = { expenses: [], attachments: [] };
+    globalThis.fetch = async (url, options) => {
+      const parsed = new URL(url);
+      const table = parsed.pathname.endsWith("expenses") ? "expenses" : "attachments";
+      const source = table === "expenses" ? expenseRows : attachmentRows;
+      const offset = Number(parsed.searchParams.get("offset"));
+      const cap = table === "expenses" ? 127 : 63;
+      const page = source.slice(offset, offset + cap);
+      offsets[table].push(offset);
+      assert.equal(options.headers.Prefer, "count=exact");
+      assert.match(parsed.searchParams.get("order"), /,id\.(asc|desc)$/);
+      return Response.json(page, {
+        status: offset + page.length < source.length ? 206 : 200,
+        headers: { "Content-Range": `${offset}-${offset + page.length - 1}/${source.length}` },
+      });
+    };
+    const expenses = await fetchLedgerSnapshot();
+    assert.equal(expenses.length, 1002);
+    assert.equal(expenses[1001].deletedAt, "2026-07-10T00:00:01.000Z");
+    assert.equal(expenses.every((expense, i) => expense.receiptId === `receipt-${i}`), true);
+    assert.equal(offsets.expenses[1], 127);
+    assert.equal(offsets.attachments[1], 63);
+  });
+
+  it("accepts an empty complete snapshot", async () => {
+    globalThis.fetch = async () => Response.json([], { headers: { "Content-Range": "*/0" } });
+    assert.deepEqual(await fetchLedgerSnapshot(), []);
+  });
+
+  for (const problem of ["missing range", "empty early page", "changed total", "repeated id", "wrong offset", "later failure"]) {
+    it(`rejects an incomplete snapshot: ${problem}`, async () => {
+      let expenseCalls = 0;
+      globalThis.fetch = async (url) => {
+        if (String(url).includes("/attachments?")) {
+          return Response.json([], { headers: { "Content-Range": "*/0" } });
+        }
+        expenseCalls++;
+        if (problem === "missing range") return Response.json([{ id: "expense-one" }]);
+        if (expenseCalls === 1) return Response.json([{ id: "expense-one" }], { headers: { "Content-Range": "0-0/2" } });
+        if (problem === "later failure") return Response.json({ message: "unavailable" }, { status: 503 });
+        if (problem === "empty early page") return Response.json([], { headers: { "Content-Range": "*/2" } });
+        return Response.json([{ id: problem === "repeated id" ? "expense-one" : "expense-two" }], {
+          headers: { "Content-Range": problem === "changed total" ? "1-1/3" : problem === "wrong offset" ? "0-0/2" : "1-1/2" },
+        });
+      };
+      await assert.rejects(() => fetchLedgerSnapshot(), SupabaseUpstreamError);
+    });
+  }
 
   it("drains an operation batch through the atomic RPC and preserves per-op status", async () => {
     const operations = [operation("op-one", "expense-one"), operation("op-two", "expense-two")];
