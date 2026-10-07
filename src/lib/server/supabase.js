@@ -2,6 +2,7 @@ import "server-only";
 
 const MAX_OPERATION_BATCH = 100;
 const MAX_ACTIVITY_LIMIT = 100;
+const SNAPSHOT_PAGE_SIZE = 500;
 
 export class SupabaseUpstreamError extends Error {
   constructor(status = 0, upstreamCode = "", upstreamMessage = "") {
@@ -24,10 +25,10 @@ export class SupabaseConfigurationError extends Error {
 
 export async function fetchLedgerSnapshot() {
   const [expenseRows, attachmentRows] = await Promise.all([
-    supabaseServiceJson("/rest/v1/expenses?select=*&order=date.asc"),
-    supabaseServiceJson(
-      "/rest/v1/attachments?select=expense_id,receipt_id,original_name,mime_type,size_bytes,storage_path,finalized_at,created_at"
-      + "&finalized_at=not.is.null&deleted_at=is.null&order=created_at.desc",
+    fetchAllRows("/rest/v1/expenses?select=*&order=date.asc,id.asc"),
+    fetchAllRows(
+      "/rest/v1/attachments?select=id,expense_id,receipt_id,original_name,mime_type,size_bytes,storage_path,finalized_at,created_at"
+      + "&finalized_at=not.is.null&deleted_at=is.null&order=created_at.desc,id.desc",
     ),
   ]);
   if (!Array.isArray(expenseRows) || !Array.isArray(attachmentRows)) {
@@ -78,6 +79,48 @@ export async function fetchActivity(limit = 50) {
 }
 
 export async function supabaseServiceJson(path, options = {}) {
+  return readResponseJson(await supabaseServiceResponse(path, options));
+}
+
+async function fetchAllRows(path) {
+  const rows = [];
+  const ids = new Set();
+  let total;
+  do {
+    const offset = rows.length;
+    const response = await supabaseServiceResponse(
+      `${path}&limit=${SNAPSHOT_PAGE_SIZE}&offset=${offset}`,
+      { headers: { Prefer: "count=exact" } },
+    );
+    const page = await readResponseJson(response);
+    const range = /^(?:(\d+)-(\d+)|\*)\/(\d+)$/.exec(response.headers.get("Content-Range") || "");
+    if (!Array.isArray(page) || !range) throw new SupabaseUpstreamError(response.status);
+    const count = Number(range[3]);
+    if (
+      !Number.isSafeInteger(count)
+      || (total !== undefined && total !== count)
+      || page.length > SNAPSHOT_PAGE_SIZE
+      || (page.length === 0 && count !== offset)
+      || (page.length > 0 && (
+        Number(range[1]) !== offset
+        || Number(range[2]) !== offset + page.length - 1
+        || offset + page.length > count
+      ))
+    ) throw new SupabaseUpstreamError(response.status);
+    total = count;
+    for (const row of page) {
+      if (!row || typeof row.id !== "string" || ids.has(row.id)) {
+        throw new SupabaseUpstreamError(response.status);
+      }
+      ids.add(row.id);
+      rows.push(row);
+    }
+    // Advance by the actual response size: the API's cap can be lower than our limit.
+  } while (rows.length < total);
+  return rows;
+}
+
+async function supabaseServiceResponse(path, options = {}) {
   const { url, serviceRole } = readSupabaseConfig();
   let response;
   try {
@@ -98,7 +141,10 @@ export async function supabaseServiceJson(path, options = {}) {
     const upstream = await readUpstreamError(response);
     throw new SupabaseUpstreamError(response.status, upstream.code, upstream.message);
   }
+  return response;
+}
 
+async function readResponseJson(response) {
   try {
     return await response.json();
   } catch {
