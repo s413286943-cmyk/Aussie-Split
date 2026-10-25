@@ -23,11 +23,7 @@ describe("expense activity", () => {
       "新增了 ¥100.00 晚餐",
     );
     assert.equal(createActivityEntry("edit", expense).summary, "编辑了 晚餐：金额 ¥100.00");
-    assert.equal(createActivityEntry("confirm", expense).summary, "标记已付 晚餐");
-    assert.equal(
-      createActivityEntry("add", { ...expense, currency: "NZD", amount: 186.5 }, new Date("2027-02-09T06:00:00.000Z")).summary,
-      "新增了 NZ$186.50 晚餐",
-    );
+    assert.equal(createActivityEntry("confirm", expense).summary, "确认了 晚餐");
     assert.equal(createActivityEntry("delete", expense).summary, "删除了 晚餐");
   });
 
@@ -65,19 +61,19 @@ describe("expense activity", () => {
 
     assert.equal(
       createActivityEntry("edit", updated, new Date("2026-07-30T10:00:00.000Z"), original).summary,
-      "编辑了 晚餐：金额 ¥100.00 → ¥128.50，日期 2026-08-01 → 2026-08-02，类别 餐饮 → 交通，状态 待付 → 已付，备注已更新",
+      "编辑了 晚餐：金额 ¥100.00 → ¥128.50，日期 2026-08-01 → 2026-08-02，类别 dining → 交通，付款方 孙张付款 → 胡董付款，状态 待确认 → 已确认，备注已更新",
     );
   });
 
-  it("no longer reports payer or split changes in the two-person ledger", () => {
+  it("describes split-settled changes for edited expenses", () => {
     assert.equal(
       createActivityEntry(
         "edit",
-        { ...expense, splitSettled: true, payer: "them" },
+        { ...expense, splitSettled: true },
         new Date("2026-07-30T10:00:00.000Z"),
-        { ...expense, splitSettled: false, payer: "us" },
+        { ...expense, splitSettled: false },
       ).summary,
-      "编辑了 晚餐：金额 ¥100.00",
+      "编辑了 晚餐：分摊状态 待分摊 → 已分摊",
     );
   });
 
@@ -151,7 +147,9 @@ describe("expense activity", () => {
   it("formats user-facing success feedback after ledger actions", () => {
     assert.equal(actionFeedbackMessage("add", expense), "已保存：晚餐 ¥100.00");
     assert.equal(actionFeedbackMessage("edit", expense), "已保存修改：晚餐");
-    assert.equal(actionFeedbackMessage("confirm", expense), "已标记已付：晚餐");
+    assert.equal(actionFeedbackMessage("confirm", expense), "已确认：晚餐");
     assert.equal(actionFeedbackMessage("delete", expense), "已删除：晚餐");
+    assert.equal(actionFeedbackMessage("split", { ...expense, splitSettled: true }), "已标记已分摊：晚餐");
+    assert.equal(actionFeedbackMessage("split", { ...expense, splitSettled: false }), "已标记待分摊：晚餐");
   });
 });

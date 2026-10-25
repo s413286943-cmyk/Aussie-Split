@@ -143,7 +143,7 @@ describe("authenticated ledger routes", () => {
     const response = await itineraryRoute.GET(authenticatedRequest("https://aussie.example/api/itinerary"));
     const payload = await response.json();
     assert.equal(response.status, 200);
-    assert.equal(payload.itinerary.trip.title, "澳新 2027");
+    assert.equal(payload.itinerary.trip.title, "Aussie Chill");
     assert.equal(payload.itinerary.days.length, 17);
     assert.equal(response.headers.get("Cache-Control"), "private, no-store");
   });

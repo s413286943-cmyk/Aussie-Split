@@ -46,6 +46,23 @@ export function fetchItinerary() {
   return requestJson("/api/itinerary");
 }
 
+export function fetchNz2027Itinerary() {
+  return requestJson("/api/nz2027/itinerary");
+}
+
+export function fetchNz2027Expenses() {
+  return requestJson("/api/nz2027/expenses");
+}
+
+export async function pushNz2027Expenses(records) {
+  const response = await requestJson("/api/nz2027/expenses", {
+    method: "POST",
+    body: JSON.stringify({ records }),
+  });
+  if (!Array.isArray(response.results) || !Array.isArray(response.expenses)) throw new ApiClientError(response.status);
+  return response;
+}
+
 export async function applyLedgerOperations(operations) {
   const response = await requestJson("/api/sync", {
     method: "POST",

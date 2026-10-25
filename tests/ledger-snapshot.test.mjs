@@ -78,7 +78,7 @@ describe("ledger snapshot boundary", () => {
     const workbook = JSON.parse(runPython([
       "scripts/itinerary_excel.py",
       "read_finance",
-      "content/archive/aussie-chill-2026-itinerary.xlsx",
+      "content/aussie-itinerary.xlsx",
     ]));
 
     assert.equal(workbook.snapshot.exportedAt, committedSnapshot.exportedAt);
@@ -102,7 +102,7 @@ describe("ledger snapshot boundary", () => {
     const workbook = JSON.parse(runPython([
       "scripts/itinerary_excel.py",
       "read_finance",
-      "content/archive/aussie-chill-2026-itinerary.xlsx",
+      "content/aussie-itinerary.xlsx",
     ]));
     const planText = JSON.stringify({
       activityPlan: workbook.activityPlan,

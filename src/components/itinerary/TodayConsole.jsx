@@ -41,7 +41,7 @@ export default function TodayConsole({ day, weather, ledgerExpenses, ledgerFresh
       <div className="today-status-grid">
         <article><span>今日交通</span><strong>{command.transport}</strong></article>
         <article><span>最晚出门</span><strong>{command.leaveBy}</strong></article>
-        <article><span>今晚住宿</span><strong>{command.lodging}{day.lodgingStatus === "待订" ? " · 待订" : ""}</strong></article>
+        <article><span>今晚住宿</span><strong>{day.lodging}</strong></article>
         <article>
           <span>{weather?.status === "live" ? "实时天气" : weather?.status === "forecast" ? "天气预报" : "天气参考"}</span>
           <strong>{weather?.summary || day.climateNote}</strong>
@@ -149,7 +149,7 @@ function TodayLedgerDock({ day, summary, freshness }) {
         : "正在核对账本数据";
   const quickActions = [
     { label: "记餐饮", category: "dining", item: `${day.label} 餐饮` },
-    { label: "记油费停车", category: "交通", item: `${day.label} 油费 / 停车` },
+    { label: "记交通", category: "交通", item: `${day.label} 交通` },
     { label: "记门票", category: "活动", item: `${day.label} 活动 / 门票` },
   ];
 
@@ -159,8 +159,8 @@ function TodayLedgerDock({ day, summary, freshness }) {
       <small className="muted" role="status" aria-live="polite">{freshnessText}</small>
       <div className="ledger-dock-metrics">
         <article><span>今日合计</span><strong>{totalText}</strong></article>
-        <article><span>待付</span><strong>{unavailable ? "--" : summary.pendingCount}</strong></article>
-        <article><span>笔数</span><strong>{unavailable ? "--" : summary.count}</strong></article>
+        <article><span>待分摊</span><strong>{unavailable ? "--" : summary.pendingSplitCount}</strong></article>
+        <article><span>待确认</span><strong>{unavailable ? "--" : summary.draftCount}</strong></article>
       </div>
       <div className="ledger-dock-actions">
         {quickActions.map((action) => <Link key={action.label} href={quickExpenseHref(day, action)}>{action.label}</Link>)}
@@ -169,7 +169,7 @@ function TodayLedgerDock({ day, summary, freshness }) {
       <div className="ledger-dock-recent" aria-label="今日已记费用">
         {!unavailable && summary.recentExpenses.length ? summary.recentExpenses.map((expense) => (
           <div key={expense.id}><span>{expense.item}</span><strong>{formatMoney(expense.currency, expense.amount)}</strong></div>
-        )) : <p>{unavailable ? "账本暂不可用，仍可从这里快速记一笔。" : "今天花了钱，从这里快速记一笔。"}</p>}
+        )) : <p>{unavailable ? "账本暂不可用，仍可从这里快速记一笔。" : "今天发生共同费用后，从这里快速记一笔。"}</p>}
       </div>
     </section>
   );
@@ -177,7 +177,7 @@ function TodayLedgerDock({ day, summary, freshness }) {
 
 function formatLedgerTotals(totalsByCurrency) {
   const entries = Object.entries(totalsByCurrency);
-  if (!entries.length) return "NZ$0.00";
+  if (!entries.length) return "¥0.00";
   return entries.map(([currency, amount]) => formatMoney(currency, amount)).join(" / ");
 }
 

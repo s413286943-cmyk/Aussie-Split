@@ -9,14 +9,14 @@ const viewTitles = {
   expenses: "费用明细",
   add: "记一笔",
   activity: "操作记录",
-  summary: "按天 / 城市汇总",
+  settlement: "结算",
 };
 
 const primaryActions = {
   expenses: { href: "/add", label: "记一笔" },
   add: { href: "/expenses", label: "看明细" },
   activity: { href: "/expenses", label: "看明细" },
-  summary: { href: "/expenses?status=draft", label: "看待付" },
+  settlement: { href: "/expenses?split=pending", label: "待分摊" },
 };
 
 export default function LedgerShell({ view, syncState, onSync, notice, children, shellRef }) {
@@ -27,20 +27,20 @@ export default function LedgerShell({ view, syncState, onSync, notice, children,
       {view === "dashboard" ? (
         <header className="hero ledger-hero" data-motion="hero">
           <div className="hero-copy">
-            <span className="hero-kicker">Travel ledger · 澳新 2027</span>
-            <h1>澳新 2027 · 两人账本</h1>
+            <span className="hero-kicker">Travel docket · Australia 2026</span>
+            <h1>Aussie Chill</h1>
             <p>
-              2027.02.01-02.17，悉尼 + 新西兰南北岛。两个人一本账，按原币种（NZD / CNY / AUD）分别累计，不换算合并。
+              2026.07.28-08.13，好友澳洲旅行账本。机票已单独 split，本账本只记录旅行中共同费用，按币种分别结算。
             </p>
           </div>
           <aside className="hero-ticket" aria-label="旅行摘要">
-            <span>旅行票夹</span>
-            <strong>悉尼进 · Auckland 出</strong>
+            <span>共享票夹</span>
+            <strong>墨尔本进 · 悉尼出</strong>
             <p>{syncState}</p>
           </aside>
           <div className="hero-actions">
             <Link className="button primary" href="/add">记一笔</Link>
-            <Link className="button" href="/summary">看汇总</Link>
+            <Link className="button" href="/settlement">看结算</Link>
             <Link className="button" href="/">看行程</Link>
             <SyncButton syncState={syncState} onSync={onSync} disabled={isSyncing} />
           </div>
@@ -63,8 +63,8 @@ function CompactLedgerHeader({ view, syncState, onSync }) {
   return (
     <header className="ledger-compact-header" data-motion="hero">
       <div>
-        <span className="hero-kicker">澳新 2027 · Travel ledger</span>
-        <h1>{viewTitles[view] || "账本"}</h1>
+        <span className="hero-kicker">Aussie Chill · Shared ledger</span>
+        <h1>{viewTitles[view] || "共享账本"}</h1>
         <p>{syncState}</p>
       </div>
       <div className="compact-header-actions">

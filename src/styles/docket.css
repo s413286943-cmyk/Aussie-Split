@@ -1002,7 +1002,7 @@ label {
   }
 
   .nav::before {
-    content: "NZ27";
+    content: "AUS";
     display: flex;
     align-items: center;
     justify-content: center;

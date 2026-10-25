@@ -1,4 +1,3 @@
-import { isSupportedCurrency } from "./currency.js";
 import { validateExpense } from "./expenseValidation.js";
 
 const BACKUP_KIND = "aussie-chill-ledger-backup";
@@ -74,7 +73,7 @@ function normalizeBackupExpense(expense) {
   if (!expense || typeof expense !== "object" || Array.isArray(expense)
     || typeof expense.id !== "string" || !expense.id
     || !validation.valid
-    || !isSupportedCurrency(expense.currency)
+    || !["CNY", "AUD"].includes(expense.currency)
     || !["us", "them"].includes(expense.payer)
     || !["confirmed", "draft"].includes(expense.status)
     || typeof expense.category !== "string" || !expense.category

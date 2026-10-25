@@ -3,7 +3,6 @@ import { describe, it } from "node:test";
 
 import itinerary from "../src/data/itinerary.generated.json" with { type: "json" };
 import {
-  buildDayCarryChecklist,
   buildDayDocket,
   buildDayTimeline,
   buildTodayCommand,
@@ -11,231 +10,338 @@ import {
   collectTodayResources,
   findTodayDay,
   parseMealPlan,
-  summarizeDayLedger,
   travelMode,
 } from "../src/lib/today.js";
 import { readWorkbook } from "../scripts/import-itinerary.mjs";
 
-const dayById = (id) => itinerary.days.find((day) => day.id === id);
+const expectedFocus = {
+  d0: "经香港转机，夜航前往墨尔本。",
+  d1: "落地恢复，轻走 CBD；晚间逛 QVM 冬季夜市。",
+  d2: "蒸汽小火车半日，下午漫步 Fitzroy。",
+  d3: "机场取车轻装上路，沿海开到 Apollo Bay。",
+  d4: "穿过雨林走向十二使徒岩，傍晚抵达 Port Campbell。",
+  d5: "清晨补拍海岸，走内陆线返回墨尔本机场。",
+  d6: "从冬季飞进热带，傍晚漫步凯恩斯海滨。",
+  d7: "全天留给大堡礁外礁平台与海上体验。",
+  d8: "沿丹翠河深入雨林，在 Cape Tribulation 看雨林入海。",
+  d9: "轻量自驾串联火山湖、巨树、高原小镇与瀑布。",
+  d10: "逛 Rusty’s Market，休整后去 Palm Cove 看海。",
+  d11: "飞抵悉尼休息后，经 Barangaroo 走向海港夜景。",
+  d12: "从歌剧院导览一路步行到花园、经典机位与 QVB。",
+  d13: "沿 Grand Pacific Drive 南下，串联海崖桥与南海岸小镇。",
+  d14: "上午看澳洲动物，下午走 Bondi 海岸，晚上吃 Totti’s。",
+  d15: "早上按状态决定 Manly，下午采购整理，傍晚 Cafe Sydney。",
+  d16: "完成 TRS 与机场手续，启程回家。",
+};
 
-describe("2027 New Zealand itinerary data", () => {
-  it("imports D01 through D17 for 2027-02-01 to 2027-02-17 from the Excel workbook", () => {
+describe("itinerary data", () => {
+  it("imports D0 through D16 from the Excel workbook", () => {
     const imported = readWorkbook();
 
     assert.equal(imported.days.length, 17);
-    assert.equal(imported.days[0].label, "D01");
-    assert.equal(imported.days[0].date, "2027-02-01");
-    assert.equal(imported.days[16].label, "D17");
-    assert.equal(imported.days[16].date, "2027-02-17");
-    assert.equal(imported.trip.title, "澳新 2027");
-    assert.equal(imported.trip.travelers, "2位成人");
+    assert.equal(imported.days[0].id, "d0");
+    assert.equal(imported.days[0].date, "2026-07-28");
+    assert.equal(imported.days[16].id, "d16");
+    assert.equal(imported.days[16].date, "2026-08-13");
   });
 
-  it("follows the booked night sequence: Sydney 3, Christchurch 1, Twizel 3, Wānaka 2, Te Anau 2, Queenstown 2, Auckland 2", () => {
-    const nights = itinerary.days.slice(0, 15).map((day) => day.base);
-    assert.deepEqual(nights, [
-      "Sydney", "Sydney", "Sydney",
-      "Christchurch",
-      "Twizel", "Twizel", "Twizel",
-      "Wānaka", "Wānaka",
-      "Te Anau", "Te Anau",
-      "Queenstown", "Queenstown",
-      "Auckland", "Auckland",
-    ]);
-    assert.equal(dayById("d16").lodging, "飞机上");
-    assert.equal(dayById("d17").lodging, "-");
-  });
-
-  it("marks only the Sydney 2/1 night and Auckland nights as still to book", () => {
-    const pending = itinerary.days.filter((day) => day.lodgingStatus === "待订").map((day) => day.id);
-    assert.deepEqual(pending, ["d1", "d14", "d15"]);
-    for (const day of itinerary.days.filter((item) => item.lodgingStatus === "已订")) {
-      assert.equal(day.lodgingResource.type, "map", day.id);
-      assert.equal(day.lodgingResource.title, day.lodging, day.id);
-      assert.match(day.lodgingResource.url, /^https:\/\/www\.google\.com\/maps\//);
-    }
-  });
-
-  it("keeps the two booked activities with their check-in times", () => {
-    const milford = dayById("d11");
-    const hobbiton = dayById("d15");
-    assert.equal(milford.ticketResource.type, "booking");
-    assert.match(milford.leaveBy, /09:30前/);
-    assert.ok(milford.blocks.some((block) => block.period === "09:50–17:00"));
-    assert.equal(hobbiton.ticketResource.type, "booking");
-    assert.match(hobbiton.leaveBy, /13:30前报到/);
-    assert.ok(hobbiton.blocks.some((block) => /13:50/.test(block.period) && /Mandarin/.test(block.activity)));
-  });
-
-  it("attaches the 11 driving guides to the right days with every segment", () => {
-    const drives = itinerary.days.filter((day) => day.drive).map((day) => [day.date.slice(5), day.drive.id, day.drive.legs.length]);
-    assert.deepEqual(drives, [
-      ["02-04", "nav01", 3],
-      ["02-05", "nav02", 5],
-      ["02-06", "nav03", 4],
-      ["02-07", "nav04", 4],
-      ["02-08", "nav05", 4],
-      ["02-09", "nav06", 3],
-      ["02-10", "nav07", 5],
-      ["02-12", "nav08", 4],
-      ["02-13", "nav09", 4],
-      ["02-14", "nav10", 3],
-      ["02-15", "nav11", 5],
-    ]);
-    assert.equal(dayById("d11").drive, null, "Milford uses the booked coach, not a self-drive guide");
-    for (const day of itinerary.days.filter((item) => item.drive)) {
-      assert.ok(day.drive.resources.some((resource) => /google\.com\/maps\/dir\/\?api=1/.test(resource.url)), day.drive.id);
-    }
-    assert.match(dayById("d10").drive.sequence, /Cromwell/);
-  });
-
-  it("puts every day into one of four stages", () => {
-    assert.deepEqual(itinerary.stages.map((stage) => stage.id), ["sydney", "mackenzie", "southern-lakes", "north-return"]);
-    assert.deepEqual(itinerary.stages.flatMap((stage) => stage.dayIds), itinerary.days.map((day) => day.id));
-  });
-
-  it("lists lodgings with free-cancellation deadlines in local time", () => {
-    const deadlines = Object.fromEntries(itinerary.lodgings.map((lodging) => [lodging.name, lodging.freeCancelUntil]));
-    assert.equal(deadlines["山景独立单间公寓Fernhill"], "2027-01-13 15:00");
-    assert.equal(deadlines["Great Southern Hotel Sydney"], "2027-02-01 14:00");
-    assert.equal(deadlines["Metropolitan Motel on Riccarton"], "2027-02-03 14:00");
-    assert.equal(deadlines["Hikuwai Haven 1"], "2027-02-03 16:00");
-    assert.equal(deadlines["Private Ensuite in the Heart of Te Anau"], "2027-02-05 15:00");
-    assert.equal(deadlines["Twizel Holiday Park"], "");
-  });
-
-  it("keeps payment dates and pre-departure todos", () => {
-    const payments = itinerary.todos.filter((todo) => todo.kind === "payment").map((todo) => `${todo.dueDate} ${todo.title}`);
-    assert.deepEqual(payments, [
-      "2027-01-05 Queenstown Fernhill付款 NZ$721.63",
-      "2027-01-26 Wānaka Hikuwai尾款 NZ$346.84",
-      "2027-01-28 Te Anau尾款 NZ$386.40",
-    ]);
-    const bookings = itinerary.todos.filter((todo) => todo.kind === "booking").map((todo) => todo.title);
-    assert.deepEqual(bookings, ["四段机票", "悉尼新增一晚", "Auckland两晚", "南岛租车", "Hobbiton当天交通", "Twizel观星", "重点餐厅"]);
-  });
-
-  it("documents route advice without changing booked lodging", () => {
-    const titles = itinerary.advice.map((item) => item.title);
-    assert.equal(itinerary.advice.length, 5);
-    assert.ok(titles.some((title) => /Crown Range/.test(title)));
-    assert.ok(titles.some((title) => /Hobbiton/.test(title)));
-    assert.ok(titles.some((title) => /Waitangi/.test(title)));
-    assert.equal(itinerary.advice.find((item) => /已订住宿/.test(item.title)).verdict, "不改订单");
-    assert.ok(itinerary.advice.every((item) => !/改订单$/.test(item.verdict) || item.verdict === "不改订单"));
-    assert.ok(dayById("d10").notes.some((note) => note.label === "路线建议"));
-  });
-
-  it("links every non-note resource to https and every block resource exists", () => {
-    const ids = new Set(itinerary.resources.map((resource) => resource.id));
-    for (const resource of itinerary.resources) {
-      if (resource.type !== "note") assert.match(resource.url, /^https:\/\//, resource.id);
-    }
+  it("keeps every day-card focus to the approved rhythm sentence", () => {
     for (const day of itinerary.days) {
+      assert.equal(day.focus, expectedFocus[day.id], `${day.id} focus is not concise`);
+    }
+  });
+
+  it("uses explicit daily transport, departure, lodging, primary, and ticket controls", () => {
+    for (const day of itinerary.days) {
+      assert.ok(day.transport, `${day.id} is missing transport`);
+      assert.ok(day.leaveBy, `${day.id} is missing leaveBy`);
+      assert.ok(day.lodgingResource?.id, `${day.id} is missing lodgingResource`);
+      assert.ok(day.primaryResource?.id, `${day.id} is missing primaryResource`);
+      assert.ok(day.ticketResource?.id, `${day.id} is missing ticketResource`);
+    }
+
+    const d2 = itinerary.days.find((day) => day.id === "d2");
+    const d3 = itinerary.days.find((day) => day.id === "d3");
+    const d4 = itinerary.days.find((day) => day.id === "d4");
+    const d13 = itinerary.days.find((day) => day.id === "d13");
+    assert.match(d2.transport, /接驳|团车/);
+    assert.match(d2.ticketResource.title, /Puffing Billy/);
+    assert.match(d3.transport, /自驾/);
+    assert.doesNotMatch(d3.transport, /机场转场/);
+    assert.doesNotMatch(d4.leaveBy, /集合/);
+    assert.doesNotMatch(d13.leaveBy, /集合/);
+  });
+
+  it("links each non-flight lodging to its exact hotel resource", () => {
+    for (const day of itinerary.days.filter((item) => !["d0", "d16"].includes(item.id))) {
+      assert.equal(day.lodgingResource.title, day.lodging, `${day.id} lodging resource mismatch`);
+      assert.equal(day.lodgingResource.type, "map", `${day.id} lodging resource is not a map`);
+    }
+  });
+
+  it("keeps generated itinerary blocks linked to known resources", () => {
+    const resourceIds = new Set(itinerary.resources.map((resource) => resource.id));
+
+    for (const day of itinerary.days) {
+      assert.ok(day.blocks.length > 0, `${day.id} has no blocks`);
       for (const block of day.blocks) {
-        for (const resource of block.resources) assert.ok(ids.has(resource.id), `${day.id} ${resource.id}`);
+        assert.ok(block.period);
+        assert.ok(block.activity);
+        for (const resource of block.resources) {
+          assert.ok(resourceIds.has(resource.id), `unknown resource ${resource.id}`);
+        }
       }
     }
   });
 
-  it("includes exactly one meal block per day", () => {
-    for (const day of itinerary.days) {
-      assert.equal(day.blocks.filter((block) => block.period === "饮食").length, 1, day.id);
+  it("has stage and image data for magazine-style browsing", () => {
+    assert.deepEqual(itinerary.stages.map((stage) => stage.title), [
+      "墨尔本 + 大洋路",
+      "凯恩斯热带暖冬",
+      "悉尼 + 南海岸",
+    ]);
+    assert.ok(itinerary.days.every((day) => day.coverImageUrl.startsWith("/itinerary/")));
+  });
+
+  it("keeps the four fixed stops without replacing D1's QVM night market", () => {
+    const expectations = [
+      { dayId: "d1", place: /Carlton/, detail: /Lygon Street|Little Italy/, resourceId: "carlton-lygon-map" },
+      { dayId: "d2", place: /Fitzroy/, detail: /Brunswick Street|Gertrude Street/, resourceId: "fitzroy-map" },
+      { dayId: "d10", place: /Palm Cove/, detail: /棕榈|海滨|Esplanade/, resourceId: "palm-cove-map" },
+      { dayId: "d11", place: /Barangaroo Reserve/, detail: /Wulugul Walk|海滨步道/, resourceId: "barangaroo-reserve-map" },
+    ];
+
+    for (const expectation of expectations) {
+      const day = itinerary.days.find((item) => item.id === expectation.dayId);
+      const dayText = [
+        day.title,
+        day.focus,
+        ...day.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`),
+      ].join(" ");
+      const block = day.blocks.find((item) => expectation.place.test(item.place));
+
+      assert.match(dayText, expectation.detail);
+      assert.ok(block, `${expectation.dayId} is missing ${expectation.place}`);
+      assert.ok(block.resources.some((resource) => resource.id === expectation.resourceId));
+      assert.doesNotMatch(
+        `${block.period} ${block.activity} ${block.tip}`,
+        /可选|触发|状态好|体力好|如果.*才去/,
+      );
+    }
+
+    const d1 = itinerary.days.find((day) => day.id === "d1");
+    const d1Text = [d1.focus, ...d1.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`)].join(" ");
+    assert.match(d1Text, /Carlton/);
+    assert.match(d1Text, /QVM Winter Night Market/);
+  });
+
+  it("keeps D3 visually before the Twelve Apostles route", () => {
+    const d3 = itinerary.days.find((day) => day.id === "d3");
+    const d4 = itinerary.days.find((day) => day.id === "d4");
+
+    assert.equal(d3.coverImageUrl, "/itinerary/d3-great-ocean-road-lorne.png");
+    assert.notEqual(d3.coverImageUrl, d4.coverImageUrl);
+    assert.doesNotMatch(d3.coverImageUrl, /twelve|apostles|gorge/i);
+    assert.match(d3.coverImageAlt, /Lorne|Apollo Bay|灯塔|大洋路早段/);
+  });
+
+  it("uses the fixed South Coast plan on D13 without Blue Mountains leftovers", () => {
+    const d13 = itinerary.days.find((day) => day.id === "d13");
+    const d13Text = [
+      d13.title,
+      d13.focus,
+      ...d13.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`),
+    ].join(" ");
+
+    assert.equal(d13.coverImageUrl, "/itinerary/d13-south-coast-kiama-gerringong.png");
+    assert.match(d13.coverImageAlt, /南海岸|Kiama|Gerringong/);
+    assert.match(d13.transport, /自驾/);
+    assert.match(d13.primaryResource.title, /Sea Cliff Bridge/);
+    assert.match(d13Text, /Kiama/);
+    assert.match(d13Text, /Gerringong/);
+    assert.match(d13Text, /Kangaroo Valley/);
+    assert.match(d13Text, /可选|允许|视时间|判断/);
+    assert.doesNotMatch(d13Text, /Blue Mountains|蓝山|Scenic World/i);
+  });
+
+  it("uses Taronga and Bondi on D14 without whale-watching leftovers", () => {
+    const d14 = itinerary.days.find((day) => day.id === "d14");
+    const d14Text = [
+      d14.title,
+      d14.focus,
+      ...d14.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`),
+    ].join(" ");
+
+    assert.equal(d14.coverImageUrl, "/itinerary/d14-taronga-bondi.png");
+    assert.match(d14.coverImageAlt, /Taronga|Bondi|悉尼港/);
+    assert.match(d14.primaryResource.title, /Taronga Zoo/);
+    assert.match(d14.ticketResource.title, /Taronga Zoo/);
+    assert.match(d14Text, /Taronga Zoo/);
+    assert.match(d14Text, /F2|公共渡轮|Ferry/);
+    assert.match(d14Text, /Bondi/);
+    assert.match(d14Text, /Tamarama/);
+    assert.match(d14Text, /Totti/);
+    assert.match(d14Text, /18:30/);
+    assert.doesNotMatch(d14Text, /Captain Cook|观鲸|whale/i);
+  });
+
+  it("does not let a cancelled same-day activity override the D14 Taronga ticket", () => {
+    const d14 = itinerary.days.find((day) => day.id === "d14");
+    const docket = buildDayDocket(d14, [{
+      id: "cancelled-whale-tour",
+      category: "活动",
+      item: "Captain Cook Whale Watching",
+      date: d14.date,
+      currency: "AUD",
+      amount: 340.2,
+      status: "confirmed",
+      note: "旧记录",
+    }]);
+    const ticket = docket.find((item) => item.id === "ticket");
+
+    assert.match(ticket.title, /Taronga Zoo/);
+    assert.doesNotMatch(`${ticket.title} ${ticket.detail}`, /Captain Cook|观鲸|whale/i);
+  });
+
+  it("keeps Manly optional on D15 before shopping and Cafe Sydney", () => {
+    const d15 = itinerary.days.find((day) => day.id === "d15");
+    const d15Text = [
+      d15.title,
+      d15.focus,
+      ...d15.blocks.map((block) => `${block.place} ${block.activity} ${block.tip}`),
+    ].join(" ");
+
+    assert.equal(d15.coverImageUrl, "/itinerary/d15-manly-flex-farewell.png");
+    assert.match(d15.coverImageAlt, /Manly|悉尼港|告别/);
+    assert.match(d15.transport, /可选/);
+    assert.match(d15.primaryResource.title, /QVB/);
+    assert.equal(d15.ticketResource.id, "no-fixed-ticket");
+    assert.match(d15Text, /Manly/);
+    assert.match(d15Text, /状态|体力|可选/);
+    assert.match(d15Text, /QVB/);
+    assert.match(d15Text, /Chemist Warehouse/);
+    assert.match(d15Text, /TRS/);
+    assert.match(d15Text, /Cafe Sydney/);
+    assert.match(d15Text, /17:30/);
+    assert.doesNotMatch(d15Text, /Taronga Zoo/);
+  });
+
+  it("keeps Totti's on D14 and Cafe Sydney on D15 in the meal plan", () => {
+    const d14Text = itinerary.days.find((day) => day.id === "d14").blocks
+      .map((block) => `${block.place} ${block.activity} ${block.tip}`)
+      .join(" ");
+    const d15Text = itinerary.days.find((day) => day.id === "d15").blocks
+      .map((block) => `${block.place} ${block.activity} ${block.tip}`)
+      .join(" ");
+
+    assert.match(d14Text, /Totti/);
+    assert.match(d14Text, /Bondi/);
+    assert.match(d15Text, /Cafe Sydney/);
+  });
+
+  it("adds the 2026 QVM Winter Night Market to D1", () => {
+    const d1 = itinerary.days.find((day) => day.id === "d1");
+    const marketBlock = d1.blocks.find((block) => /QVM Winter Night Market/.test(block.activity));
+    const mealBlock = d1.blocks.find((block) => block.period === "饮食" && block.place === "饮食安排");
+    const officialResource = marketBlock?.resources.find((resource) => resource.type === "official");
+
+    assert.match(d1.focus, /QVM 冬季夜市/);
+    assert.ok(marketBlock);
+    assert.match(marketBlock.tip, /17:00-22:00/);
+    assert.match(marketBlock.tip, /免费.*免预约/);
+    assert.equal(
+      officialResource?.url,
+      "https://whatson.melbourne.vic.gov.au/things-to-do/winter-night-market",
+    );
+    assert.match(mealBlock.activity, /QVM Winter Night Market/);
+  });
+
+  it("includes a daily meal-map block from D1 through D16", () => {
+    for (const dayId of Array.from({ length: 16 }, (_, index) => `d${index + 1}`)) {
+      const day = itinerary.days.find((item) => item.id === dayId);
+      assert.ok(
+        day.blocks.some((block) => block.period === "饮食" && block.place === "饮食安排"),
+        `${dayId} is missing daily meal-map block`,
+      );
     }
   });
-});
 
-describe("travel day helpers", () => {
-  it("selects the right control-panel day before, during, and after the trip", () => {
-    assert.equal(findTodayDay(itinerary.days, new Date("2026-12-25T10:00:00+08:00")).id, "d1");
-    assert.equal(findTodayDay(itinerary.days, new Date(2027, 1, 10, 9, 0)).id, "d10");
-    assert.equal(findTodayDay(itinerary.days, new Date(2027, 2, 1, 9, 0)).id, "d17");
+  it("selects the right control-panel day for pre-trip, in-trip, and post-trip dates", () => {
+    assert.equal(findTodayDay(itinerary.days, new Date("2026-06-25T10:00:00+08:00")).id, "d0");
+    assert.equal(findTodayDay(itinerary.days, new Date("2026-07-31T10:00:00+10:00")).id, "d3");
+    assert.equal(findTodayDay(itinerary.days, new Date("2026-08-20T10:00:00+10:00")).id, "d16");
   });
 
   it("selects the date-aware route mode and current stage", () => {
-    const before = travelMode(itinerary.days, itinerary.stages, new Date(2027, 0, 20, 10));
-    const during = travelMode(itinerary.days, itinerary.stages, new Date(2027, 1, 6, 10));
-    const after = travelMode(itinerary.days, itinerary.stages, new Date(2027, 1, 20, 10));
+    const before = travelMode(itinerary.days, itinerary.stages, new Date("2026-07-20T10:00:00+08:00"));
+    const during = travelMode(itinerary.days, itinerary.stages, new Date("2026-07-31T10:00:00+10:00"));
+    const after = travelMode(itinerary.days, itinerary.stages, new Date("2026-08-20T10:00:00+10:00"));
 
     assert.equal(before.phase, "before");
-    assert.equal(before.currentDay.id, "d1");
+    assert.equal(before.currentDay.id, "d0");
     assert.equal(during.phase, "during");
-    assert.equal(during.currentDay.id, "d6");
-    assert.equal(during.currentStage.id, "mackenzie");
-    assert.equal(during.nextDay.id, "d7");
+    assert.equal(during.currentDay.id, "d3");
+    assert.equal(during.currentStage.id, "melbourne-road");
+    assert.equal(during.nextDay.id, "d4");
     assert.equal(after.phase, "after");
-    assert.equal(after.currentDay.id, "d17");
+    assert.equal(after.currentDay.id, "d16");
     assert.equal(after.nextDay, null);
   });
 
-  it("sorts clock-time periods into the right timeline slots", () => {
-    const slots = Object.fromEntries(buildDayTimeline(dayById("d2")).map((slot) => [slot.id, slot.blocks.map((block) => block.period)]));
-    assert.deepEqual(slots.morning, ["09:00–10:00", "10:00–12:30"]);
-    assert.deepEqual(slots.noon, ["12:30–14:00"]);
-    assert.deepEqual(slots.afternoon, ["14:00–16:30"]);
-    assert.deepEqual(slots.night, ["晚上"]);
-  });
+  it("collects useful quick links for the selected travel day", () => {
+    const day = itinerary.days.find((item) => item.id === "d1");
+    const resources = collectTodayResources(day);
 
-  it("collects useful quick links for a booked activity day", () => {
-    const resources = collectTodayResources(dayById("d11"));
+    assert.ok(resources.some((resource) => resource.type === "map"));
     assert.ok(resources.some((resource) => resource.type === "booking"));
     assert.ok(resources.some((resource) => resource.type === "restaurant"));
+    assert.ok(resources.every((resource) => ["map", "booking", "restaurant", "official"].includes(resource.type)));
     assert.equal(new Set(resources.map((resource) => resource.id)).size, resources.length);
   });
 
-  it("builds the today command from explicit day controls", () => {
-    const day = dayById("d5");
+  it("builds a richer today command panel from itinerary data", () => {
+    const day = itinerary.days.find((item) => item.id === "d7");
     const command = buildTodayCommand(day);
-    const docket = buildDayDocket(day);
-    const actions = collectMapActions(day);
 
-    assert.equal(command.transport, day.transport);
-    assert.equal(command.leaveBy, day.leaveBy);
-    assert.equal(docket.find((item) => item.id === "lodging").href, day.lodgingResource.url);
-    assert.equal(docket.find((item) => item.id === "lodging").status, "已订");
-    assert.equal(docket.find((item) => item.id === "transport").status, "看路况");
-    assert.equal(actions.find((item) => item.label === "打开第一站").url, day.primaryResource.url);
+    assert.match(command.transport, /船|码头/);
+    assert.ok(command.leaveBy.length > 0);
+    assert.ok(command.meals.dinner.length > 0);
+    assert.ok(command.notes.length > 0);
   });
 
-  it("shows pending lodging and booked tickets in the docket", () => {
-    assert.equal(buildDayDocket(dayById("d14")).find((item) => item.id === "lodging").status, "待订");
-    assert.equal(buildDayDocket(dayById("d15")).find((item) => item.id === "ticket").status, "已订");
-    assert.equal(buildDayDocket(dayById("d7")).find((item) => item.id === "ticket").status, "待订");
+  it("uses explicit controls instead of unrelated first-resource fallbacks", () => {
+    const d3 = itinerary.days.find((item) => item.id === "d3");
+    const command = buildTodayCommand(d3);
+    const docket = buildDayDocket(d3);
+    const actions = collectMapActions(d3);
+
+    assert.equal(command.transport, d3.transport);
+    assert.equal(command.leaveBy, d3.leaveBy);
+    assert.equal(docket.find((item) => item.id === "lodging").href, d3.lodgingResource.url);
+    assert.equal(actions.find((item) => item.label === "打开第一站").url, d3.primaryResource.url);
   });
 
-  it("links dinner actions to the dinner plan", () => {
-    const dinnerFor = (id) => collectMapActions(dayById(id)).find((action) => action.label === "打开晚餐")?.title;
-    assert.equal(dinnerFor("d9"), "Kika");
-    assert.equal(dinnerFor("d11"), "The Redcliff");
-    assert.equal(dinnerFor("d12"), "Blue Kanu");
-    assert.equal(dinnerFor("d5"), undefined);
+  it("links dinner actions to the dinner plan instead of breakfast or lunch resources", () => {
+    const actionsFor = (dayId) => collectMapActions(itinerary.days.find((day) => day.id === dayId));
+    assert.equal(actionsFor("d5").some((action) => action.label === "打开晚餐"), false);
+    assert.match(actionsFor("d14").find((action) => action.label === "打开晚餐").title, /Totti/);
+    assert.match(actionsFor("d15").find((action) => action.label === "打开晚餐").title, /Cafe Sydney/);
+    assert.equal(actionsFor("d16").find((action) => action.label === "打开第一站").title, "悉尼机场");
+  });
+
+  it("turns each day into timeline, docket, and map actions", () => {
+    const day = itinerary.days.find((item) => item.id === "d3");
+
+    assert.ok(buildDayTimeline(day).some((slot) => slot.label === "上午"));
+    assert.equal(buildDayDocket(day).length, 3);
+    assert.ok(collectMapActions(day).some((action) => action.url.includes("google.com/maps")));
   });
 
   it("parses daily meal plans into breakfast, lunch, and dinner", () => {
-    const meals = parseMealPlan(dayById("d11"));
-    assert.match(meals.lunch, /自备路餐/);
-    assert.equal(meals.dinner, "The Redcliff");
+    const meals = parseMealPlan(itinerary.days.find((item) => item.id === "d14"));
+
+    assert.match(meals.dinner, /Totti|Icebergs|Bondi/);
     assert.ok(meals.breakfast.length > 0);
-  });
-
-  it("builds a day-specific carry checklist", () => {
-    const ids = (id) => buildDayCarryChecklist(dayById(id)).map((item) => item.id);
-    assert.ok(ids("d6").includes("hike-kit"));
-    assert.ok(ids("d6").includes("weather-shell"));
-    assert.ok(ids("d11").includes("sea-kit"));
-    assert.ok(ids("d7").includes("night-kit"));
-    assert.ok(ids("d4").includes("passport-flight"));
-    assert.ok(!ids("d17").includes("hotel-key"));
-  });
-
-  it("summarizes a day's ledger by currency with pending counts", () => {
-    const summary = summarizeDayLedger(dayById("d10"), [
-      { id: "a", date: "2027-02-10", currency: "NZD", amount: 96.6, status: "confirmed" },
-      { id: "b", date: "2027-02-10", currency: "NZD", amount: 386.4, status: "draft" },
-      { id: "c", date: "2027-02-10", currency: "NZD", amount: 5, status: "confirmed", deletedAt: "2027-02-10T00:00:00.000Z" },
-    ]);
-    assert.equal(summary.count, 2);
-    assert.equal(summary.pendingCount, 1);
-    assert.deepEqual(summary.totalsByCurrency, { NZD: 483 });
+    assert.ok(meals.lunch.length > 0);
   });
 });

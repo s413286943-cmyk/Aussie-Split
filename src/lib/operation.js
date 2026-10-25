@@ -1,4 +1,3 @@
-import { isSupportedCurrency } from "./currency.js";
 import { nextMutationVersion, parseMutationVersion } from "./mutationVersion.js";
 
 export function createUpsertOperation({ opId, expense, activity, createdAt }) {
@@ -103,7 +102,7 @@ function assertWritableExpense(expense, deleted) {
     throw new TypeError("Invalid expense text");
   }
   if (!validDate(expense.date)) throw new TypeError("Invalid expense date");
-  if (!isSupportedCurrency(expense.currency)) throw new TypeError("Invalid expense currency");
+  if (!["CNY", "AUD"].includes(expense.currency)) throw new TypeError("Invalid expense currency");
   if (!finiteNumber(expense.amount)) throw new TypeError("Invalid expense amount");
   if (!["us", "them"].includes(expense.payer)) throw new TypeError("Invalid expense payer");
   if (!["confirmed", "draft"].includes(expense.status)) throw new TypeError("Invalid expense status");

@@ -4,10 +4,11 @@ const navigationItems = [
   { id: "itinerary", href: "/", label: "行程" },
   { id: "ledger", href: "/ledger", label: "账本" },
   { id: "add", href: "/add", label: "记一笔" },
+  { id: "nz2027", href: "/nz2027", label: "2027两人" },
 ];
 
 export default function AppNav({ activeView }) {
-  const activeItemId = ["itinerary", "add"].includes(activeView) ? activeView : "ledger";
+  const activeItemId = ["itinerary", "add", "nz2027"].includes(activeView) ? activeView : "ledger";
 
   return (
     <nav className="nav" aria-label="主导航" data-motion="nav">

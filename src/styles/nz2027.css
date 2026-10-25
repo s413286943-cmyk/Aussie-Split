@@ -1,0 +1,743 @@
+/* 2027 两人行程 tab. Scoped to .nz27-* plus the shared drive/trip-board blocks. */
+.nz27-shell {
+  width: min(1080px, 100%);
+  margin: 0 auto;
+  padding: 18px 16px 112px;
+  color: var(--foreground);
+}
+
+.nz27-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 22px;
+  border-radius: var(--radius);
+  background: linear-gradient(150deg, #1b6075 0%, #0d3a43 55%, #112225 100%);
+  color: white;
+}
+
+.nz27-header h1 {
+  margin: 4px 0;
+  font-size: clamp(2rem, 6vw, 3rem);
+  line-height: 1;
+}
+
+.nz27-header p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.nz27-kicker {
+  font-family: var(--font-utility);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #f2c879;
+}
+
+.nz27-subnav {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.nz27-subnav a {
+  padding: 8px 18px;
+  border-radius: 999px;
+  color: white;
+  font-weight: 800;
+}
+
+.nz27-subnav a.active {
+  background: white;
+  color: var(--accent-strong);
+}
+
+.nz27-card {
+  margin-top: 14px;
+  padding: 16px;
+  border: 1px solid rgba(23, 35, 38, 0.1);
+  border-radius: var(--radius);
+  background: rgba(255, 253, 247, 0.94);
+  box-shadow: var(--receipt-shadow);
+}
+
+.nz27-card h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.nz27-overview p {
+  margin: 0 0 8px;
+  line-height: 1.6;
+}
+
+.nz27-route {
+  font-weight: 800;
+}
+
+.nz27-clock {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: rgba(8, 118, 111, 0.08);
+}
+
+.nz27-clock a {
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.nz27-stage-links {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.nz27-stage-links div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.nz27-stage-links span {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.nz27-stage-links a {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--mist);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.nz27-stage {
+  margin-top: 22px;
+}
+
+.nz27-stage-head h2 {
+  margin: 0 0 4px;
+}
+
+.nz27-stage-head p {
+  margin: 0 0 10px;
+  color: var(--muted);
+}
+
+.nz27-day {
+  margin-top: 10px;
+  border: 1px solid rgba(23, 35, 38, 0.1);
+  border-radius: var(--radius);
+  background: rgba(255, 253, 247, 0.96);
+  scroll-margin-top: 16px;
+}
+
+.nz27-day.is-current {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(8, 118, 111, 0.18);
+}
+
+.nz27-day summary {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 4px 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+
+.nz27-day summary small {
+  grid-column: 3;
+  color: var(--muted);
+}
+
+.nz27-day-label {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--accent-strong);
+}
+
+.nz27-day-date {
+  font-family: var(--font-utility);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.nz27-day-body {
+  padding: 0 16px 16px;
+}
+
+.nz27-focus {
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+
+.nz27-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.nz27-facts div {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(231, 241, 239, 0.6);
+}
+
+.nz27-facts dt {
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+.nz27-facts dd {
+  margin: 2px 0 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.nz27-timeline {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nz27-timeline li {
+  display: grid;
+  grid-template-columns: 9em minmax(0, 1fr);
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.nz27-timeline li > span {
+  font-family: var(--font-utility);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.nz27-timeline p {
+  margin: 2px 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.nz27-timeline small {
+  color: var(--muted);
+}
+
+.nz27-meals {
+  margin: 10px 0;
+  font-size: 0.88rem;
+}
+
+.nz27-meals strong {
+  margin-right: 8px;
+  color: var(--accent-strong);
+}
+
+.nz27-day-ledger {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-size: 0.86rem;
+}
+
+.nz27-day-ledger a {
+  font-weight: 800;
+  color: var(--accent-strong);
+}
+
+.nz27-sync {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.nz27-sync p {
+  margin: 0;
+  font-weight: 700;
+}
+
+.nz27-sync div {
+  display: flex;
+  gap: 8px;
+}
+
+.nz27-totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.nz27-total {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  background: rgba(255, 253, 247, 0.96);
+  box-shadow: var(--receipt-shadow);
+}
+
+.nz27-total.currency-cny {
+  border-left-color: var(--danger);
+}
+
+.nz27-total.currency-aud {
+  border-left-color: var(--sun);
+}
+
+.nz27-total span,
+.nz27-total small {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.nz27-total strong {
+  font-family: var(--font-utility);
+  font-size: 1.5rem;
+}
+
+.nz27-hint {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+}
+
+.nz27-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.nz27-form .full,
+.nz27-form h2 {
+  grid-column: 1 / -1;
+}
+
+.nz27-form label,
+.nz27-filters label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.nz27-form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.nz27-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.nz27-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 220px));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.nz27-records,
+.nz27-summary {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nz27-records li,
+.nz27-summary li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: rgba(231, 241, 239, 0.5);
+}
+
+.nz27-records li.is-pending {
+  background: rgba(221, 161, 58, 0.12);
+}
+
+.nz27-records strong,
+.nz27-summary strong {
+  display: block;
+}
+
+.nz27-records small,
+.nz27-summary small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.nz27-record-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: end;
+  gap: 6px;
+}
+
+.nz27-record-actions .amount,
+.nz27-summary-amounts span {
+  font-family: var(--font-utility);
+  font-weight: 800;
+}
+
+.nz27-summary-amounts {
+  display: grid;
+  justify-items: end;
+  text-align: right;
+}
+
+.nz27-records .nz27-empty,
+.nz27-summary .nz27-empty {
+  display: block;
+  color: var(--muted);
+}
+
+/* Day notes and drive guide inside day details. */
+.day-notes {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.day-notes p {
+  display: grid;
+  grid-template-columns: 6.5em minmax(0, 1fr);
+  gap: 10px;
+  margin: 0;
+  padding: 8px 10px;
+  border-left: 3px solid var(--line);
+  background: rgba(255, 255, 255, 0.55);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.day-notes p.is-advice {
+  border-left-color: var(--sun);
+  background: rgba(221, 161, 58, 0.1);
+}
+
+.day-notes strong {
+  color: var(--accent-strong);
+}
+
+.drive-guide {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid rgba(27, 96, 117, 0.2);
+  border-radius: var(--radius);
+  background: rgba(27, 96, 117, 0.05);
+}
+
+.drive-guide-head span {
+  font-family: var(--font-utility);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ocean);
+  text-transform: uppercase;
+}
+
+.drive-guide-head h4 {
+  margin: 2px 0 4px;
+  font-size: 1rem;
+}
+
+.drive-guide-head p,
+.drive-sequence,
+.drive-notes {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.drive-sequence strong {
+  margin-right: 8px;
+  color: var(--ocean);
+}
+
+.drive-legs {
+  display: grid;
+  gap: 6px;
+}
+
+.drive-leg {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.8fr) minmax(0, 1.6fr);
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.72);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.drive-leg-head {
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.drive-leg small {
+  color: var(--muted);
+}
+
+.drive-disclaimer {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+/* Trip board: lodgings, todos, advice. */
+.trip-board {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 26px 0;
+}
+
+.trip-board-head {
+  grid-column: 1 / -1;
+}
+
+.trip-board-head span {
+  font-family: var(--font-utility);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.trip-board-head h2 {
+  margin: 4px 0;
+}
+
+.trip-board-head p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.trip-board-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid rgba(23, 35, 38, 0.1);
+  border-radius: var(--radius);
+  background: rgba(255, 253, 247, 0.94);
+  box-shadow: var(--receipt-shadow);
+}
+
+.trip-board-card h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.trip-advice {
+  grid-column: 1 / -1;
+}
+
+.lodging-rows,
+.todo-timeline,
+.todo-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lodging-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  background: rgba(231, 241, 239, 0.6);
+}
+
+.lodging-row.is-pending {
+  background: rgba(221, 161, 58, 0.12);
+}
+
+.lodging-row strong,
+.todo-timeline strong,
+.todo-list strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.lodging-row small,
+.todo-timeline small,
+.todo-list small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.lodging-meta {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  text-align: right;
+}
+
+.lodging-meta a {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ocean);
+}
+
+.is-past {
+  opacity: 0.55;
+  text-decoration: line-through;
+}
+
+.todo-timeline li {
+  display: grid;
+  grid-template-columns: 6.5em minmax(0, 1fr);
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.todo-due {
+  font-family: var(--font-utility);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.todo-timeline em {
+  margin-right: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--mist);
+  font-size: 0.72rem;
+  font-style: normal;
+}
+
+.todo-deadline em {
+  background: rgba(165, 75, 59, 0.14);
+  color: var(--danger);
+}
+
+.todo-payment em {
+  background: rgba(221, 161, 58, 0.18);
+}
+
+.advice-item {
+  border-top: 1px solid var(--line);
+  padding: 10px 0;
+}
+
+.advice-item summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.advice-item summary small {
+  color: var(--muted);
+}
+
+.advice-item p {
+  margin: 8px 0 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.advice-action {
+  padding: 8px 10px;
+  border-left: 3px solid var(--sun);
+  background: rgba(221, 161, 58, 0.08);
+}
+
+@media (max-width: 900px) {
+  .trip-board {
+    grid-template-columns: 1fr;
+  }
+
+  .drive-leg {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .drive-leg-head {
+    display: none;
+  }
+
+  .nz27-form,
+  .nz27-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .nz27-records li,
+  .nz27-summary li {
+    grid-template-columns: 1fr;
+  }
+
+  .nz27-record-actions,
+  .nz27-summary-amounts {
+    justify-items: start;
+    justify-content: start;
+    text-align: left;
+  }
+
+  .lodging-row {
+    grid-template-columns: 1fr;
+  }
+
+  .lodging-meta {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .nz27-facts,
+  .nz27-timeline li {
+    grid-template-columns: 1fr;
+  }
+
+  .day-notes p,
+  .todo-timeline li {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}

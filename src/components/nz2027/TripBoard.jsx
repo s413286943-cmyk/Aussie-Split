@@ -16,7 +16,7 @@ export default function TripBoard({ itinerary, now = new Date() }) {
       <div className="trip-board-head">
         <span>Trip board</span>
         <h2>住宿、待办与路线建议</h2>
-        <p>截止和付款时间均为住宿所在地当地时间。已订费用的金额在账本里按原币种记录。</p>
+        <p>截止和付款时间均为住宿所在地当地时间。已订费用已作为初始记录放进“2027两人记账”，按原币种记录。</p>
       </div>
 
       <article className="trip-board-card trip-lodgings" aria-label="住宿地址和订单">

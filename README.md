@@ -1,11 +1,13 @@
-# 澳新 2027 · 日程与记账
+# Aussie Chill
 
-2027/2/1–2/17 两人（悉尼 + 新西兰南北岛）旅行站点，只有两部分：
+澳洲旅行两对夫妻共享站点：
 
-- `/`、`/itinerary`：日程。每日时间线、11 段自驾分段导航（Google Maps 链接）、住宿与免费取消截止、付款日期、出发前待办和路线建议。
-- `/ledger`、`/expenses`、`/add`、`/summary`、`/activity`：两人共同记账。金额、币种（NZD / CNY / AUD）、类别、日期、备注，按原币种分别累计，可按天和按城市汇总。
+- `/`、`/itinerary`：旅行杂志感行程页，含每日安排、图片、链接和天气。
+- `/ledger`、`/expenses`、`/add`、`/settlement`：split bill 账本。
 
-不再分账：没有付款方、分摊和结算。数据库仍保留 `payer` / `split_settled` 字段以兼容现有数据，新记录固定写 `us` / `false`。`/settlement` 只做跳转到 `/summary`。2026 年澳洲旅行的旧记录（日期早于 2026-09-01）保留在数据库和备份中，但不在 2027 账本里显示或累计。
+机票不纳入账本；默认每笔费用两对夫妻 50/50，按币种分别结算。
+
+另有独立的“2027两人”tab：`/nz2027`（澳新 2027 日程）和 `/nz2027/ledger`（两人记账，不分摊，原币种）。它的行程、接口、数据库表和本机存储都和上面的分账账本分开，说明见 `docs/operations/nz2027-tab.md`。
 
 ## 本地运行
 
@@ -37,7 +39,7 @@ npm run dev
 
 行程不需要后台管理，内容由 Excel 维护：
 
-1. 修改 `content/aussie-itinerary.xlsx`（工作表：Trip、Stages、Days、Blocks、Drives、DriveLegs、Lodgings、Todos、Advice、Resources）。
+1. 修改 `content/aussie-itinerary.xlsx`。
 2. 重新生成网页数据：
 
 ```bash
@@ -52,13 +54,11 @@ npm run build
 
 4. 提交并部署到 Vercel。
 
-这份 Excel 由 `scripts/itinerarySeedData.mjs` 生成（来源：`澳新2027-最终行程与自驾导航-20261025.md`）。改了种子数据后重建 Excel：
+如果需要重新生成初始 Excel，可运行：
 
 ```bash
-npm run itinerary:seed -- --force
+npm run itinerary:seed
 ```
-
-2026 澳洲行程的旧 Excel 归档在 `content/archive/aussie-chill-2026-itinerary.xlsx`。
 
 天气使用 Open-Meteo。旅行日期还太远或接口失败时，页面会显示 Excel 里的气候和穿衣提醒。
 
@@ -79,8 +79,6 @@ npm run itinerary:seed -- --force
 
 不要先锁数据库。完整上线、快照和紧急回退顺序见 `docs/operations/deploy-and-rollback.md`。
 
-2027 两人账本需要再执行两个迁移（先 NZD，后录入已订费用），顺序、验证和回退见 `docs/operations/nz2027-two-person-ledger.md`。全新项目在 `schema.sql` 之后也要执行这两个迁移。
-
 浏览器不会持有 Supabase key。小票先写入本机队列，账单同步确认后通过短期签名凭证直传私密 Storage；查看时使用 5 分钟有效的签名链接。
 
 ## 验证
@@ -98,4 +96,4 @@ npm run test:e2e
 npm run test:e2e:production
 ```
 
-核心测试覆盖：多币种分开累计、按天/城市汇总、NZD 迁移和已订费用录入（含回退）、服务端访问控制、RLS 迁移和回退、幂等同步、离线新增/编辑/删除/撤销、私密小票上传与清理、备份导入、D01-D17 行程导入与自驾导航、桌面/手机裁切、资源链接和天气 fallback。
+核心测试覆盖：多币种结算、已分摊排除、服务端访问控制、RLS 迁移和回退、幂等同步、离线新增/编辑/删除/撤销、私密小票上传与清理、备份导入、D0-D16 行程导入、桌面/手机裁切、资源链接和天气 fallback。

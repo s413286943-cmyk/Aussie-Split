@@ -56,7 +56,7 @@ function validBackup() {
       id: "expense-imported-coffee",
       category: "dining",
       item: "Imported coffee",
-      date: "2027-02-03",
+      date: "2026-08-10",
       currency: "AUD",
       amount: 25,
       payer: "us",

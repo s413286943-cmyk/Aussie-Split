@@ -1,5 +1,3 @@
-import { isSupportedCurrency } from "../currency.js";
-
 export class RequestSecurityError extends Error {
   constructor() {
     super("Request origin is not allowed");
@@ -84,7 +82,7 @@ function isExpenseOperation(operation) {
     && nonEmptyString(expense.category)
     && nonEmptyString(expense.item)
     && validDate(expense.date)
-    && isSupportedCurrency(expense.currency)
+    && ["CNY", "AUD"].includes(expense.currency)
     && finiteNumber(expense.amount)
     && ["us", "them"].includes(expense.payer)
     && ["confirmed", "draft"].includes(expense.status)
@@ -103,7 +101,7 @@ function isActivity(activity, expenseId, operationType) {
     && validActions.includes(activity.action)
     && nonEmptyString(activity.item)
     && finiteNumber(activity.amount)
-    && isSupportedCurrency(activity.currency)
+    && ["CNY", "AUD"].includes(activity.currency)
     && typeof activity.summary === "string"
     && typeof activity.createdAt === "string"
     && Number.isFinite(Date.parse(activity.createdAt));

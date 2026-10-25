@@ -1,7 +1,7 @@
 import { expect, test } from "./fixtures/test.js";
 import { documentOverflowsHorizontally, findClippedText } from "./fixtures/layout.js";
 
-const routes = ["/", "/ledger", "/expenses", "/add", "/activity", "/summary", "/itinerary"];
+const routes = ["/", "/ledger", "/expenses", "/add", "/activity", "/settlement", "/itinerary", "/nz2027", "/nz2027/ledger"];
 const viewports = [
   { width: 390, height: 844 },
   { width: 768, height: 900 },
@@ -10,7 +10,7 @@ const viewports = [
 ];
 
 test("primary routes remain bounded across the responsive matrix", async ({ page }) => {
-  await page.clock.setFixedTime(new Date("2027-02-06T10:00:00+13:00"));
+  await page.clock.setFixedTime(new Date("2026-07-30T10:00:00+08:00"));
   await page.emulateMedia({ reducedMotion: "reduce" });
 
   for (const viewport of viewports) {
