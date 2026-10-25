@@ -82,16 +82,20 @@
       "clothingNote": "轻薄夏装、防晒、帽子；机舱和室内空调带一件薄外套。",
       "coverImageUrl": "/nz2027/d01.jpg",
       "coverImageAlt": "D01 抵达悉尼，慢慢进入假期",
-      "transport": "国际航班抵达SYD · 市内公共交通",
-      "leaveBy": "航班须在2/1悉尼当地抵达",
+      "transport": "航班 CZ601 06:35 到悉尼T1 · 火车进城",
+      "leaveBy": "06:35 落地悉尼T1",
       "notes": [
         {
-          "label": "住宿",
-          "text": "Great Southern Hotel Sydney，2/1已补订1晚，与2/2–4原订单是两笔订单；入住时向前台确认能否同房连住，2/2是否需要换房。"
+          "label": "航班",
+          "text": "1/31（周日）13:35 杭州萧山T4 起飞（CZ3864），16:05 到广州白云T2，转机 1小时50分；CZ601 17:55 起飞，2/1 06:35 到悉尼T1。每人免费托运 2 件。"
         },
         {
-          "label": "航班要求",
-          "text": "无论从沪杭哪天出发，都须在2/1悉尼当地抵达。"
+          "label": "住宿",
+          "text": "Great Southern Hotel Sydney 连住三晚（2/1–2/4），共 ¥2,027.36，离店扣款。早到先寄存行李，14:00 后入住。"
+        },
+        {
+          "label": "进城",
+          "text": "机场 T1 坐 Airport Link 火车到 Central，约 15 分钟，再走到酒店；Opal 卡或手机刷卡。"
         }
       ],
       "lodgingResource": {
@@ -126,11 +130,40 @@
         {
           "dayId": "d1",
           "sortOrder": 10,
-          "period": "抵达后",
-          "place": "Sydney Airport → Haymarket",
-          "activity": "入境、取行李、进Haymarket。根据实际航班安排午餐和休息，不设置固定活动预约。",
-          "highlight": "落地先休息",
+          "period": "06:35–08:30",
+          "place": "Sydney Airport T1 → Haymarket",
+          "activity": "落地后入境、过检疫、取行李，坐火车到 Central，走到酒店寄存行李。",
+          "highlight": "夜航落地",
           "tip": "",
+          "resources": [
+            {
+              "id": "haymarket-map",
+              "title": "Haymarket / Chinatown",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Haymarket%2C+Sydney+NSW%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "great-southern-map",
+              "title": "Great Southern Hotel Sydney",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "确认邮件地址"
+            }
+          ]
+        },
+        {
+          "dayId": "d1",
+          "sortOrder": 15,
+          "period": "上午",
+          "place": "Haymarket",
+          "activity": "附近吃早餐，找家咖啡馆坐坐，别安排硬行程；困了就回酒店大堂休息。",
+          "highlight": "慢慢醒过来",
+          "tip": "能否提前入住以酒店当天答复为准。",
           "resources": [
             {
               "id": "haymarket-map",
@@ -146,11 +179,11 @@
         {
           "dayId": "d1",
           "sortOrder": 20,
-          "period": "下午",
-          "place": "Chinatown / Haymarket",
-          "activity": "入住Great Southern（2/1补订）；体力允许时逛Chinatown、Haymarket。",
+          "period": "14:00后",
+          "place": "Great Southern Hotel / Chinatown",
+          "activity": "入住、洗澡、补觉；体力允许时傍晚逛 Chinatown、Haymarket。",
           "highlight": "住宿周边轻活动",
-          "tip": "早到的寄存或提前入住以酒店答复为准。",
+          "tip": "",
           "resources": [
             {
               "id": "haymarket-map",
@@ -178,7 +211,7 @@
           "sortOrder": 90,
           "period": "饮食",
           "place": "Haymarket / Chinatown",
-          "activity": "早餐：随落地时刻；午餐：随落地时刻；晚餐：Haymarket或Chinatown",
+          "activity": "早餐：Haymarket咖啡馆；午餐：酒店附近简餐；晚餐：Haymarket或Chinatown",
           "highlight": "第一晚以方便为主",
           "tip": "",
           "resources": []
@@ -207,7 +240,7 @@
       "notes": [
         {
           "label": "住宿",
-          "text": "Great Southern Hotel Sydney第二晚。2/1补订与2/2–4原订单若不能同房连住，早上先寄存行李，原订单14:00后入住。"
+          "text": "Great Southern Hotel Sydney，第二晚。"
         },
         {
           "label": "交通",
@@ -256,8 +289,8 @@
           "sortOrder": 10,
           "period": "09:00–10:00",
           "place": "Haymarket → Bondi Beach",
-          "activity": "Haymarket吃早餐；如前台安排换房，先退房寄存行李。Central坐火车到Bondi Junction，换巴士到Bondi Beach。",
-          "highlight": "换房日先处理行李",
+          "activity": "Haymarket吃早餐；Central坐火车到Bondi Junction，换巴士到Bondi Beach。",
+          "highlight": "出发去海边",
           "tip": "",
           "resources": [
             {
@@ -353,9 +386,9 @@
           "dayId": "d2",
           "sortOrder": 50,
           "period": "晚上",
-          "place": "Great Southern Hotel",
-          "activity": "回Haymarket取行李、办理原订单入住，附近晚餐。",
-          "highlight": "原订单14:00后入住",
+          "place": "Haymarket",
+          "activity": "回酒店冲个澡，附近吃晚饭。",
+          "highlight": "",
           "tip": "",
           "resources": [
             {
@@ -526,7 +559,7 @@
           "sortOrder": 40,
           "period": "晚上",
           "place": "Newtown / Haymarket",
-          "activity": "早点晚餐、整理行李，按次日待购航班决定起床和去机场时间。",
+          "activity": "早点晚餐、整理行李；明天 10:00 前退房，傍晚 18:15 飞基督城。",
           "highlight": "为飞基督城做准备",
           "tip": "",
           "resources": []
@@ -552,28 +585,28 @@
       "base": "Christchurch",
       "lat": -43.5309,
       "lon": 172.6045,
-      "title": "悉尼飞基督城，取车和补给",
-      "focus": "把南岛自驾第一天准备好。",
+      "title": "悉尼最后一个白天，夜航飞基督城",
+      "focus": "白天在悉尼轻松走走，晚上飞到基督城，先睡一觉。",
       "lodging": "Metropolitan Motel on Riccarton",
       "lodgingStatus": "已订",
       "climateNote": "基督城2月约12–22°C，早晚凉，常有东北风。",
       "clothingNote": "短袖加抓绒或薄羽绒；机舱随身带外套。",
       "coverImageUrl": "/nz2027/d04.jpg",
-      "coverImageAlt": "D04 悉尼飞基督城，取车和补给",
-      "transport": "航班SYD→CHC（待购）· 机场取车",
-      "leaveBy": "Great Southern 10:00前退房；Metropolitan前台21:00结束",
+      "coverImageAlt": "D04 悉尼最后一个白天，夜航飞基督城",
+      "transport": "航班 NZ224 悉尼 18:15 → 基督城 23:20 · 打车去住处",
+      "leaveBy": "10:00 前退房；15:15 左右去机场",
       "notes": [
         {
+          "label": "航班",
+          "text": "新西兰航空 NZ224，悉尼 18:15 起飞，基督城 23:20 到（当地时间，新西兰比悉尼快 2 小时）。国际航班，16:00 前到悉尼机场 T1。"
+        },
+        {
           "label": "住宿",
-          "text": "Metropolitan Motel on Riccarton，175 Riccarton Road；14:00后入住，前台07:30–21:00。"
+          "text": "Metropolitan Motel on Riccarton，175 Riccarton Road。前台 07:30–21:00，到店已过半夜，一定要提前拿到晚到入住方式（钥匙盒或门禁码）。"
         },
         {
-          "label": "晚到处理",
-          "text": "若航班导致21:00后到店，提前取得晚到入住指引。"
-        },
-        {
-          "label": "航班时间",
-          "text": "2月新西兰比悉尼快2小时，约3小时航程落地时当地时间约晚5小时（例：09:00起飞约14:00落地）。优先买上午起飞的航班，留出取车、超市和21:00前入住的时间。"
+          "label": "当晚交通",
+          "text": "今晚还没有车。出机场打车或 Uber 去住处，约 20 分钟；车明天 10:00 在机场取。"
         },
         {
           "label": "入境检疫",
@@ -607,73 +640,76 @@
         "imageAlt": "",
         "sourceNote": "每日明确票券状态"
       },
-      "drive": {
-        "id": "nav01",
-        "dayId": "d4",
-        "title": "导航01 · 基督城机场 → Riccarton",
-        "duration": "落地后完成入境与取车；机场到住宿约20–30分钟，车行接驳另算。",
-        "sequence": "Christchurch Airport / 实际租车点 → Riccarton → 175 Riccarton Road",
-        "notes": "今天只做市内适应和补给。若晚间才落地，先落实租车点营业时间和住宿晚到手续。",
-        "legs": [
-          {
-            "sortOrder": 10,
-            "segment": "机场 → 租车网点",
-            "driveTime": "按订单",
-            "stopNote": "先确认柜台在航站楼内还是需摆渡；不能把机场到达口当所有公司的取车点。"
-          },
-          {
-            "sortOrder": 20,
-            "segment": "实际网点 → 175 Riccarton Road",
-            "driveTime": "机场起算约20–30分钟",
-            "stopNote": "入住后按住宿指引停车。前台21:00结束，晚到提前安排钥匙。"
-          },
-          {
-            "sortOrder": 30,
-            "segment": "住宿 → Riccarton商场/超市",
-            "driveTime": "短距离市内移动",
-            "stopNote": "买早餐、路餐、水；购物停车依车场限时牌。"
-          }
-        ],
-        "resources": [
-          {
-            "id": "chc-airport-route",
-            "title": "基督城机场至住宿参考路线",
-            "type": "map",
-            "url": "https://www.google.com/maps/dir/?api=1&origin=Christchurch+Airport%2C+New+Zealand&destination=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand&travelmode=driving",
-            "imageUrl": "",
-            "imageAlt": "",
-            "sourceNote": "导航01"
-          },
-          {
-            "id": "metropolitan-map",
-            "title": "Metropolitan Motel on Riccarton",
-            "type": "map",
-            "url": "https://www.google.com/maps/search/?api=1&query=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand",
-            "imageUrl": "",
-            "imageAlt": "",
-            "sourceNote": "确认邮件地址"
-          }
-        ]
-      },
+      "drive": null,
       "blocks": [
         {
           "dayId": "d4",
           "sortOrder": 10,
-          "period": "出发前",
-          "place": "Great Southern → Sydney Airport",
-          "activity": "Great Southern于10:00前退房；按航班时刻前往悉尼机场。",
-          "highlight": "退房赶飞机",
+          "period": "10:00前",
+          "place": "Great Southern Hotel",
+          "activity": "退房，把行李寄存在酒店。",
+          "highlight": "退房寄存",
           "tip": "",
           "resources": []
         },
         {
           "dayId": "d4",
           "sortOrder": 20,
-          "period": "落地后",
-          "place": "Christchurch Airport",
-          "activity": "入境、取车并熟悉车辆。南岛租车在基督城取、皇后镇还，租车公司和取车点还没订。",
-          "highlight": "南岛取车",
-          "tip": "不能把机场到达口当所有公司的取车点。",
+          "period": "10:00–15:00",
+          "place": "Darling Harbour / Haymarket",
+          "activity": "悉尼最后一个白天，轻松走走：Darling Harbour 海边、Chinese Garden 或附近逛逛，吃一顿像样的午饭。",
+          "highlight": "不赶行程",
+          "tip": "",
+          "resources": [
+            {
+              "id": "darling-harbour-map",
+              "title": "Darling Harbour",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Darling+Harbour%2C+Sydney+NSW%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 30,
+          "period": "15:15",
+          "place": "Great Southern → Sydney Airport T1",
+          "activity": "回酒店取行李，Central 坐火车去国际航站楼 T1，16:00 前到。",
+          "highlight": "去机场",
+          "tip": "",
+          "resources": [
+            {
+              "id": "syd-t1-map",
+              "title": "悉尼机场国际航站楼 T1",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Airport+International+Terminal+T1",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 40,
+          "period": "18:15–23:20",
+          "place": "NZ224 → Christchurch",
+          "activity": "飞基督城。落地后入境、检疫、取行李。",
+          "highlight": "夜航",
+          "tip": "徒步鞋提前洗干净。",
+          "resources": []
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 50,
+          "period": "23:20后",
+          "place": "Christchurch Airport → Riccarton",
+          "activity": "打车或 Uber 去 Metropolitan，约 20 分钟，按晚到方式拿钥匙入住，直接睡觉。",
+          "highlight": "今晚没有车",
+          "tip": "",
           "resources": [
             {
               "id": "chc-airport-route",
@@ -683,18 +719,7 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "导航01"
-            }
-          ]
-        },
-        {
-          "dayId": "d4",
-          "sortOrder": 30,
-          "period": "下午/傍晚",
-          "place": "Riccarton",
-          "activity": "入住Riccarton汽车旅馆，在附近商场或超市采购早餐、路餐、饮水。",
-          "highlight": "补给",
-          "tip": "",
-          "resources": [
+            },
             {
               "id": "metropolitan-map",
               "title": "Metropolitan Motel on Riccarton",
@@ -708,20 +733,10 @@
         },
         {
           "dayId": "d4",
-          "sortOrder": 40,
-          "period": "若落地较早",
-          "place": "Christchurch Botanic Gardens",
-          "activity": "可选植物园短走；晚到则直接入住和晚餐。",
-          "highlight": "可选",
-          "tip": "",
-          "resources": []
-        },
-        {
-          "dayId": "d4",
           "sortOrder": 90,
           "period": "饮食",
-          "place": "Riccarton",
-          "activity": "早餐：随航班；午餐：随航班；晚餐：Riccarton附近，备好2/5路上零食",
+          "place": "Sydney / 飞机上",
+          "activity": "早餐：Haymarket；午餐：Darling Harbour一带；晚餐：机场或飞机上",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -737,28 +752,32 @@
       "base": "Twizel",
       "lat": -44.2581,
       "lon": 170.0995,
-      "title": "两座湖串起的转场日",
-      "focus": "从城市平原进入Tekapo和Pukaki的湖区。",
+      "title": "机场取车，两座湖串起的转场日",
+      "focus": "上午在机场取车，下午进入Tekapo和Pukaki的湖区。",
       "lodging": "Twizel Holiday Park",
       "lodgingStatus": "已订",
       "climateNote": "Mackenzie盆地约8–24°C，昼夜温差大，紫外线很强，午后常起风。",
       "clothingNote": "防晒霜、墨镜、帽子必备；早晚加抓绒。",
       "coverImageUrl": "/nz2027/d05.jpg",
-      "coverImageAlt": "D05 两座湖串起的转场日",
+      "coverImageAlt": "D05 机场取车，两座湖串起的转场日",
       "transport": "自驾 · 纯驾驶约4–4.5小时",
-      "leaveBy": "08:30–09:00从Riccarton出发",
+      "leaveBy": "09:30 到机场，10:00 取车",
       "notes": [
+        {
+          "label": "取车",
+          "text": "10:00 基督城机场（CHC），起亚 Seltos 或同级，驾驶人 SUN SHENG；带护照、中国驾照、英文翻译件和信用卡。皇后镇机场 2/14 10:00 还车。"
+        },
         {
           "label": "住宿",
           "text": "Twizel Holiday Park，122 Mackenzie Drive；One Bedroom Unit，连住3晚。"
         },
         {
           "label": "驾驶安排",
-          "text": "纯驾驶约4–4.5小时，连停靠按6–8小时。"
+          "text": "纯驾驶约4–4.5小时，连停靠按6–7小时，约17:00–18:00到Twizel。"
         },
         {
           "label": "长周末",
-          "text": "2/6 Waitangi Day当天部分商店限制营业，今天在Geraldine/Fairlie/Twizel把2/6的早餐、路餐和饮水买齐。"
+          "text": "2/6 Waitangi Day当天部分商店限制营业，今天在Ashburton或Geraldine超市把2/6的早餐、路餐和饮水买齐。"
         }
       ],
       "lodgingResource": {
@@ -771,36 +790,36 @@
         "sourceNote": "住宿官网地址"
       },
       "primaryResource": {
-        "id": "fairlie-bakehouse-official",
-        "title": "Fairlie Bakehouse",
-        "type": "restaurant",
-        "url": "https://www.fairliebakehouse.co.nz/",
+        "id": "chc-airport-route",
+        "title": "基督城机场至住宿参考路线",
+        "type": "map",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=Christchurch+Airport%2C+New+Zealand&destination=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand&travelmode=driving",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "官网"
+        "sourceNote": "导航01"
       },
       "ticketResource": {
-        "id": "no-fixed-ticket",
-        "title": "当天无固定票券",
-        "type": "note",
-        "url": "",
+        "id": "rental-car-booking",
+        "title": "南岛租车：起亚 Seltos 或同级（已订）",
+        "type": "booking",
+        "url": "https://www.google.com/maps/search/?api=1&query=Christchurch+Airport%2C+New+Zealand",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "每日明确票券状态"
+        "sourceNote": "2/5 10:00 基督城机场取，2/14 10:00 皇后镇机场还"
       },
       "drive": {
         "id": "nav02",
         "dayId": "d5",
-        "title": "导航02 · 基督城 → Twizel",
-        "duration": "08:30–09:00离开住宿；纯驾驶约4–4.5小时，连午餐及湖边停靠留6–8小时。",
-        "sequence": "Riccarton → SH1南行 / Ashburton → SH79 / Geraldine → Fairlie → SH8 / Tekapo → Pukaki南岸 → Twizel",
+        "title": "导航02 · 基督城机场 → Twizel",
+        "duration": "10:00 机场取车，约 10:45 出发；纯驾驶约4–4.5小时，连午餐及湖边停靠留6–7小时，约17:00–18:00到Twizel。",
+        "sequence": "Christchurch Airport → SH1南行 / Ashburton → SH79 / Geraldine → Fairlie → SH8 / Tekapo → Pukaki南岸 → Twizel",
         "notes": "Geraldine和Fairlie各短停即可，优先保留Tekapo、Pukaki的湖边时间。Tekapo、Fairlie和Twizel公共车位有P10/P30/P60/P120等限制，免费不代表不限时；现场牌为准。",
         "legs": [
           {
             "sortOrder": 10,
-            "segment": "Riccarton → Geraldine",
-            "driveTime": "约1小时45分–2小时",
-            "stopNote": "镇上短休息15–20分钟，活动一下再开。"
+            "segment": "基督城机场 → Ashburton → Geraldine",
+            "driveTime": "约1小时50分–2小时",
+            "stopNote": "Ashburton 或 Geraldine 进超市买补给；Geraldine 短休息15–20分钟。"
           },
           {
             "sortOrder": 20,
@@ -832,7 +851,7 @@
             "id": "nav02-a-route",
             "title": "前半程至Tekapo",
             "type": "map",
-            "url": "https://www.google.com/maps/dir/?api=1&origin=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand&destination=Church+of+the+Good+Shepherd%2C+Pioneer+Drive%2C+Lake+Tekapo%2C+New+Zealand&travelmode=driving&waypoints=Ashburton%2C+New+Zealand%7CGeraldine%2C+Canterbury%2C+New+Zealand%7CFairlie+Bakehouse%2C+Fairlie%2C+New+Zealand",
+            "url": "https://www.google.com/maps/dir/?api=1&origin=Christchurch+Airport%2C+New+Zealand&destination=Church+of+the+Good+Shepherd%2C+Pioneer+Drive%2C+Lake+Tekapo%2C+New+Zealand&travelmode=driving&waypoints=Ashburton%2C+New+Zealand%7CGeraldine%2C+Canterbury%2C+New+Zealand%7CFairlie+Bakehouse%2C+Fairlie%2C+New+Zealand",
             "imageUrl": "",
             "imageAlt": "",
             "sourceNote": "导航02"
@@ -861,19 +880,49 @@
         {
           "dayId": "d5",
           "sortOrder": 10,
-          "period": "08:30–09:00",
-          "place": "Riccarton → Geraldine",
-          "activity": "从Riccarton出发；Geraldine短休息。",
-          "highlight": "自驾移动日",
+          "period": "09:00–10:00",
+          "place": "Riccarton → Christchurch Airport",
+          "activity": "早餐后退房，打车回机场，10:00 取车，绕车检查一圈、拍照留底。",
+          "highlight": "取车",
           "tip": "",
-          "resources": []
+          "resources": [
+            {
+              "id": "chc-airport-route",
+              "title": "基督城机场至住宿参考路线",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Christchurch+Airport%2C+New+Zealand&destination=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "导航01"
+            }
+          ]
         },
         {
           "dayId": "d5",
           "sortOrder": 20,
-          "period": "中午前后",
+          "period": "10:45–13:00",
+          "place": "Ashburton → Geraldine",
+          "activity": "沿 SH1 南下；在 Ashburton 或 Geraldine 超市买齐两天的补给，Geraldine 短休息。",
+          "highlight": "补给",
+          "tip": "2/6 不少商店不开。",
+          "resources": [
+            {
+              "id": "nav02-a-route",
+              "title": "前半程至Tekapo",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Christchurch+Airport%2C+New+Zealand&destination=Church+of+the+Good+Shepherd%2C+Pioneer+Drive%2C+Lake+Tekapo%2C+New+Zealand&travelmode=driving&waypoints=Ashburton%2C+New+Zealand%7CGeraldine%2C+Canterbury%2C+New+Zealand%7CFairlie+Bakehouse%2C+Fairlie%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "导航02"
+            }
+          ]
+        },
+        {
+          "dayId": "d5",
+          "sortOrder": 30,
+          "period": "13:30前后",
           "place": "Fairlie",
-          "activity": "Fairlie买派或简餐，再前往Tekapo。",
+          "activity": "Fairlie 买派或简餐当午饭。",
           "highlight": "Fairlie派",
           "tip": "",
           "resources": [
@@ -890,7 +939,7 @@
         },
         {
           "dayId": "d5",
-          "sortOrder": 30,
+          "sortOrder": 40,
           "period": "下午",
           "place": "Lake Tekapo / Lake Pukaki",
           "activity": "Tekapo湖畔、好牧羊人教堂外观；随后经Pukaki南岸观景停靠。",
@@ -901,7 +950,7 @@
               "id": "nav02-a-route",
               "title": "前半程至Tekapo",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand&destination=Church+of+the+Good+Shepherd%2C+Pioneer+Drive%2C+Lake+Tekapo%2C+New+Zealand&travelmode=driving&waypoints=Ashburton%2C+New+Zealand%7CGeraldine%2C+Canterbury%2C+New+Zealand%7CFairlie+Bakehouse%2C+Fairlie%2C+New+Zealand",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Christchurch+Airport%2C+New+Zealand&destination=Church+of+the+Good+Shepherd%2C+Pioneer+Drive%2C+Lake+Tekapo%2C+New+Zealand&travelmode=driving&waypoints=Ashburton%2C+New+Zealand%7CGeraldine%2C+Canterbury%2C+New+Zealand%7CFairlie+Bakehouse%2C+Fairlie%2C+New+Zealand",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "导航02"
@@ -919,10 +968,10 @@
         },
         {
           "dayId": "d5",
-          "sortOrder": 40,
-          "period": "16:00–17:00左右",
+          "sortOrder": 50,
+          "period": "17:00–18:00左右",
           "place": "Twizel",
-          "activity": "抵Twizel，办理入住、补给，附近晚餐。",
+          "activity": "抵Twizel，办理入住，附近晚餐。",
           "highlight": "连住三晚",
           "tip": "",
           "resources": [
@@ -942,7 +991,7 @@
           "sortOrder": 90,
           "period": "饮食",
           "place": "Fairlie / Twizel",
-          "activity": "早餐：出发前吃；午餐：Fairlie Bakehouse或Tekapo；晚餐：Twizel镇上",
+          "activity": "早餐：Riccarton；午餐：Fairlie Bakehouse；晚餐：Twizel镇上",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -2800,16 +2849,24 @@
       "clothingNote": "夏装＋轻薄防雨外套。",
       "coverImageUrl": "/nz2027/d14.jpg",
       "coverImageAlt": "D14 飞到Auckland，下午看海港",
-      "transport": "还车 · 航班ZQN→AKL（待购）",
-      "leaveBy": "10:00前退房；按航班倒推加油还车",
+      "transport": "10:00 还车 · 航班 JQ296 13:30 → 15:20",
+      "leaveBy": "09:15 退房出发；10:00 机场还车",
       "notes": [
+        {
+          "label": "还车",
+          "text": "10:00 皇后镇机场（ZQN）还车，路上在 Frankton 按租车油量要求加油。"
+        },
+        {
+          "label": "航班",
+          "text": "捷星 JQ296，皇后镇 13:30 起飞，奥克兰 15:20 到。每人托运 20kg，超重在机场补交很贵，前一晚称好、分好。"
+        },
         {
           "label": "住宿",
           "text": "Auckland待订。优先CBD/Britomart/SkyCity附近，确认2/16退房后可寄存行李。"
         },
         {
-          "label": "当天交通",
-          "text": "2/14恰为情人节，正式餐厅订位与最终航班衔接后再落实。"
+          "label": "当天",
+          "text": "2/14 是情人节，想吃正式晚餐的话尽早订。"
         }
       ],
       "lodgingResource": {
@@ -2842,10 +2899,10 @@
       "drive": {
         "id": "nav10",
         "dayId": "d14",
-        "title": "导航10 · Fernhill → Queenstown机场",
-        "duration": "10:00前退房；住宿至机场方向约20–35分钟，另计加油、验车和车行摆渡。",
-        "sequence": "Fernhill → Queenstown / SH6A → Frankton加油 → 实际还车网点 → Queenstown Airport",
-        "notes": "先满足最终航司的到场要求；大约起飞前90分钟到国内航站楼，再向前加约45–60分钟还车/摆渡及路程。车行若要求更早，按其说明调整。今天不插入专门绕路的游览（Arrowtown已在2/10顺路去过）。",
+        "title": "导航10 · Fernhill → 皇后镇机场还车",
+        "duration": "09:15 出发；住宿到机场约20–35分钟，加油和验车另计，10:00 还车。",
+        "sequence": "Fernhill → Queenstown / SH6A → Frankton加油 → Queenstown Airport还车",
+        "notes": "还车点在皇后镇机场（ZQN），按取车单上的地址导航；航班 13:30，还车后时间宽裕。",
         "legs": [
           {
             "sortOrder": 10,
@@ -2855,15 +2912,15 @@
           },
           {
             "sortOrder": 20,
-            "segment": "加油 → 实际还车网点",
-            "driveTime": "按车行位置",
-            "stopNote": "导航改用订单网点；场外店与机场停车区不能互换。"
+            "segment": "加油 → 皇后镇机场还车",
+            "driveTime": "约5–10分钟",
+            "stopNote": "10:00 还车；验车时拍照留底。"
           },
           {
             "sortOrder": 30,
             "segment": "还车 → 航站楼",
-            "driveTime": "按车行流程",
-            "stopNote": "把验车、搬行李、摆渡时间另计；不要把抵还车店当作已到值机柜台。"
+            "driveTime": "步行或摆渡",
+            "stopNote": "12:30 前办托运，JQ296 13:30 起飞。"
           }
         ],
         "resources": [
@@ -2900,9 +2957,9 @@
         {
           "dayId": "d14",
           "sortOrder": 10,
-          "period": "上午",
+          "period": "09:15–10:00",
           "place": "Fernhill → Frankton → Queenstown Airport",
-          "activity": "10:00前退房；按最终航班倒推加油、还车和机场到场。",
+          "activity": "退房出发，Frankton 加油，10:00 机场还车。",
           "highlight": "南岛收车",
           "tip": "",
           "resources": [
@@ -2920,26 +2977,56 @@
         {
           "dayId": "d14",
           "sortOrder": 20,
-          "period": "飞行",
-          "place": "ZQN → AKL",
-          "activity": "选择2/14出发、下午抵Auckland的班次，航班号待购后填入。",
-          "highlight": "航班待购",
+          "period": "10:00–13:30",
+          "place": "Queenstown Airport",
+          "activity": "还车后时间宽裕：机场旁 Remarkables Park 吃早午饭，12:30 前回机场办托运。",
+          "highlight": "等飞机",
           "tip": "",
-          "resources": []
+          "resources": [
+            {
+              "id": "zqn-map",
+              "title": "Queenstown Airport",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Queenstown+Airport%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
         },
         {
           "dayId": "d14",
           "sortOrder": 30,
-          "period": "抵达后",
-          "place": "Auckland CBD",
-          "activity": "取行李、进CBD酒店，入住2/14–16连续两晚。",
-          "highlight": "连住两晚",
+          "period": "13:30–15:20",
+          "place": "JQ296 → Auckland",
+          "activity": "飞奥克兰。",
+          "highlight": "航班",
           "tip": "",
           "resources": []
         },
         {
           "dayId": "d14",
           "sortOrder": 40,
+          "period": "15:20后",
+          "place": "Auckland Airport → CBD",
+          "activity": "取行李，坐 SkyBus 或打车进城（约 45–60 分钟），入住 2/14–16 连续两晚。",
+          "highlight": "连住两晚",
+          "tip": "",
+          "resources": [
+            {
+              "id": "akl-intl-map",
+              "title": "Auckland Airport国际航站楼",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Auckland+Airport+International+Terminal%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d14",
+          "sortOrder": 50,
           "period": "傍晚",
           "place": "Britomart / Viaduct Harbour",
           "activity": "Britomart、Quay Street、Viaduct Harbour散步；时间充裕再延伸Wynyard Quarter。",
@@ -2952,7 +3039,7 @@
           "sortOrder": 90,
           "period": "饮食",
           "place": "Queenstown / Auckland",
-          "activity": "早餐：Queenstown；午餐：随航班；晚餐：Auckland市中心，预留落地弹性",
+          "activity": "早餐：Fernhill；午餐：皇后镇机场附近；晚餐：Auckland市中心",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -3252,16 +3339,20 @@
       "clothingNote": "城市夏装；随身包放厚外套，落地国内是冬天。",
       "coverImageUrl": "/nz2027/d16.jpg",
       "coverImageAlt": "D16 Auckland城市日，晚间返程",
-      "transport": "市内步行 · 晚间国际航班（待购）",
-      "leaveBy": "目标起飞前约3小时到机场",
+      "transport": "市内步行 · 航班 CZ306 22:25",
+      "leaveBy": "19:25 前到奥克兰机场",
       "notes": [
         {
           "label": "住宿",
           "text": "飞机；通常无需增加2/16酒店住宿。"
         },
         {
+          "label": "航班",
+          "text": "南方航空 CZ306，奥克兰 22:25 起飞，2/17 05:00 到广州白云T2。每人免费托运 2 件。"
+        },
+        {
           "label": "去机场",
-          "text": "以22:00起飞为例：17:00取包、17:30前离开市区、19:00前到机场；按实际航班往前推。"
+          "text": "17:30 回酒店取包，18:00 前离开市区，19:00–19:25 到机场。"
         }
       ],
       "lodgingResource": {
@@ -3376,7 +3467,7 @@
           "sortOrder": 50,
           "period": "晚上",
           "place": "Auckland Airport",
-          "activity": "取行李、赴机场、办理国际出发。目标起飞前约3小时抵机场，按最终航司要求执行。",
+          "activity": "取行李去机场，19:25 前到，办理 CZ306 值机和出境。",
           "highlight": "夜航回国",
           "tip": "",
           "resources": [
@@ -3419,22 +3510,26 @@
       "weekday": "周三",
       "city": "抵达国内 · 返家",
       "base": "返程 / 国内",
-      "lat": 31.1443,
-      "lon": 121.8083,
-      "title": "早晨抵达国内，返家",
-      "focus": "完成最后一段接驳，留时间休息。",
+      "lat": 30.2295,
+      "lon": 120.4344,
+      "title": "广州转机，中午回到杭州",
+      "focus": "清晨到广州，转机回杭州，下午好好休息。",
       "lodging": "-",
       "lodgingStatus": "无需住宿",
       "climateNote": "2月中旬上海/杭州约2–10°C，湿冷。",
       "clothingNote": "落地前换上厚外套，羽绒服放随身包。",
       "coverImageUrl": "/nz2027/d17.jpg",
-      "coverImageAlt": "D17 早晨抵达国内，返家",
-      "transport": "航班抵达国内（待购）· 接驳回杭州",
-      "leaveBy": "按购得航班",
+      "coverImageAlt": "D17 广州转机，中午回到杭州",
+      "transport": "05:00 到广州 · CZ3803 09:10 → 杭州 11:10",
+      "leaveBy": "09:10 广州起飞",
       "notes": [
         {
-          "label": "购票条件",
-          "text": "2/16晚从Auckland离境，2/17早晨抵达国内；具体起降机场和时间尚未锁定。"
+          "label": "航班",
+          "text": "CZ306 05:00 到广州白云T2，转机 4小时10分；CZ3803 09:10 起飞，11:10 到杭州萧山T4。"
+        },
+        {
+          "label": "转机",
+          "text": "在广州办入境，按机场“国际转国内”指引走；行李要不要先提取过海关，以奥克兰值机时说的为准。"
         }
       ],
       "lodgingResource": {
@@ -3447,13 +3542,13 @@
         "sourceNote": "无需住宿"
       },
       "primaryResource": {
-        "id": "arrival-airport-note",
-        "title": "落地机场以出票为准",
-        "type": "note",
-        "url": "",
+        "id": "hgh-airport-map",
+        "title": "杭州萧山国际机场",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Hangzhou+Xiaoshan+International+Airport",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "机票购买后再补"
+        "sourceNote": "Google Maps"
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
@@ -3469,29 +3564,39 @@
         {
           "dayId": "d17",
           "sortOrder": 10,
-          "period": "早晨",
-          "place": "国内机场",
-          "activity": "按购得航班抵达中国目的机场，入境、取行李。",
-          "highlight": "",
+          "period": "05:00–09:10",
+          "place": "广州白云T2",
+          "activity": "入境、按国际转国内流程转机，候机时吃早餐。",
+          "highlight": "转机",
           "tip": "",
           "resources": []
         },
         {
           "dayId": "d17",
           "sortOrder": 20,
-          "period": "之后",
-          "place": "上海 → 杭州",
-          "activity": "若落地上海，再衔接回杭州；具体车次等机票确定后安排。",
-          "highlight": "",
+          "period": "09:10–11:10",
+          "place": "CZ3803 → 杭州萧山T4",
+          "activity": "飞回杭州，取行李回家。",
+          "highlight": "到家",
           "tip": "",
-          "resources": []
+          "resources": [
+            {
+              "id": "hgh-airport-map",
+              "title": "杭州萧山国际机场",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hangzhou+Xiaoshan+International+Airport",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
         },
         {
           "dayId": "d17",
           "sortOrder": 90,
           "period": "饮食",
           "place": "落地后",
-          "activity": "早餐：落地早餐；午餐：返家简餐；晚餐：在家休息",
+          "activity": "早餐：广州机场；午餐：回家简餐；晚餐：在家休息",
           "highlight": "按航班实际到达时间",
           "tip": "",
           "resources": []
@@ -3501,31 +3606,11 @@
   ],
   "lodgings": [
     {
-      "sortOrder": 10,
-      "checkIn": "2027-02-01",
-      "checkOut": "2027-02-02",
-      "name": "Great Southern Hotel Sydney（补订）",
-      "room": "同房连住待前台确认",
-      "detail": "717 George St, Haymarket",
-      "resource": {
-        "id": "great-southern-map",
-        "title": "Great Southern Hotel Sydney",
-        "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia",
-        "imageUrl": "",
-        "imageAlt": "",
-        "sourceNote": "确认邮件地址"
-      },
-      "status": "已订1晚",
-      "freeCancelUntil": "",
-      "afterDeadline": "补订订单的取消条款和金额待补"
-    },
-    {
       "sortOrder": 20,
-      "checkIn": "2027-02-02",
+      "checkIn": "2027-02-01",
       "checkOut": "2027-02-04",
       "name": "Great Southern Hotel Sydney",
-      "room": "无房务服务标准大床房",
+      "room": "三晚共 ¥2,027.36，离店扣款",
       "detail": "14:00–次日00:00入住；10:00前退房；717 George St, Haymarket",
       "resource": {
         "id": "great-southern-map",
@@ -3536,7 +3621,7 @@
         "imageAlt": "",
         "sourceNote": "确认邮件地址"
       },
-      "status": "已订2晚",
+      "status": "已订3晚",
       "freeCancelUntil": "2027-02-01 14:00",
       "afterDeadline": "之后不可取消；未入住收全额"
     },
@@ -3678,43 +3763,25 @@
       "dueDate": "",
       "dueLabel": "出发前",
       "title": "两人的驾照英文翻译件",
-      "detail": "新西兰开车要带中国驾照和认可的英文翻译件（或国际驾照认证件），取车时会查。"
+      "detail": "新西兰开车要带中国驾照和认可的英文翻译件（或国际驾照认证件），2/5 取车时会查。"
     },
     {
-      "id": "flight-syd",
-      "sortOrder": 30,
-      "kind": "book",
+      "id": "late-checkin-chc",
+      "sortOrder": 25,
+      "kind": "prep",
       "dueDate": "",
-      "dueLabel": "尽早",
-      "title": "机票：国内 → 悉尼",
-      "detail": "2/1 当天到悉尼。"
+      "dueLabel": "出发前",
+      "title": "拿到基督城 Metropolitan 的晚到入住方式",
+      "detail": "2/4 23:20 才落地，到店过了半夜，前台 21:00 就下班；让旅馆发钥匙盒或门禁码。"
     },
     {
-      "id": "flight-chc",
-      "sortOrder": 40,
-      "kind": "book",
+      "id": "baggage-jq296",
+      "sortOrder": 26,
+      "kind": "prep",
       "dueDate": "",
-      "dueLabel": "尽早",
-      "title": "机票：悉尼 → 基督城",
-      "detail": "2/4，优先上午起飞——新西兰快 2 小时，落地后还要取车、买东西、21:00 前入住。"
-    },
-    {
-      "id": "flight-akl",
-      "sortOrder": 50,
-      "kind": "book",
-      "dueDate": "",
-      "dueLabel": "尽早",
-      "title": "机票：皇后镇 → 奥克兰",
-      "detail": "2/14 下午到奥克兰。"
-    },
-    {
-      "id": "flight-home",
-      "sortOrder": 60,
-      "kind": "book",
-      "dueDate": "",
-      "dueLabel": "尽早",
-      "title": "机票：奥克兰 → 国内",
-      "detail": "2/16 晚上起飞，2/17 早上到。"
+      "dueLabel": "2/13 晚上",
+      "title": "按捷星 20kg 托运整理行李",
+      "detail": "JQ296 每人托运 20kg，机场补交很贵；南航国际段是每人 2 件。"
     },
     {
       "id": "auckland-hotel",
@@ -3724,15 +3791,6 @@
       "dueLabel": "尽早",
       "title": "订奥克兰两晚（2/14–16）",
       "detail": "同一家连住，选 CBD / Britomart 附近，能在 2/16 退房后寄存行李。"
-    },
-    {
-      "id": "car-south",
-      "sortOrder": 80,
-      "kind": "book",
-      "dueDate": "",
-      "dueLabel": "定了机票后",
-      "title": "订南岛租车",
-      "detail": "基督城取车、皇后镇还车，按航班定取还时间，确认异地还车费用。"
     },
     {
       "id": "hobbiton-transport",
@@ -3825,15 +3883,6 @@
       "detail": "Wānaka、Te Anau、Fernhill：停车位置、门锁或钥匙、晚到怎么办。"
     },
     {
-      "id": "sydney-0201",
-      "sortOrder": 190,
-      "kind": "prep",
-      "dueDate": "",
-      "dueLabel": "有空时",
-      "title": "把 2/1 悉尼那晚记进账本",
-      "detail": "补上金额、是否已付和取消规则。"
-    },
-    {
       "id": "pay-fernhill",
       "sortOrder": 200,
       "kind": "pay",
@@ -3876,7 +3925,7 @@
       "dueDate": "2027-02-01",
       "dueLabel": "2/1 14:00",
       "title": "悉尼 Great Southern 免费取消截止",
-      "detail": "之后不能取消，房费 ¥1,361.31 离店扣款。"
+      "detail": "之后不能取消。三晚共 ¥2,027.36，离店扣款；具体取消条款以订单为准。"
     },
     {
       "id": "cancel-metropolitan",
@@ -3912,7 +3961,7 @@
       "dueDate": "2027-02-05",
       "dueLabel": "2/5",
       "title": "买齐长周末补给",
-      "detail": "2/6 Waitangi Day 不少商店不开，路上把 2/6 的早餐、路餐和水买好。"
+      "detail": "2/6 Waitangi Day 不少商店不开，取车后在 Ashburton 或 Geraldine 超市把 2/6 的早餐、路餐和水买好。"
     }
   ],
   "advice": [
@@ -4505,13 +4554,40 @@
       "sourceNote": "机场官网"
     },
     {
-      "id": "arrival-airport-note",
-      "title": "落地机场以出票为准",
-      "type": "note",
-      "url": "",
+      "id": "hgh-airport-map",
+      "title": "杭州萧山国际机场",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Hangzhou+Xiaoshan+International+Airport",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "机票购买后再补"
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "syd-t1-map",
+      "title": "悉尼机场国际航站楼 T1",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Airport+International+Terminal+T1",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "darling-harbour-map",
+      "title": "Darling Harbour",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Darling+Harbour%2C+Sydney+NSW%2C+Australia",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "rental-car-booking",
+      "title": "南岛租车：起亚 Seltos 或同级（已订）",
+      "type": "booking",
+      "url": "https://www.google.com/maps/search/?api=1&query=Christchurch+Airport%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "2/5 10:00 基督城机场取，2/14 10:00 皇后镇机场还"
     },
     {
       "id": "mackenzie-parking-official",
@@ -4562,7 +4638,7 @@
       "id": "nav02-a-route",
       "title": "前半程至Tekapo",
       "type": "map",
-      "url": "https://www.google.com/maps/dir/?api=1&origin=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand&destination=Church+of+the+Good+Shepherd%2C+Pioneer+Drive%2C+Lake+Tekapo%2C+New+Zealand&travelmode=driving&waypoints=Ashburton%2C+New+Zealand%7CGeraldine%2C+Canterbury%2C+New+Zealand%7CFairlie+Bakehouse%2C+Fairlie%2C+New+Zealand",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Christchurch+Airport%2C+New+Zealand&destination=Church+of+the+Good+Shepherd%2C+Pioneer+Drive%2C+Lake+Tekapo%2C+New+Zealand&travelmode=driving&waypoints=Ashburton%2C+New+Zealand%7CGeraldine%2C+Canterbury%2C+New+Zealand%7CFairlie+Bakehouse%2C+Fairlie%2C+New+Zealand",
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "导航02"
