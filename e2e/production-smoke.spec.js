@@ -14,11 +14,11 @@ test("production routes answer without issuing mutation requests", async ({ page
     await route.continue();
   });
 
-  for (const path of ["/", "/ledger", "/expenses", "/add", "/activity", "/settlement", "/itinerary"]) {
+  for (const path of ["/", "/ledger", "/expenses", "/add", "/activity", "/summary", "/itinerary"]) {
     const response = await page.goto(path, { waitUntil: "domcontentloaded" });
     expect(response?.status(), `${path} should answer`).toBeLessThan(400);
-    await expect(page).toHaveTitle(/Aussie Chill/);
-    await expect(page.getByRole("heading", { name: "Aussie Chill", level: 1 }).first()).toBeVisible();
+    await expect(page).toHaveTitle(/澳新 2027/);
+    await expect(page.getByRole("heading", { name: "澳新 2027", level: 1 }).first()).toBeVisible();
   }
 
   expect(mutationRequests).toEqual([]);

@@ -20,7 +20,7 @@ describe("offline application shell", () => {
       "/ledger",
       "/expenses",
       "/add",
-      "/settlement",
+      "/summary",
       "/activity",
       "/manifest.webmanifest",
     ]) {
@@ -60,8 +60,8 @@ describe("offline application shell", () => {
     await dispatchWorkerEvent(active, "install");
     const before = await snapshotCaches(cacheStorage);
 
-    const update = createWorkerRuntime("release-b", cacheStorage, { failUrl: "/settlement" });
-    await assert.rejects(dispatchWorkerEvent(update, "install"), /Unable to pre-cache \/settlement/);
+    const update = createWorkerRuntime("release-b", cacheStorage, { failUrl: "/summary" });
+    await assert.rejects(dispatchWorkerEvent(update, "install"), /Unable to pre-cache \/summary/);
     const after = await snapshotCaches(cacheStorage);
 
     for (const [cacheName, entries] of Object.entries(before)) {
@@ -87,7 +87,7 @@ describe("offline application shell", () => {
   });
 
   it("publishes a standalone Chinese travel-ledger manifest", () => {
-    assert.match(manifestSource, /name:\s*["']Aussie Chill["']/);
+    assert.match(manifestSource, /name:\s*["']澳新 2027 · 日程与记账["']/);
     assert.match(manifestSource, /display:\s*["']standalone["']/);
     assert.match(manifestSource, /start_url:\s*["']\/["']/);
     assert.match(manifestSource, /lang:\s*["']zh-CN["']/);

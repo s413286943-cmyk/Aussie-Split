@@ -3,8 +3,8 @@ import Link from "next/link";
 const ledgerItems = [
   { id: "dashboard", href: "/ledger", label: "总览" },
   { id: "expenses", href: "/expenses", label: "明细" },
+  { id: "summary", href: "/summary", label: "汇总" },
   { id: "activity", href: "/activity", label: "操作" },
-  { id: "settlement", href: "/settlement", label: "结算" },
 ];
 
 export default function LedgerNav({ activeView }) {

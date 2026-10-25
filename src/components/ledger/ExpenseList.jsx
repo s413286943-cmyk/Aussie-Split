@@ -10,17 +10,16 @@ import {
   expenseToEditableForm,
   formatCategoryLabel,
   formatMoney,
-  splitSettledLabel,
+  formatStatusLabel,
 } from "@/lib/ledger";
-import { coupleName, formatPayerLabel } from "@/lib/couples";
+import { supportedCurrencies } from "@/lib/currency";
 import { findDuplicateExpense, validateExpense } from "@/lib/expenseValidation";
 
-export function ExpenseListPage({ expenses, onUpdate, onConfirm, onDelete, onViewReceipt, onInvalid }) {
+export function ExpenseListPage({ expenses, legacyCount = 0, onUpdate, onConfirm, onDelete, onViewReceipt, onInvalid }) {
   const [highlightId, setHighlightId] = useState("");
   const [category, setCategory] = useState("全部");
   const [currency, setCurrency] = useState("全部");
-  const [payer, setPayer] = useState("全部");
-  const [splitFilter, setSplitFilter] = useState("全部");
+  const [statusFilter, setStatusFilter] = useState("全部");
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -28,9 +27,9 @@ export function ExpenseListPage({ expenses, onUpdate, onConfirm, onDelete, onVie
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const split = params.get("split") === "pending" ? "待分摊" : params.get("split") === "settled" ? "已分摊" : "全部";
+    const status = params.get("status") === "draft" ? "待付" : params.get("status") === "confirmed" ? "已付" : "全部";
     setHighlightId(params.get("highlight") || "");
-    setSplitFilter(split);
+    setStatusFilter(status);
   }, []);
 
   const filtered = useMemo(() => {
@@ -38,30 +37,27 @@ export function ExpenseListPage({ expenses, onUpdate, onConfirm, onDelete, onVie
     return expenses.filter((expense) => (
       (category === "全部" || expense.category === category)
       && (currency === "全部" || expense.currency === currency)
-      && (payer === "全部" || expense.payer === payer)
-      && (splitFilter === "全部"
-        || (splitFilter === "待分摊" && expense.status === "confirmed" && !expense.splitSettled)
-        || (splitFilter === "已分摊" && expense.splitSettled))
+      && (statusFilter === "全部"
+        || (statusFilter === "待付" && expense.status === "draft")
+        || (statusFilter === "已付" && expense.status !== "draft"))
       && (!normalizedSearch || `${expense.item} ${expense.note}`.toLocaleLowerCase("zh-CN").includes(normalizedSearch))
       && (!startDate || expense.date >= startDate)
       && (!endDate || expense.date <= endDate)
     ));
-  }, [category, currency, endDate, expenses, payer, search, splitFilter, startDate]);
+  }, [category, currency, endDate, expenses, search, statusFilter, startDate]);
 
   const activeFilters = [
     search && `搜索“${search}”`,
     category !== "全部" && `类别：${formatCategoryLabel(category)}`,
     currency !== "全部" && `币种：${currency}`,
-    payer !== "全部" && `付款方：${coupleName(payer)}`,
-    splitFilter !== "全部" && `分摊：${splitFilter}`,
+    statusFilter !== "全部" && `状态：${statusFilter}`,
     startDate && `从 ${startDate}`,
     endDate && `到 ${endDate}`,
   ].filter(Boolean);
   const advancedFilterCount = [
     category !== "全部",
     currency !== "全部",
-    payer !== "全部",
-    splitFilter !== "全部",
+    statusFilter !== "全部",
     Boolean(startDate),
     Boolean(endDate),
   ].filter(Boolean).length;
@@ -69,8 +65,7 @@ export function ExpenseListPage({ expenses, onUpdate, onConfirm, onDelete, onVie
   function clearFilters() {
     setCategory("全部");
     setCurrency("全部");
-    setPayer("全部");
-    setSplitFilter("全部");
+    setStatusFilter("全部");
     setSearch("");
     setStartDate("");
     setEndDate("");
@@ -83,7 +78,7 @@ export function ExpenseListPage({ expenses, onUpdate, onConfirm, onDelete, onVie
           <span className="section-kicker">Receipt stream</span>
           <h2>费用明细</h2>
         </div>
-        <span className="muted">{filtered.length} 条</span>
+        <span className="muted">{filtered.length} 条{legacyCount ? ` · 已隐藏 ${legacyCount} 条 2026 旧记录` : ""}</span>
       </div>
       <div className="filter-toolbar">
         <label className="filter-search">
@@ -101,16 +96,8 @@ export function ExpenseListPage({ expenses, onUpdate, onConfirm, onDelete, onVie
       </div>
       <div className={filtersOpen ? "filters ledger-filters advanced-filters is-open" : "filters ledger-filters advanced-filters"}>
         <SelectField label="类别" value={category} onChange={setCategory} options={["全部", ...categories]} formatOption={formatCategoryLabel} />
-        <SelectField label="币种" value={currency} onChange={setCurrency} options={["全部", "CNY", "AUD"]} />
-        <SelectField label="分摊状态" value={splitFilter} onChange={setSplitFilter} options={["全部", "待分摊", "已分摊"]} />
-        <label>
-          <span>付款方</span>
-          <select value={payer} onChange={(event) => setPayer(event.target.value)}>
-            <option value="全部">全部付款方</option>
-            <option value="us">{coupleName("us")}</option>
-            <option value="them">{coupleName("them")}</option>
-          </select>
-        </label>
+        <SelectField label="币种" value={currency} onChange={setCurrency} options={["全部", ...supportedCurrencies]} />
+        <SelectField label="付款状态" value={statusFilter} onChange={setStatusFilter} options={["全部", "已付", "待付"]} />
         <label>
           <span>开始日期</span>
           <input type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} />
@@ -215,24 +202,17 @@ export default function ExpenseList({ expenses, allExpenses = expenses, onUpdate
                   日期
                   <input type="date" value={editForm.date} onChange={(event) => setEditForm({ ...editForm, date: event.target.value })} />
                 </label>
-                <SelectInput label="币种" value={editForm.currency} onChange={(value) => setEditForm({ ...editForm, currency: value })} options={["CNY", "AUD"]} />
+                <SelectInput label="币种" value={editForm.currency} onChange={(value) => setEditForm({ ...editForm, currency: value })} options={supportedCurrencies} />
                 <label>
                   金额
                   <input type="number" min="0.01" step="0.01" value={editForm.amount} onChange={(event) => setEditForm({ ...editForm, amount: event.target.value })} aria-invalid={submitted && Boolean(validation.errors.amount)} />
                   {submitted && validation.errors.amount && <span className="field-error">{validation.errors.amount}</span>}
                 </label>
                 <label>
-                  付款方
-                  <select value={editForm.payer} onChange={(event) => setEditForm({ ...editForm, payer: event.target.value })}>
-                    <option value="us">{formatPayerLabel("us")}</option>
-                    <option value="them">{formatPayerLabel("them")}</option>
-                  </select>
-                </label>
-                <label>
                   状态
                   <select value={editForm.status} onChange={(event) => setEditForm({ ...editForm, status: event.target.value })}>
-                    <option value="confirmed">已确认</option>
-                    <option value="draft">待确认</option>
+                    <option value="confirmed">已付</option>
+                    <option value="draft">待付</option>
                   </select>
                 </label>
                 <label className="full">
@@ -256,23 +236,16 @@ export default function ExpenseList({ expenses, allExpenses = expenses, onUpdate
               <p className="muted">{expense.date || "日期待补"} · {expense.note || "无备注"}</p>
               <div className="tags">
                 <span className="tag">{formatCategoryLabel(expense.category)}</span>
-                <span className={expense.status === "draft" ? "tag draft" : "tag"}>{expense.status === "draft" ? "待确认" : "已确认"}</span>
-                <span className={expense.payer === "them" ? "tag other" : "tag"}>{formatPayerLabel(expense.payer)}</span>
-                {expense.splitSettled && <span className="tag settled">已分摊</span>}
+                <span className={expense.status === "draft" ? "tag draft" : "tag"}>{formatStatusLabel(expense.status)}</span>
                 {receiptPending && <span className="tag draft">小票待上传</span>}
                 {receiptUploaded && <span className="tag">有小票</span>}
               </div>
             </div>
             <div className="stack row-actions">
               <strong className="amount">{formatMoney(expense.currency, expense.amount)}</strong>
-              {onUpdate && (
-                <button className={expense.splitSettled ? "button small primary" : "button small"} type="button" aria-pressed={Boolean(expense.splitSettled)} disabled={isBusy} onClick={() => runRowAction(expense, () => onUpdate(expense, "toggle-split"))}>
-                  {splitSettledLabel(expense.splitSettled)}
-                </button>
-              )}
               {onUpdate && <button className="button small" type="button" onClick={() => startEdit(expense)} disabled={isBusy}>编辑</button>}
               {onViewReceipt && receiptUploaded && <button className="button small" type="button" onClick={() => runRowAction(expense, () => onViewReceipt(expense))} disabled={isBusy}>查看小票</button>}
-              {onConfirm && expense.status === "draft" && <button className="button small primary" type="button" onClick={() => runRowAction(expense, () => onConfirm(expense))} disabled={isBusy}>确认</button>}
+              {onConfirm && expense.status === "draft" && <button className="button small primary" type="button" onClick={() => runRowAction(expense, () => onConfirm(expense))} disabled={isBusy}>标为已付</button>}
               {onDelete && <button className="button small danger" type="button" onClick={() => runRowAction(expense, () => onDelete(expense.id))} disabled={isBusy}>删除</button>}
             </div>
           </article>
@@ -307,7 +280,7 @@ function SelectInput({ label, value, onChange, options, formatOption = (option) 
 function rowClassName(baseClassName, expense, isBusy, highlightId) {
   return [
     baseClassName,
-    expense.status === "draft" ? "is-draft" : expense.splitSettled ? "is-settled" : "is-pending",
+    expense.status === "draft" ? "is-draft" : "is-paid",
     isBusy ? "is-busy" : "",
     highlightId && expense.id === highlightId ? "is-highlighted" : "",
   ].filter(Boolean).join(" ");

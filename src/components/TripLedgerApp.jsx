@@ -7,16 +7,23 @@ import {
   calculateLedger,
   formatCategoryLabel,
   formatMoney,
-  setExpenseSplitSettled,
+  formatTotals,
 } from "@/lib/ledger";
+import {
+  buildDayLookup,
+  countLegacyExpenses,
+  scopeTripExpenses,
+  summarizeByBase,
+  summarizeByDay,
+} from "@/lib/ledgerSummary";
+import { readCachedItinerary, writeCachedItinerary } from "@/lib/itineraryCache";
 import {
   actionFeedbackMessage,
   createActivityEntry,
 } from "@/lib/activity";
-import { formatSettlementDirection } from "@/lib/couples";
 import { createLedgerBackup } from "@/lib/backup";
 import { pulseElement, revealPage, shakeElement } from "@/lib/motion";
-import { applyLedgerOperations, fetchReceipt } from "@/lib/apiClient";
+import { applyLedgerOperations, fetchItinerary, fetchReceipt } from "@/lib/apiClient";
 import {
   closeOfflineLedger,
   commitOfflineMutation,
@@ -41,7 +48,7 @@ const undoDeleteMs = DELETE_UNDO_MS;
 
 export default function TripLedgerApp({ view }) {
   return (
-    <UnlockGate intro="输入旅行访问码后进入共享账本和行程。">
+    <UnlockGate intro="输入旅行访问码后进入两人账本和日程。">
       <TripLedgerContent view={view} />
     </UnlockGate>
   );
@@ -66,7 +73,41 @@ function TripLedgerContent({ view }) {
   const [actionNotice, setActionNotice] = useState(null);
   const [feedbackAnimation, setFeedbackAnimation] = useState(null);
   const [syncState, setSyncState] = useState("正在同步");
-  const ledger = useMemo(() => calculateLedger(expenses), [expenses]);
+  const [tripDays, setTripDays] = useState([]);
+  const tripExpenses = useMemo(() => scopeTripExpenses(expenses), [expenses]);
+  const legacyCount = useMemo(() => countLegacyExpenses(expenses), [expenses]);
+  const ledger = useMemo(() => calculateLedger(tripExpenses), [tripExpenses]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadTripDays() {
+      await Promise.resolve();
+      let cached = null;
+      try {
+        cached = readCachedItinerary(localStorage);
+      } catch {
+        cached = null;
+      }
+      if (cached && !cancelled) setTripDays(buildDayLookup(cached));
+      if (!navigator.onLine) return;
+      try {
+        const response = await fetchItinerary();
+        if (cancelled || !response?.itinerary) return;
+        setTripDays(buildDayLookup(response.itinerary));
+        try {
+          writeCachedItinerary(localStorage, response.itinerary);
+        } catch {
+          // Day labels still work for this session when storage is full.
+        }
+      } catch {
+        // Summaries fall back to the cached itinerary or to date-only groups.
+      }
+    }
+    loadTripDays();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const showActionNotice = useCallback((message, tone = "success", options = {}) => {
     if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
@@ -324,24 +365,18 @@ function TripLedgerContent({ view }) {
     }
   }
 
-  async function updateExpense(expense, action = "edit") {
+  async function updateExpense(expense) {
     try {
       const committed = await commitLedgerMutation(
         (currentExpenses) => {
           const latestExpense = currentExpenses.find((item) => item.id === expense.id);
           if (!latestExpense) return null;
-          if (action === "toggle-split") {
-            return setExpenseSplitSettled(latestExpense, !latestExpense.splitSettled);
-          }
           return { ...expense, mutationVersion: latestExpense.mutationVersion };
         },
         { activityAction: "edit" },
       );
       if (!committed) return;
-      const versionedExpense = committed.expense;
-      const previousExpense = committed.previousExpense;
-      const feedbackAction = previousExpense && Boolean(previousExpense.splitSettled) !== Boolean(versionedExpense.splitSettled) ? "split" : "edit";
-      showPersistNotice(feedbackAction, versionedExpense);
+      showPersistNotice("edit", committed.expense);
       requestLedgerSync();
     } catch {
       showActionNotice(`保存修改失败：${expense.item || "这笔费用"}`, "danger");
@@ -530,7 +565,9 @@ function TripLedgerContent({ view }) {
     >
       {view === "dashboard" && (
         <Dashboard
-          expenses={expenses}
+          expenses={tripExpenses}
+          legacyCount={legacyCount}
+          tripDays={tripDays}
           ledger={ledger}
           activity={activity}
           syncState={syncState}
@@ -541,10 +578,10 @@ function TripLedgerContent({ view }) {
         />
       )}
       {view === "expenses" && (
-        <ExpenseListPage expenses={expenses} onUpdate={updateExpense} onConfirm={confirmExpense} onDelete={removeExpense} onViewReceipt={viewReceipt} onInvalid={showFormWarning} />
+        <ExpenseListPage expenses={tripExpenses} legacyCount={legacyCount} onUpdate={updateExpense} onConfirm={confirmExpense} onDelete={removeExpense} onViewReceipt={viewReceipt} onInvalid={showFormWarning} />
       )}
-      {view === "add" && <ExpenseForm onAdd={addExpense} onInvalid={showFormWarning} expenses={expenses} />}
-      {view === "settlement" && <Settlement ledger={ledger} />}
+      {view === "add" && <ExpenseForm onAdd={addExpense} onInvalid={showFormWarning} expenses={tripExpenses} />}
+      {view === "summary" && <LedgerSummary expenses={tripExpenses} ledger={ledger} tripDays={tripDays} />}
       {view === "activity" && (
         <>
           <ActivityFeed activity={activity} fullPage syncState={syncState} />
@@ -555,14 +592,27 @@ function TripLedgerContent({ view }) {
   );
 }
 
-function Dashboard({ expenses, ledger, activity, syncState, onUpdate, onConfirm, onViewReceipt, onInvalid }) {
+function Dashboard({ expenses, legacyCount, tripDays, ledger, activity, syncState, onUpdate, onConfirm, onViewReceipt, onInvalid }) {
   const recent = expenses.slice(0, 5);
   const stats = dashboardStats(expenses, activity);
+  const cityRows = summarizeByBase(expenses, tripDays);
 
   return (
     <>
       <DashboardDocket stats={stats} />
       <SummaryCards ledger={ledger} />
+      {legacyCount > 0 && (
+        <p className="muted legacy-ledger-note">
+          另有 {legacyCount} 条 2026 年澳洲旅行的旧记录未计入，仍保存在数据库和备份中。
+        </p>
+      )}
+      <section className="section ledger-section">
+        <div className="section-head" data-motion="section">
+          <h2>按城市</h2>
+          <Link href="/summary" className="button small">按天看</Link>
+        </div>
+        <SummaryRows rows={cityRows} emptyText="还没有记账" />
+      </section>
       <ActivityFeed activity={activity} syncState={syncState} />
       <section className="section ledger-section">
         <div className="section-head" data-motion="section">
@@ -584,8 +634,8 @@ function DashboardDocket({ stats }) {
         <p>{stats.tripDetail}</p>
       </article>
       <div className="docket-metrics">
-        <DocketMetric label="待分摊" value={stats.pendingSplitCount} detail="需要后续处理" href="/expenses?split=pending" />
-        <DocketMetric label="待确认" value={stats.draftCount} detail="草稿费用" />
+        <DocketMetric label="待付" value={stats.pendingCount} detail="预订尾款 / 待核对" href="/expenses?status=draft" />
+        <DocketMetric label="已记" value={stats.expenseCount} detail="本次旅行笔数" href="/expenses" />
         <DocketMetric label="操作记录" value={stats.activityCount} detail="最近同步" />
       </div>
     </section>
@@ -608,25 +658,116 @@ function DocketMetric({ label, value, detail, href }) {
 function SummaryCards({ ledger }) {
   const entries = Object.entries(ledger.currencies);
 
-  return (
+  if (!entries.length) {
+    return (
       <section className="section summary-grid ledger-summary">
+        <article className="card summary-card" data-motion="summary-card">
+          <span className="muted">本次旅行</span>
+          <strong>还没有记账</strong>
+          <p className="muted">从“记一笔”开始，或等预订记录同步下来。</p>
+        </article>
+      </section>
+    );
+  }
+
+  return (
+    <section className="section summary-grid ledger-summary">
       {entries.map(([currency, bucket]) => (
         <article className={`card summary-card currency-${currency.toLowerCase()}`} key={currency} data-motion="summary-card">
-          <span className="muted">{currency} 已确认总额</span>
+          <span className="muted">{currency} 合计 · {bucket.count} 笔</span>
           <strong>{formatMoney(currency, bucket.total)}</strong>
-          <p className="muted">每对夫妻承担 {formatMoney(currency, bucket.eachCoupleShare)}</p>
-        </article>
-      ))}
-      {entries.map(([currency, bucket]) => (
-        <article className={`card summary-card is-net currency-${currency.toLowerCase()}`} key={`${currency}-net`} data-motion="summary-card">
-          <span className="muted">{currency} 当前应收</span>
-          <strong>{formatMoney(currency, Math.abs(bucket.netOtherOwesUs))}</strong>
           <p className="muted">
-            {formatSettlementDirection(bucket.netOtherOwesUs)}
+            已付 {formatMoney(currency, bucket.paid)}
+            {bucket.pending ? ` · 待付 ${formatMoney(currency, bucket.pending)}` : ""}
           </p>
         </article>
       ))}
     </section>
+  );
+}
+
+function SummaryRows({ rows, emptyText }) {
+  if (!rows.length) {
+    return (
+      <div className="expense-list summary-rows">
+        <article className="expense-row empty-state" data-motion="row">
+          <div>
+            <h3>{emptyText}</h3>
+          </div>
+        </article>
+      </div>
+    );
+  }
+
+  return (
+    <div className="expense-list summary-rows">
+      {rows.map((row) => (
+        <article className="expense-row summary-row" key={row.key} data-motion="row">
+          <div>
+            <h3>{row.label}</h3>
+            <p className="muted">{[row.detail, `${row.count} 笔`].filter(Boolean).join(" · ")}</p>
+          </div>
+          <div className="summary-row-amounts">
+            <strong className="amount">{formatTotals(row.totals, "total")}</strong>
+            {Object.values(row.totals).some((bucket) => bucket.pending) && (
+              <small className="muted">待付 {formatTotals(row.totals, "pending")}</small>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function LedgerSummary({ expenses, ledger, tripDays }) {
+  const cityRows = summarizeByBase(expenses, tripDays);
+  const dayRows = summarizeByDay(expenses, tripDays);
+  const categoryEntries = Object.entries(ledger.categoriesByCurrency);
+
+  return (
+    <>
+      <SummaryCards ledger={ledger} />
+      <section className="section ledger-section">
+        <div className="section-head" data-motion="section">
+          <h2>按城市</h2>
+          <span className="muted">按当晚住宿城市归类</span>
+        </div>
+        <SummaryRows rows={cityRows} emptyText="还没有记账" />
+      </section>
+      <section className="section ledger-section">
+        <div className="section-head" data-motion="section">
+          <h2>按天</h2>
+          <span className="muted">{tripDays.length ? "2/1–2/17 行程日" : "行程未载入，仅按日期分组"}</span>
+        </div>
+        <SummaryRows rows={dayRows} emptyText="还没有记账" />
+      </section>
+      <section className="section ledger-section">
+        <div className="section-head" data-motion="section">
+          <h2>按类别</h2>
+          <span className="muted">各币种分开统计</span>
+        </div>
+        <div className="expense-list category-breakdown">
+          {categoryEntries.flatMap(([currency, byCategory]) =>
+            Object.entries(byCategory).map(([category, amount]) => (
+              <article className="expense-row category-row" key={`${currency}-${category}`} data-motion="row">
+                <div>
+                  <h3>{formatCategoryLabel(category)}</h3>
+                  <p className="muted">{currency}</p>
+                </div>
+                <strong className="amount">{formatMoney(currency, amount)}</strong>
+              </article>
+            )),
+          )}
+          {!categoryEntries.length && (
+            <article className="expense-row empty-state" data-motion="row">
+              <div>
+                <h3>还没有记账</h3>
+              </div>
+            </article>
+          )}
+        </div>
+      </section>
+    </>
   );
 }
 
@@ -642,94 +783,43 @@ function escapeFeedbackSelector(value) {
   return String(value || "").replaceAll("\\", "\\\\").replaceAll("'", "\\'");
 }
 
-function Settlement({ ledger }) {
-  const entries = Object.entries(ledger.currencies);
-
-  return (
-    <>
-      <section className="section settlement-grid ledger-summary settlement-instructions">
-        {entries.map(([currency, bucket]) => (
-          <article className={`card summary-card settlement-card currency-${currency.toLowerCase()}`} key={currency} data-motion="summary-card">
-            <span className="muted">{currency} 结算</span>
-            <strong>{formatMoney(currency, Math.abs(bucket.netOtherOwesUs))}</strong>
-            <p className="muted">
-              {formatSettlementDirection(bucket.netOtherOwesUs)}
-            </p>
-          </article>
-        ))}
-      </section>
-      <section className="section ledger-section">
-        <div className="section-head" data-motion="section">
-          <h2>待分摊分类小计</h2>
-          <span className="muted">当前待结算</span>
-        </div>
-        <div className="expense-list settlement-breakdown">
-          {entries.flatMap(([currency]) =>
-            Object.entries(ledger.pendingCategoriesByCurrency[currency] || {}).map(([category, amount]) => (
-              <article className="expense-row settlement-category-row" key={`${currency}-${category}`} data-motion="row">
-                <div>
-                  <h3>{formatCategoryLabel(category)}</h3>
-                  <p className="muted">{currency}</p>
-                </div>
-                <strong className="amount">{formatMoney(currency, amount)}</strong>
-              </article>
-            )),
-          )}
-          {entries.every(([currency]) => !Object.keys(ledger.pendingCategoriesByCurrency[currency] || {}).length) && (
-            <article className="expense-row empty-state" data-motion="row">
-              <div>
-                <h3>当前没有待分摊费用</h3>
-                <p className="muted">两边已结清</p>
-              </div>
-            </article>
-          )}
-        </div>
-      </section>
-    </>
-  );
-}
-
 function dashboardStats(expenses, activity) {
-  const pendingSplitCount = expenses.filter((expense) => expense.status === "confirmed" && !expense.splitSettled).length;
-  const draftCount = expenses.filter((expense) => expense.status === "draft").length;
-  const tripClock = tripStatus();
-
   return {
-    pendingSplitCount,
-    draftCount,
+    pendingCount: expenses.filter((expense) => expense.status === "draft").length,
+    expenseCount: expenses.length,
     activityCount: activity.length,
-    ...tripClock,
+    ...tripStatus(),
   };
 }
 
 function tripStatus(now = new Date()) {
-  const start = new Date(2026, 6, 28);
-  const end = new Date(2026, 7, 13);
+  const start = new Date(2027, 1, 1);
+  const end = new Date(2027, 1, 17);
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const dayMs = 24 * 60 * 60 * 1000;
 
   if (today < start) {
-    const days = Math.ceil((start.getTime() - today.getTime()) / dayMs);
+    const days = Math.round((start.getTime() - today.getTime()) / dayMs);
     return {
-      tripLabel: "行前票夹",
+      tripLabel: "行前",
       tripValue: `T-${days}`,
-      tripDetail: "先把酒店、租车、门票和预付账单收齐。",
+      tripDetail: "预订尾款按日期扣款，机票、Auckland 两晚和租车入账后这里会更新。",
     };
   }
 
   if (today <= end) {
-    const day = Math.floor((today.getTime() - start.getTime()) / dayMs);
+    const day = Math.round((today.getTime() - start.getTime()) / dayMs) + 1;
     return {
       tripLabel: "旅行中",
-      tripValue: `D${day}`,
-      tripDetail: "当天发生的共同费用，先记再慢慢补细节。",
+      tripValue: `D${String(day).padStart(2, "0")}`,
+      tripDetail: "花了就先记一笔，币种按实际付款填。",
     };
   }
 
   return {
     tripLabel: "返程后",
     tripValue: "收尾",
-    tripDetail: "核对待分摊和待确认项目，完成最终结算。",
+    tripDetail: "核对待付项目和信用卡账单，补齐小票。",
   };
 }
 

@@ -13,7 +13,7 @@ const PRECACHE_URLS = [
   "/ledger",
   "/expenses",
   "/add",
-  "/settlement",
+  "/summary",
   "/activity",
   "/manifest.webmanifest",
 ];

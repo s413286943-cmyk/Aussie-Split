@@ -1,3 +1,5 @@
+import { formatCurrencyAmount } from "./currency.js";
+
 const quickResourceTypes = new Set(["map", "booking", "restaurant", "official"]);
 
 const baseCarryItems = [
@@ -8,8 +10,8 @@ const baseCarryItems = [
   },
   {
     id: "booking-screenshots",
-    label: "预订截图",
-    detail: "酒店、门票、租车资料放在离线相册里。",
+    label: "预订截图 / 离线地图",
+    detail: "住宿、门票、租车确认单和当天导航提前离线保存。",
   },
 ];
 
@@ -65,7 +67,7 @@ export function buildTodayCommand(day) {
   return {
     transport: day.transport,
     leaveBy: day.leaveBy,
-    lodging: day?.lodging && day.lodging !== "-" ? day.lodging : "飞机上 / 返程",
+    lodging: day?.lodging && day.lodging !== "-" ? day.lodging : "返程，无需住宿",
     bookedItems,
     meals,
     notes: buildExecutionNotes(day, bookedItems, mapActions),
@@ -91,9 +93,9 @@ export function buildDayTimeline(day) {
 }
 
 export function buildDayDocket(day, expenses = []) {
-  const dayExpenses = expenses.filter((expense) => expense.date === day?.date);
+  const dayExpenses = expenses.filter((expense) => expense.date === day?.date && !expense.deletedAt);
   const lodgingExpense = findMatchingExpense(dayExpenses, ["酒店"], day?.lodging);
-  const transportExpense = findMatchingExpense(dayExpenses, ["租车", "交通"], day?.title);
+  const transportExpense = findMatchingExpense(dayExpenses, ["租车", "交通", "机票"], day?.title);
   const activityExpense = findMatchingActivityExpense(dayExpenses, day);
   const lodgingResource = day?.lodgingResource;
   const primaryResource = day?.primaryResource;
@@ -105,7 +107,7 @@ export function buildDayDocket(day, expenses = []) {
       label: "住宿",
       title: day?.lodging && day.lodging !== "-" ? day.lodging : "无住宿",
       detail: lodgingExpense ? `账本已记 ${moneyLabel(lodgingExpense)}` : "看当天入住 / 返程安排",
-      status: lodgingResource?.type === "map" ? "已订" : "核对",
+      status: day?.lodgingStatus || (lodgingResource?.type === "map" ? "已订" : "核对"),
       href: lodgingResource?.url || "",
     },
     {
@@ -113,15 +115,15 @@ export function buildDayDocket(day, expenses = []) {
       label: "交通",
       title: day?.transport || "",
       detail: transportExpense ? `账本已记 ${moneyLabel(transportExpense)}` : day?.leaveBy || "",
-      status: /自驾|租车/.test(day?.transport || "") ? "看车况" : "看时间",
+      status: /自驾|租车/.test(day?.transport || "") ? "看路况" : /待购/.test(day?.transport || "") ? "待购" : "看时间",
       href: primaryResource?.url || "",
     },
     {
       id: "ticket",
       label: "门票 / Tour",
       title: activityExpense?.item || ticketResource?.title || "当天无固定票券",
-      detail: activityExpense ? `账本已记 ${moneyLabel(activityExpense)}` : "有预订就提前截图",
-      status: activityExpense || (ticketResource && ticketResource.type !== "note") ? "已付款/待核" : "机动",
+      detail: activityExpense ? `账本已记 ${moneyLabel(activityExpense)}` : ticketResource?.sourceNote || "有预订就提前截图",
+      status: ticketResource?.type === "booking" ? "已订" : /待订|待预约/.test(ticketResource?.title || "") ? "待订" : "机动",
       href: ticketResource?.url || "",
     },
   ];
@@ -133,7 +135,7 @@ export function collectMapActions(day) {
   const lodging = day?.lodgingResource;
   const primary = day?.primaryResource;
   const dinner = findDinnerResource(day);
-  const transit = resources.find((resource) => /airport|wharf|ferry|parking|station|机场|码头|停车|车站/i.test(resource.title));
+  const transit = resources.find((resource) => /airport|wharf|ferry|parking|station|visitor centre|机场|码头|停车|车站|集合/i.test(resource.title));
 
   if (lodging?.type === "map" && day?.lodging && day.lodging !== "-") {
     actions.push({ id: `lodging-${lodging.id}`, label: "打开酒店地图", title: lodging.title, url: lodging.url });
@@ -190,47 +192,55 @@ export function buildDayCarryChecklist(day) {
     });
   }
 
-  if (/自驾|租车|停车|toll|车|大洋路|阿瑟顿|南海岸|road|drive|car/i.test(text)) {
+  if (/自驾|租车|取车|还车|停车|加油|drive|car/i.test(text)) {
     items.push({
       id: "drive-kit",
-      label: "驾照翻译件 / 车钥匙",
-      detail: "确认停车票、导航路线和加油计划。",
+      label: "驾照 + 翻译件 / 车钥匙",
+      detail: "出发前看NZTA路况、油量和停车限时牌。",
     });
   }
 
-  if (/大堡礁|外礁|reef|船|观鲸|whale|ferry|游船/i.test(text)) {
+  if (/徒步|步道|Track|Walk|Hooker|Mount Iron|Lagoon/i.test(text)) {
+    items.push({
+      id: "hike-kit",
+      label: "徒步鞋 / 路餐 / 饮水",
+      detail: "步道没有补给，水和零食按全程准备。",
+    });
+  }
+
+  if (/游船|船|峡湾|Milford|cruise/i.test(text)) {
     items.push({
       id: "sea-kit",
       label: "晕船药 / 防水袋",
-      detail: "船上风大，手机和证件单独防水。",
+      detail: "船头风大水雾重，手机和证件单独防水。",
     });
   }
 
-  if (/泳|snorkel|浮潜|大堡礁|外礁|Bondi|海滩|beach/i.test(text)) {
-    items.push({
-      id: "swim-kit",
-      label: "泳衣 / 毛巾 / 换洗衣物",
-      detail: "下水或海边日提前放进包里。",
-    });
-  }
-
-  if (/雨|防水|瀑布|雨林|Daintree|丹翠|Atherton|阿瑟顿|海岸|Bondi|大洋路|whale|观鲸/i.test(text)) {
+  if (/雨|防水|防风|山区|Mt Cook|Aoraki|Milford|Fiordland|山口|Lindis/i.test(text)) {
     items.push({
       id: "weather-shell",
-      label: "防风防雨外套",
-      detail: "澳洲冬天海边和雨林温差明显。",
+      label: "防风防雨外套 / 保暖层",
+      detail: "新西兰山区和峡湾天气变化快，夏天也要带。",
     });
   }
 
-  if (/防晒|海岸|海滩|reef|大堡礁|Daintree|丹翠|Atherton|阿瑟顿|Bondi|蓝山|南海岸|观鲸/i.test(text)) {
+  if (/防晒|紫外线|湖|Tekapo|Pukaki|Wānaka|Glenorchy|Hobbiton|日晒/i.test(text)) {
     items.push({
       id: "sun-kit",
-      label: "防晒 / 墨镜",
-      detail: "冬天紫外线也强，户外日不要省。",
+      label: "防晒霜 / 墨镜 / 帽子",
+      detail: "新西兰紫外线很强，阴天也要涂。",
     });
   }
 
-  if (day?.lodging && day.lodging !== "-" && !/飞机上/.test(day.lodging)) {
+  if (/观星|星空/i.test(text)) {
+    items.push({
+      id: "night-kit",
+      label: "观星保暖外套",
+      detail: "夜里气温可降到个位数，按冬装准备。",
+    });
+  }
+
+  if (day?.lodging && day.lodging !== "-" && !/飞机上/.test(day.lodging) && day.lodgingStatus !== "无需住宿") {
     items.push({
       id: "hotel-key",
       label: "房卡 / 住宿地址",
@@ -242,19 +252,18 @@ export function buildDayCarryChecklist(day) {
 }
 
 export function summarizeDayLedger(day, expenses = []) {
-  const dayExpenses = expenses.filter((expense) => expense.date === day?.date);
+  const dayExpenses = expenses.filter((expense) => expense.date === day?.date && !expense.deletedAt);
   const totalsByCurrency = {};
 
   for (const expense of dayExpenses) {
-    const currency = expense.currency || "CNY";
+    const currency = expense.currency || "NZD";
     totalsByCurrency[currency] = roundMoney((totalsByCurrency[currency] || 0) + Number(expense.amount || 0));
   }
 
   return {
     date: day?.date || "",
     count: dayExpenses.length,
-    pendingSplitCount: dayExpenses.filter((expense) => expense.status === "confirmed" && !expense.splitSettled).length,
-    draftCount: dayExpenses.filter((expense) => expense.status === "draft").length,
+    pendingCount: dayExpenses.filter((expense) => expense.status === "draft").length,
     totalsByCurrency,
     recentExpenses: dayExpenses.slice(0, 3),
   };
@@ -277,11 +286,21 @@ function daySearchText(day) {
     day?.lodging,
     day?.climateNote,
     day?.clothingNote,
+    day?.transport,
+    ...(day?.notes || []).map((note) => note.text),
     ...(day?.blocks || []).flatMap((block) => [block.period, block.place, block.activity, block.highlight, block.tip]),
   ].filter(Boolean).join(" ");
 }
 
 function classifyTimelineSlot(block) {
+  const clock = String(block.period || "").match(/^(\d{1,2}):\d{2}/);
+  if (clock) {
+    const hour = Number(clock[1]);
+    if (hour < 11) return "morning";
+    if (hour < 14) return "noon";
+    if (hour < 18) return "afternoon";
+    return "night";
+  }
   const text = `${block.period} ${block.place} ${block.activity}`;
   if (/早|上午|出发|抵达|入境/i.test(text)) return "morning";
   if (/午|中午|午餐/i.test(text)) return "noon";
@@ -299,8 +318,9 @@ function buildExecutionNotes(day, bookedItems, mapActions) {
   const notes = [];
   if (bookedItems.length) notes.push("预订截图提前离线保存");
   if (mapActions.length) notes.push("出门前先打开第一站地图");
-  if (/自驾|租车|大洋路|阿瑟顿/i.test(daySearchText(day))) notes.push("上车前确认油量、停车和 toll");
-  if (/大堡礁|观鲸|船|reef|whale/i.test(daySearchText(day))) notes.push("海上日优先防风、防晒和晕船药");
+  if (/自驾|租车/i.test(daySearchText(day))) notes.push("上车前看NZTA路况、油量和停车限时");
+  if (/游船|Milford|峡湾/i.test(daySearchText(day))) notes.push("峡湾日优先防水、保暖和晕船药");
+  if (/已订|报到/i.test(daySearchText(day))) notes.push("报到时间比游览时间更重要，留足缓冲");
   if (!notes.length) notes.push("今天主打轻松执行，不要把行程塞满");
   return notes.slice(0, 4);
 }
@@ -331,7 +351,7 @@ function findDinnerResource(day) {
 
 function resourceTitleMatchesText(title, text) {
   const normalizedText = normalizeText(text).replace(/[^\p{L}\p{N}]+/gu, "");
-  const ignoredWords = new Set(["sydney", "melbourne", "cairns"]);
+  const ignoredWords = new Set(["sydney", "queenstown", "wanaka", "auckland", "anau"]);
   const words = String(title || "")
     .toLowerCase()
     .split(/[^\p{L}\p{N}]+/gu)
@@ -340,11 +360,7 @@ function resourceTitleMatchesText(title, text) {
 }
 
 function moneyLabel(expense) {
-  const value = Number(expense.amount || 0).toLocaleString("zh-CN", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-  return expense.currency === "AUD" ? `A$${value}` : `¥${value}`;
+  return formatCurrencyAmount(expense.currency, expense.amount);
 }
 
 function normalizeText(value = "") {

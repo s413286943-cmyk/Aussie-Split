@@ -14,7 +14,7 @@ test("shared access gate rejects a bad code and unlocks with the shared code", a
 
   await accessCode.fill("shared-code");
   await page.getByRole("button", { name: "进入" }).click();
-  await expect(page.getByRole("heading", { name: "Aussie Chill", level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "澳新 2027", level: 1 })).toBeVisible();
 
   await page.goto("/expenses");
   await expect(page.getByRole("heading", { name: "费用明细", level: 1 })).toBeVisible();
@@ -32,7 +32,9 @@ test("public application scripts contain no private itinerary or seeded expense 
         .map((source) => fetch(source).then((response) => response.text())),
     ));
     const publicScripts = scriptBodies.join("\n");
-    expect(publicScripts).not.toContain("Oaks Melbourne on Market Hotel");
-    expect(publicScripts).not.toContain("Billy Tea Daintree Rainforest & Cape Tribulation Tour");
+    expect(publicScripts).not.toContain("Hikuwai Haven");
+    expect(publicScripts).not.toContain("15 Greenstone Place");
+    expect(publicScripts).not.toContain("Mandarin Language Tour");
+    expect(publicScripts).not.toContain("Twizel Holiday Park");
   }
 });

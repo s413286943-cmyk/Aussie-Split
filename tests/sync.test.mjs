@@ -404,10 +404,10 @@ describe("TripLedger durable outbox contract", () => {
     for (const name of ["addExpense", "updateExpense", "confirmExpense", "removeExpense"]) {
       assert.match(functionSource(tripLedgerSource, name), /await commitLedgerMutation\(/);
     }
-    assert.match(expenseListSource, /onUpdate\(expense, "toggle-split"\)/);
+    assert.doesNotMatch(expenseListSource, /toggle-split|splitSettled/);
     const updateSource = functionSource(tripLedgerSource, "updateExpense");
-    assert.match(updateSource, /action === "toggle-split"/);
-    assert.match(updateSource, /setExpenseSplitSettled\(latestExpense/);
+    assert.doesNotMatch(updateSource, /toggle-split|setExpenseSplitSettled/);
+    assert.match(updateSource, /mutationVersion: latestExpense\.mutationVersion/);
   });
 
   it("commits IndexedDB before updating refs and React state", () => {

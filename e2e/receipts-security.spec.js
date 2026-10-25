@@ -23,7 +23,7 @@ test("uploaded receipt opens through the protected receipt endpoint", async ({ p
 test("new receipt uses mocked protected contracts and never touches live Storage", async ({ page, mockApi }) => {
   await page.goto("/add");
   await page.getByLabel("项目").fill("Receipt coffee");
-  await page.getByLabel("日期").fill("2026-08-10");
+  await page.getByLabel("日期").fill("2027-02-03");
   await page.getByLabel("币种").selectOption("AUD");
   await page.getByLabel("金额").fill("18");
   await page.getByLabel("小票图片").setInputFiles({
@@ -53,7 +53,7 @@ test("ledger browser traffic stays same-origin and never calls Supabase Data or 
   await page.goto("/ledger");
   await expect(page.getByRole("heading", { name: "Harbour dinner" })).toBeVisible();
   await page.goto("/expenses");
-  await page.goto("/settlement");
+  await page.goto("/summary");
 
   const origin = new URL(page.url()).origin;
   const dataRequests = browserRequests.filter((request) => ["fetch", "xhr"].includes(request.resourceType));

@@ -9,12 +9,13 @@ import {
   applyExpenseTemplate,
   categories,
   createCapturedExpense,
+  DEFAULT_CURRENCY,
   expenseTemplates,
   formatCategoryLabel,
   parseBankMessage,
 } from "@/lib/ledger";
 import { findDuplicateExpense, validateExpense } from "@/lib/expenseValidation";
-import { formatPayerLabel } from "@/lib/couples";
+import { supportedCurrencies } from "@/lib/currency";
 import { createReceiptBlobRecord } from "@/lib/receipt";
 import { createRecordId } from "@/lib/recordId";
 
@@ -44,10 +45,11 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
       category: params.get("category") || "",
       item: params.get("item") || "",
       currency: params.get("currency") || "",
-      payer: params.get("payer") || "",
     };
 
-    setForm(emptyForm({ ...savedDefaults, ...removeEmptyValues(queryDefaults) }));
+    const rememberedDefaults = { ...savedDefaults };
+    delete rememberedDefaults.payer;
+    setForm(emptyForm({ ...rememberedDefaults, ...removeEmptyValues(queryDefaults) }));
   }, []);
 
   function useMessage() {
@@ -90,7 +92,6 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
         category: form.category,
         date: form.date,
         currency: form.currency,
-        payer: form.payer,
       };
       try {
         localStorage.setItem(addDefaultsStorageKey, JSON.stringify(nextDefaults));
@@ -116,7 +117,7 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
           <span className="section-kicker">Quick capture</span>
           <h2>记一笔</h2>
         </div>
-        <span className="muted">默认 50/50 split</span>
+        <span className="muted">两人共同账本 · 按原币种记</span>
       </div>
       <div className="stack">
         <div className="quick-templates" aria-label="常用模板">
@@ -142,9 +143,9 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
           <div className="message-capture-body">
             <label>
               银行短信
-              <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="例如：08/11 Harbour dinner card purchase A$86.50" />
+              <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="例如：02/09 Kika Wanaka card purchase NZ$186.50" />
             </label>
-            <button className="button" type="button" onClick={useMessage}>生成待确认草稿</button>
+            <button className="button" type="button" onClick={useMessage}>生成待付草稿</button>
           </div>
         </details>
         <div className="form-grid">
@@ -166,8 +167,7 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
           <label>
             币种
             <select value={form.currency} onChange={(event) => setForm({ ...form, currency: event.target.value })}>
-              <option value="CNY">CNY</option>
-              <option value="AUD">AUD</option>
+              {supportedCurrencies.map((currency) => <option key={currency} value={currency}>{currency}</option>)}
             </select>
           </label>
           <label>
@@ -176,17 +176,10 @@ export default function ExpenseForm({ onAdd, onInvalid, expenses }) {
             {submitted && validation.errors.amount && <span className="field-error">{validation.errors.amount}</span>}
           </label>
           <label>
-            付款方
-            <select value={form.payer} onChange={(event) => setForm({ ...form, payer: event.target.value })}>
-              <option value="us">{formatPayerLabel("us")}</option>
-              <option value="them">{formatPayerLabel("them")}</option>
-            </select>
-          </label>
-          <label>
             状态
             <select value={form.status} onChange={(event) => setForm({ ...form, status: event.target.value })}>
-              <option value="confirmed">已确认</option>
-              <option value="draft">待确认</option>
+              <option value="confirmed">已付</option>
+              <option value="draft">待付</option>
             </select>
           </label>
           <label className="full receipt-upload">
@@ -221,7 +214,7 @@ function emptyForm(defaults = {}) {
     category: "dining",
     item: "",
     date: "",
-    currency: "CNY",
+    currency: DEFAULT_CURRENCY,
     amount: "",
     payer: "us",
     status: "confirmed",

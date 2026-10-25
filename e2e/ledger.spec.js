@@ -9,76 +9,100 @@ test("homepage opens the itinerary while the ledger overview remains available",
   await page.getByRole("link", { name: "账本", exact: true }).click();
   await expect(page).toHaveURL(/\/ledger$/);
 
-  await expect(page.getByRole("heading", { name: "Aussie Chill", level: 1 })).toBeVisible();
-  await expect(page.getByText("A$200.00", { exact: true })).toBeVisible();
-  await expect(page.getByText("A$60.00", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "澳新 2027 · 两人账本", level: 1 })).toBeVisible();
+  const nzd = page.locator(".summary-card.currency-nzd");
+  await expect(nzd.getByText("NZ$120.00", { exact: true })).toBeVisible();
+  await expect(nzd).toContainText("已付 NZ$80.00 · 待付 NZ$40.00");
+  await expect(page.locator(".summary-card.currency-aud").getByText("A$120.00", { exact: true })).toBeVisible();
+  await expect(page.getByText("另有 1 条 2026 年澳洲旅行的旧记录未计入")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Harbour dinner" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Old Melbourne laneway lunch" })).toHaveCount(0);
 
   await page.goto("/expenses");
   await expect(page.getByRole("heading", { name: "费用明细", level: 1 })).toBeVisible();
   await expect(page.locator(".expense-row.receipt-row")).toHaveCount(3);
   await expect(page.getByRole("heading", { name: "Draft museum tickets" })).toBeVisible();
+  await expect(page.getByText(/已隐藏 1 条 2026 旧记录/)).toBeVisible();
 });
 
-test("add, edit, split-settle, delete, and Undo work through rendered ledger controls", async ({ page }) => {
+test("ledger has no payer, split, or settlement controls", async ({ page }) => {
+  await page.goto("/add");
+  await expect(page.getByLabel("付款方")).toHaveCount(0);
+  await expect(page.getByText("50/50")).toHaveCount(0);
+  await expect(page.getByLabel("币种").locator("option")).toHaveText(["NZD", "CNY", "AUD"]);
+
+  await page.goto("/expenses");
+  await expect(page.getByRole("button", { name: /分摊/ })).toHaveCount(0);
+  await expect(page.getByText(/付款$/)).toHaveCount(0);
+
+  await page.goto("/settlement");
+  await expect(page).toHaveURL(/\/summary$/);
+});
+
+test("add, edit, mark paid, delete, and Undo work through rendered ledger controls", async ({ page }) => {
   await page.goto("/add");
 
-  await page.getByLabel("项目").fill("E2E ferry");
-  await page.getByLabel("类别").selectOption("交通");
-  await page.getByLabel("日期").fill("2026-08-10");
-  await page.getByLabel("币种").selectOption("AUD");
-  await page.getByLabel("金额").fill("60");
-  await page.getByLabel("备注").fill("Circular Quay to Manly");
+  await page.getByLabel("项目").fill("E2E Kika dinner");
+  await page.getByLabel("类别").selectOption("dining");
+  await page.getByLabel("日期").fill("2027-02-09");
+  await page.getByLabel("币种").selectOption("NZD");
+  await page.getByLabel("金额").fill("160");
+  await page.getByLabel("状态").selectOption("draft");
+  await page.getByLabel("备注").fill("Wānaka");
   await page.getByRole("button", { name: "保存", exact: true }).click();
 
   await expect(page).toHaveURL(/\/expenses\?highlight=/);
-  let row = expenseRow(page, "E2E ferry");
+  let row = expenseRow(page, "E2E Kika dinner");
   await expect(row).toBeVisible();
-  await expect(row.getByText("A$60.00", { exact: true })).toBeVisible();
+  await expect(row.getByText("NZ$160.00", { exact: true })).toBeVisible();
+  await expect(row.getByText("待付", { exact: true })).toBeVisible();
 
   await row.getByRole("button", { name: "编辑" }).click();
   row = page.locator(".expense-row.editing");
-  await row.getByLabel("项目").fill("E2E ferry return");
-  await row.getByLabel("金额").fill("100");
+  await row.getByLabel("项目").fill("E2E Kika dinner for two");
+  await row.getByLabel("金额").fill("186.5");
   await row.getByRole("button", { name: "保存", exact: true }).click();
 
-  row = expenseRow(page, "E2E ferry return");
-  await expect(row.getByText("A$100.00", { exact: true })).toBeVisible();
-  await row.getByRole("button", { name: "待分摊" }).click();
-  await expect(row.getByRole("button", { name: "已分摊" })).toHaveAttribute("aria-pressed", "true");
+  row = expenseRow(page, "E2E Kika dinner for two");
+  await expect(row.getByText("NZ$186.50", { exact: true })).toBeVisible();
+  await row.getByRole("button", { name: "标为已付" }).click();
+  await expect(row.getByText("已付", { exact: true })).toBeVisible();
 
-  await page.getByRole("link", { name: "结算", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "结算", level: 1 })).toBeVisible();
-  await expect(page.locator(".settlement-card.currency-aud").getByText("A$60.00", { exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "汇总", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "按天 / 城市汇总", level: 1 })).toBeVisible();
+  const wanaka = page.locator(".summary-row").filter({ has: page.getByRole("heading", { name: "Wānaka", exact: true }) });
+  await expect(wanaka.getByText("NZ$186.50", { exact: true })).toBeVisible();
+  await expect(page.locator(".summary-row").filter({ has: page.getByRole("heading", { name: /^D09 · 02\.09/ }) })).toBeVisible();
 
   await page.getByRole("link", { name: "明细", exact: true }).click();
-  row = expenseRow(page, "E2E ferry return");
+  row = expenseRow(page, "E2E Kika dinner for two");
   await row.getByRole("button", { name: "删除" }).click();
-  await expect(expenseRow(page, "E2E ferry return")).toHaveCount(0);
+  await expect(expenseRow(page, "E2E Kika dinner for two")).toHaveCount(0);
   const notice = page.locator(".action-toast");
-  await expect(notice).toContainText("已删除：E2E ferry return");
+  await expect(notice).toContainText("已删除：E2E Kika dinner for two");
   await notice.getByRole("button", { name: "撤销" }).click();
-  await expect(expenseRow(page, "E2E ferry return")).toBeVisible();
-  await expect(page.locator(".action-toast")).toContainText("已恢复：E2E ferry return");
+  await expect(expenseRow(page, "E2E Kika dinner for two")).toBeVisible();
+  await expect(page.locator(".action-toast")).toContainText("已恢复：E2E Kika dinner for two");
 });
 
-test("settlement excludes expenses already marked split-settled", async ({ page }) => {
-  await page.goto("/settlement");
+test("summary groups records by sleeping city and by itinerary day", async ({ page }) => {
+  await page.goto("/summary");
 
-  const audSettlement = page.locator(".settlement-card.currency-aud");
-  await expect(audSettlement.getByText("A$60.00", { exact: true })).toBeVisible();
-  const pendingCategories = page.locator(".ledger-section .expense-row");
-  await expect(pendingCategories).toContainText(["餐饮"]);
-  await expect(page.locator(".ledger-section")).not.toContainText("交通");
+  const city = (name) => page.locator(".summary-row").filter({ has: page.getByRole("heading", { name, exact: true }) });
+  await expect(city("Sydney").getByText("A$120.00", { exact: true })).toBeVisible();
+  await expect(city("Te Anau").getByText("NZ$80.00", { exact: true })).toBeVisible();
+  await expect(city("Auckland")).toContainText("待付 NZ$40.00");
+  const categories = page.locator(".category-row");
+  await expect(categories).toHaveCount(3);
+  for (const label of ["餐饮", "交通", "活动"]) {
+    await expect(categories.filter({ has: page.getByRole("heading", { name: label, exact: true }) })).toHaveCount(1);
+  }
+});
 
-  await page.goto("/expenses");
-  const row = expenseRow(page, "Harbour dinner");
-  await row.getByRole("button", { name: "待分摊" }).click();
-  await expect(row.getByRole("button", { name: "已分摊" })).toBeVisible();
-
-  await page.goto("/settlement");
-  await expect(page.locator(".settlement-card.currency-aud").getByText("A$0.00", { exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "当前没有待分摊费用" })).toBeVisible();
+test("pending filter link shows only unpaid records", async ({ page }) => {
+  await page.goto("/expenses?status=draft");
+  await expect(page.locator(".expense-row.receipt-row")).toHaveCount(1);
+  await expect(page.getByRole("heading", { name: "Draft museum tickets" })).toBeVisible();
 });
 
 test("mobile ledger exposes work before advanced controls", async ({ page }) => {
@@ -146,14 +170,14 @@ test("ledger pages expose their own overview and reporting navigation", async ({
   const ledgerDestinations = [
     ["/ledger", "总览", "/ledger"],
     ["/expenses", "明细", "/expenses"],
+    ["/summary", "汇总", "/summary"],
     ["/activity", "操作", "/activity"],
-    ["/settlement", "结算", "/settlement"],
   ];
 
   for (const [path, activeLabel, href] of ledgerDestinations) {
     await page.goto(path);
     const ledgerNav = page.getByRole("navigation", { name: "账本导航" });
-    await expect(ledgerNav.getByRole("link")).toHaveText(["总览", "明细", "操作", "结算"]);
+    await expect(ledgerNav.getByRole("link")).toHaveText(["总览", "明细", "汇总", "操作"]);
     const activeLink = ledgerNav.getByRole("link", { name: activeLabel, exact: true });
     await expect(activeLink).toHaveAttribute("href", href);
     await expect(activeLink).toHaveAttribute("aria-current", "page");

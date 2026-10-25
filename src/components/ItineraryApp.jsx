@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { applyLedgerOperations, fetchItinerary } from "@/lib/apiClient";
 import { readCachedItinerary, writeCachedItinerary } from "@/lib/itineraryCache";
+import { scopeTripExpenses } from "@/lib/ledgerSummary";
 import { pulseElement, revealOnScroll, revealPage } from "@/lib/motion";
 import {
   closeOfflineLedger,
@@ -19,6 +20,7 @@ import LazyDayDetails from "@/components/itinerary/LazyDayDetails";
 import StageNavigator from "@/components/itinerary/StageNavigator";
 import TodayConsole from "@/components/itinerary/TodayConsole";
 import AppNav from "@/components/AppNav";
+import TripBoard from "@/components/itinerary/TripBoard";
 
 const checklistStorageKey = "aussie-chill-day-kit-v1";
 
@@ -33,7 +35,7 @@ const resourceLabels = {
 
 export default function ItineraryApp() {
   return (
-    <UnlockGate intro="输入旅行访问码后查看 Aussie Chill 行程。">
+    <UnlockGate intro="输入旅行访问码后查看澳新 2027 日程。">
       <ItineraryContent />
     </UnlockGate>
   );
@@ -150,7 +152,7 @@ function ItineraryExperience({ itinerary }) {
       })
         .then((synced) => {
           if (cancelled) return;
-          setLedgerExpenses(synced.state.expenses);
+          setLedgerExpenses(scopeTripExpenses(synced.state.expenses));
           setLedgerFreshness(synced.result.completed ? "current" : "cached");
           if (synced.result.reason === "lease_unavailable") {
             retryTimer = window.setTimeout(syncLedger, 500);
@@ -174,7 +176,7 @@ function ItineraryExperience({ itinerary }) {
         }
 
         context = initialized;
-        setLedgerExpenses(initialized.state.expenses);
+        setLedgerExpenses(scopeTripExpenses(initialized.state.expenses));
         setLedgerFreshness("cached");
         await syncLedger();
       } catch {
@@ -259,12 +261,13 @@ function ItineraryExperience({ itinerary }) {
   const visibleStages = mode.phase === "during" && !showAllStages
     ? itinerary.stages.filter((stage) => stage.id === selectedStageId)
     : itinerary.stages;
-  const currentIsBookend = ["d0", "d16"].includes(todayDay.id);
+  const firstStageId = itinerary.stages[0]?.id;
 
   return (
     <main className={`itinerary-shell route-atlas travel-mode-${mode.phase}`} ref={shellRef}>
       <Hero itinerary={itinerary} nextDay={heroDay} weather={weatherByDay[heroDay.id]} compact={mode.phase !== "before"} />
       {mode.phase === "before" && <RouteManifest days={itinerary.days} stages={itinerary.stages} />}
+      {mode.phase === "before" && <TripBoard itinerary={itinerary} />}
       {mode.phase === "after" && <PostTripSummary expenses={ledgerExpenses} />}
       <TodayConsole
         day={todayDay}
@@ -285,11 +288,6 @@ function ItineraryExperience({ itinerary }) {
           onToggleAll={() => setShowAllStages((current) => !current)}
         />
       ) : <DayJump days={itinerary.days} />}
-      {mode.phase === "during" && currentIsBookend && (
-        <section className="final-day current-bookend">
-          <DayCard day={todayDay} weather={weatherByDay[todayDay.id]} ledgerExpenses={ledgerExpenses} compact current />
-        </section>
-      )}
       <section className="stage-stack" aria-label="行程时间线">
         {visibleStages.map((stage) => (
           <StageSection
@@ -298,17 +296,12 @@ function ItineraryExperience({ itinerary }) {
             days={itinerary.days.filter((day) => stage.dayIds.includes(day.id))}
             weatherByDay={weatherByDay}
             ledgerExpenses={ledgerExpenses}
-            eagerImage={stage.id === "melbourne-road"}
+            eagerImage={stage.id === firstStageId}
             currentDayId={mode.phase === "during" ? todayDay.id : ""}
           />
         ))}
       </section>
-      {(mode.phase !== "during" || showAllStages) && (
-        <section className="final-day">
-          <DayCard day={itinerary.days.find((day) => day.id === "d0")} weather={weatherByDay.d0} ledgerExpenses={ledgerExpenses} compact />
-          <DayCard day={itinerary.days.find((day) => day.id === "d16")} weather={weatherByDay.d16} ledgerExpenses={ledgerExpenses} compact />
-        </section>
-      )}
+      {mode.phase !== "before" && <TripBoard itinerary={itinerary} />}
       <AppNav activeView="itinerary" />
     </main>
   );
@@ -317,15 +310,17 @@ function ItineraryExperience({ itinerary }) {
 function Hero({ itinerary, nextDay, weather, compact = false }) {
   return (
     <header className={compact ? "itinerary-hero route-hero is-compact" : "itinerary-hero route-hero"} data-motion="itinerary-hero">
-      <Image
-        className="itinerary-hero-image"
-        src={itinerary.trip.coverImageUrl}
-        alt={itinerary.trip.coverImageAlt}
-        fill
-        loading="eager"
-        priority
-        sizes="(max-width: 1180px) 100vw, 1180px"
-      />
+      {itinerary.trip.coverImageUrl ? (
+        <Image
+          className="itinerary-hero-image"
+          src={itinerary.trip.coverImageUrl}
+          alt={itinerary.trip.coverImageAlt}
+          fill
+          loading="eager"
+          priority
+          sizes="(max-width: 1180px) 100vw, 1180px"
+        />
+      ) : <div className="itinerary-hero-image cover-art cover-art-hero" aria-hidden="true" />}
       <div className="itinerary-hero-copy">
         <p>{itinerary.trip.route}</p>
         <h1>
@@ -334,9 +329,10 @@ function Hero({ itinerary, nextDay, weather, compact = false }) {
         </h1>
         <div className="hero-meta">
           <span>{itinerary.trip.dates}</span>
-          <span>好友出行</span>
-          <span>城市风光 · 海岸自驾 · 大堡礁</span>
+          <span>{itinerary.trip.travelers}</span>
+          <span>城市街区 · 湖区自驾 · 峡湾</span>
         </div>
+        {itinerary.trip.statusNote && <p className="hero-status-note">{itinerary.trip.statusNote}</p>}
         <div className="hero-route-strip" aria-label="行程阶段">
           {itinerary.stages.map((stage) => (
             <span key={stage.id}>{stage.title}</span>
@@ -354,55 +350,39 @@ function Hero({ itinerary, nextDay, weather, compact = false }) {
 }
 
 function PostTripSummary({ expenses }) {
-  const pendingSplit = expenses.filter((expense) => expense.status === "confirmed" && !expense.splitSettled).length;
   const drafts = expenses.filter((expense) => expense.status === "draft").length;
   return (
     <section className="post-trip-summary" aria-label="返程后账本收尾" data-motion="today-console">
       <div>
         <span className="section-kicker">Return checkpoint</span>
-        <h2>旅程结束，先把账本收尾</h2>
-        <p>核对待分摊与待确认项目，再完成最终结算。</p>
+        <h2>旅程结束，把账本收个尾</h2>
+        <p>核对待付项目和信用卡账单，补齐小票。</p>
       </div>
       <div className="post-trip-metrics">
-        <Link href="/expenses?split=pending"><span>待分摊</span><strong>{pendingSplit}</strong></Link>
-        <Link href="/expenses"><span>待确认</span><strong>{drafts}</strong></Link>
-        <Link className="post-trip-primary" href="/settlement">查看最终结算</Link>
+        <Link href="/expenses?status=draft"><span>待付</span><strong>{drafts}</strong></Link>
+        <Link href="/expenses"><span>共记</span><strong>{expenses.length}</strong></Link>
+        <Link className="post-trip-primary" href="/summary">按天 / 城市汇总</Link>
       </div>
     </section>
   );
 }
 
 function RouteManifest({ days, stages }) {
-  const bookendDays = days.filter((day) => day.id === "d0" || day.id === "d16");
-
   return (
     <section className="route-manifest" aria-label="路线总览" data-motion="day-jump">
       <div className="manifest-lead">
         <span>Route atlas</span>
-        <h2>D0-D16 每日路书</h2>
-        <p>先看今天怎么走，再按阶段翻每日安排。</p>
+        <h2>{days[0].label}-{days.at(-1).label} 每日路书</h2>
+        <p>先看今天怎么走，再按阶段翻每日安排；自驾日都有分段导航。</p>
       </div>
       <div className="manifest-stages">
-        <article className="manifest-stage manifest-bookends">
-          <span>出发 / 返程</span>
-          <h3>上海往返</h3>
-          <p>{bookendDays.map((day) => day.city).join(" → ")}</p>
-          <div className="manifest-days">
-            {bookendDays.map((day) => (
-              <a key={day.id} href={`#${day.id}`}>
-                <strong>{day.label}</strong>
-                <small>{formatShortDate(day)}</small>
-              </a>
-            ))}
-          </div>
-        </article>
         {stages.map((stage, index) => {
           const stageDays = days.filter((day) => stage.dayIds.includes(day.id));
           return (
             <article className={`manifest-stage stage-tone-${index + 1}`} key={stage.id}>
               <span>{formatStageRange(stageDays)}</span>
               <h3>{stage.title}</h3>
-              <p>{stageDays[0].city} → {stageDays.at(-1).city}</p>
+              <p>{stage.summary || `${stageDays[0].city} → ${stageDays.at(-1).city}`}</p>
               <div className="manifest-days">
                 {stageDays.map((day) => (
                   <a key={day.id} href={`#${day.id}`}>
@@ -445,13 +425,19 @@ function StageSection({ stage, days, weatherByDay, ledgerExpenses, eagerImage, c
           </div>
         </div>
         <div className="stage-image">
-          <Image
-            src={stage.imageUrl}
-            alt={stage.title}
-            fill
-            loading={eagerImage ? "eager" : "lazy"}
-            sizes="(max-width: 860px) 100vw, 430px"
-          />
+          {stage.imageUrl ? (
+            <Image
+              src={stage.imageUrl}
+              alt={stage.title}
+              fill
+              loading={eagerImage ? "eager" : "lazy"}
+              sizes="(max-width: 860px) 100vw, 430px"
+            />
+          ) : (
+            <div className={`cover-art cover-art-${stage.id}`} aria-hidden="true">
+              <span>{stage.title}</span>
+            </div>
+          )}
         </div>
       </div>
       <div className={["day-grid", includesCurrentDay ? "has-current-day" : ""].filter(Boolean).join(" ")}>
@@ -504,13 +490,19 @@ function DayCard({ day, weather, ledgerExpenses = [], compact = false, current =
   return (
     <article className={["day-card route-day-card", compact ? "compact" : "", current ? "is-current" : ""].filter(Boolean).join(" ")} id={day.id} data-motion="day-card">
       <div className="day-cover">
-        <Image
-          className="day-cover-image"
-          src={day.coverImageUrl}
-          alt={day.coverImageAlt}
-          fill
-          sizes="(max-width: 860px) 100vw, 560px"
-        />
+        {day.coverImageUrl ? (
+          <Image
+            className="day-cover-image"
+            src={day.coverImageUrl}
+            alt={day.coverImageAlt}
+            fill
+            sizes="(max-width: 860px) 100vw, 560px"
+          />
+        ) : (
+          <div className={`day-cover-image cover-art cover-art-day ${day.drive ? "is-drive-day" : ""}`} aria-hidden="true">
+            <span>{day.base}</span>
+          </div>
+        )}
         <div>
           <span>{day.label}</span>
           <strong>{formatShortDate(day)} {day.weekday}</strong>
@@ -522,7 +514,7 @@ function DayCard({ day, weather, ledgerExpenses = [], compact = false, current =
             <p>{day.city}</p>
             <h3>{day.title}</h3>
           </div>
-          <span>{day.lodging === "-" ? "返程" : day.lodging}</span>
+          <span>{day.lodging === "-" ? "返程" : day.lodging}{day.lodgingStatus === "待订" ? " · 待订" : ""}</span>
         </div>
         <p className="focus">{day.focus}</p>
         <div className="day-brief-grid">
@@ -549,6 +541,8 @@ function DayCard({ day, weather, ledgerExpenses = [], compact = false, current =
           <div className="day-operational-details">
             <DayExecutionGrid timeline={timeline} />
             <DayDocket docket={docket} />
+            <DayNotes notes={day.notes} />
+            {day.drive && <DriveGuide drive={day.drive} />}
             <DayMapActions actions={mapActions} meals={meals} />
             <div className="timeline">
               {day.blocks.map((block) => (
@@ -603,6 +597,50 @@ function DayDocket({ docket }) {
           <small>{item.status} · {item.detail}</small>
         </a>
       ))}
+    </section>
+  );
+}
+
+function DayNotes({ notes }) {
+  if (!notes?.length) return null;
+  return (
+    <section className="day-notes" aria-label="当天说明">
+      {notes.map((note) => (
+        <p key={`${note.label}-${note.text.slice(0, 12)}`} className={note.label === "路线建议" || note.label === "长周末" ? "is-advice" : ""}>
+          <strong>{note.label}</strong>
+          <span>{note.text}</span>
+        </p>
+      ))}
+    </section>
+  );
+}
+
+function DriveGuide({ drive }) {
+  return (
+    <section className="drive-guide" aria-label={drive.title}>
+      <div className="drive-guide-head">
+        <span>自驾导航</span>
+        <h4>{drive.title}</h4>
+        <p>{drive.duration}</p>
+      </div>
+      <p className="drive-sequence"><strong>道路顺序</strong>{drive.sequence}</p>
+      <div className="drive-legs" role="table" aria-label="分段驾驶">
+        <div className="drive-leg drive-leg-head" role="row">
+          <span role="columnheader">路段 / 到达点</span>
+          <span role="columnheader">纯驾驶</span>
+          <span role="columnheader">停车与停留</span>
+        </div>
+        {drive.legs.map((leg) => (
+          <div className="drive-leg" role="row" key={`${drive.id}-${leg.sortOrder}`}>
+            <strong role="cell">{leg.segment}</strong>
+            <span role="cell">{leg.driveTime}</span>
+            <small role="cell">{leg.stopNote}</small>
+          </div>
+        ))}
+      </div>
+      {drive.notes && <p className="drive-notes">{drive.notes}</p>}
+      <ResourceLinks resources={drive.resources} />
+      <small className="drive-disclaimer">Google Maps链接按已知地址和途经点生成，不是2027实时路况；出发前看NZTA路况并下载离线地图。</small>
     </section>
   );
 }

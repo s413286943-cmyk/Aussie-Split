@@ -14,7 +14,7 @@ import { readCachedItinerary, writeCachedItinerary } from "@/lib/itineraryCache"
 
 let itineraryPrimePromise = null;
 
-export default function UnlockGate({ children, intro = "输入旅行访问码后进入 Aussie Chill。" }) {
+export default function UnlockGate({ children, intro = "输入旅行访问码后进入澳新 2027。" }) {
   const [ready, setReady] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
 
@@ -103,7 +103,7 @@ function Unlock({ intro, onUnlock }) {
   return (
     <main className="unlock-wrap">
       <section className="unlock-card stack">
-        <h1>Aussie Chill</h1>
+        <h1>澳新 2027</h1>
         <p className="muted">{intro}</p>
         <form className="stack" onSubmit={submit}>
           <label>

@@ -1,246 +1,223 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { describe, it } from "node:test";
 
+import itinerary from "../src/data/itinerary.generated.json" with { type: "json" };
+import { formatCurrencyAmount, supportedCurrencies } from "../src/lib/currency.js";
 import {
-  applyExpenseTemplate,
   applyExpenseEdit,
+  applyExpenseTemplate,
   calculateLedger,
-  expenseToEditableForm,
+  createCapturedExpense,
   expenseTemplates,
+  expenseToEditableForm,
   formatCategoryLabel,
+  formatStatusLabel,
+  formatTotals,
   parseBankMessage,
-  setExpenseSplitSettled,
-  splitSettledLabel,
 } from "../src/lib/ledger.js";
-import { seedExpenses } from "./fixtures/seed-expenses.mjs";
 import {
-  coupleName,
-  formatPayerLabel,
-  formatSettlementDirection,
-} from "../src/lib/couples.js";
+  buildDayLookup,
+  countLegacyExpenses,
+  scopeTripExpenses,
+  summarizeByBase,
+  summarizeByDay,
+} from "../src/lib/ledgerSummary.js";
 
-describe("travel split ledger", () => {
-  it("seeds the 10 non-flight prepaid expenses", () => {
-    assert.equal(seedExpenses.length, 10);
-    assert.equal(seedExpenses.some((expense) => /机票|flight/i.test(expense.item)), false);
+const bookingSql = fs.readFileSync("supabase/migrations/20261025091000_seed_nz2027_bookings.sql", "utf8");
+const bookings = parseSeedRows(bookingSql);
+
+describe("two-person travel ledger", () => {
+  it("accepts NZD alongside CNY and AUD and formats each with its own symbol", () => {
+    assert.deepEqual(supportedCurrencies, ["NZD", "CNY", "AUD"]);
+    assert.equal(formatCurrencyAmount("NZD", 1546.31), "NZ$1,546.31");
+    assert.equal(formatCurrencyAmount("CNY", 1962.74), "¥1,962.74");
+    assert.equal(formatCurrencyAmount("AUD", 12), "A$12.00");
   });
 
-  it("keeps RMB and AUD totals separate", () => {
-    const ledger = calculateLedger(seedExpenses);
+  it("seeds exactly the booked costs from the 2027 itinerary in their original currencies", () => {
+    assert.equal(bookings.length, 10);
+    const ledger = calculateLedger(bookings);
 
-    assert.equal(ledger.currencies.CNY.total, 29543.26);
-    assert.equal(ledger.currencies.CNY.eachCoupleShare, 14771.63);
-    assert.equal(ledger.currencies.CNY.netOtherOwesUs, 14771.63);
-    assert.equal(ledger.currencies.AUD.total, 1296.2);
-    assert.equal(ledger.currencies.AUD.eachCoupleShare, 648.1);
-    assert.equal(ledger.currencies.AUD.netOtherOwesUs, 648.1);
+    assert.deepEqual(Object.keys(ledger.currencies), ["NZD", "CNY"]);
+    assert.equal(ledger.currencies.NZD.paid, 1546.31);
+    assert.equal(ledger.currencies.NZD.pending, 1454.87);
+    assert.equal(ledger.currencies.NZD.total, 3001.18);
+    assert.equal(ledger.currencies.CNY.paid, 0);
+    assert.equal(ledger.currencies.CNY.pending, 1962.74);
+    assert.equal(ledger.currencies.CNY.total, 1962.74);
   });
 
-  it("offsets expenses paid by the other couple", () => {
+  it("keeps currencies apart and splits paid from pending without any couple share", () => {
     const ledger = calculateLedger([
-      {
-        id: "ours",
-        category: "dining",
-        item: "Dinner",
-        date: "2026-08-01",
-        currency: "CNY",
-        amount: 100,
-        payer: "us",
-        status: "confirmed",
-        note: "",
-      },
-      {
-        id: "theirs",
-        category: "transport",
-        item: "Taxi",
-        date: "2026-08-02",
-        currency: "AUD",
-        amount: 80,
-        payer: "them",
-        status: "confirmed",
-        note: "",
-      },
+      expense({ id: "a", currency: "NZD", amount: 100, status: "confirmed", category: "dining" }),
+      expense({ id: "b", currency: "NZD", amount: 40.5, status: "draft", category: "dining" }),
+      expense({ id: "c", currency: "CNY", amount: 300, status: "confirmed", category: "酒店" }),
+      expense({ id: "deleted", currency: "NZD", amount: 999, deletedAt: "2027-02-01T00:00:00.000Z" }),
     ]);
 
-    assert.equal(ledger.currencies.CNY.netOtherOwesUs, 50);
-    assert.equal(ledger.currencies.AUD.netOtherOwesUs, -40);
+    assert.deepEqual(ledger.currencies.NZD, { total: 140.5, paid: 100, pending: 40.5, count: 2, pendingCount: 1 });
+    assert.deepEqual(ledger.currencies.CNY, { total: 300, paid: 300, pending: 0, count: 1, pendingCount: 0 });
+    assert.equal(ledger.categoriesByCurrency.NZD.dining, 140.5);
+    assert.equal("eachCoupleShare" in ledger.currencies.NZD, false);
+    assert.equal("netOtherOwesUs" in ledger.currencies.NZD, false);
   });
 
-  it("keeps historical totals but removes split-settled expenses from the current balance", () => {
-    const expense = {
-      id: "dinner",
-      category: "dining",
-      item: "Dinner",
-      date: "2026-08-01",
-      currency: "CNY",
-      amount: 100,
-      payer: "us",
-      status: "confirmed",
-      note: "",
-      splitSettled: false,
-    };
-    const before = calculateLedger([expense]);
-    const settledExpense = setExpenseSplitSettled(expense, true);
-    const after = calculateLedger([settledExpense]);
-
-    assert.equal(settledExpense.splitSettled, true);
-    assert.equal(before.currencies.CNY.total, 100);
-    assert.equal(before.currencies.CNY.netOtherOwesUs, 50);
-    assert.equal(after.currencies.CNY.total, 100);
-    assert.equal(after.currencies.CNY.eachCoupleShare, 50);
-    assert.equal(after.currencies.CNY.pendingTotal, 0);
-    assert.equal(after.currencies.CNY.netOtherOwesUs, 0);
-    assert.equal(after.categoriesByCurrency.CNY.dining, 100);
-    assert.deepEqual(after.pendingCategoriesByCurrency.CNY, {});
+  it("formats multi-currency totals without converting them", () => {
+    assert.equal(formatTotals({ NZD: { total: 10, pending: 0 }, CNY: { total: 20, pending: 5 } }, "total"), "NZ$10.00 + ¥20.00");
+    assert.equal(formatTotals({ NZD: { total: 10, pending: 0 } }, "pending"), "—");
   });
 
-  it("calculates settlement totals and category subtotals from pending expenses only", () => {
-    const ledger = calculateLedger([
-      {
-        id: "settled-dinner",
-        category: "dining",
-        item: "Dinner",
-        date: "2026-08-01",
-        currency: "CNY",
-        amount: 100,
-        payer: "us",
-        status: "confirmed",
-        note: "",
-        splitSettled: true,
-      },
-      {
-        id: "pending-dinner",
-        category: "dining",
-        item: "Dinner 2",
-        date: "2026-08-02",
-        currency: "CNY",
-        amount: 60,
-        payer: "us",
-        status: "confirmed",
-        note: "",
-        splitSettled: false,
-      },
-      {
-        id: "pending-taxi",
-        category: "交通",
-        item: "Taxi",
-        date: "2026-08-03",
-        currency: "CNY",
-        amount: 20,
-        payer: "them",
-        status: "confirmed",
-        note: "",
-        splitSettled: false,
-      },
-    ]);
-
-    assert.equal(ledger.currencies.CNY.total, 180);
-    assert.equal(ledger.currencies.CNY.eachCoupleShare, 90);
-    assert.equal(ledger.currencies.CNY.pendingTotal, 80);
-    assert.equal(ledger.currencies.CNY.pendingEachCoupleShare, 40);
-    assert.equal(ledger.currencies.CNY.netOtherOwesUs, 20);
-    assert.deepEqual(ledger.pendingCategoriesByCurrency.CNY, {
-      dining: 60,
-      交通: 20,
-    });
+  it("labels statuses as paid and pending", () => {
+    assert.equal(formatStatusLabel("confirmed"), "已付");
+    assert.equal(formatStatusLabel("draft"), "待付");
   });
 
-  it("labels split-settled state as pending before it is settled", () => {
-    assert.equal(splitSettledLabel(false), "待分摊");
-    assert.equal(splitSettledLabel(true), "已分摊");
-  });
-
-  it("offers high-frequency templates for fast expense entry", () => {
+  it("offers templates for the NZ road trip", () => {
     assert.deepEqual(expenseTemplates.map((template) => template.label), [
       "餐饮",
-      "打车 / Uber",
-      "停车 / toll",
+      "超市补给",
       "油费",
-      "门票 / tour",
-      "购物 / 超市",
+      "停车",
+      "打车 / Uber",
+      "门票 / 活动",
     ]);
   });
 
   it("presents stored categories with traveler-facing Chinese labels", () => {
     assert.equal(formatCategoryLabel("dining"), "餐饮");
-    assert.equal(formatCategoryLabel("酒店"), "酒店");
+    assert.equal(formatCategoryLabel("酒店"), "住宿");
+    assert.equal(formatCategoryLabel("机票"), "机票");
   });
 
-  it("applies an expense template without clearing amount or note", () => {
-    const next = applyExpenseTemplate(
-      {
-        id: "",
-        category: "其他",
-        item: "",
-        date: "",
-        currency: "AUD",
-        amount: "88.50",
-        payer: "them",
-        status: "draft",
-        note: "机场到酒店",
-        attachmentName: "",
-        splitSettled: true,
-      },
-      "taxi",
-      new Date("2026-08-02T10:30:00"),
+  it("always writes the database-compatible payer and split fields", () => {
+    const captured = createCapturedExpense({ id: "x", item: "Kika", amount: "186.50", currency: "NZD", payer: "them", splitSettled: true });
+    assert.equal(captured.payer, "us");
+    assert.equal(captured.splitSettled, false);
+    assert.equal(captured.amount, 186.5);
+
+    const template = applyExpenseTemplate(
+      { id: "", category: "其他", item: "", date: "2027-02-09", currency: "NZD", amount: "88.50", payer: "them", status: "draft", note: "Mount Iron", splitSettled: true },
+      "fuel",
+      new Date("2027-02-10T10:30:00"),
     );
+    assert.equal(template.category, "交通");
+    assert.equal(template.item, "油费");
+    assert.equal(template.date, "2027-02-09");
+    assert.equal(template.payer, "us");
+    assert.equal(template.status, "confirmed");
+    assert.equal(template.splitSettled, false);
+    assert.equal(template.amount, "88.50");
+    assert.equal(template.note, "Mount Iron");
 
-    assert.equal(next.category, "交通");
-    assert.equal(next.item, "打车 / Uber");
-    assert.equal(next.date, "2026-08-02");
-    assert.equal(next.payer, "us");
-    assert.equal(next.status, "confirmed");
-    assert.equal(next.splitSettled, false);
-    assert.equal(next.currency, "AUD");
-    assert.equal(next.amount, "88.50");
-    assert.equal(next.note, "机场到酒店");
+    const undated = applyExpenseTemplate({ date: "" }, "dining", new Date("2027-02-12T10:30:00"));
+    assert.equal(undated.date, "2027-02-12");
   });
 
-  it("turns a bank message into a draft expense", () => {
-    const draft = parseBankMessage("08/11 Captain Cook Whale Watching card purchase A$340.20");
+  it("turns bank messages into pending drafts with the right currency and trip year", () => {
+    const nz = parseBankMessage("02/09 Kika Wanaka card purchase NZ$186.50", new Date("2026-11-01T10:00:00"));
+    assert.equal(nz.currency, "NZD");
+    assert.equal(nz.amount, 186.5);
+    assert.equal(nz.date, "2027-02-09");
+    assert.equal(nz.status, "draft");
+    assert.equal(nz.payer, "us");
 
-    assert.equal(draft.amount, 340.2);
-    assert.equal(draft.currency, "AUD");
-    assert.equal(draft.status, "draft");
-    assert.match(draft.item, /Captain Cook/);
+    const au = parseBankMessage("02/03 Spice Alley dinner A$64.00", new Date("2027-02-03T20:00:00"));
+    assert.equal(au.currency, "AUD");
+    assert.equal(au.category, "dining");
+    assert.equal(au.date, "2027-02-03");
+
+    const fuel = parseBankMessage("02/10 Z Energy Frankton NZD 92.10");
+    assert.equal(fuel.category, "交通");
   });
 
-  it("classifies dinner messages as dining, not hotels", () => {
-    const draft = parseBankMessage("08/12 Dinner at Cafe Sydney card purchase A$220.50");
+  it("applies edits while preserving identity and the stored payer", () => {
+    const original = { ...bookings[0], payer: "us" };
+    const form = { ...expenseToEditableForm(original), item: "悉尼两晚", amount: "1400.00", note: "改过备注" };
 
-    assert.equal(draft.category, "dining");
-    assert.equal(draft.item.startsWith("/"), false);
-  });
-
-  it("uses traveler-facing couple names", () => {
-    assert.equal(coupleName("us"), "孙张");
-    assert.equal(coupleName("them"), "胡董");
-    assert.equal(formatPayerLabel("us"), "孙张付款");
-    assert.equal(formatPayerLabel("them"), "胡董付款");
-  });
-
-  it("formats settlement direction with couple names", () => {
-    assert.equal(formatSettlementDirection(120), "胡董还需给孙张");
-    assert.equal(formatSettlementDirection(-80), "孙张还需给胡董");
-    assert.equal(formatSettlementDirection(0), "两边已结清");
-  });
-
-  it("applies edits while preserving record identity", () => {
-    const original = seedExpenses[0];
-    const form = {
-      ...expenseToEditableForm(original),
-      item: "Oaks Melbourne updated",
-      amount: "3000.50",
-      payer: "them",
-      note: "改过备注",
-    };
-
+    assert.equal("payer" in expenseToEditableForm(original), false);
     assert.deepEqual(applyExpenseEdit(original, form), {
       ...original,
-      item: "Oaks Melbourne updated",
-      amount: 3000.5,
-      payer: "them",
+      item: "悉尼两晚",
+      amount: 1400,
       note: "改过备注",
     });
   });
 });
+
+describe("ledger summaries", () => {
+  const days = buildDayLookup(itinerary);
+
+  it("hides 2026 Australia records from the 2027 ledger but counts them", () => {
+    const records = [
+      expense({ id: "old", date: "2026-08-09", currency: "AUD" }),
+      expense({ id: "new", date: "2027-02-09" }),
+      expense({ id: "undated", date: "" }),
+      expense({ id: "tomb", date: "2027-02-09", deletedAt: "2027-02-09T00:00:00.000Z" }),
+    ];
+    assert.deepEqual(scopeTripExpenses(records).map((item) => item.id), ["new", "undated"]);
+    assert.equal(countLegacyExpenses(records), 1);
+  });
+
+  it("groups by itinerary day with pre-trip bookings first", () => {
+    const rows = summarizeByDay([
+      expense({ id: "pre", date: "2026-12-01", currency: "NZD", amount: 50 }),
+      expense({ id: "d9a", date: "2027-02-09", currency: "NZD", amount: 100 }),
+      expense({ id: "d9b", date: "2027-02-09", currency: "NZD", amount: 20, status: "draft" }),
+      expense({ id: "d2", date: "2027-02-02", currency: "AUD", amount: 30 }),
+    ], days);
+
+    assert.deepEqual(rows.map((row) => row.key), ["before", "2027-02-02", "2027-02-09"]);
+    assert.equal(rows[0].label, "行前预订");
+    assert.match(rows[2].label, /^D09 · 02\.09/);
+    assert.deepEqual(rows[2].totals.NZD, { paid: 100, pending: 20, total: 120 });
+  });
+
+  it("groups by the city where you sleep that night", () => {
+    const rows = summarizeByBase(bookings, days);
+    const byCity = Object.fromEntries(rows.map((row) => [row.key, row]));
+
+    assert.deepEqual(rows.map((row) => row.key), ["Sydney", "Christchurch", "Twizel", "Wānaka", "Te Anau", "Queenstown", "Auckland"]);
+    assert.equal(byCity["Wānaka"].totals.NZD.total, 433.55);
+    assert.equal(byCity["Te Anau"].totals.NZD.total, 1061);
+    assert.equal(byCity.Sydney.totals.CNY.pending, 1361.31);
+    assert.equal(byCity.Auckland.detail, "D15");
+  });
+
+  it("falls back to date-only groups when the itinerary is not loaded", () => {
+    const rows = summarizeByDay([expense({ id: "x", date: "2027-02-09" })], []);
+    assert.equal(rows.length, 1);
+    assert.equal(rows[0].key, "before");
+  });
+});
+
+function expense(overrides) {
+  return {
+    id: "expense",
+    category: "dining",
+    item: "Dinner",
+    date: "2027-02-09",
+    currency: "NZD",
+    amount: 10,
+    payer: "us",
+    status: "confirmed",
+    note: "",
+    splitSettled: false,
+    deletedAt: null,
+    ...overrides,
+  };
+}
+
+function parseSeedRows(sql) {
+  const pattern = /\('(nz27-[^']+)', '([^']+)', '([^']+)', date '(\d{4}-\d{2}-\d{2})', '([A-Z]{3})', ([0-9.]+)(?:::numeric\(12, 2\))?, '(confirmed|draft)',\s*'([^']*)', \d+\)/g;
+  return [...sql.matchAll(pattern)].map((match) => expense({
+    id: match[1],
+    category: match[2],
+    item: match[3],
+    date: match[4],
+    currency: match[5],
+    amount: Number(match[6]),
+    status: match[7],
+    note: match[8],
+  }));
+}

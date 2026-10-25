@@ -1,5 +1,6 @@
-import TripLedgerApp from "@/components/TripLedgerApp";
+import { redirect } from "next/navigation";
 
+// Settlement between two couples was removed; keep old bookmarks working.
 export default function SettlementPage() {
-  return <TripLedgerApp view="settlement" />;
+  redirect("/summary");
 }

@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Aussie Chill",
-    short_name: "Aussie Chill",
-    description: "澳洲旅行行程与共同费用账本",
+    name: "澳新 2027 · 日程与记账",
+    short_name: "澳新2027",
+    description: "澳新 2027 两人日程与记账",
     start_url: "/",
     display: "standalone",
     background_color: "#f7f2e8",

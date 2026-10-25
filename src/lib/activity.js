@@ -1,11 +1,10 @@
-import { formatMoney } from "./ledger.js";
-import { formatPayerLabel } from "./couples.js";
+import { formatCurrencyAmount as formatMoney } from "./currency.js";
 import { createRecordId } from "./recordId.js";
 
 const actionLabels = {
   add: "新增了",
   edit: "编辑了",
-  confirm: "确认了",
+  confirm: "标记已付",
   delete: "删除了",
 };
 
@@ -47,9 +46,8 @@ export function actionFeedbackMessage(action, expense) {
 
   if (action === "add") return `已保存：${item} ${formatMoney(currency, amount)}`;
   if (action === "edit") return `已保存修改：${item}`;
-  if (action === "confirm") return `已确认：${item}`;
+  if (action === "confirm") return `已标记已付：${item}`;
   if (action === "delete") return `已删除：${item}`;
-  if (action === "split") return `已标记${splitSettledLabel(expense.splitSettled)}：${item}`;
   return `已更新：${item}`;
 }
 
@@ -85,16 +83,10 @@ function describeExpenseChanges(previousExpense, expense) {
     changes.push(`日期 ${previousExpense.date || "未填"} → ${expense.date || "未填"}`);
   }
   if ((previousExpense.category || "") !== (expense.category || "")) {
-    changes.push(`类别 ${previousExpense.category || "未填"} → ${expense.category || "未填"}`);
-  }
-  if ((previousExpense.payer || "") !== (expense.payer || "")) {
-    changes.push(`付款方 ${formatPayerLabel(previousExpense.payer || "us")} → ${formatPayerLabel(expense.payer || "us")}`);
+    changes.push(`类别 ${categoryLabel(previousExpense.category)} → ${categoryLabel(expense.category)}`);
   }
   if ((previousExpense.status || "") !== (expense.status || "")) {
     changes.push(`状态 ${statusLabel(previousExpense.status)} → ${statusLabel(expense.status)}`);
-  }
-  if (Boolean(previousExpense.splitSettled) !== Boolean(expense.splitSettled)) {
-    changes.push(`分摊状态 ${splitSettledLabel(previousExpense.splitSettled)} → ${splitSettledLabel(expense.splitSettled)}`);
   }
   if ((previousExpense.item || "") !== (expense.item || "")) {
     changes.push(`项目 ${previousExpense.item || "未命名费用"} → ${expense.item || "未命名费用"}`);
@@ -109,13 +101,15 @@ function describeExpenseChanges(previousExpense, expense) {
 }
 
 function statusLabel(status) {
-  if (status === "draft") return "待确认";
-  if (status === "confirmed") return "已确认";
+  if (status === "draft") return "待付";
+  if (status === "confirmed") return "已付";
   return status || "未填";
 }
 
-function splitSettledLabel(splitSettled) {
-  return splitSettled ? "已分摊" : "待分摊";
+function categoryLabel(category) {
+  if (category === "dining") return "餐饮";
+  if (category === "酒店") return "住宿";
+  return category || "未填";
 }
 
 function normalizeActivitySummary(summary) {

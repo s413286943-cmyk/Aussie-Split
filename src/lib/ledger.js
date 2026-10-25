@@ -1,100 +1,92 @@
-import { couples } from "./couples.js";
+import { formatCurrencyAmount, supportedCurrencies } from "./currency.js";
 import { createRecordId } from "./recordId.js";
 
-export const members = couples.map((couple) => ({
-  id: couple.id,
-  name: couple.shortName,
-}));
+// Two-person ledger: every record is a shared household expense. The database still
+// requires `payer` and `splitSettled`, so new records always carry payer "us" and
+// splitSettled false; the UI never shows either field.
+export const DEFAULT_PAYER = "us";
+export const DEFAULT_CURRENCY = "NZD";
 
 export const categories = [
   "酒店",
+  "机票",
   "租车",
+  "交通",
   "活动",
   "dining",
-  "交通",
   "购物",
   "其他",
 ];
 
+const categoryLabels = {
+  dining: "餐饮",
+  酒店: "住宿",
+};
+
 export function formatCategoryLabel(category) {
-  return category === "dining" ? "餐饮" : category;
+  return categoryLabels[category] || category;
+}
+
+export const statusLabels = {
+  confirmed: "已付",
+  draft: "待付",
+};
+
+export function formatStatusLabel(status) {
+  return statusLabels[status] || status || "未填";
 }
 
 export const expenseTemplates = [
   { id: "dining", label: "餐饮", category: "dining", item: "餐饮" },
-  { id: "taxi", label: "打车 / Uber", category: "交通", item: "打车 / Uber" },
-  { id: "parking", label: "停车 / toll", category: "交通", item: "停车 / toll" },
+  { id: "groceries", label: "超市补给", category: "购物", item: "超市补给" },
   { id: "fuel", label: "油费", category: "交通", item: "油费" },
-  { id: "tour", label: "门票 / tour", category: "活动", item: "门票 / tour" },
-  { id: "shopping", label: "购物 / 超市", category: "购物", item: "购物 / 超市" },
+  { id: "parking", label: "停车", category: "交通", item: "停车" },
+  { id: "taxi", label: "打车 / Uber", category: "交通", item: "打车 / Uber" },
+  { id: "tour", label: "门票 / 活动", category: "活动", item: "门票 / 活动" },
 ];
 
 export function calculateLedger(expenses) {
   const currencies = {};
   const categoriesByCurrency = {};
-  const pendingCategoriesByCurrency = {};
 
-  for (const expenseItem of expenses.filter((item) => item.status === "confirmed")) {
+  for (const expenseItem of expenses || []) {
+    if (expenseItem.deletedAt) continue;
     const currency = expenseItem.currency;
     const amount = roundMoney(Number(expenseItem.amount || 0));
-    const bucket = currencies[currency] ?? {
-      total: 0,
-      paidByUs: 0,
-      paidByThem: 0,
-      eachCoupleShare: 0,
-      pendingTotal: 0,
-      pendingPaidByUs: 0,
-      pendingPaidByThem: 0,
-      pendingEachCoupleShare: 0,
-      netOtherOwesUs: 0,
-    };
+    const bucket = currencies[currency] ?? { total: 0, paid: 0, pending: 0, count: 0, pendingCount: 0 };
     const categoryBucket = categoriesByCurrency[currency] ?? {};
-    const pendingCategoryBucket = pendingCategoriesByCurrency[currency] ?? {};
 
     bucket.total = roundMoney(bucket.total + amount);
-    if (expenseItem.payer === "them") {
-      bucket.paidByThem = roundMoney(bucket.paidByThem + amount);
+    bucket.count += 1;
+    if (expenseItem.status === "draft") {
+      bucket.pending = roundMoney(bucket.pending + amount);
+      bucket.pendingCount += 1;
     } else {
-      bucket.paidByUs = roundMoney(bucket.paidByUs + amount);
+      bucket.paid = roundMoney(bucket.paid + amount);
     }
     categoryBucket[expenseItem.category] = roundMoney((categoryBucket[expenseItem.category] ?? 0) + amount);
-    if (!expenseItem.splitSettled) {
-      bucket.pendingTotal = roundMoney(bucket.pendingTotal + amount);
-      if (expenseItem.payer === "them") {
-        bucket.pendingPaidByThem = roundMoney(bucket.pendingPaidByThem + amount);
-      } else {
-        bucket.pendingPaidByUs = roundMoney(bucket.pendingPaidByUs + amount);
-      }
-      pendingCategoryBucket[expenseItem.category] = roundMoney(
-        (pendingCategoryBucket[expenseItem.category] ?? 0) + amount
-      );
-    }
 
     currencies[currency] = bucket;
     categoriesByCurrency[currency] = categoryBucket;
-    pendingCategoriesByCurrency[currency] = pendingCategoryBucket;
   }
 
-  for (const bucket of Object.values(currencies)) {
-    bucket.eachCoupleShare = roundMoney(bucket.total / 2);
-    bucket.pendingEachCoupleShare = roundMoney(bucket.pendingTotal / 2);
-    bucket.netOtherOwesUs = roundMoney(bucket.pendingPaidByUs / 2 - bucket.pendingPaidByThem / 2);
-  }
-
-  return { currencies, categoriesByCurrency, pendingCategoriesByCurrency };
+  return {
+    currencies: sortByCurrency(currencies),
+    categoriesByCurrency: sortByCurrency(categoriesByCurrency),
+  };
 }
 
-export function parseBankMessage(message) {
+export function parseBankMessage(message, now = new Date()) {
   const text = message.trim().replace(/\s+/g, " ");
-  const currency = /A\$|AUD/i.test(text) ? "AUD" : "CNY";
+  const currency = /NZ\$|NZD/i.test(text) ? "NZD" : /A\$|AUD/i.test(text) ? "AUD" : /¥|￥|CNY|RMB|人民币/i.test(text) ? "CNY" : DEFAULT_CURRENCY;
   const amountMatch =
-    text.match(/(?:A\$|AUD|¥|￥|CNY|RMB)\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)/i) ??
+    text.match(/(?:NZ\$|NZD|A\$|AUD|¥|￥|CNY|RMB)\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)/i) ??
     text.match(/([0-9][0-9,]*(?:\.[0-9]{1,2})?)/i);
   const dateMatch = text.match(/(\d{1,2})[/-](\d{1,2})/);
   const amount = amountMatch ? Number(amountMatch[1].replace(/,/g, "")) : 0;
   const item = text
     .replace(/^\d{1,2}[/-]\d{1,2}\s*/, "")
-    .replace(/(?:A\$|AUD|¥|￥|CNY|RMB)?\s*[0-9][0-9,]*(?:\.[0-9]{1,2})?/gi, "")
+    .replace(/(?:NZ\$|NZD|A\$|AUD|¥|￥|CNY|RMB)?\s*[0-9][0-9,]*(?:\.[0-9]{1,2})?/gi, "")
     .replace(/\b(card purchase|purchase|消费|交易|支付|付款)\b/gi, "")
     .trim() || "待确认消费";
 
@@ -102,12 +94,12 @@ export function parseBankMessage(message) {
     id: createRecordId("draft"),
     category: guessCategory(item),
     item,
-    date: dateMatch ? `2026-${dateMatch[1].padStart(2, "0")}-${dateMatch[2].padStart(2, "0")}` : "",
+    date: dateMatch ? `${tripYearFor(Number(dateMatch[1]), now)}-${dateMatch[1].padStart(2, "0")}-${dateMatch[2].padStart(2, "0")}` : "",
     currency,
     amount,
-    payer: "us",
+    payer: DEFAULT_PAYER,
     status: "draft",
-    note: "由短信粘贴生成，确认后入账",
+    note: "由短信粘贴生成，核对后标记已付",
     attachmentName: "",
     splitSettled: false,
   };
@@ -118,9 +110,8 @@ export function expenseToEditableForm(expense) {
     category: expense.category || "其他",
     item: expense.item || "",
     date: expense.date || "",
-    currency: expense.currency || "CNY",
+    currency: expense.currency || DEFAULT_CURRENCY,
     amount: String(expense.amount || ""),
-    payer: expense.payer || "us",
     status: expense.status || "confirmed",
     note: expense.note || "",
   };
@@ -134,7 +125,7 @@ export function applyExpenseEdit(expense, form) {
     date: form.date,
     currency: form.currency,
     amount: Number(form.amount || 0),
-    payer: form.payer,
+    payer: expense.payer || DEFAULT_PAYER,
     status: form.status,
     note: form.note,
   };
@@ -145,15 +136,9 @@ export function createCapturedExpense(form, options = {}) {
     ...form,
     id: options.id || form.id,
     amount: Number(form.amount),
+    payer: DEFAULT_PAYER,
     attachmentName: options.attachmentName ?? form.attachmentName ?? "",
     splitSettled: false,
-  };
-}
-
-export function setExpenseSplitSettled(expense, splitSettled) {
-  return {
-    ...expense,
-    splitSettled,
   };
 }
 
@@ -165,34 +150,52 @@ export function applyExpenseTemplate(form, templateId, now = new Date()) {
     ...form,
     category: template.category,
     item: template.item,
-    date: localDateInputValue(now),
-    payer: "us",
+    date: form.date || localDateInputValue(now),
+    payer: DEFAULT_PAYER,
     status: "confirmed",
     splitSettled: false,
   };
 }
 
-export function splitSettledLabel(splitSettled) {
-  return splitSettled ? "已分摊" : "待分摊";
+export function formatMoney(currency, amount) {
+  return formatCurrencyAmount(currency, amount);
 }
 
-export function formatMoney(currency, amount) {
-  const value = Number(amount || 0).toLocaleString("zh-CN", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-  return currency === "AUD" ? `A$${value}` : `¥${value}`;
+export function formatTotals(totalsByCurrency, field) {
+  const entries = Object.entries(totalsByCurrency || {})
+    .map(([currency, value]) => [currency, typeof value === "number" ? value : value?.[field] ?? 0])
+    .filter(([, value]) => value);
+  if (!entries.length) return "—";
+  return entries.map(([currency, value]) => formatMoney(currency, value)).join(" + ");
 }
 
 export function roundMoney(value) {
   return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
 }
 
+function sortByCurrency(record) {
+  const order = (currency) => {
+    const index = supportedCurrencies.indexOf(currency);
+    return index === -1 ? supportedCurrencies.length : index;
+  };
+  return Object.fromEntries(Object.entries(record).sort(([left], [right]) => order(left) - order(right)));
+}
+
+function tripYearFor(month, now) {
+  // The trip runs in February 2027; messages from late in the year belong to the booking period.
+  const year = now.getFullYear();
+  if (year <= 2026 && month <= 6) return 2027;
+  return year;
+}
+
 function guessCategory(item) {
-  if (/\b(hotel|motel|apartment|apartments|villa|villas|inn)\b|oaks|酒店/i.test(item)) return "酒店";
-  if (/car|uber|taxi|ferry|train|租车|交通|停车|油费|toll/i.test(item)) return "交通";
-  if (/tour|reef|watching|opera|活动|一日游/i.test(item)) return "活动";
-  if (/dinner|lunch|cafe|restaurant|bbq|market|dining|餐|食材|咖啡/i.test(item)) return "dining";
+  if (/\b(hotel|motel|apartment|apartments|villa|villas|inn|holiday park|airbnb)\b|酒店|住宿/i.test(item)) return "酒店";
+  if (/airline|airways|jetstar|air new zealand|qantas|flight|机票|航班/i.test(item)) return "机票";
+  if (/rental|car hire|租车/i.test(item)) return "租车";
+  if (/uber|taxi|ferry|train|bus|交通|停车|parking|油费|fuel|petrol|z energy|bp\b|toll/i.test(item)) return "交通";
+  if (/tour|cruise|hobbiton|milford|ticket|活动|门票/i.test(item)) return "活动";
+  if (/countdown|woolworths|new world|pak.?n.?save|four square|supermarket|超市/i.test(item)) return "购物";
+  if (/dinner|lunch|cafe|coffee|restaurant|bakery|bar|market|dining|餐|咖啡/i.test(item)) return "dining";
   return "其他";
 }
 
