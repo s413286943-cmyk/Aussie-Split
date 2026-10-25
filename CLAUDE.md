@@ -43,8 +43,9 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 
 ## 状态（2026-10-25）
 
-`main` = `origin/main` `b78700a`（PR #3 合并），已部署生产 `dpl_6XGq5hbpUoXV43t8xk73Si1biyne`。Node 24 下 352 单测和数据库测试通过，lint、tsc、build 通过，32 个本地 e2e 全部通过；线上只读冒烟通过，未登录时所有数据接口返回 401，公开页面和脚本不含私密行程内容。
+`main` = `origin/main` `46092f1`（PR #6 合并：已订机票、南岛租车、悉尼三晚写入日程和清单），已部署生产 `dpl_DSm2cWvJoRbiJxJa2xkoxitYNoqp`。此前 PR #3 上线 2027 首页，#4 更新本文件，#5 换成沉浸式深色界面。Node 24 下 353 个单测中 346 通过、7 个数据库测试跳过（PR #6 未改 SQL；数据库测试最近一次全部通过是在 PR #3），lint、tsc、build 通过，32 个本地 e2e 全部通过；未登录时数据接口返回 401。
+
+生产账本 `nz2027_expenses` 共 13 条：2026-10-25 补记南航往返 ¥16,800、NZ224+JQ296 ¥3,153、租车 ¥3,636（均已付），悉尼 Great Southern 改为三晚 ¥2,027.36 待付；改动前的行备份在 `.backups/20261025-before-booking-ledger/`。
 
 待办：
-- 2/1 悉尼补订那晚的金额、付款状态和取消规则未记账（清单里有对应条目）。
 - `aussie-split` 还留着旧的 `NEXT_PUBLIC_SUPABASE_URL`、`NEXT_PUBLIC_SUPABASE_ANON_KEY`，代码已不用，可在 Vercel 删除。
