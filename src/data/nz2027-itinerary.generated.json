@@ -7,8 +7,8 @@
     "endDate": "2027-02-17",
     "travelers": "2位成人",
     "route": "悉尼3晚 → 基督城1晚 → Twizel3晚 → Wānaka2晚 → Te Anau2晚 → Queenstown2晚 → Auckland2晚 → 夜航回国",
-    "summary": "每天保留一个主要体验：悉尼街区与艺术、湖区公路与星空、Mt Cook徒步、Wānaka的一顿晚餐、Milford峡湾、Glenorchy公路、Hobbiton中文导览。",
-    "statusNote": "已有6笔住宿订单共12晚，另有Milford和Hobbiton两项活动；四段机票均未购买，悉尼2/1一晚、Auckland 2/14–16两晚待订。所有日期时间均为当地时间。",
+    "summary": "每天保留一个主要体验：悉尼Bondi海岸与城市漫步、湖区公路与星空、Mt Cook徒步、Wānaka的一顿晚餐、Milford峡湾、Glenorchy公路、Hobbiton中文导览。",
+    "statusNote": "已有7笔住宿订单共13晚（含悉尼2/1补订），另有Milford和Hobbiton两项活动；四段机票均未购买，Auckland 2/14–16两晚待订。所有日期时间均为当地时间。",
     "updatedAt": "2026-10-25",
     "coverImageUrl": "",
     "coverImageAlt": ""
@@ -23,7 +23,7 @@
         "d3"
       ],
       "imageUrl": "/itinerary/sydney-harbor-evening.png",
-      "summary": "Haymarket、Newtown、White Rabbit与Surry Hills，公共交通加步行。"
+      "summary": "Haymarket、Bondi海岸步道、White Rabbit与Newtown，公共交通加步行。"
     },
     {
       "id": "mackenzie",
@@ -76,8 +76,8 @@
       "lon": 151.2048,
       "title": "抵达悉尼，慢慢进入假期",
       "focus": "先休息好，再在住宿周边找回悉尼的城市节奏。",
-      "lodging": "悉尼新增一晚（待订）",
-      "lodgingStatus": "待订",
+      "lodging": "Great Southern Hotel Sydney",
+      "lodgingStatus": "已订",
       "climateNote": "2月悉尼盛夏，约20–27°C，湿热，午后可能有雷阵雨。",
       "clothingNote": "轻薄夏装、防晒、帽子；机舱和室内空调带一件薄外套。",
       "coverImageUrl": "",
@@ -87,7 +87,7 @@
       "notes": [
         {
           "label": "住宿",
-          "text": "2/1–2/2待订。优先补Great Southern同一家，并确认2/2是否需要换房。"
+          "text": "Great Southern Hotel Sydney，2/1已补订1晚，与2/2–4原订单是两笔订单；入住时向前台确认能否同房连住，2/2是否需要换房。"
         },
         {
           "label": "航班要求",
@@ -95,13 +95,13 @@
         }
       ],
       "lodgingResource": {
-        "id": "sydney-extra-night-note",
-        "title": "悉尼新增一晚（待订）",
-        "type": "note",
-        "url": "",
+        "id": "great-southern-map",
+        "title": "Great Southern Hotel Sydney",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "优先Great Southern同一家"
+        "sourceNote": "确认邮件地址"
       },
       "primaryResource": {
         "id": "haymarket-map",
@@ -148,7 +148,7 @@
           "sortOrder": 20,
           "period": "下午",
           "place": "Chinatown / Haymarket",
-          "activity": "优先入住新增一晚住宿；体力允许时逛Chinatown、Haymarket。",
+          "activity": "入住Great Southern（2/1补订）；体力允许时逛Chinatown、Haymarket。",
           "highlight": "住宿周边轻活动",
           "tip": "早到的寄存或提前入住以酒店答复为准。",
           "resources": [
@@ -190,28 +190,36 @@
       "label": "D02",
       "date": "2027-02-02",
       "weekday": "周二",
-      "city": "Sydney · Newtown",
+      "city": "Sydney · Bondi → Coogee",
       "base": "Sydney",
-      "lat": -33.8981,
-      "lon": 151.1749,
-      "title": "Newtown街区日",
-      "focus": "书店、古着、小店和一顿不赶时间的午餐。",
+      "lat": -33.8915,
+      "lon": 151.2767,
+      "title": "Bondi海滩与海岸步道",
+      "focus": "上次没去成的Bondi：看海、走一段海岸步道，下午在海边慢慢待。",
       "lodging": "Great Southern Hotel Sydney",
       "lodgingStatus": "已订",
-      "climateNote": "2月悉尼盛夏，约20–27°C，湿热，午后可能有雷阵雨。",
-      "clothingNote": "好走的鞋、轻薄夏装、防晒；备一把折叠伞。",
+      "climateNote": "2月悉尼盛夏，约20–27°C，湿热，海边日晒强，午后可能有雷阵雨。",
+      "clothingNote": "防晒霜、帽子、墨镜、好走的鞋；想下水就带泳衣和毛巾。",
       "coverImageUrl": "",
       "coverImageAlt": "",
-      "transport": "市内公共交通＋步行",
+      "transport": "火车＋巴士往返Bondi · 海岸步行",
       "leaveBy": "09:00–10:00早餐后出门",
       "notes": [
         {
           "label": "住宿",
-          "text": "Great Southern Hotel Sydney，原订单2/2开始，14:00后办理入住。"
+          "text": "Great Southern Hotel Sydney第二晚。2/1补订与2/2–4原订单若不能同房连住，早上先寄存行李，原订单14:00后入住。"
         },
         {
           "label": "交通",
-          "text": "本日公共交通和步行为主。"
+          "text": "Central坐火车到Bondi Junction，再换巴士到Bondi Beach，单程约35–45分钟；Opal卡或手机刷卡。"
+        },
+        {
+          "label": "海边",
+          "text": "只在红黄旗之间下水；海岸步道多处没有遮阴，带足水。周二平日人比周末少。"
+        },
+        {
+          "label": "缩短版",
+          "text": "累了就只走Bondi → Bronte约3公里，从Bronte坐巴士回城。"
         }
       ],
       "lodgingResource": {
@@ -224,13 +232,13 @@
         "sourceNote": "确认邮件地址"
       },
       "primaryResource": {
-        "id": "king-street-official",
-        "title": "King Street街区资料",
-        "type": "official",
-        "url": "https://www.sydney.com/destinations/sydney/inner-sydney/newtown/attractions/king-street-newtown",
+        "id": "bondi-transit-route",
+        "title": "Great Southern → Bondi Beach公共交通",
+        "type": "map",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia&destination=Bondi+Beach%2C+NSW%2C+Australia&travelmode=transit",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "Destination NSW"
+        "sourceNote": "Google Maps"
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
@@ -247,29 +255,48 @@
           "dayId": "d2",
           "sortOrder": 10,
           "period": "09:00–10:00",
-          "place": "Haymarket → Newtown",
-          "activity": "Haymarket吃早餐；如不能同房续住，先按新增订单要求退房、寄存行李，再乘公共交通前往Newtown。",
+          "place": "Haymarket → Bondi Beach",
+          "activity": "Haymarket吃早餐；如前台安排换房，先退房寄存行李。Central坐火车到Bondi Junction，换巴士到Bondi Beach。",
           "highlight": "换房日先处理行李",
           "tip": "",
-          "resources": []
+          "resources": [
+            {
+              "id": "bondi-transit-route",
+              "title": "Great Southern → Bondi Beach公共交通",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia&destination=Bondi+Beach%2C+NSW%2C+Australia&travelmode=transit",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
         },
         {
           "dayId": "d2",
           "sortOrder": 20,
           "period": "10:00–12:30",
-          "place": "King Street",
-          "activity": "沿King Street走走停停，重点看独立书店、小店和街头艺术。",
-          "highlight": "书店、古着、街头艺术",
-          "tip": "",
+          "place": "Bondi → Tamarama → Bronte → Coogee",
+          "activity": "走Bondi to Coogee海岸步道，约6公里，含拍照和休息按2–2.5小时；Tamarama、Bronte都可以停。",
+          "highlight": "悬崖海岸线",
+          "tip": "累了就在Bronte结束。",
           "resources": [
             {
-              "id": "king-street-official",
-              "title": "King Street街区资料",
-              "type": "official",
-              "url": "https://www.sydney.com/destinations/sydney/inner-sydney/newtown/attractions/king-street-newtown",
+              "id": "bondi-beach-map",
+              "title": "Bondi Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Beach%2C+NSW%2C+Australia",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Destination NSW"
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "bondi-coogee-walk-map",
+              "title": "Bondi to Coogee Coastal Walk",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Bondi+Beach%2C+NSW%2C+Australia&destination=Coogee+Beach%2C+NSW%2C+Australia&travelmode=walking&waypoints=Tamarama+Beach%2C+NSW%2C+Australia%7CBronte+Beach%2C+NSW%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps步行"
             }
           ]
         },
@@ -277,28 +304,57 @@
           "dayId": "d2",
           "sortOrder": 30,
           "period": "12:30–14:00",
-          "place": "Newtown",
-          "activity": "在Newtown安排完整午餐，午后喝咖啡。",
-          "highlight": "不赶时间的午餐",
+          "place": "Coogee / Bronte",
+          "activity": "在Coogee或Bronte海边吃午餐。",
+          "highlight": "海边午餐",
           "tip": "",
-          "resources": []
+          "resources": [
+            {
+              "id": "coogee-beach-map",
+              "title": "Coogee Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Coogee+Beach%2C+NSW%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "bronte-beach-map",
+              "title": "Bronte Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Bronte+Beach%2C+NSW%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
         },
         {
           "dayId": "d2",
           "sortOrder": 40,
           "period": "14:00–16:30",
-          "place": "Enmore Road",
-          "activity": "沿Enmore Road继续逛；疲惫时提前回酒店。",
-          "highlight": "街区慢逛",
+          "place": "Bondi Beach",
+          "activity": "坐巴士回Bondi，海滩晒太阳、下水（只在红黄旗之间），或沿Campbell Parade喝咖啡。",
+          "highlight": "Bondi海滩时间",
           "tip": "",
-          "resources": []
+          "resources": [
+            {
+              "id": "bondi-beach-map",
+              "title": "Bondi Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Beach%2C+NSW%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
         },
         {
           "dayId": "d2",
           "sortOrder": 50,
           "period": "晚上",
           "place": "Great Southern Hotel",
-          "activity": "回酒店取行李、办理原订单入住，在Haymarket附近晚餐。",
+          "activity": "回Haymarket取行李、办理原订单入住，附近晚餐。",
           "highlight": "原订单14:00后入住",
           "tip": "",
           "resources": [
@@ -317,8 +373,8 @@
           "dayId": "d2",
           "sortOrder": 90,
           "period": "饮食",
-          "place": "Newtown / Haymarket",
-          "activity": "早餐：住宿附近咖啡店；午餐：Newtown坐下来慢慢吃；晚餐：Haymarket",
+          "place": "Coogee / Bondi / Haymarket",
+          "activity": "早餐：住宿附近咖啡店；午餐：Coogee或Bronte海边；晚餐：Haymarket",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -330,11 +386,11 @@
       "label": "D03",
       "date": "2027-02-03",
       "weekday": "周三",
-      "city": "Sydney · Chippendale / Surry Hills",
+      "city": "Sydney · Chippendale / Newtown",
       "base": "Sydney",
       "lat": -33.8862,
       "lon": 151.199,
-      "title": "当代艺术、餐饮巷与Surry Hills",
+      "title": "当代艺术、餐饮巷与Newtown",
       "focus": "White Rabbit加一段有生活感的城市散步。",
       "lodging": "Great Southern Hotel Sydney",
       "lodgingStatus": "已订",
@@ -347,7 +403,11 @@
       "notes": [
         {
           "label": "住宿",
-          "text": "Great Southern Hotel Sydney，第二晚。"
+          "text": "Great Southern Hotel Sydney，第三晚。"
+        },
+        {
+          "label": "交通",
+          "text": "Spice Alley到Newtown步行约20–25分钟，或在Central坐火车一站到Newtown；回程同样。"
         },
         {
           "label": "开放时间",
@@ -436,17 +496,36 @@
           "dayId": "d3",
           "sortOrder": 30,
           "period": "14:00–16:30",
-          "place": "Surry Hills · Crown Street",
-          "activity": "Surry Hills、Crown Street散步喝咖啡；有购物需求就在今天完成。",
-          "highlight": "有生活感的街区",
+          "place": "Newtown · King Street / Enmore Road",
+          "activity": "沿King Street走走停停，看独立书店、古着、小店和街头艺术，再拐进Enmore Road喝咖啡；有购物需求就在今天完成。",
+          "highlight": "书店、古着、街头艺术",
           "tip": "",
-          "resources": []
+          "resources": [
+            {
+              "id": "king-street-official",
+              "title": "King Street街区资料",
+              "type": "official",
+              "url": "https://www.sydney.com/destinations/sydney/inner-sydney/newtown/attractions/king-street-newtown",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Destination NSW"
+            },
+            {
+              "id": "newtown-map",
+              "title": "Newtown · King Street",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=King+Street%2C+Newtown+NSW%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
         },
         {
           "dayId": "d3",
           "sortOrder": 40,
           "period": "晚上",
-          "place": "Surry Hills / Haymarket",
+          "place": "Newtown / Haymarket",
           "activity": "早点晚餐、整理行李，按次日待购航班决定起床和去机场时间。",
           "highlight": "为飞基督城做准备",
           "tip": "",
@@ -456,8 +535,8 @@
           "dayId": "d3",
           "sortOrder": 90,
           "period": "饮食",
-          "place": "Spice Alley / Surry Hills",
-          "activity": "早餐：咖啡＋简单早餐；午餐：Spice Alley；晚餐：Surry Hills或回Haymarket",
+          "place": "Spice Alley / Newtown",
+          "activity": "早餐：咖啡＋简单早餐；午餐：Spice Alley；晚餐：Newtown或回Haymarket",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -491,6 +570,14 @@
         {
           "label": "晚到处理",
           "text": "若航班导致21:00后到店，提前取得晚到入住指引。"
+        },
+        {
+          "label": "航班时间",
+          "text": "2月新西兰比悉尼快2小时，约3小时航程落地时当地时间约晚5小时（例：09:00起飞约14:00落地）。优先买上午起飞的航班，留出取车、超市和21:00前入住的时间。"
+        },
+        {
+          "label": "入境检疫",
+          "text": "徒步鞋提前洗净、不带泥土；入境卡如实申报食品和户外装备，漏报会被罚款。"
         }
       ],
       "lodgingResource": {
@@ -880,7 +967,7 @@
       "coverImageUrl": "",
       "coverImageAlt": "",
       "transport": "自驾往返Mt Cook · 单程约1小时",
-      "leaveBy": "08:00左右出发（长周末建议提前到07:15–07:30）",
+      "leaveBy": "07:15–07:30出发（长周末停车场早满）",
       "notes": [
         {
           "label": "住宿",
@@ -926,7 +1013,7 @@
         "id": "nav03",
         "dayId": "d6",
         "title": "导航03 · Twizel ↔ Mt Cook",
-        "duration": "08:00左右出发；单程约1小时，观景停车另加；主要体力留给4–5小时徒步窗口。",
+        "duration": "07:15–07:30出发（长周末提前）；单程约1小时，观景停车另加；主要体力留给4–5小时徒步窗口。",
         "sequence": "Twizel → SH8北行 → SH80沿Pukaki西岸 → Hooker Valley Road → White Horse Hill Car Park；返程停Peter’s Lookout",
         "notes": "White Horse Hill现行NZ$2.50/半小时、NZ$25/天封顶，刷卡支付；完整徒步暂留NZ$20–25。短线备选：同一停车区域走Kea Point约1小时。Tasman Valley是另一停车场，从White Horse Hill开车约20–30分钟；只有体力和时间充足才加。大风雨不适合进山时与2/7交换。",
         "legs": [
@@ -1016,11 +1103,11 @@
         {
           "dayId": "d6",
           "sortOrder": 10,
-          "period": "08:00左右",
+          "period": "07:15–07:30",
           "place": "Twizel → White Horse Hill",
           "activity": "Twizel出发，沿SH80进山，尽早到White Horse Hill停车场。",
-          "highlight": "长周末建议更早出发",
-          "tip": "",
+          "highlight": "长周末停车场早满，提前出发",
+          "tip": "原行程为08:00左右，因Waitangi长周末提前。",
           "resources": [
             {
               "id": "white-horse-hill-route",
@@ -1118,6 +1205,10 @@
         {
           "label": "住宿",
           "text": "Twizel Holiday Park，第三晚。"
+        },
+        {
+          "label": "新月",
+          "text": "按月相推算，2027/2/6前后是新月，2/6、2/7晚上都几乎没有月光，是一年里很好的观星窗口；Mt Cook与湖区日互换也不影响观星。"
         },
         {
           "label": "观星待订",
@@ -1538,7 +1629,7 @@
         },
         {
           "label": "备选",
-          "text": "不想爬坡就用湖边Waterfall Creek方向散步60–90分钟替换Mount Iron；电影依当周场次，不叠加硬预约。Rippon只在想品酒且约到场次时加入，驾驶者不饮酒。"
+          "text": "不想爬坡就用湖边Waterfall Creek方向散步60–90分钟替换Mount Iron；电影依当周场次，不叠加硬预约。"
         }
       ],
       "lodgingResource": {
@@ -1668,10 +1759,10 @@
           "dayId": "d9",
           "sortOrder": 20,
           "period": "中午",
-          "place": "Wānaka湖边",
-          "activity": "湖边午餐，之后咖啡和休息。",
-          "highlight": "",
-          "tip": "",
+          "place": "Wānaka湖边 · That Wānaka Tree",
+          "activity": "湖边午餐，前后去Roys Bay湖岸看That Wānaka Tree，之后咖啡和休息。",
+          "highlight": "湖里那棵树",
+          "tip": "只在岸边看，不攀爬、不下水靠近。",
           "resources": [
             {
               "id": "wanaka-lakefront-route",
@@ -1681,6 +1772,15 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "导航06"
+            },
+            {
+              "id": "wanaka-tree-map",
+              "title": "That Wānaka Tree",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=That+Wanaka+Tree%2C+Wanaka%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
             }
           ]
         },
@@ -1701,6 +1801,35 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "官网"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 35,
+          "period": "下午（可选）",
+          "place": "Rippon品酒",
+          "activity": "可选：Rippon湖景酒庄品酒，约45–60分钟，需提前预约场次；驾驶者不饮酒。",
+          "highlight": "补选项",
+          "tip": "订不到场次就跳过，不影响晚餐。",
+          "resources": [
+            {
+              "id": "rippon-official",
+              "title": "Rippon品酒预约说明",
+              "type": "official",
+              "url": "https://rippon.co.nz/pages/tastings",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "官网"
+            },
+            {
+              "id": "rippon-map",
+              "title": "Rippon酒庄",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Rippon+Vineyard%2C+Wanaka%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
             }
           ]
         },
@@ -1750,19 +1879,19 @@
       "label": "D10",
       "date": "2027-02-10",
       "weekday": "周三",
-      "city": "Wānaka → Cromwell → Kingston → Te Anau",
+      "city": "Wānaka → Crown Range → Arrowtown → Kingston → Te Anau",
       "base": "Te Anau",
       "lat": -45.4145,
       "lon": 167.718,
-      "title": "经Cromwell去Te Anau",
+      "title": "翻Crown Range、经Arrowtown去Te Anau",
       "focus": "完成最长的一次南岛转场，为Milford留足体力。",
       "lodging": "Private Ensuite in the Heart of Te Anau",
       "lodgingStatus": "已订",
       "climateNote": "Central Otago晴热干燥；Te Anau约9–19°C，Fiordland多雨、云层变化快。",
-      "clothingNote": "车上备外套和雨具；到Te Anau后气温明显降低。",
+      "clothingNote": "车上备外套和雨具；到Te Anau后气温明显降低；带驱蚊液防沙蝇。",
       "coverImageUrl": "",
       "coverImageAlt": "",
-      "transport": "自驾 · 纯驾驶约4–5小时",
+      "transport": "自驾 · 纯驾驶约3.5–4.5小时",
       "leaveBy": "09:00左右出发；10:00前退房",
       "notes": [
         {
@@ -1771,11 +1900,11 @@
         },
         {
           "label": "驾驶安排",
-          "text": "主路线保留Cromwell途经点，纯驾按约4–5小时、加停靠留5–7小时；抵达时间随休息调整。"
+          "text": "纯驾驶约3.5–4.5小时，加Arrowtown午餐和停靠留5–6小时；抵达时间随休息调整。"
         },
         {
           "label": "路线建议",
-          "text": "可改走Crown Range并顺路Arrowtown，纯驾驶少约20–30分钟，见“路线建议”。不涉及任何订单。"
+          "text": "主线已改为Crown Range + Arrowtown（行程文件原为经Cromwell）。起雾、大风、下雨或不想开山路时改回Cromwell，导航见下方备选链接，从Frankton起两条路完全相同。"
         }
       ],
       "lodgingResource": {
@@ -1788,13 +1917,13 @@
         "sourceNote": "确认邮件地址"
       },
       "primaryResource": {
-        "id": "nav07-leg1-route",
-        "title": "第一段经Cromwell到Frankton",
+        "id": "crown-range-route",
+        "title": "第一段经Crown Range、Arrowtown到Frankton",
         "type": "map",
-        "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cromwell+Heritage+Precinct%2C+Cromwell%2C+New+Zealand",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cardrona+Hotel%2C+Cardrona%2C+New+Zealand%7CCrown+Range+Summit%2C+New+Zealand%7CArrowtown%2C+New+Zealand",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "导航07"
+        "sourceNote": "导航07主线"
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
@@ -1808,22 +1937,22 @@
       "drive": {
         "id": "nav07",
         "dayId": "d10",
-        "title": "导航07 · Wānaka经Cromwell → Te Anau",
-        "duration": "09:00左右出发；纯驾驶按约4–5小时准备，加午餐休息留5–7小时，入住后不再远行。",
-        "sequence": "1 Outlet Road → SH6 / Cromwell → Kawarau Gorge → Frankton → SH6 / Kingston → Five Rivers → SH97 / Mossburn → SH94 / Te Anau → 3 Thomson Place",
-        "notes": "必须保留的途经点：Cromwell。这是本次主线选择；只输入Wānaka到Te Anau时，导航可能给出Crown Range方案。Frankton补油后继续南下，皇后镇中心游览留给2/12。",
+        "title": "导航07 · Wānaka经Crown Range、Arrowtown → Te Anau",
+        "duration": "09:00左右出发；纯驾驶约3.5–4.5小时，加Arrowtown午餐和停靠留5–6小时，入住后不再远行。",
+        "sequence": "1 Outlet Road → Cardrona Valley Road / Cardrona → Crown Range Summit → Arrow Junction / Arrowtown → SH6 / Frankton → Kingston → Five Rivers → SH97 / Mossburn → SH94 / Te Anau → 3 Thomson Place",
+        "notes": "导航时把Cardrona、Arrowtown设为途经点，否则手机可能改走Cromwell。Crown Range是新西兰最高的铺装主干道之一（约1,076米），Queenstown一侧连续急弯；起雾、大风或下雨时改走备选的Cromwell路线（经Kawarau Gorge到Frankton，多约50公里、20–30分钟）。Frankton补油后继续南下，皇后镇中心游览留给2/12。",
         "legs": [
           {
             "sortOrder": 10,
-            "segment": "Wānaka → Cromwell",
-            "driveTime": "约45–60分钟",
-            "stopNote": "历史街区附近正规停车，咖啡及短走30–45分钟。"
+            "segment": "Wānaka → Cardrona → Crown Range Summit",
+            "driveTime": "约40–50分钟",
+            "stopNote": "山顶观景停车场短停10–15分钟；Cardrona Hotel可顺路拍照。"
           },
           {
             "sortOrder": 20,
-            "segment": "Cromwell → Kawarau Gorge → Frankton",
-            "driveTime": "约50–70分钟",
-            "stopNote": "弯道峡谷段按实际路况行驶；可在Frankton午餐、补油。"
+            "segment": "Crown Range → Arrowtown → Frankton",
+            "driveTime": "约30–40分钟（含绕进Arrowtown）",
+            "stopNote": "下山急弯慢行；Arrowtown按标识停车，午餐60–90分钟；Frankton加油。"
           },
           {
             "sortOrder": 30,
@@ -1846,17 +1975,17 @@
         ],
         "resources": [
           {
-            "id": "nav07-leg1-route",
-            "title": "第一段经Cromwell到Frankton",
+            "id": "crown-range-route",
+            "title": "第一段经Crown Range、Arrowtown到Frankton",
             "type": "map",
-            "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cromwell+Heritage+Precinct%2C+Cromwell%2C+New+Zealand",
+            "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cardrona+Hotel%2C+Cardrona%2C+New+Zealand%7CCrown+Range+Summit%2C+New+Zealand%7CArrowtown%2C+New+Zealand",
             "imageUrl": "",
             "imageAlt": "",
-            "sourceNote": "导航07"
+            "sourceNote": "导航07主线"
           },
           {
             "id": "nav07-leg2-route",
-            "title": "第二段到Te Anau",
+            "title": "第二段Frankton到Te Anau",
             "type": "map",
             "url": "https://www.google.com/maps/dir/?api=1&origin=Frankton%2C+Queenstown%2C+New+Zealand&destination=3+Thomson+Place%2C+Te+Anau%2C+New+Zealand&travelmode=driving&waypoints=Kingston%2C+Otago%2C+New+Zealand%7CFive+Rivers%2C+Southland%2C+New+Zealand%7CMossburn%2C+New+Zealand",
             "imageUrl": "",
@@ -1864,13 +1993,13 @@
             "sourceNote": "导航07"
           },
           {
-            "id": "crown-range-route",
-            "title": "备选：Crown Range + Arrowtown到Frankton",
+            "id": "nav07-leg1-route",
+            "title": "备选：经Cromwell到Frankton",
             "type": "map",
-            "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cardrona+Hotel%2C+Cardrona%2C+New+Zealand%7CArrowtown%2C+New+Zealand",
+            "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cromwell+Heritage+Precinct%2C+Cromwell%2C+New+Zealand",
             "imageUrl": "",
             "imageAlt": "",
-            "sourceNote": "路线建议，非原行程主线"
+            "sourceNote": "导航07"
           },
           {
             "id": "nzta-five-rivers-official",
@@ -1888,29 +2017,39 @@
           "dayId": "d10",
           "sortOrder": 10,
           "period": "09:00左右",
-          "place": "Wānaka → Cromwell",
-          "activity": "退房出发，沿SH6去Cromwell。",
+          "place": "Wānaka → Cardrona → Crown Range",
+          "activity": "退房出发，沿Cardrona Valley Road经Cardrona小镇翻Crown Range；山顶观景点短停。",
           "highlight": "最长转场日",
-          "tip": "",
-          "resources": []
+          "tip": "下山一侧连续急弯，低速档慢下。",
+          "resources": [
+            {
+              "id": "crown-range-route",
+              "title": "第一段经Crown Range、Arrowtown到Frankton",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cardrona+Hotel%2C+Cardrona%2C+New+Zealand%7CCrown+Range+Summit%2C+New+Zealand%7CArrowtown%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "导航07主线"
+            }
+          ]
         },
         {
           "dayId": "d10",
           "sortOrder": 20,
-          "period": "上午",
-          "place": "Cromwell → Kawarau Gorge",
-          "activity": "Cromwell历史街区短停、咖啡；穿Kawarau Gorge到Frankton方向。",
-          "highlight": "峡谷公路",
+          "period": "上午后段至中午",
+          "place": "Arrowtown",
+          "activity": "Arrowtown老街散步、午餐或咖啡，约60–90分钟；之后到Frankton加油。",
+          "highlight": "淘金小镇午餐",
           "tip": "",
           "resources": [
             {
-              "id": "nav07-leg1-route",
-              "title": "第一段经Cromwell到Frankton",
+              "id": "arrowtown-map",
+              "title": "Arrowtown",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cromwell+Heritage+Precinct%2C+Cromwell%2C+New+Zealand",
+              "url": "https://www.google.com/maps/search/?api=1&query=Arrowtown%2C+New+Zealand",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "导航07"
+              "sourceNote": "Google Maps"
             }
           ]
         },
@@ -1919,13 +2058,13 @@
           "sortOrder": 30,
           "period": "中午至下午",
           "place": "Kingston → Five Rivers → Mossburn",
-          "activity": "经Kingston、Five Rivers、Mossburn到Te Anau；途中吃午餐、分段休息。",
+          "activity": "经Kingston、Five Rivers、Mossburn到Te Anau；Kingston湖边短停，分段休息。",
           "highlight": "分段休息",
           "tip": "",
           "resources": [
             {
               "id": "nav07-leg2-route",
-              "title": "第二段到Te Anau",
+              "title": "第二段Frankton到Te Anau",
               "type": "map",
               "url": "https://www.google.com/maps/dir/?api=1&origin=Frankton%2C+Queenstown%2C+New+Zealand&destination=3+Thomson+Place%2C+Te+Anau%2C+New+Zealand&travelmode=driving&waypoints=Kingston%2C+Otago%2C+New+Zealand%7CFive+Rivers%2C+Southland%2C+New+Zealand%7CMossburn%2C+New+Zealand",
               "imageUrl": "",
@@ -1959,7 +2098,7 @@
           "sortOrder": 90,
           "period": "饮食",
           "place": "Frankton / Kingston / Te Anau",
-          "activity": "早餐：Wānaka；午餐：Frankton或Kingston；晚餐：Te Anau镇上，早点结束",
+          "activity": "早餐：Wānaka；午餐：Arrowtown；晚餐：Te Anau镇上，早点结束",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -1980,7 +2119,7 @@
       "lodging": "Private Ensuite in the Heart of Te Anau",
       "lodgingStatus": "已订",
       "climateNote": "Milford Sound全年多雨，约8–17°C，船头风大、水雾重。",
-      "clothingNote": "防水外套＋保暖层、防滑鞋；雨天瀑布反而更壮观。",
+      "clothingNote": "防水外套＋保暖层、防滑鞋、驱蚊液；雨天瀑布反而更壮观。",
       "coverImageUrl": "",
       "coverImageAlt": "",
       "transport": "RealNZ大巴＋游船（已订，2成人）",
@@ -1989,6 +2128,14 @@
         {
           "label": "住宿",
           "text": "Private Ensuite，第二晚。"
+        },
+        {
+          "label": "天气",
+          "text": "暴雨、落石时Milford Road（SH94）会临时封路，RealNZ可能取消或改期。前一晚和当天早上看RealNZ通知；若取消，当天改为Te Anau湖边步道和休息，不临时补订其他项目。"
+        },
+        {
+          "label": "沙蝇",
+          "text": "Milford码头和Te Anau湖边沙蝇多，叮咬会痒好几天；下车前喷驱蚊液，长袖长裤更稳。"
         },
         {
           "label": "集合",
@@ -2129,7 +2276,7 @@
       "lodging": "山景独立单间公寓Fernhill",
       "lodgingStatus": "已订",
       "climateNote": "Queenstown约10–24°C，晴天干燥、紫外线强，傍晚转凉。",
-      "clothingNote": "夏装＋晚间外套；Fernhill上坡穿好走的鞋。",
+      "clothingNote": "夏装＋晚间外套；Fernhill上坡穿好走的鞋；湖边带驱蚊液。",
       "coverImageUrl": "",
       "coverImageAlt": "",
       "transport": "自驾 · 纯驾驶约2–2.5小时",
@@ -2268,11 +2415,29 @@
           "dayId": "d12",
           "sortOrder": 20,
           "period": "中午",
-          "place": "Queenstown",
-          "activity": "经Kingston到Queenstown，先吃午餐。",
-          "highlight": "",
+          "place": "Fergburger",
+          "activity": "经Kingston到Queenstown，午餐吃Fergburger；店在市中心Shotover Street，饭点排队常很长，尽量错开12:00–13:30，或打包到湖边吃。",
+          "highlight": "皇后镇招牌汉堡",
           "tip": "",
           "resources": [
+            {
+              "id": "fergburger-map",
+              "title": "Fergburger",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Fergburger%2C+Shotover+Street%2C+Queenstown%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "fergburger-official",
+              "title": "Fergburger官网",
+              "type": "restaurant",
+              "url": "https://www.fergburger.com/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "官网"
+            },
             {
               "id": "boundary-street-map",
               "title": "Boundary Street停车场",
@@ -2307,10 +2472,39 @@
         {
           "dayId": "d12",
           "sortOrder": 40,
-          "period": "16:30–晚上",
-          "place": "Queenstown Gardens / Blue Kanu",
-          "activity": "Queenstown Gardens或湖边轻走；可把Blue Kanu作为今天的晚餐。",
-          "highlight": "湖边与晚餐",
+          "period": "16:30–18:30",
+          "place": "Skyline Gondola · Bob’s Peak",
+          "activity": "坐Skyline缆车上Bob’s Peak看湖和Remarkables山脉，按1.5–2小时安排；想玩可加Luge滑道。缆车站在Brecon Street，离Fernhill很近。",
+          "highlight": "俯瞰皇后镇",
+          "tip": "缆车票可网上或现场买；大风时可能停运。",
+          "resources": [
+            {
+              "id": "skyline-map",
+              "title": "Skyline Gondola Queenstown",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Skyline+Queenstown%2C+Brecon+Street%2C+Queenstown%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "skyline-official",
+              "title": "Skyline Queenstown官网",
+              "type": "official",
+              "url": "https://www.skyline.co.nz/en/queenstown/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "官网"
+            }
+          ]
+        },
+        {
+          "dayId": "d12",
+          "sortOrder": 50,
+          "period": "19:00–晚上",
+          "place": "Blue Kanu / 湖边",
+          "activity": "下山后湖边走走，晚餐Blue Kanu。不去缆车就改Queenstown Gardens湖边轻走。",
+          "highlight": "晚餐",
           "tip": "",
           "resources": [
             {
@@ -2328,8 +2522,8 @@
           "dayId": "d12",
           "sortOrder": 90,
           "period": "饮食",
-          "place": "Queenstown / Blue Kanu",
-          "activity": "早餐：Te Anau；午餐：Queenstown；晚餐：Blue Kanu",
+          "place": "Fergburger / Blue Kanu",
+          "activity": "早餐：Te Anau；午餐：Fergburger；晚餐：Blue Kanu",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -2350,7 +2544,7 @@
       "lodging": "山景独立单间公寓Fernhill",
       "lodgingStatus": "已订",
       "climateNote": "Wakatipu湖区约10–24°C，晴天日照强，湖边风大。",
-      "clothingNote": "防晒＋防风外套；Lagoon步道雨后可能积水，穿防水鞋。",
+      "clothingNote": "防晒＋防风外套、驱蚊液；Lagoon步道雨后可能积水，穿防水鞋。",
       "coverImageUrl": "",
       "coverImageAlt": "",
       "transport": "自驾往返Glenorchy · 往返约2小时",
@@ -2359,6 +2553,10 @@
         {
           "label": "住宿",
           "text": "Fernhill山景单间，第二晚。"
+        },
+        {
+          "label": "沙蝇",
+          "text": "Glenorchy码头和Lagoon湿地沙蝇多，下车前喷驱蚊液。"
         },
         {
           "label": "天气备选",
@@ -2647,7 +2845,7 @@
         "title": "导航10 · Fernhill → Queenstown机场",
         "duration": "10:00前退房；住宿至机场方向约20–35分钟，另计加油、验车和车行摆渡。",
         "sequence": "Fernhill → Queenstown / SH6A → Frankton加油 → 实际还车网点 → Queenstown Airport",
-        "notes": "先满足最终航司的到场要求；规划可留起飞前约90分钟到国内航站楼，再向前加约45–60分钟还车/摆渡及路程。车行若要求更早，按其说明调整。今天不插入Arrowtown等专门绕路的游览。",
+        "notes": "先满足最终航司的到场要求；规划可留起飞前约90分钟到国内航站楼，再向前加约45–60分钟还车/摆渡及路程。车行若要求更早，按其说明调整。今天不插入专门绕路的游览（Arrowtown已在2/10顺路去过）。",
         "legs": [
           {
             "sortOrder": 10,
@@ -2778,16 +2976,24 @@
       "clothingNote": "防晒、帽子、好走的鞋；车上备一件薄外套。",
       "coverImageUrl": "",
       "coverImageAlt": "",
-      "transport": "一日租车自驾 · 往返约5–6小时",
-      "leaveBy": "09:30左右离开市区；13:30前报到",
+      "transport": "交通待定：一日租车自驾，或大巴 / 接驳",
+      "leaveBy": "13:30前到The Shire’s Rest报到",
       "notes": [
         {
           "label": "住宿",
           "text": "回同一家Auckland住宿，第二晚。"
         },
         {
-          "label": "交通主案",
-          "text": "单日租车，须支持晚间还车。现票只含Shire’s Rest至片场巴士，不含Auckland接送；找到适配13:50的纯接送后可替换自驾。"
+          "label": "交通待定",
+          "text": "还没决定租车还是公共交通。现票只含Shire’s Rest至片场巴士，不含Auckland往返。"
+        },
+        {
+          "label": "方案A 租车",
+          "text": "一日租车自驾，往返纯驾驶约4.5–5小时，须支持晚间还车；按下方导航11执行。"
+        },
+        {
+          "label": "方案B 大巴 / 接驳",
+          "text": "Auckland没有直达Shire’s Rest的公共交通：可坐长途大巴到Matamata再打车到501 Buckland Road，或订接受自购票的纯接送。选这个方案前确认班次能13:30前送到Shire’s Rest、16:20后能接回Auckland。"
         },
         {
           "label": "回程",
@@ -2804,13 +3010,13 @@
         "sourceNote": "优先CBD/Britomart/SkyCity"
       },
       "primaryResource": {
-        "id": "nav11-out-route",
-        "title": "市区参考起点经Matamata到现场",
+        "id": "shire-rest-map",
+        "title": "The Shire’s Rest报到点",
         "type": "map",
-        "url": "https://www.google.com/maps/dir/?api=1&origin=Britomart%2C+Auckland%2C+New+Zealand&destination=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand&travelmode=driving&waypoints=Matamata+i-SITE+Visitor+Information+Centre%2C+Matamata%2C+New+Zealand",
+        "url": "https://www.google.com/maps/search/?api=1&query=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "导航11"
+        "sourceNote": "Google Maps"
       },
       "ticketResource": {
         "id": "hobbiton-booking",
@@ -2824,7 +3030,7 @@
       "drive": {
         "id": "nav11",
         "dayId": "d15",
-        "title": "导航11 · Auckland ↔ Hobbiton",
+        "title": "导航11 · （若租车）Auckland ↔ Hobbiton",
         "duration": "08:30–09:00提车，09:30左右离开市区；去回各预留约3小时交通窗口含短休息，13:30前报到。",
         "sequence": "Auckland市区实际取车点 → SH1南行 → 按当日导航经SH2 / SH27到Matamata → 501 Buckland Road / The Shire’s Rest；返程回实际还车点",
         "notes": "取还车点尚未确定，地图先以Britomart作CBD参考；实际使用时替换成车行地址。优先支持晚间自助还车的网点；若必须次晨还，另计过夜停车和租期，2/16先还车再城市活动。现有票不含Auckland接送；纯接送只有确认接受自购票、13:30前送达且16:20后接回才可替代本页自驾。",
@@ -2922,9 +3128,9 @@
           "dayId": "d15",
           "sortOrder": 10,
           "period": "08:30–09:30",
-          "place": "Auckland市区取车",
-          "activity": "办理一日租车；09:30左右从Auckland市区出发。租车和取还车地点待订。",
-          "highlight": "一日租车",
+          "place": "Auckland市区出发",
+          "activity": "交通方式待定：租车就08:30–09:00取车、09:30前出城；坐大巴或接驳就按班次出发，保证13:30前到Shire’s Rest。",
+          "highlight": "交通待定",
           "tip": "",
           "resources": [
             {
@@ -2935,6 +3141,15 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "导航11"
+            },
+            {
+              "id": "hobbiton-transfers-official",
+              "title": "Hobbiton官方交通伙伴",
+              "type": "official",
+              "url": "https://www.hobbitontours.com/plan-visit/transfers/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "官网"
             }
           ]
         },
@@ -2993,7 +3208,7 @@
           "sortOrder": 50,
           "period": "16:30–17:00左右返程",
           "place": "Hobbiton → Auckland",
-          "activity": "回Auckland，按约19:00–20:00抵城安排晚餐及还车。",
+          "activity": "回Auckland，按约19:00–20:00抵城安排晚餐；租车的话晚上还车，坐大巴或接驳按回程班次。",
           "highlight": "晚间回城",
           "tip": "",
           "resources": [
@@ -3232,13 +3447,13 @@
         "sourceNote": "无需住宿"
       },
       "primaryResource": {
-        "id": "pvg-map",
-        "title": "上海浦东国际机场",
-        "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Shanghai+Pudong+International+Airport",
+        "id": "arrival-airport-note",
+        "title": "落地机场以出票为准",
+        "type": "note",
+        "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "落地机场以出票为准"
+        "sourceNote": "机票购买后再补"
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
@@ -3289,21 +3504,21 @@
       "sortOrder": 10,
       "checkIn": "2027-02-01",
       "checkOut": "2027-02-02",
-      "name": "悉尼新增一晚",
-      "room": "优先Great Southern；同房续住待确认",
-      "detail": "—",
+      "name": "Great Southern Hotel Sydney（补订）",
+      "room": "同房连住待前台确认",
+      "detail": "717 George St, Haymarket",
       "resource": {
-        "id": "sydney-extra-night-note",
-        "title": "悉尼新增一晚（待订）",
-        "type": "note",
-        "url": "",
+        "id": "great-southern-map",
+        "title": "Great Southern Hotel Sydney",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "优先Great Southern同一家"
+        "sourceNote": "确认邮件地址"
       },
-      "status": "待订",
+      "status": "已订1晚",
       "freeCancelUntil": "",
-      "afterDeadline": ""
+      "afterDeadline": "补订订单的取消条款和金额待补"
     },
     {
       "sortOrder": 20,
@@ -3448,20 +3663,28 @@
   ],
   "todos": [
     {
+      "sortOrder": 4,
+      "kind": "prep",
+      "dueDate": "",
+      "dueLabel": "最先办",
+      "title": "澳大利亚、新西兰签证",
+      "detail": "如持中国护照，两国都需要单独申请旅游签证；办好后再出机票。具体材料和时长以两国官方为准。"
+    },
+    {
+      "sortOrder": 6,
+      "kind": "prep",
+      "dueDate": "",
+      "dueLabel": "出发前",
+      "title": "驾照英文翻译件",
+      "detail": "新西兰开车需随身带中国驾照和认可的英文翻译件（或国际驾照认证件），两人都要准备；租车取车时会查，要求以租车公司为准。"
+    },
+    {
       "sortOrder": 10,
       "kind": "booking",
       "dueDate": "",
       "dueLabel": "尽早",
       "title": "四段机票",
-      "detail": "2/1抵SYD；2/4当日SYD→CHC；2/14下午抵AKL；2/16晚AKL离境、2/17早晨抵国内。出票后补准确航班号及机场到场时间。"
-    },
-    {
-      "sortOrder": 20,
-      "kind": "booking",
-      "dueDate": "",
-      "dueLabel": "尽早",
-      "title": "悉尼新增一晚",
-      "detail": "2/1–2/2；优先补同一家，确认续住是否要换房。"
+      "detail": "2/1抵SYD；2/4当日SYD→CHC（优先上午起飞，新西兰快2小时）；2/14下午抵AKL；2/16晚AKL离境、2/17早晨抵国内。出票后补准确航班号及机场到场时间。"
     },
     {
       "sortOrder": 30,
@@ -3485,7 +3708,7 @@
       "dueDate": "",
       "dueLabel": "定机票后",
       "title": "Hobbiton当天交通",
-      "detail": "主案一日自驾，支持晚还；若有适配现票的纯接送，再以已确认班次替换。"
+      "detail": "租车自驾和大巴 / 接驳二选一，待定。租车要支持晚间还车；大巴或接驳要确认13:30前送达Shire’s Rest、16:20后能接回，并接受自购票。"
     },
     {
       "sortOrder": 60,
@@ -3493,7 +3716,15 @@
       "dueDate": "",
       "dueLabel": "尽早",
       "title": "Twizel观星",
-      "detail": "优先2/7当地产品；核准确集合点、语言、天气改期条件。2/6–2/8是长周末，场次更紧。"
+      "detail": "优先2/7当地产品；2/6前后是新月，观星条件最好。核准确集合点、语言、天气改期条件。2/6–2/8是长周末，场次更紧。"
+    },
+    {
+      "sortOrder": 65,
+      "kind": "prep",
+      "dueDate": "",
+      "dueLabel": "出发前",
+      "title": "查Milford订单退改规则",
+      "detail": "确认RealNZ在天气取消（Milford Road封路）时是全额退款还是改期，以及改期可选日期。"
     },
     {
       "sortOrder": 70,
@@ -3501,7 +3732,7 @@
       "dueDate": "",
       "dueLabel": "按计划时间",
       "title": "重点餐厅",
-      "detail": "Kika 2/9、The Redcliff 2/11、Blue Kanu 2/12、Amano 2/16，按计划时间查询和预约。"
+      "detail": "Kika 2/9、The Redcliff 2/11、Blue Kanu 2/12、Amano 2/16，按计划时间查询和预约；可选Rippon品酒 2/9下午；Skyline缆车2/12可提前网上买票。"
     },
     {
       "sortOrder": 80,
@@ -3587,22 +3818,31 @@
   "advice": [
     {
       "sortOrder": 10,
-      "title": "2/10 Wānaka → Te Anau：可改走Crown Range，顺路Arrowtown",
-      "verdict": "可选优化 · 不涉及订单",
+      "title": "2/10 Wānaka → Te Anau：改走Crown Range，顺路Arrowtown",
+      "verdict": "已采用 · 不涉及订单",
       "dayIds": [
         "d10"
       ],
       "detail": "行程文件主线经Cromwell + Kawarau Gorge到Frankton（约110公里）。改走Cardrona Valley Road翻Crown Range到Frankton约60公里，少约50公里、纯驾驶省约20–30分钟；Crown Range下山就是Arrow Junction，Arrowtown只需绕5分钟，可在这里吃午饭或喝咖啡。两条路线从Frankton起完全相同（Kingston → Five Rivers → Mossburn → Te Anau）。",
-      "action": "Crown Range是新西兰海拔最高的铺装主干道之一（约1,076米），Queenstown一侧有连续急弯；驾驶者不熟悉山路、起雾或大风时仍走Cromwell。Cromwell路线更平缓，2月沿途有水果摊。两条都可以，按当天天气和精神状态选；导航时把Cardrona和Arrowtown设为途经点，否则手机可能自动选其中一条。",
+      "action": "Crown Range是新西兰海拔最高的铺装主干道之一（约1,076米），Queenstown一侧有连续急弯；驾驶者不熟悉山路、起雾或大风时仍走Cromwell。Cromwell路线更平缓，2月沿途有水果摊。已采用为主线，Cromwell留作坏天气备选；导航时把Cardrona和Arrowtown设为途经点，否则手机可能自动选Cromwell。",
       "resources": [
         {
           "id": "crown-range-route",
-          "title": "备选：Crown Range + Arrowtown到Frankton",
+          "title": "第一段经Crown Range、Arrowtown到Frankton",
           "type": "map",
-          "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cardrona+Hotel%2C+Cardrona%2C+New+Zealand%7CArrowtown%2C+New+Zealand",
+          "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cardrona+Hotel%2C+Cardrona%2C+New+Zealand%7CCrown+Range+Summit%2C+New+Zealand%7CArrowtown%2C+New+Zealand",
           "imageUrl": "",
           "imageAlt": "",
-          "sourceNote": "路线建议，非原行程主线"
+          "sourceNote": "导航07主线"
+        },
+        {
+          "id": "nav07-leg1-route",
+          "title": "备选：经Cromwell到Frankton",
+          "type": "map",
+          "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cromwell+Heritage+Precinct%2C+Cromwell%2C+New+Zealand",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "导航07"
         }
       ]
     },
@@ -3620,13 +3860,13 @@
     },
     {
       "sortOrder": 30,
-      "title": "2/15 Hobbiton当天往返约5–6小时驾驶",
-      "verdict": "保持当天往返，调整执行",
+      "title": "2/15 Hobbiton当天往返约5–6小时车程",
+      "verdict": "保持当天往返，交通方式待定",
       "dayIds": [
         "d15"
       ],
       "detail": "Auckland到The Shire’s Rest单程约175公里，去回纯驾驶约4.5–5小时，加2.5小时导览和缓冲，全天约10–11小时，前一天还刚从Queenstown飞来。Auckland两晚尚未预订，理论上可改成2/15住Matamata/Cambridge，但会多一次搬行李，2/16早上还要开2小时回城，城市日被压缩，所以不建议。",
-      "action": "建议：两人轮流开，去程和回程各换一次人；09:00出发比09:30更稳，周一早上出城方向不堵；2/14晚上早点休息；午饭在Shire’s Rest解决；晚餐订20:00以后或不订；租车选支持晚间自助还车、离酒店近的网点。",
+      "action": "如果租车：两人轮流开，去程和回程各换一次人；09:00出发比09:30更稳，周一早上出城方向不堵；租车选支持晚间自助还车、离酒店近的网点。如果坐大巴或接驳：不用开车更省力，但要确认班次衔接13:30报到和16:20结束。两种都建议2/14晚上早点休息、午饭在Shire’s Rest解决、晚餐订20:00以后或不订。",
       "resources": []
     },
     {
@@ -3648,21 +3888,12 @@
       "title": "已订住宿：不建议改订",
       "verdict": "不改订单",
       "dayIds": [],
-      "detail": "对照路线后，没有哪一笔已订住宿改了会明显更好：Te Anau是Milford的必要基地，Twizel连住三晚兼顾Mt Cook和观星，Wānaka和Fernhill的位置与当天安排吻合。可以优化的只有待订部分：悉尼2/1尽量订Great Southern同一家免得换房；Auckland两晚选CBD/Britomart、可寄存行李且附近有晚间还车网点的酒店。",
+      "detail": "对照路线后，没有哪一笔已订住宿改了会明显更好：Te Anau是Milford的必要基地，Twizel连住三晚兼顾Mt Cook和观星，Wānaka和Fernhill的位置与当天安排吻合。可以优化的只有待订部分：Auckland两晚选CBD/Britomart、可寄存行李且附近有晚间还车网点的酒店。",
       "action": "如果之后仍想调整，免费取消截止（当地时间）依次为：Queenstown Fernhill 2027/1/13 15:00、悉尼Great Southern 2/1 14:00、基督城Metropolitan 2/3 14:00、Wānaka Hikuwai 2/3 16:00、Te Anau 2/5 15:00；Twizel未展开条款，不预设可免费取消。",
       "resources": []
     }
   ],
   "resources": [
-    {
-      "id": "sydney-extra-night-note",
-      "title": "悉尼新增一晚（待订）",
-      "type": "note",
-      "url": "",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "优先Great Southern同一家"
-    },
     {
       "id": "great-southern-map",
       "title": "Great Southern Hotel Sydney",
@@ -3808,6 +4039,15 @@
       "sourceNote": "Google Maps"
     },
     {
+      "id": "bondi-transit-route",
+      "title": "Great Southern → Bondi Beach公共交通",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia&destination=Bondi+Beach%2C+NSW%2C+Australia&travelmode=transit",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
       "id": "king-street-official",
       "title": "King Street街区资料",
       "type": "official",
@@ -3815,6 +4055,51 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Destination NSW"
+    },
+    {
+      "id": "newtown-map",
+      "title": "Newtown · King Street",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=King+Street%2C+Newtown+NSW%2C+Australia",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "bondi-beach-map",
+      "title": "Bondi Beach",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Beach%2C+NSW%2C+Australia",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "bondi-coogee-walk-map",
+      "title": "Bondi to Coogee Coastal Walk",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Bondi+Beach%2C+NSW%2C+Australia&destination=Coogee+Beach%2C+NSW%2C+Australia&travelmode=walking&waypoints=Tamarama+Beach%2C+NSW%2C+Australia%7CBronte+Beach%2C+NSW%2C+Australia",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps步行"
+    },
+    {
+      "id": "bronte-beach-map",
+      "title": "Bronte Beach",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Bronte+Beach%2C+NSW%2C+Australia",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "coogee-beach-map",
+      "title": "Coogee Beach",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Coogee+Beach%2C+NSW%2C+Australia",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
     },
     {
       "id": "white-rabbit-map",
@@ -4141,13 +4426,13 @@
       "sourceNote": "机场官网"
     },
     {
-      "id": "pvg-map",
-      "title": "上海浦东国际机场",
-      "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Shanghai+Pudong+International+Airport",
+      "id": "arrival-airport-note",
+      "title": "落地机场以出票为准",
+      "type": "note",
+      "url": "",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "落地机场以出票为准"
+      "sourceNote": "机票购买后再补"
     },
     {
       "id": "mackenzie-parking-official",
@@ -4322,7 +4607,7 @@
     },
     {
       "id": "nav07-leg1-route",
-      "title": "第一段经Cromwell到Frankton",
+      "title": "备选：经Cromwell到Frankton",
       "type": "map",
       "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cromwell+Heritage+Precinct%2C+Cromwell%2C+New+Zealand",
       "imageUrl": "",
@@ -4331,7 +4616,7 @@
     },
     {
       "id": "nav07-leg2-route",
-      "title": "第二段到Te Anau",
+      "title": "第二段Frankton到Te Anau",
       "type": "map",
       "url": "https://www.google.com/maps/dir/?api=1&origin=Frankton%2C+Queenstown%2C+New+Zealand&destination=3+Thomson+Place%2C+Te+Anau%2C+New+Zealand&travelmode=driving&waypoints=Kingston%2C+Otago%2C+New+Zealand%7CFive+Rivers%2C+Southland%2C+New+Zealand%7CMossburn%2C+New+Zealand",
       "imageUrl": "",
@@ -4340,12 +4625,75 @@
     },
     {
       "id": "crown-range-route",
-      "title": "备选：Crown Range + Arrowtown到Frankton",
+      "title": "第一段经Crown Range、Arrowtown到Frankton",
       "type": "map",
-      "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cardrona+Hotel%2C+Cardrona%2C+New+Zealand%7CArrowtown%2C+New+Zealand",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cardrona+Hotel%2C+Cardrona%2C+New+Zealand%7CCrown+Range+Summit%2C+New+Zealand%7CArrowtown%2C+New+Zealand",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "路线建议，非原行程主线"
+      "sourceNote": "导航07主线"
+    },
+    {
+      "id": "arrowtown-map",
+      "title": "Arrowtown",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Arrowtown%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "fergburger-map",
+      "title": "Fergburger",
+      "type": "restaurant",
+      "url": "https://www.google.com/maps/search/?api=1&query=Fergburger%2C+Shotover+Street%2C+Queenstown%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "fergburger-official",
+      "title": "Fergburger官网",
+      "type": "restaurant",
+      "url": "https://www.fergburger.com/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "官网"
+    },
+    {
+      "id": "skyline-map",
+      "title": "Skyline Gondola Queenstown",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Skyline+Queenstown%2C+Brecon+Street%2C+Queenstown%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "skyline-official",
+      "title": "Skyline Queenstown官网",
+      "type": "official",
+      "url": "https://www.skyline.co.nz/en/queenstown/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "官网"
+    },
+    {
+      "id": "wanaka-tree-map",
+      "title": "That Wānaka Tree",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=That+Wanaka+Tree%2C+Wanaka%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "rippon-map",
+      "title": "Rippon酒庄",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Rippon+Vineyard%2C+Wanaka%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
     },
     {
       "id": "nav08-route",

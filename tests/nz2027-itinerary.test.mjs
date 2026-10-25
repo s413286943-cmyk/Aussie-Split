@@ -39,7 +39,7 @@ describe("2027 two-person itinerary data", () => {
       "Queenstown", "Queenstown",
       "Auckland", "Auckland",
     ]);
-    assert.deepEqual(itinerary.days.filter((day) => day.lodgingStatus === "待订").map((day) => day.id), ["d1", "d14", "d15"]);
+    assert.deepEqual(itinerary.days.filter((day) => day.lodgingStatus === "待订").map((day) => day.id), ["d14", "d15"]);
     for (const day of itinerary.days.filter((item) => item.lodgingStatus === "已订")) {
       assert.equal(day.lodgingResource.title, day.lodging, day.id);
       assert.match(day.lodgingResource.url, /^https:\/\/www\.google\.com\/maps\//);
@@ -50,7 +50,8 @@ describe("2027 two-person itinerary data", () => {
     assert.equal(dayById("d11").ticketResource.type, "booking");
     assert.match(dayById("d11").leaveBy, /09:30前/);
     assert.ok(dayById("d11").blocks.some((block) => block.period === "09:50–17:00"));
-    assert.match(dayById("d15").leaveBy, /13:30前报到/);
+    assert.match(dayById("d15").leaveBy, /13:30前.*报到/);
+    assert.match(dayById("d15").transport, /交通待定/);
     assert.ok(dayById("d15").blocks.some((block) => /13:50/.test(block.period) && /Mandarin/.test(block.activity)));
   });
 
@@ -63,7 +64,8 @@ describe("2027 two-person itinerary data", () => {
         ["02-13", "nav09", 4], ["02-14", "nav10", 3], ["02-15", "nav11", 5],
       ],
     );
-    assert.match(dayById("d10").drive.sequence, /Cromwell/);
+    assert.match(dayById("d10").drive.sequence, /Crown Range Summit → Arrow Junction \/ Arrowtown/);
+    assert.ok(dayById("d10").drive.resources.some((resource) => /备选：经Cromwell/.test(resource.title)));
   });
 
   it("lists free-cancellation deadlines and payment dates", () => {

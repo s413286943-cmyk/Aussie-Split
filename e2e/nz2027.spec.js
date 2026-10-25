@@ -30,7 +30,7 @@ test("schedule shows the trip board before departure", async ({ page }) => {
   await expect(board.getByRole("article", { name: "出发前需要落实的事项" })).toContainText("Te Anau尾款 NZ$386.40");
   const advice = board.getByRole("article", { name: "路线建议" });
   await expect(advice.locator("details")).toHaveCount(5);
-  await advice.getByText("2/15 Hobbiton当天往返约5–6小时驾驶").click();
+  await advice.getByText("2/15 Hobbiton当天往返约5–6小时车程").click();
   await expect(advice).toContainText("两人轮流开");
 });
 
@@ -43,7 +43,7 @@ test("during the trip today's day is open with its drive guide and day ledger", 
   await expect(d10.locator("details")).toHaveAttribute("open", "");
   const guide = d10.getByRole("region", { name: /导航07/ });
   await expect(guide.getByRole("row")).toHaveCount(6);
-  await expect(guide.getByRole("link", { name: /第一段经Cromwell到Frankton/ })).toHaveAttribute("href", /google\.com\/maps\/dir/);
+  await expect(guide.getByRole("link", { name: /第一段经Crown Range、Arrowtown到Frankton/ })).toHaveAttribute("href", /google\.com\/maps\/dir/);
   await expect(d10.locator(".day-notes .is-advice")).toContainText("Crown Range");
   await expect(page.locator("#nz-d11 details")).not.toHaveAttribute("open", "");
 
