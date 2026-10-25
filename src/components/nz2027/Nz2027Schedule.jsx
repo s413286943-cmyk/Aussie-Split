@@ -59,7 +59,9 @@ function Hero({ itinerary, day, phase, today }) {
     : phase === "after"
       ? "旅行结束啦"
       : daysToGo !== null ? `还有 ${daysToGo} 天出发` : "出发倒计时";
-  const image = day.coverImageUrl || itinerary.trip.coverImageUrl;
+  const image = phase === "during"
+    ? day.coverImageUrl || itinerary.trip.coverImageUrl
+    : itinerary.trip.coverImageUrl || day.coverImageUrl;
 
   return (
     <section className={`nz-hero stage-${stageTone(day)}`} aria-label="今天的行程">
