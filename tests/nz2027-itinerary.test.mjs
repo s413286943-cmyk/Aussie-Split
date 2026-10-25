@@ -57,17 +57,36 @@ describe("2027 two-person itinerary data", () => {
     assert.ok(dayById("d15").blocks.some((block) => /13:50/.test(block.period) && /Mandarin/.test(block.activity)));
   });
 
-  it("attaches all 11 driving guides with their segments", () => {
+  it("attaches all 10 driving guides with their segments", () => {
     assert.deepEqual(
       itinerary.days.filter((day) => day.drive).map((day) => [day.date.slice(5), day.drive.id, day.drive.legs.length]),
       [
-        ["02-04", "nav01", 3], ["02-05", "nav02", 5], ["02-06", "nav03", 4], ["02-07", "nav04", 4],
+        ["02-05", "nav02", 5], ["02-06", "nav03", 4], ["02-07", "nav04", 4],
         ["02-08", "nav05", 4], ["02-09", "nav06", 3], ["02-10", "nav07", 5], ["02-12", "nav08", 4],
         ["02-13", "nav09", 4], ["02-14", "nav10", 3], ["02-15", "nav11", 5],
       ],
     );
     assert.match(dayById("d10").drive.sequence, /Crown Range Summit → Arrow Junction \/ Arrowtown/);
     assert.ok(dayById("d10").drive.resources.some((resource) => /备选：经Cromwell/.test(resource.title)));
+  });
+
+  it("follows the booked flights, rental car and Sydney hotel", () => {
+    const text = (id) => JSON.stringify(dayById(id));
+    assert.match(text("d1"), /CZ3864/);
+    assert.match(dayById("d1").transport, /CZ601 06:35/);
+    assert.match(dayById("d4").transport, /NZ224 悉尼 18:15 → 基督城 23:20/);
+    assert.equal(dayById("d4").drive, null);
+    assert.match(text("d4"), /晚到入住/);
+    assert.match(text("d5"), /10:00 基督城机场/);
+    assert.match(dayById("d5").drive.duration, /10:00 机场取车/);
+    assert.match(dayById("d14").transport, /JQ296 13:30 → 15:20/);
+    assert.match(text("d14"), /20kg/);
+    assert.match(dayById("d16").transport, /CZ306 22:25/);
+    assert.match(dayById("d17").transport, /CZ3803 09:10 → 杭州 11:10/);
+    const sydney = itinerary.lodgings.filter((lodging) => lodging.name.startsWith("Great Southern"));
+    assert.deepEqual(sydney.map((lodging) => [lodging.checkIn, lodging.checkOut]), [["2027-02-01", "2027-02-04"]]);
+    const all = JSON.stringify(itinerary);
+    for (const phrase of ["待购", "（补订）", "换房"]) assert.ok(!all.includes(phrase), phrase);
   });
 
   it("lists free-cancellation deadlines and payment dates", () => {
@@ -87,7 +106,7 @@ describe("2027 two-person itinerary data", () => {
     const ids = itinerary.todos.map((todo) => todo.id);
     assert.equal(new Set(ids).size, ids.length);
     assert.ok(ids.every((id) => /^[a-z0-9][a-z0-9-]{0,63}$/.test(id)));
-    for (const id of ["visa", "licence", "flight-syd", "flight-chc", "flight-akl", "flight-home", "auckland-hotel", "car-south", "hobbiton-transport", "stargazing", "dinner-kika", "milford-terms", "pay-fernhill", "cancel-teanau"]) {
+    for (const id of ["visa", "licence", "late-checkin-chc", "baggage-jq296", "auckland-hotel", "hobbiton-transport", "stargazing", "dinner-kika", "milford-terms", "pay-fernhill", "cancel-teanau"]) {
       assert.ok(ids.includes(id), id);
     }
     assert.ok(itinerary.todos.every((todo) => ["book", "pay", "deadline", "prep"].includes(todo.kind)));
