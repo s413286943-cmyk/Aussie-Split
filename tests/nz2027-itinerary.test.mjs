@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { describe, it } from "node:test";
 
 import itinerary from "../src/data/nz2027-itinerary.generated.json" with { type: "json" };
@@ -76,17 +78,39 @@ describe("2027 two-person itinerary data", () => {
     assert.equal(deadlines["Hikuwai Haven 1"], "2027-02-03 16:00");
     assert.equal(deadlines["Private Ensuite in the Heart of Te Anau"], "2027-02-05 15:00");
     assert.deepEqual(
-      itinerary.todos.filter((todo) => todo.kind === "payment").map((todo) => todo.dueDate),
+      itinerary.todos.filter((todo) => todo.kind === "pay").map((todo) => todo.dueDate),
       ["2027-01-05", "2027-01-26", "2027-01-28"],
     );
   });
 
-  it("documents route advice without changing booked lodging", () => {
-    assert.equal(itinerary.advice.length, 5);
-    assert.ok(itinerary.advice.some((item) => /Crown Range/.test(item.title)));
-    assert.ok(itinerary.advice.some((item) => /Hobbiton/.test(item.title)));
-    assert.ok(itinerary.advice.some((item) => /Waitangi/.test(item.title)));
-    assert.equal(itinerary.advice.find((item) => /已订住宿/.test(item.title)).verdict, "不改订单");
+  it("gives every to-do a stable id so ticks survive content edits", () => {
+    const ids = itinerary.todos.map((todo) => todo.id);
+    assert.equal(new Set(ids).size, ids.length);
+    assert.ok(ids.every((id) => /^[a-z0-9][a-z0-9-]{0,63}$/.test(id)));
+    for (const id of ["visa", "licence", "flight-syd", "flight-chc", "flight-akl", "flight-home", "auckland-hotel", "car-south", "hobbiton-transport", "stargazing", "dinner-kika", "milford-terms", "pay-fernhill", "cancel-teanau"]) {
+      assert.ok(ids.includes(id), id);
+    }
+    assert.ok(itinerary.todos.every((todo) => ["book", "pay", "deadline", "prep"].includes(todo.kind)));
+  });
+
+  it("keeps travel tips in the travellers' own voice", () => {
+    assert.deepEqual(itinerary.advice.map((item) => item.dayIds), [["d10"], ["d15"], ["d5", "d6", "d7", "d8"]]);
+    const text = JSON.stringify({ trip: itinerary.trip, days: itinerary.days, todos: itinerary.todos, advice: itinerary.advice, lodgings: itinerary.lodgings });
+    for (const phrase of ["行程文件", "原行程", "主线", "主案", "已采用", "不涉及订单", "规划窗口", "分账"]) {
+      assert.ok(!text.includes(phrase), phrase);
+    }
+  });
+
+  it("picks up theme pictures by file name", async () => {
+    const { findThemeImage } = await import("../scripts/nz2027/import-itinerary.mjs");
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), "nz2027-images-"));
+    try {
+      fs.writeFileSync(path.join(directory, "d03.jpg"), "");
+      assert.equal(findThemeImage("d03", directory), "/nz2027/d03.jpg");
+      assert.equal(findThemeImage("d04", directory), "");
+    } finally {
+      fs.rmSync(directory, { recursive: true, force: true });
+    }
   });
 
   it("uses https for every linked resource and one meal block per day", () => {

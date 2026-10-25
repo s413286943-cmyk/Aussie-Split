@@ -74,9 +74,27 @@ it("adds the separate 2027 ledger without touching the 2026 tables, and rolls ba
     await expectFailure(database, rpcSql("anon", record), /permission denied/);
     await expectFailure(database, "set role service_role; delete from public.nz2027_expenses", /permission denied/);
 
+    const check = (done, updatedAt) => `set role service_role; select public.nz2027_set_check(${literal(JSON.stringify({ id: "visa", done, updatedAt }))}::jsonb) ->> 'status'`;
+    assert.equal(lastLine(await scalar(database, check(true, now))), "applied");
+    assert.equal(lastLine(await scalar(database, check(false, "2026-01-01T00:00:00.000Z"))), "stale");
+    assert.equal(await scalar(database, "select done from public.nz2027_checklist where item_id = 'visa'"), "t");
+    await expectFailure(database, `set role service_role; select public.nz2027_set_check('{"id":"Bad Id","done":true,"updatedAt":"2026-11-01T00:00:00Z"}'::jsonb)`, /invalid_nz2027_check/);
+    await expectFailure(database, check(true, "2099-01-01T00:00:00.000Z"), /nz2027_check_in_future/);
+    assert.equal(await scalar(database, `
+      select relrowsecurity
+        and not has_table_privilege('anon', 'public.nz2027_checklist', 'SELECT')
+        and not has_table_privilege('authenticated', 'public.nz2027_checklist', 'SELECT')
+        and not has_table_privilege('service_role', 'public.nz2027_checklist', 'DELETE')
+        and has_table_privilege('service_role', 'public.nz2027_checklist', 'SELECT')
+        and not has_function_privilege('anon', 'public.nz2027_set_check(jsonb)', 'EXECUTE')
+        and has_function_privilege('service_role', 'public.nz2027_set_check(jsonb)', 'EXECUTE')
+      from pg_class where oid = 'public.nz2027_checklist'::regclass
+    `), "t");
+
     await runFile(database, "supabase/rollback/drop_nz2027_ledger.sql");
     assert.equal(await scalar(database, "select to_regclass('public.nz2027_expenses') is null"), "t");
     assert.equal(await scalar(database, "select to_regprocedure('public.nz2027_upsert_expense(jsonb)') is null"), "t");
+    assert.equal(await scalar(database, "select to_regclass('public.nz2027_checklist') is null and to_regprocedure('public.nz2027_set_check(jsonb)') is null"), "t");
     assert.deepEqual(await legacyState(database), legacyBefore);
   } finally {
     await adminSql(`drop database if exists ${quoteIdentifier(database)} with (force)`);
@@ -94,6 +112,10 @@ async function legacyState(database) {
       (select string_agg(conname || '=' || pg_get_constraintdef(oid), ',' order by conname) from pg_constraint where conrelid = 'public.expenses'::regclass)
     )
   `);
+}
+
+function lastLine(output) {
+  return output.split("\n").filter(Boolean).at(-1);
 }
 
 function rpcSql(role, record) {

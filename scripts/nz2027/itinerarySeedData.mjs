@@ -13,7 +13,7 @@ export const trip = [
   kv("travelers", "2位成人"),
   kv("route", "悉尼3晚 → 基督城1晚 → Twizel3晚 → Wānaka2晚 → Te Anau2晚 → Queenstown2晚 → Auckland2晚 → 夜航回国"),
   kv("summary", "每天保留一个主要体验：悉尼Bondi海岸与城市漫步、湖区公路与星空、Mt Cook徒步、Wānaka的一顿晚餐、Milford峡湾、Glenorchy公路、Hobbiton中文导览。"),
-  kv("status_note", "已有7笔住宿订单共13晚（含悉尼2/1补订），另有Milford和Hobbiton两项活动；四段机票均未购买，Auckland 2/14–16两晚待订。所有日期时间均为当地时间。"),
+  kv("status_note", "所有日期和时间都是当地时间。"),
   kv("updated_at", "2026-10-25"),
   kv("cover_image_url", ""),
   kv("cover_image_alt", ""),
@@ -113,7 +113,7 @@ export const days = [
     notes: [
       "住宿｜Twizel Holiday Park，第三晚。",
       "新月｜按月相推算，2027/2/6前后是新月，2/6、2/7晚上都几乎没有月光，是一年里很好的观星窗口；Mt Cook与湖区日互换也不影响观星。",
-      "观星待订｜可选Silver River的Twizel产品，约75分钟；使用该产品指定集合点。若改选Tekapo Mount John，要另外增加夜间往返驾驶。主案保留Twizel观星。长周末场次紧，尽早预约。",
+      "观星待订｜可选Silver River的Twizel产品，约75分钟；使用该产品指定集合点。改去Tekapo Mount John的话，晚上要多开一趟来回，所以首选在Twizel看。长周末场次紧，尽早预约。",
     ],
   }),
   day({
@@ -151,7 +151,7 @@ export const days = [
     notes: [
       "住宿｜Private Ensuite in the Heart of Te Anau，3 Thomson Place；15:00后入住。",
       "驾驶安排｜纯驾驶约3.5–4.5小时，加Arrowtown午餐和停靠留5–6小时；抵达时间随休息调整。",
-      "路线建议｜主线已改为Crown Range + Arrowtown（行程文件原为经Cromwell）。起雾、大风、下雨或不想开山路时改回Cromwell，导航见下方备选链接，从Frankton起两条路完全相同。",
+      "坏天气｜起雾、大风或下雨时别翻Crown Range，改走Cromwell（导航里有备选链接），从Frankton起两条路一样。",
     ],
   }),
   day({
@@ -189,7 +189,7 @@ export const days = [
     notes: [
       "住宿｜Fernhill山景单间，第二晚。",
       "沙蝇｜Glenorchy码头和Lagoon湿地沙蝇多，下车前喷驱蚊液。",
-      "天气备选｜小雨时缩短Lagoon段；大雨、路况或能见度不适合时留Queenstown城市活动。主行程止于Glenorchy，不延伸碎石支路。",
+      "天气备选｜小雨时缩短Lagoon段；大雨、路况或能见度不适合时留Queenstown城市活动。只到Glenorchy，不走碎石支路。",
     ],
   }),
   day({
@@ -227,7 +227,7 @@ export const days = [
     transport: "市内步行 · 晚间国际航班（待购）", leaveBy: "目标起飞前约3小时到机场", primary: "art-gallery-map", ticket: "amano-note",
     notes: [
       "住宿｜飞机；通常无需增加2/16酒店住宿。",
-      "若最终买22:00航班｜可按17:00取包、17:30前离开市区、19:00前到机场规划；这是示例，出票后整体平移。",
+      "去机场｜以22:00起飞为例：17:00取包、17:30前离开市区、19:00前到机场；按实际航班往前推。",
     ],
   }),
   day({
@@ -263,7 +263,7 @@ export const blocks = [
   block("d3", 90, "饮食", "Spice Alley / Newtown", "早餐：咖啡＋简单早餐；午餐：Spice Alley；晚餐：Newtown或回Haymarket", "", ""),
   // D04
   block("d4", 10, "出发前", "Great Southern → Sydney Airport", "Great Southern于10:00前退房；按航班时刻前往悉尼机场。", "退房赶飞机", ""),
-  block("d4", 20, "落地后", "Christchurch Airport", "入境、取车并熟悉车辆。南岛用车按Christchurch取、Queenstown还规划，车行和网点待落实。", "南岛取车", "不能把机场到达口当所有公司的取车点。", "chc-airport-route"),
+  block("d4", 20, "落地后", "Christchurch Airport", "入境、取车并熟悉车辆。南岛租车在基督城取、皇后镇还，租车公司和取车点还没订。", "南岛取车", "不能把机场到达口当所有公司的取车点。", "chc-airport-route"),
   block("d4", 30, "下午/傍晚", "Riccarton", "入住Riccarton汽车旅馆，在附近商场或超市采购早餐、路餐、饮水。", "补给", "", "metropolitan-map"),
   block("d4", 40, "若落地较早", "Christchurch Botanic Gardens", "可选植物园短走；晚到则直接入住和晚餐。", "可选", ""),
   block("d4", 90, "饮食", "Riccarton", "早餐：随航班；午餐：随航班；晚餐：Riccarton附近，备好2/5路上零食", "", ""),
@@ -274,7 +274,7 @@ export const blocks = [
   block("d5", 40, "16:00–17:00左右", "Twizel", "抵Twizel，办理入住、补给，附近晚餐。", "连住三晚", "", "twizel-holiday-park-map"),
   block("d5", 90, "饮食", "Fairlie / Twizel", "早餐：出发前吃；午餐：Fairlie Bakehouse或Tekapo；晚餐：Twizel镇上", "", ""),
   // D06
-  block("d6", 10, "07:15–07:30", "Twizel → White Horse Hill", "Twizel出发，沿SH80进山，尽早到White Horse Hill停车场。", "长周末停车场早满，提前出发", "原行程为08:00左右，因Waitangi长周末提前。", "white-horse-hill-route"),
+  block("d6", 10, "07:15–07:30", "Twizel → White Horse Hill", "Twizel出发，沿SH80进山，尽早到White Horse Hill停车场。", "长周末停车场早满，提前出发", "长周末停车场上午很早就满。", "white-horse-hill-route"),
   block("d6", 20, "09:15–14:00左右", "Hooker Valley Track", "Hooker Valley徒步，含拍照、路餐和休息预留4–5小时。", "全天主角", "全程10km，官方约3小时往返。", "doc-hooker-official"),
   block("d6", 30, "下午", "Mount Cook Village / Peter’s Lookout", "村内咖啡休息；返程在Peter’s Lookout短停看Pukaki。", "Pukaki回望", "", "peters-lookout-route"),
   block("d6", 40, "16:30–18:00左右", "Twizel", "回Twizel吃晚餐，晚上放松。", "", ""),
@@ -389,7 +389,7 @@ export const drives = [
     "nav09-out-route,glenorchy-lagoon-map,nav09-back-route,bennetts-bluff-official,glenorchy-lagoon-official"),
   drive("nav10", "d14", "导航10 · Fernhill → Queenstown机场", "10:00前退房；住宿至机场方向约20–35分钟，另计加油、验车和车行摆渡。",
     "Fernhill → Queenstown / SH6A → Frankton加油 → 实际还车网点 → Queenstown Airport",
-    "先满足最终航司的到场要求；规划可留起飞前约90分钟到国内航站楼，再向前加约45–60分钟还车/摆渡及路程。车行若要求更早，按其说明调整。今天不插入专门绕路的游览（Arrowtown已在2/10顺路去过）。",
+    "先满足最终航司的到场要求；大约起飞前90分钟到国内航站楼，再向前加约45–60分钟还车/摆渡及路程。车行若要求更早，按其说明调整。今天不插入专门绕路的游览（Arrowtown已在2/10顺路去过）。",
     "nav10-route,zqn-map,qt-airport-rental-official"),
   drive("nav11", "d15", "导航11 · （若租车）Auckland ↔ Hobbiton", "08:30–09:00提车，09:30左右离开市区；去回各预留约3小时交通窗口含短休息，13:30前报到。",
     "Auckland市区实际取车点 → SH1南行 → 按当日导航经SH2 / SH27到Matamata → 501 Buckland Road / The Shire’s Rest；返程回实际还车点",
@@ -441,14 +441,14 @@ export const driveLegs = [
   leg("nav11", 20, "Matamata → The Shire’s Rest", "约15–25分钟", "最终目的地501 Buckland Road。乡村道路跟当日导航与标识，不套用旧攻略出口号。"),
   leg("nav11", 30, "现场停车、午餐、报到", "约30–60分钟缓冲", "目标12:30–13:00到；停访客停车区，13:30前到Ticketing Office。"),
   leg("nav11", 40, "13:50 → 约16:20", "已订导览约2.5小时", "乘运营商巴士进出片场，私家车停在Shire’s Rest。"),
-  leg("nav11", 50, "约16:30–17:00 → Auckland", "约2.5–3小时规划窗口", "按19:00–20:00抵城安排；堵车、离场晚时顺延，不在当天衔接国际航班。"),
+  leg("nav11", 50, "约16:30–17:00 → Auckland", "约2.5–3小时", "按19:00–20:00抵城安排；堵车、离场晚时顺延，不在当天衔接国际航班。"),
 ];
 
 export const lodgings = [
   lodging(10, "2027-02-01", "2027-02-02", "Great Southern Hotel Sydney（补订）", "同房连住待前台确认", "717 George St, Haymarket", "great-southern-map", "已订1晚", "", "补订订单的取消条款和金额待补"),
   lodging(20, "2027-02-02", "2027-02-04", "Great Southern Hotel Sydney", "无房务服务标准大床房", "14:00–次日00:00入住；10:00前退房；717 George St, Haymarket", "great-southern-map", "已订2晚", "2027-02-01 14:00", "之后不可取消；未入住收全额"),
   lodging(30, "2027-02-04", "2027-02-05", "Metropolitan Motel on Riccarton", "行政开间、按摩浴缸", "14:00后入住；07:30–10:00退房；175 Riccarton Road", "metropolitan-map", "已订1晚", "2027-02-03 14:00", "之后不可取消；未入住收全额"),
-  lodging(40, "2027-02-05", "2027-02-08", "Twizel Holiday Park", "One Bedroom Unit", "入退房时间按原凭证；122 Mackenzie Drive", "twizel-holiday-park-map", "已订3晚，已付", "", "原确认凭证未在本次展开，不预设免费取消"),
+  lodging(40, "2027-02-05", "2027-02-08", "Twizel Holiday Park", "One Bedroom Unit", "入退房时间看订单确认；122 Mackenzie Drive", "twizel-holiday-park-map", "已订3晚，已付", "", "原确认凭证未在本次展开，不预设免费取消"),
   lodging(50, "2027-02-08", "2027-02-10", "Hikuwai Haven 1", "", "16:00后入住；10:00前退房；1 Outlet Road, Wānaka", "hikuwai-map", "已订2晚", "2027-02-03 16:00", "入住前部分退款，比例按订单"),
   lodging(60, "2027-02-10", "2027-02-12", "Private Ensuite in the Heart of Te Anau", "", "15:00后入住；10:00前退房；3 Thomson Place", "te-anau-ensuite-map", "已订2晚", "2027-02-05 15:00", "入住前部分退款，比例按订单"),
   lodging(70, "2027-02-12", "2027-02-14", "山景独立单间公寓Fernhill", "房东Coral", "15:00后入住；10:00前退房；15 Greenstone Place", "fernhill-map", "已订2晚", "2027-01-13 15:00", "2/5 15:00前取消可获部分退款，具体金额按订单"),
@@ -456,47 +456,50 @@ export const lodgings = [
 ];
 
 export const todos = [
-  todo(4, "prep", "", "最先办", "澳大利亚、新西兰签证", "如持中国护照，两国都需要单独申请旅游签证；办好后再出机票。具体材料和时长以两国官方为准。"),
-  todo(6, "prep", "", "出发前", "驾照英文翻译件", "新西兰开车需随身带中国驾照和认可的英文翻译件（或国际驾照认证件），两人都要准备；租车取车时会查，要求以租车公司为准。"),
-  todo(10, "booking", "", "尽早", "四段机票", "2/1抵SYD；2/4当日SYD→CHC（优先上午起飞，新西兰快2小时）；2/14下午抵AKL；2/16晚AKL离境、2/17早晨抵国内。出票后补准确航班号及机场到场时间。"),
-  todo(30, "booking", "", "尽早", "Auckland两晚", "2/14入住、2/16退房；同一家连住，确认寄存及取包时段。最好选附近有支持晚间还车租车网点的位置，方便2/15。"),
-  todo(40, "booking", "", "定机票后", "南岛租车", "Christchurch取、Queenstown还；按航班确定实际取还车时间、网点及异地还车条件。"),
-  todo(50, "booking", "", "定机票后", "Hobbiton当天交通", "租车自驾和大巴 / 接驳二选一，待定。租车要支持晚间还车；大巴或接驳要确认13:30前送达Shire’s Rest、16:20后能接回，并接受自购票。"),
-  todo(60, "booking", "", "尽早", "Twizel观星", "优先2/7当地产品；2/6前后是新月，观星条件最好。核准确集合点、语言、天气改期条件。2/6–2/8是长周末，场次更紧。"),
-  todo(65, "prep", "", "出发前", "查Milford订单退改规则", "确认RealNZ在天气取消（Milford Road封路）时是全额退款还是改期，以及改期可选日期。"),
-  todo(70, "booking", "", "按计划时间", "重点餐厅", "Kika 2/9、The Redcliff 2/11、Blue Kanu 2/12、Amano 2/16，按计划时间查询和预约；可选Rippon品酒 2/9下午；Skyline缆车2/12可提前网上买票。"),
-  todo(80, "prep", "", "出发前", "房东入住说明", "三处Airbnb的停车位置、门锁/钥匙、晚到要求；Fernhill尤其确认停车和回程方式。"),
-  todo(110, "payment", "2027-01-05", "1/5", "Queenstown Fernhill付款 NZ$721.63", "Apple Pay付款。付款日早于免费取消截止（1/13），付款日与取消截止分别管理。"),
-  todo(120, "deadline", "2027-01-13", "1/13 15:00", "Queenstown Fernhill免费取消截止", "之后至2/5 15:00前取消可获部分退款，具体金额按订单。"),
-  todo(130, "payment", "2027-01-26", "1/26", "Wānaka Hikuwai尾款 NZ$346.84", "Apple Pay扣款；订金NZ$86.71已付。"),
-  todo(140, "payment", "2027-01-28", "1/28", "Te Anau尾款 NZ$386.40", "Apple Pay扣款；订金NZ$96.60已付。"),
-  todo(150, "deadline", "2027-02-01", "2/1 14:00", "悉尼Great Southern免费取消截止", "之后不可取消；未入住收全额。房费¥1,361.31离店扣款。"),
-  todo(160, "deadline", "2027-02-03", "2/3 14:00", "基督城Metropolitan免费取消截止", "之后不可取消；未入住收全额。房费¥601.43离店扣款，另有NZ$200可退押金。"),
-  todo(170, "deadline", "2027-02-03", "2/3 16:00", "Wānaka Hikuwai免费取消截止", "入住前部分退款，比例按订单。"),
-  todo(180, "deadline", "2027-02-05", "2/5 15:00", "Te Anau Private Ensuite免费取消截止", "入住前部分退款，比例按订单。"),
-  todo(190, "prep", "2027-02-05", "2/5", "2/6长周末补给", "2/6 Waitangi Day是限制营业日，部分超市和商店不开；2/5在途中把早餐、路餐和饮水买齐。"),
+  // Things to book or prepare. due_date is empty when there is no fixed date.
+  todo("visa", 10, "prep", "", "最先办", "办澳大利亚、新西兰签证", "持中国护照两国都要单独办旅游签证，办好再出机票。材料和时长以两国官方为准。"),
+  todo("licence", 20, "prep", "", "出发前", "两人的驾照英文翻译件", "新西兰开车要带中国驾照和认可的英文翻译件（或国际驾照认证件），取车时会查。"),
+  todo("flight-syd", 30, "book", "", "尽早", "机票：国内 → 悉尼", "2/1 当天到悉尼。"),
+  todo("flight-chc", 40, "book", "", "尽早", "机票：悉尼 → 基督城", "2/4，优先上午起飞——新西兰快 2 小时，落地后还要取车、买东西、21:00 前入住。"),
+  todo("flight-akl", 50, "book", "", "尽早", "机票：皇后镇 → 奥克兰", "2/14 下午到奥克兰。"),
+  todo("flight-home", 60, "book", "", "尽早", "机票：奥克兰 → 国内", "2/16 晚上起飞，2/17 早上到。"),
+  todo("auckland-hotel", 70, "book", "", "尽早", "订奥克兰两晚（2/14–16）", "同一家连住，选 CBD / Britomart 附近，能在 2/16 退房后寄存行李。"),
+  todo("car-south", 80, "book", "", "定了机票后", "订南岛租车", "基督城取车、皇后镇还车，按航班定取还时间，确认异地还车费用。"),
+  todo("hobbiton-transport", 90, "book", "", "定了机票后", "定 2/15 去 Hobbiton 怎么走", "租车自驾（要能晚上还车），或坐大巴 / 接驳（要 13:30 前送到 Shire’s Rest、16:20 后能接回）。"),
+  todo("stargazing", 100, "book", "", "尽早", "订 2/7 Twizel 观星", "2/6 前后是新月，星空最好；长周末场次紧。确认集合点、语言和天气改期规则。"),
+  todo("dinner-kika", 110, "book", "", "提前预约", "订 Kika（2/9 晚餐，Wānaka）", "约 18:00，两人。"),
+  todo("dinner-redcliff", 120, "book", "", "提前预约", "订 The Redcliff（2/11 晚餐，Te Anau）", "Milford 回来约 18:30。"),
+  todo("dinner-bluekanu", 130, "book", "", "提前预约", "订 Blue Kanu（2/12 晚餐，皇后镇）", "缆车下来后约 19:00。"),
+  todo("lunch-amano", 140, "book", "", "提前预约", "订 Amano（2/16 午餐，奥克兰）", "12:30–14:00。"),
+  todo("rippon", 150, "book", "", "可选", "订 Rippon 品酒（2/9 下午）", "订不到就跳过。"),
+  todo("skyline", 160, "book", "", "可选", "买 Skyline 缆车票（2/12）", "网上或现场都能买。"),
+  todo("milford-terms", 170, "prep", "", "出发前", "查 Milford 订单的天气退改规则", "Milford Road 封路时是全额退款还是改期，能改到哪天。"),
+  todo("host-notes", 180, "prep", "", "入住前", "拿到三处民宿的入住说明", "Wānaka、Te Anau、Fernhill：停车位置、门锁或钥匙、晚到怎么办。"),
+  todo("sydney-0201", 190, "prep", "", "有空时", "把 2/1 悉尼那晚记进账本", "补上金额、是否已付和取消规则。"),
+  // Payments and cancellation deadlines (local time where the stay is).
+  todo("pay-fernhill", 200, "pay", "2027-01-05", "1/5", "皇后镇 Fernhill 付款 NZ$721.63", "Apple Pay 付款。"),
+  todo("cancel-fernhill", 210, "deadline", "2027-01-13", "1/13 15:00", "皇后镇 Fernhill 免费取消截止", "之后到 2/5 15:00 前取消可退一部分。"),
+  todo("pay-hikuwai", 220, "pay", "2027-01-26", "1/26", "Wānaka Hikuwai 尾款 NZ$346.84", "Apple Pay 扣款，订金 NZ$86.71 已付。"),
+  todo("pay-teanau", 230, "pay", "2027-01-28", "1/28", "Te Anau 尾款 NZ$386.40", "Apple Pay 扣款，订金 NZ$96.60 已付。"),
+  todo("cancel-greatsouthern", 240, "deadline", "2027-02-01", "2/1 14:00", "悉尼 Great Southern 免费取消截止", "之后不能取消，房费 ¥1,361.31 离店扣款。"),
+  todo("cancel-metropolitan", 250, "deadline", "2027-02-03", "2/3 14:00", "基督城 Metropolitan 免费取消截止", "之后不能取消，房费 ¥601.43 离店扣款；另有 NZ$200 押金会退。"),
+  todo("cancel-hikuwai", 260, "deadline", "2027-02-03", "2/3 16:00", "Wānaka Hikuwai 免费取消截止", "之后取消只退一部分。"),
+  todo("cancel-teanau", 270, "deadline", "2027-02-05", "2/5 15:00", "Te Anau 免费取消截止", "之后取消只退一部分。"),
+  todo("supplies-0205", 280, "prep", "2027-02-05", "2/5", "买齐长周末补给", "2/6 Waitangi Day 不少商店不开，路上把 2/6 的早餐、路餐和水买好。"),
 ];
 
 export const advice = [
-  advice_(10, "2/10 Wānaka → Te Anau：改走Crown Range，顺路Arrowtown", "已采用 · 不涉及订单", "d10",
-    "行程文件主线经Cromwell + Kawarau Gorge到Frankton（约110公里）。改走Cardrona Valley Road翻Crown Range到Frankton约60公里，少约50公里、纯驾驶省约20–30分钟；Crown Range下山就是Arrow Junction，Arrowtown只需绕5分钟，可在这里吃午饭或喝咖啡。两条路线从Frankton起完全相同（Kingston → Five Rivers → Mossburn → Te Anau）。",
-    "Crown Range是新西兰海拔最高的铺装主干道之一（约1,076米），Queenstown一侧有连续急弯；驾驶者不熟悉山路、起雾或大风时仍走Cromwell。Cromwell路线更平缓，2月沿途有水果摊。已采用为主线，Cromwell留作坏天气备选；导航时把Cardrona和Arrowtown设为途经点，否则手机可能自动选Cromwell。",
+  advice_(10, "天气不好就别翻 Crown Range", "2/10", "d10",
+    "Crown Range 是新西兰最高的铺装公路之一，皇后镇一侧连续急弯。起雾、大风或下雨时，改走 Cromwell 和 Kawarau 峡谷，多约 50 公里、20–30 分钟，从 Frankton 起路线一样。",
+    "导航时把 Cardrona、Arrowtown 设为途经点，不然手机可能直接带你走 Cromwell。",
     "crown-range-route,nav07-leg1-route"),
-  advice_(20, "2/10与2/12重复Frankton–Kingston–Five Rivers路段", "保持住宿不变", "d10,d12",
-    "这是Te Anau作为Milford大巴起点带来的固定代价：2/11已订RealNZ从Te Anau出发，从Queenstown当天往返Milford会变成12小时以上的大巴日。两天重复约2小时车程，换来Milford当天从容出发。",
-    "执行上把湖边停留只放在一天：2/10在Kingston停10–20分钟，2/12经过Kingston不再停，直接到Queenstown早点吃午饭，下午多一点湖边时间。",
+  advice_(20, "Hobbiton 那天是长日子", "2/15", "d15",
+    "奥克兰到 Shire’s Rest 单程约 175 公里，来回 4.5–5 小时，加上 2.5 小时导览，全天 10 小时左右，前一天还刚飞过来。",
+    "租车的话两人轮流开，09:00 出发更从容；坐大巴或接驳就盯紧 13:30 报到和 16:20 结束。两种都建议 2/14 早点睡、午饭在 Shire’s Rest 解决、晚饭订 20:00 以后。",
     ""),
-  advice_(30, "2/15 Hobbiton当天往返约5–6小时车程", "保持当天往返，交通方式待定", "d15",
-    "Auckland到The Shire’s Rest单程约175公里，去回纯驾驶约4.5–5小时，加2.5小时导览和缓冲，全天约10–11小时，前一天还刚从Queenstown飞来。Auckland两晚尚未预订，理论上可改成2/15住Matamata/Cambridge，但会多一次搬行李，2/16早上还要开2小时回城，城市日被压缩，所以不建议。",
-    "如果租车：两人轮流开，去程和回程各换一次人；09:00出发比09:30更稳，周一早上出城方向不堵；租车选支持晚间自助还车、离酒店近的网点。如果坐大巴或接驳：不用开车更省力，但要确认班次衔接13:30报到和16:20结束。两种都建议2/14晚上早点休息、午饭在Shire’s Rest解决、晚餐订20:00以后或不订。",
-    ""),
-  advice_(40, "2/6–2/8 Waitangi长周末", "保持顺序，提前出发和预订", "d5,d6,d7,d8",
-    "2027/2/6（周六）是Waitangi Day，2/8（周一）是补休日，2/5–2/8全程在Mackenzie和Wānaka的热门段。主要影响：White Horse Hill停车场周末上午很早停满；2/6是限制营业日，部分超市和商店不开门；不少餐厅在2/6和2/8收公众假期附加费（常见10–15%）；观星和Wānaka晚餐更难订。",
-    "建议：2/5在途中买齐2/6的补给；2/6提前到07:15–07:30出发去Mt Cook，天气不好就和2/7互换（两天都在长周末内）；观星和2/8晚餐尽早订；Kika放在2/9周二不受影响，保持。",
-    ""),
-  advice_(50, "已订住宿：不建议改订", "不改订单", "",
-    "对照路线后，没有哪一笔已订住宿改了会明显更好：Te Anau是Milford的必要基地，Twizel连住三晚兼顾Mt Cook和观星，Wānaka和Fernhill的位置与当天安排吻合。可以优化的只有待订部分：Auckland两晚选CBD/Britomart、可寄存行李且附近有晚间还车网点的酒店。",
-    "如果之后仍想调整，免费取消截止（当地时间）依次为：Queenstown Fernhill 2027/1/13 15:00、悉尼Great Southern 2/1 14:00、基督城Metropolitan 2/3 14:00、Wānaka Hikuwai 2/3 16:00、Te Anau 2/5 15:00；Twizel未展开条款，不预设可免费取消。",
+  advice_(30, "2/6–2/8 是新西兰长周末", "2/5–2/8", "d5,d6,d7,d8",
+    "2/6（周六）Waitangi Day、2/8（周一）补休。Mt Cook 停车场上午很早就满；2/6 不少商店不开；很多餐厅这两天加收 10–15% 假日附加费；观星和晚餐更难订。",
+    "2/5 路上买齐补给，2/6 07:15–07:30 出发去 Mt Cook，观星和 2/8 晚餐尽早订。",
     ""),
 ];
 
@@ -585,7 +588,7 @@ export const resources = [
   resource("waterfall-creek-route", "平缓备选Waterfall Creek", "map", "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Waterfall+Creek+Car+Park%2C+Wanaka%2C+New+Zealand&travelmode=driving", "导航06"),
   resource("nav07-leg1-route", "备选：经Cromwell到Frankton", "map", "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cromwell+Heritage+Precinct%2C+Cromwell%2C+New+Zealand", "导航07"),
   resource("nav07-leg2-route", "第二段Frankton到Te Anau", "map", "https://www.google.com/maps/dir/?api=1&origin=Frankton%2C+Queenstown%2C+New+Zealand&destination=3+Thomson+Place%2C+Te+Anau%2C+New+Zealand&travelmode=driving&waypoints=Kingston%2C+Otago%2C+New+Zealand%7CFive+Rivers%2C+Southland%2C+New+Zealand%7CMossburn%2C+New+Zealand", "导航07"),
-  resource("crown-range-route", "第一段经Crown Range、Arrowtown到Frankton", "map", "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cardrona+Hotel%2C+Cardrona%2C+New+Zealand%7CCrown+Range+Summit%2C+New+Zealand%7CArrowtown%2C+New+Zealand", "导航07主线"),
+  resource("crown-range-route", "第一段经Crown Range、Arrowtown到Frankton", "map", "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cardrona+Hotel%2C+Cardrona%2C+New+Zealand%7CCrown+Range+Summit%2C+New+Zealand%7CArrowtown%2C+New+Zealand", "导航07"),
   resource("arrowtown-map", "Arrowtown", "map", gmSearch("Arrowtown%2C+New+Zealand"), "Google Maps"),
   resource("fergburger-map", "Fergburger", "restaurant", gmSearch("Fergburger%2C+Shotover+Street%2C+Queenstown%2C+New+Zealand"), "Google Maps"),
   resource("fergburger-official", "Fergburger官网", "restaurant", "https://www.fergburger.com/", "官网"),
@@ -654,8 +657,8 @@ function lodging(sort_order, check_in, check_out, name, room, detail, resource_i
   return { sort_order, check_in, check_out, name, room, detail, resource_id, status, free_cancel_until, after_deadline };
 }
 
-function todo(sort_order, kind, due_date, due_label, title, detail) {
-  return { sort_order, kind, due_date, due_label, title, detail };
+function todo(todo_id, sort_order, kind, due_date, due_label, title, detail) {
+  return { todo_id, sort_order, kind, due_date, due_label, title, detail };
 }
 
 function advice_(sort_order, title, verdict, day_ids, detail, action, resource_ids) {

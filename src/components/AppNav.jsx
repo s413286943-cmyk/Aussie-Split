@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 const navigationItems = [
-  { id: "itinerary", href: "/", label: "行程" },
+  { id: "itinerary", href: "/itinerary", label: "行程" },
   { id: "ledger", href: "/ledger", label: "账本" },
   { id: "add", href: "/add", label: "记一笔" },
-  { id: "nz2027", href: "/nz2027", label: "2027两人" },
+  { id: "nz2027", href: "/", label: "回到2027" },
 ];
 
 export default function AppNav({ activeView }) {

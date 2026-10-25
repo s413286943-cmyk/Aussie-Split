@@ -3,11 +3,25 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import AppNav from "@/components/AppNav";
 import UnlockGate from "@/components/UnlockGate";
+import Nz2027Checklist from "@/components/nz2027/Nz2027Checklist";
 import Nz2027Ledger from "@/components/nz2027/Nz2027Ledger";
 import Nz2027Schedule from "@/components/nz2027/Nz2027Schedule";
-import { fetchNz2027Expenses, fetchNz2027Itinerary, pushNz2027Expenses } from "@/lib/apiClient";
+import {
+  fetchNz2027Checklist,
+  fetchNz2027Expenses,
+  fetchNz2027Itinerary,
+  pushNz2027Checklist,
+  pushNz2027Expenses,
+} from "@/lib/apiClient";
+import {
+  applyChecklistSnapshot,
+  emptyChecklist,
+  loadChecklist,
+  pendingChecks,
+  saveChecklist,
+  setCheck,
+} from "@/lib/nz2027/checklist";
 import {
   applyServerSnapshot,
   deleteLocal,
@@ -22,63 +36,77 @@ import {
 
 const itineraryCacheKey = "nz2027-itinerary-v1";
 
+const tabs = [
+  { id: "schedule", href: "/", label: "日程" },
+  { id: "checklist", href: "/nz2027/checklist", label: "清单" },
+  { id: "ledger", href: "/nz2027/ledger", label: "记账" },
+];
+
 export default function Nz2027App({ view }) {
   return (
-    <UnlockGate intro="输入旅行访问码后查看 2027 两人行程和账本。">
+    <UnlockGate title="澳新 2027" intro="输入访问码，打开我们的澳新行程。">
       <Nz2027Content view={view} />
     </UnlockGate>
   );
 }
 
 function Nz2027Content({ view }) {
-  const itinerary = useNz2027Itinerary();
-  const ledger = useNz2027Ledger();
+  const itinerary = useItinerary();
+  const ledger = useLedger();
+  const checklist = useChecklist();
+  const openCount = itinerary.data ? itinerary.data.todos.filter((todo) => !checklist.isDone(todo.id)).length : 0;
 
   return (
-    <main className="nz27-shell">
-      <header className="nz27-header">
-        <div>
-          <span className="nz27-kicker">2027 两人行程 · 与 2026 分账账本分开</span>
-          <h1>澳新 2027</h1>
-          <p>{itinerary.data?.trip.dates || "2027.02.01-02.17"} · {itinerary.data?.trip.travelers || "2位成人"} · 悉尼 + 新西兰南北岛</p>
-        </div>
-        <nav className="nz27-subnav" aria-label="2027 两人行程导航">
-          <Link href="/nz2027" className={view === "schedule" ? "active" : ""} aria-current={view === "schedule" ? "page" : undefined}>日程</Link>
-          <Link href="/nz2027/ledger" className={view === "ledger" ? "active" : ""} aria-current={view === "ledger" ? "page" : undefined}>记账</Link>
+    <div className="nz">
+      <header className="nz-top">
+        <Link href="/" className="nz-mark" aria-label="澳新 2027 日程">
+          <strong>澳新 2027</strong>
+          <span>2月1日–17日 · 悉尼 + 新西兰</span>
+        </Link>
+        <nav className="nz-tabs" aria-label="主导航">
+          {tabs.map((tab) => (
+            <Link key={tab.id} href={tab.href} className={tab.id === view ? "is-active" : ""} aria-current={tab.id === view ? "page" : undefined}>
+              {tab.label}
+              {tab.id === "checklist" && openCount > 0 && <span className="nz-tab-count" aria-label={`还有 ${openCount} 件`}>{openCount}</span>}
+            </Link>
+          ))}
         </nav>
       </header>
 
-      {view === "schedule" ? (
-        itinerary.data
-          ? <Nz2027Schedule itinerary={itinerary.data} records={ledger.records} />
-          : <LoadState state={itinerary.state} />
-      ) : (
-        <Nz2027Ledger
-          records={ledger.records}
-          days={itinerary.data?.days || []}
-          syncLabel={ledger.syncLabel}
-          syncing={ledger.syncing}
-          onSync={ledger.sync}
-          onSave={ledger.save}
-          onDelete={ledger.remove}
-          onRestore={ledger.restore}
-        />
-      )}
-      <AppNav activeView="nz2027" />
-    </main>
+      <main className="nz-main">
+        {!itinerary.data && view !== "ledger" ? (
+          <LoadState state={itinerary.state} />
+        ) : view === "schedule" ? (
+          <Nz2027Schedule itinerary={itinerary.data} records={ledger.records} checklist={checklist} />
+        ) : view === "checklist" ? (
+          <Nz2027Checklist todos={itinerary.data.todos} checklist={checklist} />
+        ) : (
+          <Nz2027Ledger
+            records={ledger.records}
+            days={itinerary.data?.days || []}
+            syncLabel={ledger.syncLabel}
+            syncing={ledger.syncing}
+            onSync={ledger.sync}
+            onSave={ledger.save}
+            onDelete={ledger.remove}
+            onRestore={ledger.restore}
+          />
+        )}
+      </main>
+    </div>
   );
 }
 
 function LoadState({ state }) {
   return (
-    <section className="nz27-card" role="status" aria-live="polite">
-      <h2>{state === "loading" ? "正在载入 2027 日程" : "日程暂时无法载入"}</h2>
-      <p className="muted">{state === "offline" ? "请先联网打开一次，之后即可离线查看。" : state === "loading" ? "正在读取受保护的旅行资料。" : "网络恢复后会自动重试。"}</p>
+    <section className="nz-empty" role="status" aria-live="polite">
+      <h2>{state === "loading" ? "正在打开行程" : "行程暂时打不开"}</h2>
+      <p>{state === "offline" ? "第一次需要联网打开，之后没信号也能看。" : state === "loading" ? "稍等一下。" : "联网后会自动重试。"}</p>
     </section>
   );
 }
 
-function useNz2027Itinerary() {
+function useItinerary() {
   const [data, setData] = useState(null);
   const [state, setState] = useState("loading");
 
@@ -92,12 +120,13 @@ function useNz2027Itinerary() {
       } catch {
         cached = null;
       }
-      if (cached && Array.isArray(cached.days) && !cancelled) {
+      const usable = cached && Array.isArray(cached.days) && Array.isArray(cached.todos) && cached.todos.every((todo) => todo.id);
+      if (usable && !cancelled) {
         setData(cached);
         setState("cached");
       }
       if (!navigator.onLine) {
-        if (!cached && !cancelled) setState("offline");
+        if (!usable && !cancelled) setState("offline");
         return;
       }
       try {
@@ -108,10 +137,10 @@ function useNz2027Itinerary() {
         try {
           localStorage.setItem(itineraryCacheKey, JSON.stringify(response.itinerary));
         } catch {
-          // The online copy still renders when storage is full.
+          // Still usable online when storage is full.
         }
       } catch {
-        if (!cached && !cancelled) setState("unavailable");
+        if (!usable && !cancelled) setState("unavailable");
       }
     }
     load();
@@ -125,57 +154,59 @@ function useNz2027Itinerary() {
   return { data, state };
 }
 
-function useNz2027Ledger() {
-  const [state, setState] = useState(emptyState);
+// Shared local-first sync loop: keep a ref of the latest state, persist on every
+// change, push queued items when online and merge the server snapshot back.
+function useSyncedState({ initial, load, save, pending, push, fetchAll, merge }) {
+  const [state, setState] = useState(initial);
   const [loaded, setLoaded] = useState(false);
-  const [syncStatus, setSyncStatus] = useState("idle");
+  const [status, setStatus] = useState("idle");
   const stateRef = useRef(state);
-  const syncingRef = useRef(false);
-  const rerunRef = useRef(false);
+  const busyRef = useRef(false);
+  const againRef = useRef(false);
 
   const commit = useCallback((next) => {
     stateRef.current = next;
     setState(next);
     try {
-      saveState(localStorage, next);
+      save(localStorage, next);
     } catch {
-      // Records remain in memory for this session if storage is unavailable.
+      // Kept in memory for this visit if storage is unavailable.
     }
-  }, []);
+  }, [save]);
 
   const sync = useCallback(async () => {
-    if (syncingRef.current) {
-      rerunRef.current = true;
+    if (busyRef.current) {
+      againRef.current = true;
       return;
     }
     if (!navigator.onLine) {
-      setSyncStatus("offline");
+      setStatus("offline");
       return;
     }
-    syncingRef.current = true;
-    setSyncStatus("syncing");
+    busyRef.current = true;
+    setStatus("syncing");
     try {
       do {
-        rerunRef.current = false;
-        const sent = pendingRecords(stateRef.current);
-        const response = sent.length ? await pushNz2027Expenses(sent) : await fetchNz2027Expenses();
-        commit(applyServerSnapshot(stateRef.current, { sent, expenses: response.expenses, serverTime: response.serverTime }));
-      } while (rerunRef.current);
-      setSyncStatus("synced");
+        againRef.current = false;
+        const sent = pending(stateRef.current);
+        const response = sent.length ? await push(sent) : await fetchAll();
+        commit(merge(stateRef.current, sent, response));
+      } while (againRef.current);
+      setStatus("synced");
     } catch {
-      setSyncStatus("failed");
+      setStatus("failed");
     } finally {
-      syncingRef.current = false;
+      busyRef.current = false;
     }
-  }, [commit]);
+  }, [commit, fetchAll, merge, pending, push]);
 
   useEffect(() => {
     let cancelled = false;
     Promise.resolve().then(() => {
       if (cancelled) return;
-      const initial = loadState(localStorage);
-      stateRef.current = initial;
-      setState(initial);
+      const initialState = load(localStorage);
+      stateRef.current = initialState;
+      setState(initialState);
       setLoaded(true);
       sync();
     });
@@ -185,36 +216,69 @@ function useNz2027Ledger() {
       cancelled = true;
       window.removeEventListener("online", handleOnline);
     };
-  }, [sync]);
+  }, [load, sync]);
 
-  const save = useCallback((record) => {
-    commit(upsertLocal(stateRef.current, record));
+  const update = useCallback((change) => {
+    commit(change(stateRef.current));
     sync();
   }, [commit, sync]);
 
-  const remove = useCallback((id) => {
-    commit(deleteLocal(stateRef.current, id));
-    sync();
-  }, [commit, sync]);
+  return { state, loaded, status, sync, update };
+}
 
-  const restore = useCallback((record) => {
-    commit(restoreLocal(stateRef.current, record));
-    sync();
-  }, [commit, sync]);
+function syncText(loaded, status, pendingCount, noun) {
+  if (!loaded) return "正在读取";
+  if (status === "syncing") return "正在同步";
+  if (pendingCount) {
+    return status === "failed"
+      ? `没连上，${pendingCount} ${noun}稍后自动重试`
+      : `已存在手机上，联网后同步（${pendingCount} ${noun}）`;
+  }
+  if (status === "failed") return "没连上，稍后自动重试";
+  return status === "synced" ? "已同步" : "已存在手机上";
+}
 
-  const records = useMemo(() => listRecords(state), [state]);
-  const pendingCount = state.pendingIds.length;
-  const syncLabel = !loaded
-    ? "正在读取本机记录"
-    : syncStatus === "syncing"
-      ? "正在同步"
-      : pendingCount
-        ? `已本机保存，待同步（${pendingCount}）${syncStatus === "failed" ? " · 同步失败，可重试" : syncStatus === "offline" ? " · 离线" : ""}`
-        : syncStatus === "failed"
-          ? "同步失败，可重试"
-          : syncStatus === "synced"
-            ? "已同步"
-            : "本机记录";
+const ledgerSync = {
+  initial: emptyState,
+  load: loadState,
+  save: saveState,
+  pending: pendingRecords,
+  push: pushNz2027Expenses,
+  fetchAll: fetchNz2027Expenses,
+  merge: (state, sent, response) => applyServerSnapshot(state, { sent, expenses: response.expenses, serverTime: response.serverTime }),
+};
 
-  return { records, syncLabel, syncing: syncStatus === "syncing", sync, save, remove, restore };
+function useLedger() {
+  const synced = useSyncedState(ledgerSync);
+  const { update } = synced;
+  const records = useMemo(() => listRecords(synced.state), [synced.state]);
+  return {
+    records,
+    syncLabel: syncText(synced.loaded, synced.status, synced.state.pendingIds.length, "笔"),
+    syncing: synced.status === "syncing",
+    sync: synced.sync,
+    save: useCallback((record) => update((state) => upsertLocal(state, record)), [update]),
+    remove: useCallback((id) => update((state) => deleteLocal(state, id)), [update]),
+    restore: useCallback((record) => update((state) => restoreLocal(state, record)), [update]),
+  };
+}
+
+const checklistSync = {
+  initial: emptyChecklist,
+  load: loadChecklist,
+  save: saveChecklist,
+  pending: pendingChecks,
+  push: pushNz2027Checklist,
+  fetchAll: fetchNz2027Checklist,
+  merge: (state, sent, response) => applyChecklistSnapshot(state, { sent, items: response.items }),
+};
+
+function useChecklist() {
+  const synced = useSyncedState(checklistSync);
+  const { update, state } = synced;
+  return {
+    isDone: useCallback((id) => Boolean(state.items[id]?.done), [state]),
+    toggle: useCallback((id, done) => update((current) => setCheck(current, id, done)), [update]),
+    syncLabel: syncText(synced.loaded, synced.status, state.pendingIds.length, "项"),
+  };
 }

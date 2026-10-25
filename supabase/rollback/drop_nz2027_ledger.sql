@@ -5,6 +5,8 @@
 -- 保存一份。
 begin;
 
+drop function if exists public.nz2027_set_check(jsonb);
+drop table if exists public.nz2027_checklist;
 drop function if exists public.nz2027_upsert_expense(jsonb);
 drop table if exists public.nz2027_expenses;
 

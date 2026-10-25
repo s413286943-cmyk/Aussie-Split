@@ -4,61 +4,95 @@ import { documentOverflowsHorizontally, findClippedText } from "./fixtures/layou
 const beforeTrip = new Date("2026-11-11T10:00:00+08:00");
 const duringTrip = new Date("2027-02-10T09:00:00+13:00");
 
-test("the 2027 tab sits beside the existing itinerary and ledger", async ({ page }) => {
-  await page.goto("/");
-  const primary = page.getByRole("navigation", { name: "主导航" });
-  await expect(primary.getByRole("link")).toHaveText(["行程", "账本", "记一笔", "2027两人"]);
-  await expect(page.locator(".itinerary-shell")).toBeVisible();
-
-  await primary.getByRole("link", { name: "2027两人" }).click();
-  await expect(page).toHaveURL(/\/nz2027$/);
-  await expect(page.getByRole("heading", { name: "澳新 2027", level: 1 })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link", { name: "2027两人" })).toHaveAttribute("aria-current", "page");
-
-  await page.goto("/ledger");
-  await expect(page.getByRole("heading", { name: "Aussie Chill", level: 1 })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Harbour dinner" })).toBeVisible();
-});
-
-test("schedule shows the trip board before departure", async ({ page }) => {
+test("the home page opens the 2027 trip and tucks the finished trip away", async ({ page, mockApi }) => {
+  mockApi.authenticated = false;
   await page.clock.setFixedTime(beforeTrip);
-  await page.goto("/nz2027");
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "澳新 2027", level: 1 })).toBeVisible();
+  await page.getByLabel("访问码").fill("shared-code");
+  await page.getByRole("button", { name: "进入" }).click();
 
-  await expect(page.getByText(/距出发 \d+ 天/)).toBeVisible();
-  const board = page.getByRole("region", { name: "行前清单与路线建议" });
-  await expect(board.getByRole("article", { name: "住宿地址和订单" })).toContainText("免费取消至 2027/1/13 15:00");
-  await expect(board.getByRole("article", { name: "出发前需要落实的事项" })).toContainText("Te Anau尾款 NZ$386.40");
-  const advice = board.getByRole("article", { name: "路线建议" });
-  await expect(advice.locator("details")).toHaveCount(5);
-  await advice.getByText("2/15 Hobbiton当天往返约5–6小时车程").click();
-  await expect(advice).toContainText("两人轮流开");
+  const hero = page.getByRole("region", { name: "今天的行程" });
+  await expect(hero).toContainText(/还有 \d+ 天出发/);
+  await expect(hero.getByRole("heading", { level: 1 })).toContainText("抵达悉尼");
+  await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link")).toHaveText(["日程", "清单28", "记账"]);
+
+  const past = page.locator(".nz-past");
+  await expect(past.getByRole("link", { name: "看那次的行程" })).toBeHidden();
+  await past.locator("summary").click();
+  await past.getByRole("link", { name: "看那次的行程" }).click();
+  await expect(page).toHaveURL(/\/itinerary$/);
+  await expect(page.locator(".itinerary-shell")).toBeVisible();
 });
 
-test("during the trip today's day is open with its drive guide and day ledger", async ({ page }) => {
+test("copy reads from the travellers' side, not the builders'", async ({ page }) => {
+  await page.clock.setFixedTime(beforeTrip);
+  for (const path of ["/", "/nz2027/checklist", "/nz2027/ledger"]) {
+    await page.goto(path);
+    await expect(page.locator(".nz-main")).toBeVisible();
+    const text = await page.locator(".nz").innerText();
+    for (const phrase of ["分账", "2026 分账", "本机", "接口", "数据库", "行程文件", "主线"]) {
+      expect(text, `${path} mentions ${phrase}`).not.toContain(phrase);
+    }
+  }
+});
+
+test("during the trip today is the hero and its day opens with the drive guide", async ({ page }) => {
   await page.clock.setFixedTime(duringTrip);
-  await page.goto("/nz2027");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  const hero = page.getByRole("region", { name: "今天的行程" });
+  await expect(hero).toContainText("今天 · 2月10日 周三");
+  await expect(hero.locator(".nz-sign").first()).toContainText("Te Anau");
 
   const d10 = page.locator("#nz-d10");
-  await expect(d10).toHaveClass(/is-current/);
-  await expect(d10.locator("details")).toHaveAttribute("open", "");
+  await expect(d10).toHaveClass(/is-today/);
+  await expect(d10.getByRole("button")).toHaveAttribute("aria-expanded", "true");
   const guide = d10.getByRole("region", { name: /导航07/ });
   await expect(guide.getByRole("row")).toHaveCount(6);
   await expect(guide.getByRole("link", { name: /第一段经Crown Range、Arrowtown到Frankton/ })).toHaveAttribute("href", /google\.com\/maps\/dir/);
-  await expect(d10.locator(".day-notes .is-advice")).toContainText("Crown Range");
-  await expect(page.locator("#nz-d11 details")).not.toHaveAttribute("open", "");
+  await expect(page.locator("#nz-d11 .nz-day-body")).toHaveCount(0);
+
+  await page.locator("#nz-d11 .nz-day-head").click();
+  await expect(page.locator("#nz-d11 .nz-day-body")).toContainText("RealNZ");
 
   await d10.getByRole("link", { name: "记一笔" }).click();
   await expect(page).toHaveURL(/\/nz2027\/ledger\?date=2027-02-10$/);
   await expect(page.getByRole("form", { name: "记一笔" }).getByLabel("日期")).toHaveValue("2027-02-10");
 });
 
-test("two-person ledger adds, edits, marks paid, deletes, undoes, and stays separate from the split ledger", async ({ page, mockApi }) => {
+test("checklist items can be ticked off and the tick syncs", async ({ page, mockApi }) => {
+  await page.clock.setFixedTime(beforeTrip);
+  await page.goto("/nz2027/checklist");
+
+  await expect(page.getByRole("region", { name: "清单进度" })).toContainText("0 / 28 已办完");
+  const visa = page.locator(".nz-check").filter({ hasText: "办澳大利亚、新西兰签证" });
+  await visa.locator("label").click();
+  await expect(visa).toHaveClass(/is-done/);
+  await expect(visa.locator("strong")).toHaveCSS("text-decoration-line", "line-through");
+  await expect(page.getByRole("region", { name: "清单进度" })).toContainText("1 / 28 已办完");
+  await expect.poll(() => mockApi.nz2027Checklist.find((item) => item.id === "visa")?.done).toBe(true);
+
+  await page.getByLabel("隐藏已办完的").check();
+  await expect(visa).toHaveCount(0);
+
+  await page.goto("/");
+  await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link", { name: /清单/ })).toContainText("27");
+});
+
+test("ticks made on the other phone show up here", async ({ page, mockApi }) => {
+  mockApi.nz2027Checklist = [{ id: "flight-syd", done: true, updatedAt: "2026-11-02T00:00:00.000Z" }];
+  await page.clock.setFixedTime(beforeTrip);
+  await page.goto("/nz2027/checklist");
+  await expect(page.locator(".nz-check").filter({ hasText: "机票：国内 → 悉尼" })).toHaveClass(/is-done/);
+});
+
+test("two-person ledger adds, edits, marks paid, deletes and undoes, apart from the 2026 ledger", async ({ page, mockApi }) => {
   await page.goto("/nz2027/ledger");
   await expect(page.getByText("已同步", { exact: true })).toBeVisible();
-  const nzd = page.locator(".nz27-total.currency-nzd");
-  await expect(nzd.getByText("NZ$1,103.00", { exact: true })).toBeVisible();
-  await expect(page.locator(".nz27-total.currency-cny")).toContainText("待付 ¥1,361.31");
-  await expect(page.getByLabel("付款方")).toHaveCount(0);
+  await expect(page.locator(".nz-total.currency-nzd").getByText("NZ$1,103.00", { exact: true })).toBeVisible();
+  await expect(page.locator(".nz-total.currency-cny")).toContainText("待付 ¥1,361.31");
 
   const form = page.getByRole("form", { name: "记一笔" });
   await form.getByLabel("项目").fill("E2E Kika dinner");
@@ -67,56 +101,57 @@ test("two-person ledger adds, edits, marks paid, deletes, undoes, and stays sepa
   await form.getByLabel("状态").selectOption("pending");
   await form.getByRole("button", { name: "保存" }).click();
 
-  const row = page.locator(".nz27-records li").filter({ hasText: "E2E Kika dinner" });
+  const row = page.locator(".nz-records li").filter({ hasText: "E2E Kika dinner" });
   await expect(row).toContainText("NZ$160.00");
   await expect(row).toContainText("待付");
   await expect.poll(() => mockApi.nz2027Expenses.some((item) => item.item === "E2E Kika dinner")).toBe(true);
 
   await row.getByRole("button", { name: "编辑" }).click();
-  const edit = page.getByRole("form", { name: "编辑这笔" });
+  const edit = page.getByRole("form", { name: "改这一笔" });
   await edit.getByLabel("金额").fill("186.5");
   await edit.getByRole("button", { name: "保存" }).click();
   await expect(row).toContainText("NZ$186.50");
   await row.getByRole("button", { name: "标为已付" }).click();
   await expect(row).not.toContainText("待付");
 
-  const wanaka = page.getByRole("region", { name: "按城市" }).locator("li").filter({ hasText: "Wānaka" });
-  await expect(wanaka).toContainText("NZ$186.50");
+  await expect(page.getByRole("region", { name: "按城市" }).locator("li").filter({ hasText: "Wānaka" })).toContainText("NZ$186.50");
 
   await row.getByRole("button", { name: "删除" }).click();
-  await expect(page.locator(".nz27-records li").filter({ hasText: "E2E Kika dinner" })).toHaveCount(0);
-  await page.locator(".action-toast").getByRole("button", { name: "撤销" }).click();
-  await expect(page.locator(".nz27-records li").filter({ hasText: "E2E Kika dinner" })).toBeVisible();
+  await expect(page.locator(".nz-records li").filter({ hasText: "E2E Kika dinner" })).toHaveCount(0);
+  await page.locator(".nz-toast").getByRole("button", { name: "撤销" }).click();
+  await expect(page.locator(".nz-records li").filter({ hasText: "E2E Kika dinner" })).toBeVisible();
 
-  const splitLedgerWrites = mockApi.requests.filter((request) => request.pathname === "/api/sync" && request.method === "POST");
-  expect(splitLedgerWrites).toEqual([]);
+  expect(mockApi.requests.filter((request) => request.pathname === "/api/sync" && request.method === "POST")).toEqual([]);
   expect(mockApi.expenses.some((expense) => /Kika/.test(expense.item))).toBe(false);
 });
 
-test("records saved while the server is unavailable stay queued and sync later", async ({ page, mockApi }) => {
+test("records saved without signal stay on the phone and sync later", async ({ page, mockApi }) => {
   mockApi.nz2027Available = false;
   await page.goto("/nz2027/ledger");
   const form = page.getByRole("form", { name: "记一笔" });
   await form.getByLabel("项目").fill("Queued fuel");
   await form.getByLabel("金额").fill("92.1");
   await form.getByRole("button", { name: "保存" }).click();
-  await expect(page.getByText(/已本机保存，待同步（1）/)).toBeVisible();
+  await expect(page.getByText(/1 笔/).first()).toBeVisible();
+  await expect(page.locator(".nz-ledger-sync")).toContainText("没连上");
 
   await page.reload();
-  await expect(page.locator(".nz27-records li").filter({ hasText: "Queued fuel" })).toBeVisible();
+  await expect(page.locator(".nz-records li").filter({ hasText: "Queued fuel" })).toBeVisible();
 
   mockApi.nz2027Available = true;
-  await page.getByRole("button", { name: "同步" }).click();
+  await page.getByRole("button", { name: "立即同步" }).click();
   await expect(page.getByText("已同步", { exact: true })).toBeVisible();
   expect(mockApi.nz2027Expenses.some((item) => item.item === "Queued fuel")).toBe(true);
 });
 
-test("mobile 2027 pages stay inside the viewport", async ({ page }) => {
+test("phone layout keeps the tab bar at the bottom and nothing overflows", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.clock.setFixedTime(duringTrip);
-  for (const path of ["/nz2027", "/nz2027/ledger"]) {
+  for (const path of ["/", "/nz2027/checklist", "/nz2027/ledger"]) {
     await page.goto(path);
-    await expect(page.getByRole("heading", { name: "澳新 2027", level: 1 })).toBeVisible();
+    await expect(page.locator(".nz-main")).toBeVisible();
+    const tabs = await page.getByRole("navigation", { name: "主导航" }).boundingBox();
+    expect(tabs.y, `${path} tab bar position`).toBeGreaterThan(700);
     expect(await documentOverflowsHorizontally(page), path).toBe(false);
     expect(await findClippedText(page), path).toEqual([]);
   }
@@ -124,7 +159,7 @@ test("mobile 2027 pages stay inside the viewport", async ({ page }) => {
 
 test("public scripts contain no private 2027 itinerary text", async ({ page, mockApi }) => {
   mockApi.authenticated = false;
-  await page.goto("/nz2027");
+  await page.goto("/");
   const scriptBodies = await page.evaluate(async () => Promise.all(
     [...document.scripts].map((script) => script.src).filter(Boolean).map((source) => fetch(source).then((response) => response.text())),
   ));

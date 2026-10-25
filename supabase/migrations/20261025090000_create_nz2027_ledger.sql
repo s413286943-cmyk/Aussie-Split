@@ -1,4 +1,4 @@
--- 2027 澳新两人账本：独立新表，只新增，不修改任何现有表、函数、权限或数据。
+-- 2027 澳新两人账本和出发前清单：独立新表，只新增，不修改任何现有表、函数、权限或数据。
 -- 与 2026 分账账本（public.expenses / expense_activity）完全分开。
 -- 重复执行安全：表、函数用 if not exists / or replace，种子记录 on conflict do nothing。
 begin;
@@ -104,6 +104,62 @@ $function$;
 
 revoke execute on function public.nz2027_upsert_expense(jsonb) from public, anon, authenticated;
 grant execute on function public.nz2027_upsert_expense(jsonb) to service_role;
+
+-- 出发前清单的勾选状态：两个人共用，后写覆盖先写。
+create table if not exists public.nz2027_checklist (
+  item_id text primary key check (item_id ~ '^[a-z0-9][a-z0-9-]{0,63}$'),
+  done boolean not null,
+  updated_at timestamptz not null
+);
+
+alter table public.nz2027_checklist enable row level security;
+revoke all privileges on table public.nz2027_checklist from public, anon, authenticated, service_role;
+grant select, insert, update on table public.nz2027_checklist to service_role;
+
+create or replace function public.nz2027_set_check(item jsonb)
+returns jsonb
+language plpgsql
+security invoker
+set search_path = pg_catalog, pg_temp
+as $function$
+declare
+  incoming_updated_at timestamptz;
+  affected integer;
+begin
+  if item is null or pg_catalog.jsonb_typeof(item) is distinct from 'object'
+     or coalesce(item ->> 'id', '') !~ '^[a-z0-9][a-z0-9-]{0,63}$'
+     or pg_catalog.jsonb_typeof(item -> 'done') is distinct from 'boolean'
+     or pg_catalog.jsonb_typeof(item -> 'updatedAt') is distinct from 'string' then
+    raise exception 'invalid_nz2027_check' using errcode = '22023';
+  end if;
+
+  begin
+    incoming_updated_at := (item ->> 'updatedAt')::timestamptz;
+  exception
+    when others then
+      raise exception 'invalid_nz2027_check' using errcode = '22023';
+  end;
+
+  if incoming_updated_at > pg_catalog.now() + interval '5 minutes' then
+    raise exception 'nz2027_check_in_future' using errcode = '22023';
+  end if;
+
+  insert into public.nz2027_checklist as current_row (item_id, done, updated_at)
+  values (item ->> 'id', (item ->> 'done')::boolean, incoming_updated_at)
+  on conflict (item_id) do update
+  set done = excluded.done, updated_at = excluded.updated_at
+  where current_row.updated_at < excluded.updated_at;
+
+  get diagnostics affected = row_count;
+  return pg_catalog.jsonb_build_object(
+    'id', item ->> 'id',
+    'status', case when affected = 1 then 'applied' else 'stale' end
+  );
+end
+$function$;
+
+revoke execute on function public.nz2027_set_check(jsonb) from public, anon, authenticated;
+grant execute on function public.nz2027_set_check(jsonb) to service_role;
 
 -- 已订费用作为初始记录，按原币种，不换算合并。paid = 已付，pending = 待付（之后扣款或离店扣款）。
 -- CNY 待付 ¥1,962.74；NZD 已付 NZ$1,546.31、待付 NZ$1,454.87（合计 NZ$3,001.18）。

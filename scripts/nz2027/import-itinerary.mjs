@@ -5,6 +5,16 @@ import { runPython } from "../pythonRunner.mjs";
 
 export const workbookPath = path.join("content", "nz2027-itinerary.xlsx");
 export const outputPath = path.join("src", "data", "nz2027-itinerary.generated.json");
+export const imageDirectory = path.join("public", "nz2027");
+const imageExtensions = ["webp", "jpg", "jpeg", "png"];
+
+// Theme pictures are picked up by file name: public/nz2027/d01.jpg … d17.jpg and cover.jpg.
+export function findThemeImage(name, directory = imageDirectory) {
+  for (const extension of imageExtensions) {
+    if (fs.existsSync(path.join(directory, `${name}.${extension}`))) return `/nz2027/${name}.${extension}`;
+  }
+  return "";
+}
 
 export const expectedTrip = {
   dayCount: 17,
@@ -44,13 +54,13 @@ const requiredColumns = {
   Drives: ["drive_id", "day_id", "title", "duration", "sequence", "notes", "resource_ids"],
   DriveLegs: ["drive_id", "sort_order", "segment", "drive_time", "stop_note"],
   Lodgings: ["sort_order", "check_in", "check_out", "name", "room", "detail", "resource_id", "status", "free_cancel_until", "after_deadline"],
-  Todos: ["sort_order", "kind", "due_date", "due_label", "title", "detail"],
+  Todos: ["todo_id", "sort_order", "kind", "due_date", "due_label", "title", "detail"],
   Advice: ["sort_order", "title", "verdict", "day_ids", "detail", "action", "resource_ids"],
   Resources: ["resource_id", "title", "type", "url", "image_url", "image_alt", "source_note"],
 };
 const resourceTypes = new Set(["map", "official", "booking", "restaurant", "photo", "note"]);
 const lodgingStatuses = new Set(["已订", "待订", "无需住宿"]);
-const todoKinds = new Set(["booking", "payment", "deadline", "prep"]);
+const todoKinds = new Set(["book", "pay", "deadline", "prep"]);
 
 export function readWorkbook(sourcePath = workbookPath) {
   const workbook = JSON.parse(runPython(["scripts/itinerary_excel.py", "read_all", sourcePath]));
@@ -140,8 +150,8 @@ export function buildItinerary(sheets) {
       lodgingStatus: text(row.lodging_status),
       climateNote: text(row.climate_note),
       clothingNote: text(row.clothing_note),
-      coverImageUrl: text(row.cover_image_url),
-      coverImageAlt: text(row.cover_image_alt),
+      coverImageUrl: text(row.cover_image_url) || findThemeImage(text(row.day_label).toLowerCase()),
+      coverImageAlt: text(row.cover_image_alt) || `${text(row.day_label)} ${text(row.title)}`,
       transport: text(row.transport),
       leaveBy: text(row.leave_by),
       notes: parseNotes(row.notes),
@@ -167,6 +177,7 @@ export function buildItinerary(sheets) {
   })).sort(bySortOrder);
 
   const todos = sheets.Todos.map((row) => ({
+    id: text(row.todo_id),
     sortOrder: Number(row.sort_order),
     kind: text(row.kind),
     dueDate: text(row.due_date) ? normalizeDate(row.due_date) : "",
@@ -197,8 +208,8 @@ export function buildItinerary(sheets) {
       summary: tripRows.summary,
       statusNote: tripRows.status_note,
       updatedAt: tripRows.updated_at,
-      coverImageUrl: tripRows.cover_image_url || "",
-      coverImageAlt: tripRows.cover_image_alt || "",
+      coverImageUrl: tripRows.cover_image_url || findThemeImage("cover"),
+      coverImageAlt: tripRows.cover_image_alt || tripRows.title,
     },
     stages,
     days,
@@ -267,8 +278,12 @@ function validateItinerary(itinerary) {
     if (!lodging.name || !lodging.checkIn || !lodging.checkOut || !lodging.status) throw new Error(`Invalid lodging ${lodging.name}`);
     if (lodging.checkOut <= lodging.checkIn) throw new Error(`Lodging dates out of order for ${lodging.name}`);
   }
+  const seenTodos = new Set();
   for (const todo of todos) {
     if (!todoKinds.has(todo.kind) || !todo.title || !todo.dueLabel) throw new Error(`Invalid todo ${todo.title}`);
+    if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(todo.id)) throw new Error(`Invalid todo id ${todo.id}`);
+    if (seenTodos.has(todo.id)) throw new Error(`Duplicate todo id ${todo.id}`);
+    seenTodos.add(todo.id);
   }
   for (const item of advice) {
     if (!item.title || !item.verdict || !item.detail) throw new Error(`Invalid advice ${item.title}`);

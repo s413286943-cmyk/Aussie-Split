@@ -1,7 +1,7 @@
 import { expect, test } from "./fixtures/test.js";
 
-test("homepage opens the itinerary while the ledger overview remains available", async ({ page }) => {
-  await page.goto("/");
+test("the finished 2026 trip still opens its itinerary and ledger", async ({ page }) => {
+  await page.goto("/itinerary");
 
   await expect(page.locator(".itinerary-shell")).toBeVisible();
   await expect(page.getByRole("link", { name: "行程", exact: true })).toHaveAttribute("aria-current", "page");
@@ -123,7 +123,7 @@ test("mobile add keeps message recognition and templates compact", async ({ page
 
 test("primary navigation separates itinerary, ledger, and quick capture", async ({ page }) => {
   const primaryDestinations = [
-    ["/", "行程", "/"],
+    ["/itinerary", "行程", "/itinerary"],
     ["/ledger", "账本", "/ledger"],
     ["/add", "记一笔", "/add"],
   ];
@@ -131,7 +131,7 @@ test("primary navigation separates itinerary, ledger, and quick capture", async 
   for (const [path, activeLabel, href] of primaryDestinations) {
     await page.goto(path);
     const primary = page.getByRole("navigation", { name: "主导航" });
-    await expect(primary.getByRole("link")).toHaveText(["行程", "账本", "记一笔", "2027两人"]);
+    await expect(primary.getByRole("link")).toHaveText(["行程", "账本", "记一笔", "回到2027"]);
     const activeLink = primary.getByRole("link", { name: activeLabel, exact: true });
     await expect(activeLink).toHaveAttribute("href", href);
     await expect(activeLink).toHaveAttribute("aria-current", "page");

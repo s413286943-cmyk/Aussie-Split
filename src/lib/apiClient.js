@@ -54,6 +54,19 @@ export function fetchNz2027Expenses() {
   return requestJson("/api/nz2027/expenses");
 }
 
+export function fetchNz2027Checklist() {
+  return requestJson("/api/nz2027/checklist");
+}
+
+export async function pushNz2027Checklist(items) {
+  const response = await requestJson("/api/nz2027/checklist", {
+    method: "POST",
+    body: JSON.stringify({ items }),
+  });
+  if (!Array.isArray(response.items)) throw new ApiClientError(response.status);
+  return response;
+}
+
 export async function pushNz2027Expenses(records) {
   const response = await requestJson("/api/nz2027/expenses", {
     method: "POST",
