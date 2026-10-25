@@ -13,7 +13,7 @@ test("the home page opens the 2027 trip and tucks the finished trip away", async
   await page.getByRole("button", { name: "进入" }).click();
 
   const hero = page.getByRole("region", { name: "今天的行程" });
-  await expect(hero).toContainText(/还有 \d+ 天出发/);
+  await expect(hero).toContainText(/还有 \d+ 天/);
   await expect(hero.getByRole("heading", { level: 1 })).toContainText("抵达悉尼");
   await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link")).toHaveText(["日程", "清单28", "记账"]);
 
@@ -43,8 +43,10 @@ test("during the trip today is the hero and its day opens with the drive guide",
   await page.goto("/");
 
   const hero = page.getByRole("region", { name: "今天的行程" });
-  await expect(hero).toContainText("今天 · 2月10日 周三");
-  await expect(hero.locator(".nz-sign").first()).toContainText("Te Anau");
+  await expect(hero).toContainText("今天 · DAY 10 · 2月10日 周三");
+  await expect(hero).toContainText("第 10 天 / 17");
+  await expect(hero.locator(".nz-hero-stay")).toHaveText("今晚住 Te Anau");
+  await expect(page.locator(".nz-cities li.is-here")).toContainText("Te Anau");
 
   const d10 = page.locator("#nz-d10");
   await expect(d10).toHaveClass(/is-today/);

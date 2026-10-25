@@ -57,21 +57,21 @@ function Nz2027Content({ view }) {
   const openCount = itinerary.data ? itinerary.data.todos.filter((todo) => !checklist.isDone(todo.id)).length : 0;
 
   return (
-    <div className="nz">
-      <header className="nz-top">
-        <Link href="/" className="nz-mark" aria-label="澳新 2027 日程">
-          <strong>澳新 2027</strong>
-          <span>2月1日–17日 · 悉尼 + 新西兰</span>
-        </Link>
-        <nav className="nz-tabs" aria-label="主导航">
-          {tabs.map((tab) => (
-            <Link key={tab.id} href={tab.href} className={tab.id === view ? "is-active" : ""} aria-current={tab.id === view ? "page" : undefined}>
-              {tab.label}
-              {tab.id === "checklist" && openCount > 0 && <span className="nz-tab-count" aria-label={`还有 ${openCount} 件`}>{openCount}</span>}
-            </Link>
-          ))}
-        </nav>
-      </header>
+    <div className={`nz nz-view-${view}`}>
+      {view !== "schedule" && (
+        <header className="nz-top">
+          <Link href="/" className="nz-mark" aria-label="澳新 2027 日程">澳新 2027</Link>
+          <span>2月1日 – 17日 · 悉尼 + 新西兰</span>
+        </header>
+      )}
+      <nav className="nz-tabs" aria-label="主导航">
+        {tabs.map((tab) => (
+          <Link key={tab.id} href={tab.href} className={tab.id === view ? "is-active" : ""} aria-current={tab.id === view ? "page" : undefined}>
+            {tab.label}
+            {tab.id === "checklist" && openCount > 0 && <span className="nz-tab-count" aria-label={`还有 ${openCount} 件`}>{openCount}</span>}
+          </Link>
+        ))}
+      </nav>
 
       <main className="nz-main">
         {!itinerary.data && view !== "ledger" ? (

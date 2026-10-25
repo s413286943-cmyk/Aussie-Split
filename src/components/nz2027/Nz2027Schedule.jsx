@@ -28,8 +28,8 @@ export default function Nz2027Schedule({ itinerary, records, checklist }) {
   return (
     <>
       <Hero itinerary={itinerary} day={focusDay} phase={phase} today={today} />
-      <ToDoStrip todos={itinerary.todos} checklist={checklist} today={today} />
-      <RouteSigns days={days} />
+      <CityStrip days={days} today={phase === "during" ? today : ""} />
+      <ToDoBox todos={itinerary.todos} checklist={checklist} today={today} />
 
       {itinerary.stages.map((stage) => (
         <section className="nz-stage" key={stage.id} aria-label={stage.title}>
@@ -37,7 +37,7 @@ export default function Nz2027Schedule({ itinerary, records, checklist }) {
             <h2>{stage.title}</h2>
             <p>{stage.summary}</p>
           </header>
-          <ol className="nz-road">
+          <ol className="nz-days">
             {days.filter((day) => stage.dayIds.includes(day.id)).map((day) => (
               <DayCard key={day.id} day={day} current={phase === "during" && day.date === today} records={recordsByDate.get(day.date) || []} />
             ))}
@@ -54,89 +54,89 @@ export default function Nz2027Schedule({ itinerary, records, checklist }) {
 
 function Hero({ itinerary, day, phase, today }) {
   const daysToGo = today ? Math.round((Date.parse(`${itinerary.days[0].date}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / 86400000) : null;
-  const eyebrow = phase === "during"
-    ? `今天 · ${monthDay(day.date)} ${day.weekday}`
-    : phase === "after"
-      ? "旅行结束啦"
-      : daysToGo !== null ? `还有 ${daysToGo} 天出发` : "出发倒计时";
+  const badge = phase === "during" ? `第 ${dayNumber(day)} 天 / 17` : phase === "after" ? "旅行结束啦" : daysToGo !== null ? `还有 ${daysToGo} 天` : "出发倒计时";
+  const eyebrow = `${phase === "during" ? "今天 · " : ""}DAY ${day.label.slice(1)} · ${monthDay(day.date)} ${day.weekday}`;
   const image = phase === "during"
     ? day.coverImageUrl || itinerary.trip.coverImageUrl
     : itinerary.trip.coverImageUrl || day.coverImageUrl;
 
   return (
-    <section className={`nz-hero stage-${stageTone(day)}`} aria-label="今天的行程">
+    <section className="nz-hero" aria-label="今天的行程">
       {image
-        ? <Image className="nz-hero-photo" src={image} alt={day.coverImageAlt} fill priority sizes="(max-width: 760px) 100vw, 760px" />
+        ? <Image className="nz-hero-photo" src={image} alt={day.coverImageAlt} fill priority sizes="(max-width: 640px) 100vw, 640px" />
         : <div className="nz-hero-photo nz-photo-fallback" aria-hidden="true" />}
+      <div className="nz-hero-bar">
+        <span>澳新 2027</span>
+        <span>{badge}</span>
+      </div>
       <div className="nz-hero-copy">
         <p className="nz-eyebrow">{eyebrow}</p>
-        <h1>
-          <span className="nz-hero-day">{day.label}</span>
-          {day.title}
-        </h1>
-        <p className="nz-hero-focus">{day.focus}</p>
-        <div className="nz-hero-signs">
-          {day.lodgingStatus !== "无需住宿" && <span className="nz-sign">今晚 <b>{day.base}</b></span>}
-          {day.drive && <span className="nz-sign nz-sign-route">{driveSpan(day)}</span>}
-        </div>
-        <dl className="nz-hero-facts">
-          <div><dt>出发</dt><dd>{day.leaveBy}</dd></div>
-          <div><dt>怎么走</dt><dd>{day.transport}</dd></div>
-        </dl>
+        <h1>{day.title}</h1>
+        <p className="nz-hero-sub">
+          {day.lodgingStatus !== "无需住宿" && <span className="nz-hero-stay">今晚住 {day.base}</span>}
+          <span>{shortTransport(day)}</span>
+        </p>
         <a className="nz-hero-cta" href={`#nz-${day.id}`}>看{phase === "during" ? "今天" : "这一天"}的安排</a>
       </div>
     </section>
   );
 }
 
-function ToDoStrip({ todos, checklist, today }) {
-  const open = todos.filter((todo) => !checklist.isDone(todo.id));
-  const upcoming = open.filter((todo) => todo.dueDate).sort((left, right) => left.dueDate.localeCompare(right.dueDate)).slice(0, 3);
-  if (!open.length) {
-    return (
-      <section className="nz-todo-strip is-clear" aria-label="出发前清单">
-        <p><b>清单全部办完了</b> 可以安心出发。</p>
-        <Link href="/nz2027/checklist">看清单</Link>
-      </section>
-    );
-  }
-  return (
-    <section className="nz-todo-strip" aria-label="出发前清单">
-      <div className="nz-todo-strip-head">
-        <p><b>{open.length}</b> 件事还没办</p>
-        <Link href="/nz2027/checklist">去清单勾选</Link>
-      </div>
-      <ul>
-        {upcoming.map((todo) => (
-          <li key={todo.id} className={today && todo.dueDate < today ? "is-late" : ""}>
-            <span>{todo.dueLabel}</span>
-            {todo.title}
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
-function RouteSigns({ days }) {
+function CityStrip({ days, today }) {
   const stops = [];
   for (const day of days) {
     if (day.lodgingStatus === "无需住宿") continue;
     const last = stops.at(-1);
-    if (last && last.base === day.base) last.nights += 1;
-    else stops.push({ base: day.base, nights: 1, id: day.id });
+    if (last && last.base === day.base) {
+      last.nights += 1;
+      last.end = day.date;
+    } else {
+      stops.push({ base: day.base, nights: 1, id: day.id, start: day.date, end: day.date, image: day.coverImageUrl });
+    }
   }
   return (
-    <nav className="nz-route" aria-label="住哪儿">
+    <nav className="nz-cities" aria-label="住哪儿">
       <ol>
-        {stops.map((stop) => (
-          <li key={stop.id}>
-            <a className="nz-sign" href={`#nz-${stop.id}`}>{stop.base}<small>{stop.nights} 晚</small></a>
-          </li>
-        ))}
-        <li><span className="nz-sign nz-sign-home">回家</span></li>
+        {stops.map((stop) => {
+          const here = today && today >= stop.start && today <= stop.end;
+          return (
+            <li key={stop.id} className={here ? "is-here" : ""}>
+              <a href={`#nz-${stop.id}`}>
+                <span className="nz-city-photo">
+                  {stop.image ? <Image src={stop.image} alt="" fill sizes="104px" /> : <span className="nz-photo-fallback" />}
+                </span>
+                <b>{stop.base}</b>
+                <small>{shortDate(stop.start)} · {stop.nights} 晚</small>
+              </a>
+            </li>
+          );
+        })}
       </ol>
     </nav>
+  );
+}
+
+function ToDoBox({ todos, checklist, today }) {
+  const open = todos.filter((todo) => !checklist.isDone(todo.id));
+  const upcoming = open.filter((todo) => todo.dueDate).sort((left, right) => left.dueDate.localeCompare(right.dueDate)).slice(0, 3);
+  return (
+    <section className={open.length ? "nz-todo-box" : "nz-todo-box is-clear"} aria-label="出发前清单">
+      <header>
+        <h2>{open.length ? `出发前还有 ${open.length} 件` : "清单全部办完了"}</h2>
+        <Link href="/nz2027/checklist">清单 →</Link>
+      </header>
+      {upcoming.length > 0 && (
+        <ul>
+          {upcoming.map((todo) => (
+            <li key={todo.id} className={today && todo.dueDate < today ? "is-late" : ""}>
+              <i aria-hidden="true" />
+              <span>{todo.title}</span>
+              <em>{todo.dueLabel}</em>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
 
@@ -159,76 +159,81 @@ function DayCard({ day, current, records }) {
   return (
     <li id={`nz-${day.id}`} className={["nz-day", current ? "is-today" : "", open ? "is-open" : ""].filter(Boolean).join(" ")}>
       <button type="button" className="nz-day-head" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
-        <span className={`nz-day-thumb stage-${stageTone(day)}`}>
-          {day.coverImageUrl ? <Image src={day.coverImageUrl} alt="" width={112} height={112} /> : <span aria-hidden="true">{day.base.slice(0, 1)}</span>}
+        <span className="nz-day-photo">
+          {day.coverImageUrl
+            ? <Image src={day.coverImageUrl} alt="" fill sizes="(max-width: 640px) 100vw, 640px" />
+            : <span className="nz-photo-fallback" />}
         </span>
-        <span className="nz-day-date">
-          <b>{Number(day.label.slice(1))}</b>
-          <small>{monthDay(day.date)} {day.weekday}</small>
-        </span>
-        <span className="nz-day-title">
-          {current && <em>今天</em>}
+        <span className="nz-day-cover">
+          <small>
+            {current && <em>今天</em>}
+            DAY {day.label.slice(1)} · {monthDay(day.date)} {day.weekday}
+          </small>
           <strong>{day.title}</strong>
-          <small>{day.city}</small>
+          <span className="nz-day-route">{day.city}</span>
         </span>
       </button>
+      <div className="nz-day-tags">
+        {day.lodgingStatus !== "无需住宿" && <span>今晚 {day.base}{day.lodgingStatus === "待订" ? " · 还没订" : ""}</span>}
+        <span>{shortTransport(day)}</span>
+      </div>
 
       {open && (
         <div className="nz-day-body">
-          {day.coverImageUrl && (
-            <span className="nz-day-photo">
-              <Image src={day.coverImageUrl} alt={day.coverImageAlt} fill sizes="(max-width: 760px) 100vw, 720px" />
-            </span>
-          )}
           <p className="nz-day-focus">{day.focus}</p>
-          <div className="nz-day-signs">
-            {day.lodgingStatus !== "无需住宿" && (
-              <a className="nz-sign" href={day.lodgingResource.url || undefined} target={day.lodgingResource.url ? "_blank" : undefined} rel="noreferrer">
-                今晚 <b>{day.lodging}</b>{day.lodgingStatus === "待订" ? " · 还没订" : ""}
-              </a>
-            )}
-            {day.drive && <span className="nz-sign nz-sign-route">{driveSpan(day)}</span>}
-          </div>
 
           <dl className="nz-facts">
             <div><dt>出发</dt><dd>{day.leaveBy}</dd></div>
             <div><dt>怎么走</dt><dd>{day.transport}</dd></div>
             <div><dt>天气</dt><dd>{day.climateNote}</dd></div>
             <div><dt>穿什么</dt><dd>{day.clothingNote}</dd></div>
+            <div className="is-wide">
+              <dt>住哪儿</dt>
+              <dd>
+                {day.lodging === "-" ? "回家" : day.lodging}
+                {day.lodgingStatus === "待订" ? "（还没订）" : ""}
+                {day.lodgingResource?.url && <> · <a href={day.lodgingResource.url} target="_blank" rel="noreferrer">地图</a></>}
+              </dd>
+            </div>
           </dl>
 
+          <h3 className="nz-sub">时间线</h3>
           <ol className="nz-timeline" aria-label={`${day.label} 时间线`}>
             {timeline.map((block) => (
               <li key={block.sortOrder}>
                 <time>{block.period}</time>
-                <div>
-                  <strong>{block.place}</strong>
-                  <p>{block.activity}</p>
-                  {block.tip && <small>{block.tip}</small>}
-                  <Links resources={block.resources} />
-                </div>
+                <strong>{block.place}</strong>
+                <p>{block.activity}</p>
+                {block.tip && <small>{block.tip}</small>}
+                <Links resources={block.resources} />
               </li>
             ))}
           </ol>
 
           {meals.length > 0 && (
-            <dl className="nz-meals" aria-label="吃什么">
-              {meals.map(([meal, place]) => <div key={meal}><dt>{meal}</dt><dd>{place}</dd></div>)}
-            </dl>
+            <>
+              <h3 className="nz-sub">吃什么</h3>
+              <dl className="nz-meals" aria-label="吃什么">
+                {meals.map(([meal, place]) => <div key={meal}><dt>{meal}</dt><dd>{place}</dd></div>)}
+              </dl>
+            </>
           )}
 
           {day.notes.length > 0 && (
-            <ul className="nz-notes" aria-label="当天提醒">
-              {day.notes.map((note) => (
-                <li key={`${note.label}-${note.text.slice(0, 10)}`}><b>{note.label}</b>{note.text}</li>
-              ))}
-            </ul>
+            <>
+              <h3 className="nz-sub">提醒</h3>
+              <ul className="nz-notes" aria-label="当天提醒">
+                {day.notes.map((note) => (
+                  <li key={`${note.label}-${note.text.slice(0, 10)}`}><b>{note.label}</b>{note.text}</li>
+                ))}
+              </ul>
+            </>
           )}
 
           {day.drive && <DriveGuide drive={day.drive} />}
 
           <div className="nz-day-ledger">
-            <span>{records.length ? `这天花了 ${formatTotals(totals)}（${records.length} 笔）` : "这天还没记账"}</span>
+            <span>{records.length ? `这天花了 ${formatTotals(totals)} · ${records.length} 笔` : "这天还没记账"}</span>
             <Link href={`/nz2027/ledger?date=${day.date}`}>记一笔</Link>
           </div>
         </div>
@@ -240,11 +245,9 @@ function DayCard({ day, current, records }) {
 function DriveGuide({ drive }) {
   return (
     <section className="nz-drive" aria-label={drive.title}>
-      <header>
-        <span className="nz-sign nz-sign-route">{drive.title.replace(/^导航\d+ · /, "")}</span>
-        <p>{drive.duration}</p>
-      </header>
-      <p className="nz-drive-roads">{drive.sequence}</p>
+      <h3 className="nz-sub">开车</h3>
+      <p className="nz-drive-title">{routeName(drive)}</p>
+      <p className="nz-drive-time">{drive.duration}</p>
       <div className="nz-legs" role="table" aria-label="分段驾驶">
         <div className="nz-leg nz-leg-head" role="row">
           <span role="columnheader">路段</span>
@@ -260,14 +263,15 @@ function DriveGuide({ drive }) {
         ))}
       </div>
       {drive.notes && <p className="nz-drive-notes">{drive.notes}</p>}
+      <p className="nz-drive-roads">{drive.sequence}</p>
       <Links resources={drive.resources} />
-      <small className="nz-drive-hint">路线时间是平常路况，出发前看一眼 NZTA 路况，山里提前下载离线地图。</small>
+      <small className="nz-drive-hint">路线时间按平常路况，出发前看一眼 NZTA 路况，山里提前下载离线地图。</small>
     </section>
   );
 }
 
 function Tips({ advice, days }) {
-  const labelFor = new Map(days.map((day) => [day.id, day]));
+  const dayFor = new Map(days.map((day) => [day.id, day]));
   return (
     <section className="nz-section" aria-label="出行提示">
       <h2>出行提示</h2>
@@ -276,7 +280,7 @@ function Tips({ advice, days }) {
           <article key={item.sortOrder} className="nz-tip">
             <p className="nz-tip-when">
               {item.verdict}
-              {item.dayIds.length > 0 && ` · ${item.dayIds.map((id) => labelFor.get(id)?.label).join(" ")}`}
+              {item.dayIds.length > 0 && ` · ${item.dayIds.map((id) => dayFor.get(id)?.label).join(" ")}`}
             </p>
             <h3>{item.title}</h3>
             <p>{item.detail}</p>
@@ -296,15 +300,15 @@ function Stays({ lodgings }) {
       <ul className="nz-stays">
         {lodgings.map((stay) => (
           <li key={stay.sortOrder} className={/待订/.test(stay.status) ? "is-pending" : ""}>
-            <span className="nz-stays-dates">{shortDate(stay.checkIn)} – {shortDate(stay.checkOut)}</span>
+            <span className="nz-stays-dates">{shortDate(stay.checkIn)}<i>–</i>{shortDate(stay.checkOut)}</span>
             <div>
               <strong>{stay.name}</strong>
               <small>{[stay.room, stay.detail].filter((value) => value && value !== "—").join(" · ")}</small>
               {stay.freeCancelUntil && <small className="nz-stays-cancel">免费取消到 {formatDeadline(stay.freeCancelUntil)}</small>}
               {!stay.freeCancelUntil && stay.afterDeadline && <small>{stay.afterDeadline}</small>}
+              {stay.resource?.url && <a href={stay.resource.url} target="_blank" rel="noreferrer">地图</a>}
             </div>
             <span className="nz-stays-status">{stay.status.replace("待订", "还没订")}</span>
-            {stay.resource?.url && <a href={stay.resource.url} target="_blank" rel="noreferrer">地图</a>}
           </li>
         ))}
       </ul>
@@ -342,21 +346,24 @@ function Links({ resources }) {
   );
 }
 
-function driveSpan(day) {
-  const hours = day.transport.match(/约?([\d.–]+)小时/);
-  const route = day.drive.title.replace(/^导航\d+ · /, "").replace(/^（若租车）/, "");
-  return hours ? `${route} · ${hours[1]} h` : route;
+function routeName(drive) {
+  return drive.title.replace(/^导航\d+ · /, "").replace(/^（若租车）/, "");
+}
+
+function shortTransport(day) {
+  if (day.drive) {
+    const hours = day.transport.match(/约?([\d.–]+)小时/);
+    return hours ? `开车 ${hours[1]} 小时` : "当天开车";
+  }
+  return day.transport.split(" · ")[0];
+}
+
+function dayNumber(day) {
+  return Number(day.label.slice(1));
 }
 
 function parseMeals(text) {
   return text.split(/[；;]/).map((part) => part.split(/[：:]/)).filter((pair) => pair.length > 1 && pair[1].trim()).map(([meal, ...rest]) => [meal.trim(), rest.join("：").trim()]);
-}
-
-function stageTone(day) {
-  if (["Sydney"].includes(day.base)) return "sydney";
-  if (["Christchurch", "Twizel"].includes(day.base)) return "mackenzie";
-  if (["Wānaka", "Te Anau", "Queenstown"].includes(day.base)) return "lakes";
-  return "north";
 }
 
 function groupByDate(records) {
