@@ -3,7 +3,7 @@ import { expect, test } from "./fixtures/test.js";
 test("shared access gate rejects a bad code and unlocks with the shared code", async ({ page, mockApi }) => {
   mockApi.authenticated = false;
 
-  await page.goto("/");
+  await page.goto("/itinerary");
   const accessCode = page.getByLabel("访问码");
   await expect(accessCode).toBeFocused();
 

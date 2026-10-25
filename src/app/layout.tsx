@@ -8,6 +8,7 @@ import "@/styles/route-atlas.css";
 import "@/styles/ledger-focus.css";
 import "@/styles/live-route.css";
 import "@/styles/motion.css";
+import "@/styles/nz2027.css";
 
 export const metadata: Metadata = {
   title: "Aussie Chill",

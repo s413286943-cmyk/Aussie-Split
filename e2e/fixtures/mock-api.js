@@ -1,5 +1,6 @@
 import { defaultSnapshot } from "./data.js";
 import itinerary from "../../src/data/itinerary.generated.json" with { type: "json" };
+import nz2027Itinerary from "../../src/data/nz2027-itinerary.generated.json" with { type: "json" };
 
 export class MockApi {
   constructor(options = {}) {
@@ -12,6 +13,9 @@ export class MockApi {
     this.requests = [];
     this.securityViolations = [];
     this.uploadedReceipts = new Map();
+    this.nz2027Expenses = structuredClone(options.nz2027Expenses || defaultNz2027Expenses());
+    this.nz2027Available = options.nz2027Available ?? true;
+    this.nz2027Checklist = structuredClone(options.nz2027Checklist || []);
     this.finalizedReceipts = new Map();
   }
 
@@ -50,6 +54,9 @@ export class MockApi {
     if (url.pathname === "/api/access") return this.#handleAccess(route);
     if (!this.authenticated) return json(route, { error: "access_required" }, 401);
     if (url.pathname === "/api/itinerary") return json(route, { itinerary: structuredClone(itinerary) });
+    if (url.pathname === "/api/nz2027/itinerary") return json(route, { itinerary: structuredClone(nz2027Itinerary) });
+    if (url.pathname === "/api/nz2027/expenses") return this.#handleNz2027(route);
+    if (url.pathname === "/api/nz2027/checklist") return this.#handleNz2027Checklist(route);
     if (url.pathname === "/api/sync") return this.#handleSync(route);
     if (url.pathname === "/api/activity") return json(route, { activity: structuredClone(this.activity) });
     if (url.pathname === "/api/receipts/upload-url") return this.#createUpload(route);
@@ -87,6 +94,46 @@ export class MockApi {
       results.push({ opId: operation.opId, status: "applied" });
     }
     return json(route, { results, ...this.snapshot() });
+  }
+
+  async #handleNz2027Checklist(route) {
+    if (!this.nz2027Available) return json(route, { error: "service_unavailable" }, 502);
+    if (route.request().method() === "POST") {
+      const payload = readJsonBody(route.request());
+      const results = [];
+      for (const item of payload.items || []) {
+        const existing = this.nz2027Checklist.find((entry) => entry.id === item.id);
+        if (existing && existing.updatedAt >= item.updatedAt) {
+          results.push({ id: item.id, status: "stale" });
+          continue;
+        }
+        this.nz2027Checklist = [structuredClone(item), ...this.nz2027Checklist.filter((entry) => entry.id !== item.id)];
+        results.push({ id: item.id, status: "applied" });
+      }
+      return json(route, { results, items: structuredClone(this.nz2027Checklist) });
+    }
+    return json(route, { items: structuredClone(this.nz2027Checklist) });
+  }
+
+  async #handleNz2027(route) {
+    if (!this.nz2027Available) return json(route, { error: "service_unavailable" }, 502);
+    const method = route.request().method();
+    if (method === "POST") {
+      const payload = readJsonBody(route.request());
+      const results = [];
+      for (const record of payload.records || []) {
+        const existing = this.nz2027Expenses.find((item) => item.id === record.id);
+        if (existing && existing.updatedAt >= record.updatedAt) {
+          results.push({ id: record.id, status: "stale" });
+          continue;
+        }
+        this.nz2027Expenses = [structuredClone(record), ...this.nz2027Expenses.filter((item) => item.id !== record.id)];
+        results.push({ id: record.id, status: "applied" });
+      }
+      return json(route, { results, expenses: structuredClone(this.nz2027Expenses), serverTime: new Date().toISOString() });
+    }
+    if (method !== "GET") return json(route, { error: "method_not_allowed" }, 405);
+    return json(route, { expenses: structuredClone(this.nz2027Expenses), serverTime: new Date().toISOString() });
   }
 
   #applyOperation(operation) {
@@ -191,6 +238,17 @@ export class MockApi {
       this.securityViolations.push(`${request.method()} ${url.href}`);
     }
   }
+}
+
+function defaultNz2027Expenses() {
+  const record = (id, date, category, item, currency, amount, status) => ({
+    id, date, category, item, currency, amount, status, note: "", updatedAt: "2026-10-25T00:00:00.000Z", deletedAt: null,
+  });
+  return [
+    record("nz27-hotel-sydney-great-southern", "2027-02-02", "lodging", "悉尼 Great Southern Hotel 2/2–4（2晚）", "CNY", 1361.31, "pending"),
+    record("nz27-hotel-twizel", "2027-02-05", "lodging", "Twizel Holiday Park 2/5–8（3晚）", "NZD", 525, "paid"),
+    record("nz27-tour-milford", "2027-02-11", "activity", "Milford Sound RealNZ 大巴＋游船（2人）", "NZD", 578, "paid"),
+  ];
 }
 
 function json(route, body, status = 200) {
