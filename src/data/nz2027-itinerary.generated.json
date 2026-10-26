@@ -660,10 +660,20 @@
           "sortOrder": 70,
           "period": "晚上",
           "place": "Haymarket",
-          "activity": "回酒店整理行李；明天10:00前退房，18:15飞基督城，不用早起。",
-          "highlight": "",
-          "tip": "",
-          "resources": []
+          "activity": "回酒店收好行李、早点睡；明早 05:15 起床，06:00 打车去机场。",
+          "highlight": "早点睡",
+          "tip": "最好下午就把行李收好。",
+          "resources": [
+            {
+              "id": "great-southern-map",
+              "title": "Great Southern Hotel Sydney",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "确认邮件地址"
+            }
+          ]
         },
         {
           "dayId": "d3",
@@ -686,28 +696,28 @@
       "base": "Christchurch",
       "lat": -43.5309,
       "lon": 172.6045,
-      "title": "悉尼最后一个白天，夜航飞基督城",
-      "focus": "白天在悉尼轻松走走，晚上飞到基督城，先睡一觉。",
-      "lodging": "基督城机场附近酒店（待订）",
-      "lodgingStatus": "待订",
+      "title": "早班机飞基督城，下午逛植物园和雅芳河",
+      "focus": "早上飞过塔斯曼海，下午沿雅芳河慢慢走，晚上不赶。",
+      "lodging": "HOTEL GIVE",
+      "lodgingStatus": "已订",
       "climateNote": "基督城2月约12–22°C，早晚凉，常有东北风。",
       "clothingNote": "短袖加抓绒或薄羽绒；机舱随身带外套。",
       "coverImageUrl": "/nz2027/d04.jpg",
-      "coverImageAlt": "D04 悉尼最后一个白天，夜航飞基督城",
-      "transport": "航班 NZ224 悉尼 18:15 → 基督城 23:20 · 走到机场旁的酒店",
-      "leaveBy": "10:00 前退房；15:15 左右去机场",
+      "coverImageAlt": "D04 早班机飞基督城，下午逛植物园和雅芳河",
+      "transport": "航班 EK412 悉尼 09:00 → 基督城 14:15 · 打车进城",
+      "leaveBy": "06:00 从酒店打车去机场",
       "notes": [
         {
           "label": "航班",
-          "text": "新西兰航空 NZ224，悉尼 18:15 起飞，基督城 23:20 到（当地时间，新西兰比悉尼快 2 小时）。国际航班，16:00 前到悉尼机场 T1。"
+          "text": "阿联酋航空 EK412，悉尼 09:00 起飞，基督城 14:15 到（当地时间，新西兰比悉尼快 2 小时）。每人托运 30kg。国际航班，06:30 前到悉尼机场 T1。"
         },
         {
           "label": "住宿",
-          "text": "改住基督城机场附近的酒店（待订），选走几分钟就到航站楼、24 小时前台的。23:20 落地，订单里注明约 23:45 到店。"
+          "text": "HOTEL GIVE，12 Hereford Street，就在植物园旁边。15:00 后入住、2/5 10:00 前退房，前台 24 小时。到店付全款 ¥510.06；入住日前一天之前可免费取消或改订。"
         },
         {
-          "label": "当晚",
-          "text": "今晚还没有车，出了到达厅走到酒店，直接睡；明早 10:00 在机场取车，不用来回打车。"
+          "label": "交通",
+          "text": "今天还没有车。机场打车或 Uber 到酒店约 20–25 分钟，下午和晚上都走路；明早打车回机场取车。"
         },
         {
           "label": "入境检疫",
@@ -715,22 +725,22 @@
         }
       ],
       "lodgingResource": {
-        "id": "chc-airport-hotel-note",
-        "title": "基督城机场附近酒店（待订）",
-        "type": "note",
-        "url": "",
-        "imageUrl": "",
-        "imageAlt": "",
-        "sourceNote": "走到航站楼几分钟、24 小时前台"
-      },
-      "primaryResource": {
-        "id": "syd-t1-map",
-        "title": "悉尼机场国际航站楼 T1",
+        "id": "hotel-give-map",
+        "title": "HOTEL GIVE",
         "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Airport+International+Terminal+T1",
+        "url": "https://www.google.com/maps/search/?api=1&query=Hotel+Give%2C+12+Hereford+Street%2C+Christchurch%2C+New+Zealand",
         "imageUrl": "",
         "imageAlt": "",
         "sourceNote": "Google Maps"
+      },
+      "primaryResource": {
+        "id": "avon-walk-route",
+        "title": "植物园 → Riverside Market 沿河步行",
+        "type": "map",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=12+Hereford+Street%2C+Christchurch%2C+New+Zealand&destination=Bridge+of+Remembrance%2C+Christchurch%2C+New+Zealand&travelmode=walking&waypoints=Riverside+Market%2C+Christchurch%2C+New+Zealand",
+        "imageUrl": "",
+        "imageAlt": "",
+        "sourceNote": "Google Maps步行"
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
@@ -746,41 +756,11 @@
         {
           "dayId": "d4",
           "sortOrder": 10,
-          "period": "10:00前",
+          "period": "05:15–06:00",
           "place": "Great Southern Hotel",
-          "activity": "退房，把行李寄存在酒店。",
-          "highlight": "退房寄存",
-          "tip": "",
-          "resources": []
-        },
-        {
-          "dayId": "d4",
-          "sortOrder": 20,
-          "period": "10:00–15:00",
-          "place": "Darling Harbour / Haymarket",
-          "activity": "悉尼最后一个白天，轻松走走：Darling Harbour 海边、Chinese Garden 或附近逛逛，吃一顿像样的午饭。",
-          "highlight": "不赶行程",
-          "tip": "",
-          "resources": [
-            {
-              "id": "darling-harbour-map",
-              "title": "Darling Harbour",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Darling+Harbour%2C+Sydney+NSW%2C+Australia",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
-        },
-        {
-          "dayId": "d4",
-          "sortOrder": 30,
-          "period": "15:15",
-          "place": "Great Southern → Sydney Airport T1",
-          "activity": "回酒店取行李，Central 坐火车去国际航站楼 T1，16:00 前到。",
-          "highlight": "去机场",
-          "tip": "",
+          "activity": "起床、退房，打车或 Uber 去悉尼机场 T1，约 20–25 分钟。",
+          "highlight": "早起出发",
+          "tip": "前一晚收好行李。",
           "resources": [
             {
               "id": "syd-t1-map",
@@ -795,31 +775,178 @@
         },
         {
           "dayId": "d4",
+          "sortOrder": 20,
+          "period": "06:30–09:00",
+          "place": "Sydney Airport T1",
+          "activity": "值机、托运、出境，在机场吃早餐。",
+          "highlight": "",
+          "tip": "",
+          "resources": []
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 30,
+          "period": "09:00–14:15",
+          "place": "EK412 → Christchurch",
+          "activity": "飞基督城。",
+          "highlight": "航班",
+          "tip": "",
+          "resources": []
+        },
+        {
+          "dayId": "d4",
           "sortOrder": 40,
-          "period": "18:15–23:20",
-          "place": "NZ224 → Christchurch",
-          "activity": "飞基督城。落地后入境、检疫、取行李。",
-          "highlight": "夜航",
+          "period": "14:15–15:15",
+          "place": "Christchurch Airport",
+          "activity": "入境、过检疫、取行李。白天落地，排队可能比较长。",
+          "highlight": "入境",
           "tip": "徒步鞋提前洗干净。",
           "resources": []
         },
         {
           "dayId": "d4",
           "sortOrder": 50,
-          "period": "23:20后",
-          "place": "Christchurch Airport → 机场酒店",
-          "activity": "入境取行李后走到机场旁的酒店入住，直接睡觉。",
-          "highlight": "今晚没有车",
+          "period": "15:15–15:45",
+          "place": "Christchurch Airport → HOTEL GIVE",
+          "activity": "打车或 Uber 到酒店，15:00 后入住，放下行李。",
+          "highlight": "入住",
           "tip": "",
           "resources": [
             {
-              "id": "chc-airport-hotel-note",
-              "title": "基督城机场附近酒店（待订）",
-              "type": "note",
-              "url": "",
+              "id": "hotel-give-map",
+              "title": "HOTEL GIVE",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hotel+Give%2C+12+Hereford+Street%2C+Christchurch%2C+New+Zealand",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "走到航站楼几分钟、24 小时前台"
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 60,
+          "period": "16:00–17:30",
+          "place": "Christchurch Botanic Gardens",
+          "activity": "植物园就在酒店旁边。温室约 16:00 关门，先看温室再逛园子。想坐雅芳河撑篙船，17:00 前到园边的 Antigua Boat Sheds，约 30 分钟，最好先订。",
+          "highlight": "植物园",
+          "tip": "温室和撑篙船时间以当天为准。",
+          "resources": [
+            {
+              "id": "chc-botanic-map",
+              "title": "Christchurch Botanic Gardens",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Christchurch+Botanic+Gardens%2C+Christchurch%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "punting-official",
+              "title": "雅芳河撑篙船（Antigua Boat Sheds）",
+              "type": "official",
+              "url": "https://www.christchurchnz.com/see-do/activity/punting-on-the-avon",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "christchurchnz.com"
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 70,
+          "period": "17:30–18:00",
+          "place": "Avon River",
+          "activity": "沿雅芳河往东走到 Riverside 一带。",
+          "highlight": "河边散步",
+          "tip": "",
+          "resources": [
+            {
+              "id": "avon-walk-route",
+              "title": "植物园 → Riverside Market 沿河步行",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=12+Hereford+Street%2C+Christchurch%2C+New+Zealand&destination=Bridge+of+Remembrance%2C+Christchurch%2C+New+Zealand&travelmode=walking&waypoints=Riverside+Market%2C+Christchurch%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps步行"
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 80,
+          "period": "18:00–19:30",
+          "place": "Riverside Market",
+          "activity": "在 Riverside Market 吃晚饭。周四开到 21:00，各家店关门时间不一样，别拖太晚。",
+          "highlight": "晚饭",
+          "tip": "",
+          "resources": [
+            {
+              "id": "riverside-market-map",
+              "title": "Riverside Market",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Riverside+Market%2C+96+Oxford+Terrace%2C+Christchurch%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 85,
+          "period": "19:30–20:15",
+          "place": "Bridge of Remembrance / Cathedral Square",
+          "activity": "走两分钟到 Bridge of Remembrance；天气好再走 5–10 分钟去 Cathedral Square 看看。",
+          "highlight": "城里转转",
+          "tip": "",
+          "resources": [
+            {
+              "id": "bridge-remembrance-map",
+              "title": "Bridge of Remembrance",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Bridge+of+Remembrance%2C+Christchurch%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "cathedral-square-map",
+              "title": "Cathedral Square",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Cathedral+Square%2C+Christchurch%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 87,
+          "period": "20:15–22:00",
+          "place": "Avon River → HOTEL GIVE",
+          "activity": "沿雅芳河走回酒店，路上看 20:52 的日落；22:00 前回酒店休息。",
+          "highlight": "河边日落",
+          "tip": "明早 09:20 打车去机场取车。",
+          "resources": [
+            {
+              "id": "avon-walk-route",
+              "title": "植物园 → Riverside Market 沿河步行",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=12+Hereford+Street%2C+Christchurch%2C+New+Zealand&destination=Bridge+of+Remembrance%2C+Christchurch%2C+New+Zealand&travelmode=walking&waypoints=Riverside+Market%2C+Christchurch%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps步行"
+            },
+            {
+              "id": "hotel-give-map",
+              "title": "HOTEL GIVE",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hotel+Give%2C+12+Hereford+Street%2C+Christchurch%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
             }
           ]
         },
@@ -827,8 +954,8 @@
           "dayId": "d4",
           "sortOrder": 90,
           "period": "饮食",
-          "place": "Sydney / 飞机上",
-          "activity": "早餐：Haymarket；午餐：Darling Harbour一带；晚餐：机场或飞机上",
+          "place": "悉尼机场 / 飞机上 / Riverside Market",
+          "activity": "早餐：悉尼机场；午餐：飞机上；晚餐：Riverside Market",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -853,7 +980,7 @@
       "coverImageUrl": "/nz2027/d05.jpg",
       "coverImageAlt": "D05 机场取车，两座湖串起的转场日",
       "transport": "自驾 · 纯驾驶约4–4.5小时",
-      "leaveBy": "10:00 机场取车",
+      "leaveBy": "09:20 打车去机场，10:00 取车",
       "notes": [
         {
           "label": "取车",
@@ -973,11 +1100,20 @@
           "dayId": "d5",
           "sortOrder": 10,
           "period": "08:30–10:00",
-          "place": "机场酒店 → 租车柜台",
-          "activity": "酒店吃早餐、退房，走到机场租车柜台，10:00 取车，绕车检查一圈、拍照留底。",
+          "place": "HOTEL GIVE → Christchurch Airport",
+          "activity": "酒店附近吃早餐、退房，09:20 打车去机场（约 20–25 分钟），10:00 取车，绕车检查一圈、拍照留底。",
           "highlight": "取车",
           "tip": "",
           "resources": [
+            {
+              "id": "chc-hotel-airport-route",
+              "title": "HOTEL GIVE → 基督城机场",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=12+Hereford+Street%2C+Christchurch%2C+New+Zealand&destination=Christchurch+Airport%2C+New+Zealand&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
             {
               "id": "rental-car-booking",
               "title": "南岛租车：起亚 Seltos 或同级（已订）",
@@ -1103,7 +1239,7 @@
           "sortOrder": 90,
           "period": "饮食",
           "place": "Fairlie / Twizel",
-          "activity": "早餐：机场酒店；午餐：Fairlie Bakehouse；晚餐：Twizel镇上",
+          "activity": "早餐：酒店附近；午餐：Fairlie Bakehouse；晚餐：Twizel镇上",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -3946,21 +4082,21 @@
       "sortOrder": 30,
       "checkIn": "2027-02-04",
       "checkOut": "2027-02-05",
-      "name": "基督城机场附近酒店（待订）",
-      "room": "走几分钟到航站楼、24 小时前台",
-      "detail": "23:45 左右到店；2/5 早上走去租车柜台",
+      "name": "HOTEL GIVE",
+      "room": "¥510.06，到店付全款",
+      "detail": "15:00后入住；10:00前退房；12 Hereford Street，植物园旁；前台24小时",
       "resource": {
-        "id": "chc-airport-hotel-note",
-        "title": "基督城机场附近酒店（待订）",
-        "type": "note",
-        "url": "",
+        "id": "hotel-give-map",
+        "title": "HOTEL GIVE",
+        "type": "map",
+        "url": "https://www.google.com/maps/search/?api=1&query=Hotel+Give%2C+12+Hereford+Street%2C+Christchurch%2C+New+Zealand",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "走到航站楼几分钟、24 小时前台"
+        "sourceNote": "Google Maps"
       },
-      "status": "待订1晚",
-      "freeCancelUntil": "",
-      "afterDeadline": ""
+      "status": "已订1晚",
+      "freeCancelUntil": "2027-02-02 23:59",
+      "afterDeadline": "之后取消或改订收全额"
     },
     {
       "sortOrder": 40,
@@ -4083,15 +4219,6 @@
       "detail": "要 NZTA 认可翻译员或中国公证处出具的英文翻译件，国内平台卖的“认证件”不算；2/5 取车时连同中国驾照一起查。"
     },
     {
-      "id": "chc-airport-hotel",
-      "sortOrder": 25,
-      "kind": "book",
-      "dueDate": "",
-      "dueLabel": "尽早",
-      "title": "订基督城机场附近酒店（2/4 一晚）",
-      "detail": "选走几分钟到航站楼、24 小时前台的，比如 Novotel Christchurch Airport；23:20 落地，订单里注明约 23:45 到店并拿到书面确认。"
-    },
-    {
       "id": "baggage-jq296",
       "sortOrder": 26,
       "kind": "prep",
@@ -4107,7 +4234,7 @@
       "dueDate": "",
       "dueLabel": "2/3 晚–2/4 起飞前",
       "title": "填新西兰入境申报 NZTD（每人一份）",
-      "detail": "起飞前 24 小时内在官网或 App 填；徒步鞋、食品、药品如实勾选。"
+      "detail": "2/4 早上 09:00 的 EK412 起飞前 24 小时内在官网或 App 填；徒步鞋、食品、药品如实勾选。"
     },
     {
       "id": "auckland-hotel",
@@ -4254,6 +4381,15 @@
       "detail": "Apple Pay 扣款，订金 NZ$96.60 已付。"
     },
     {
+      "id": "cancel-hotelgive",
+      "sortOrder": 235,
+      "kind": "deadline",
+      "dueDate": "2027-02-02",
+      "dueLabel": "2/2 前",
+      "title": "基督城 HOTEL GIVE 免费取消截止",
+      "detail": "入住日前一天之前可取消或改订，之后收全额；到店付全款 ¥510.06。"
+    },
+    {
       "id": "cancel-greatsouthern",
       "sortOrder": 240,
       "kind": "deadline",
@@ -4368,13 +4504,76 @@
       "sourceNote": "确认邮件地址"
     },
     {
-      "id": "chc-airport-hotel-note",
-      "title": "基督城机场附近酒店（待订）",
-      "type": "note",
-      "url": "",
+      "id": "hotel-give-map",
+      "title": "HOTEL GIVE",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Hotel+Give%2C+12+Hereford+Street%2C+Christchurch%2C+New+Zealand",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "走到航站楼几分钟、24 小时前台"
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "chc-hotel-airport-route",
+      "title": "HOTEL GIVE → 基督城机场",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=12+Hereford+Street%2C+Christchurch%2C+New+Zealand&destination=Christchurch+Airport%2C+New+Zealand&travelmode=driving",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "chc-botanic-map",
+      "title": "Christchurch Botanic Gardens",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Christchurch+Botanic+Gardens%2C+Christchurch%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "punting-official",
+      "title": "雅芳河撑篙船（Antigua Boat Sheds）",
+      "type": "official",
+      "url": "https://www.christchurchnz.com/see-do/activity/punting-on-the-avon",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "christchurchnz.com"
+    },
+    {
+      "id": "riverside-market-map",
+      "title": "Riverside Market",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Riverside+Market%2C+96+Oxford+Terrace%2C+Christchurch%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "bridge-remembrance-map",
+      "title": "Bridge of Remembrance",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Bridge+of+Remembrance%2C+Christchurch%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "cathedral-square-map",
+      "title": "Cathedral Square",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Cathedral+Square%2C+Christchurch%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "avon-walk-route",
+      "title": "植物园 → Riverside Market 沿河步行",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=12+Hereford+Street%2C+Christchurch%2C+New+Zealand&destination=Bridge+of+Remembrance%2C+Christchurch%2C+New+Zealand&travelmode=walking&waypoints=Riverside+Market%2C+Christchurch%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps步行"
     },
     {
       "id": "twizel-holiday-park-map",
@@ -4885,15 +5084,6 @@
       "title": "悉尼机场国际航站楼 T1",
       "type": "map",
       "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Airport+International+Terminal+T1",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "Google Maps"
-    },
-    {
-      "id": "darling-harbour-map",
-      "title": "Darling Harbour",
-      "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Darling+Harbour%2C+Sydney+NSW%2C+Australia",
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
