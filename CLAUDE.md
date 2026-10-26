@@ -11,7 +11,7 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 
 - Node 24（`package.json` `engines` 为 `24.x`，`.nvmrc` 为 24）。本机默认 Node 26 加载失败，先 `export PATH="/opt/homebrew/opt/node@24/bin:$PATH"`。
 - `npm ci` → `npm test` → `npm run lint` → `npm run build` → `npm run test:e2e`
-- `test:e2e` 只跑本地构建 + mock API，可放心运行。**不要运行 `test:e2e:production`**，除非用户本轮明确要求线上冒烟。
+- `test:e2e` 只跑本地构建 + mock API，可放心运行。**不要运行 `test:e2e:production`**，除非用户本轮明确要求线上冒烟。本机 shell 设了 `HTTP(S)_PROXY`，测试浏览器走代理时常连接重置、页面空白；线上冒烟要去掉代理变量再跑：`env -u HTTPS_PROXY -u HTTP_PROXY -u https_proxy -u http_proxy -u ALL_PROXY -u all_proxy npm run test:e2e:production`。
 - 7 个数据库集成测试在没有 `AUSSIE_TEST_PG*` 环境变量时跳过，属正常；要跑就用临时、隔离的本地 PostgreSQL 17，用完删除。本机启动时要 `export LC_ALL=C LANG=C`（否则 postmaster 报 multithreaded 退出），并用 `-c listen_addresses=127.0.0.1 -c unix_socket_directories=''` 走 TCP。
 
 ## 不可破坏的约束
@@ -44,7 +44,7 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 
 ## 状态（2026-10-26）
 
-`main` = `origin/main` `59e73ee`（PR #15 合并），已部署生产 `dpl_DpjerW9pmnayg6XbsDW5G4JLfDnr`；线上只读检查和 `test:e2e:production` 冒烟通过，未登录时数据接口返回 401，公开页面和脚本不含私密行程内容。
+`main` = `origin/main` `044d874`（PR #18 合并），已部署生产 `dpl_3jsXeMyamC4FiquzF17gBLNnbZax`；线上只读检查和 `test:e2e:production` 冒烟通过，未登录时数据接口返回 401，公开页面和脚本不含私密行程内容。
 
 近期合并：
 - PR #3 上线 2027 首页，#4 更新本文件，#5 换成沉浸式深色界面。
@@ -54,9 +54,11 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 - PR #11 写入 2/12 已订 Skyline 缆车＋Luge 3 圈（16:30–18:30），Kelvin 步道和入住提前。
 - PR #12 按两份外部审核（逐条核实后用户确认）修正：2/1、2/14 打车进城（奥克兰 SkyBus 已停）；2/2 Coogee→Bondi；2/4 基督城改住机场附近酒店（待订）；2/6 Hooker 新桥 2026-07 已通，备选 Tasman Glacier View + Blue Lakes；2/8 Diamond Lake、2/13 Moke Lake、2/14 日落改为可选，2/15 晚上休息；清单加 NZeTA 延长观察、NZTA 认可驾照翻译、NZTD、捷星随身 7kg、Hooker 提醒。
 - PR #14 新增“更新”tab（`/nz2027/updates`）：数据库触发器自动记录记账和清单改动，行程调整写在 `content/nz2027-updates.json`；迁移 `20261026114024 create_nz2027_activity` 已在生产执行（快照 `.backups/20261026T113932Z-before-nz2027-activity/`，回填 16 行，账本和 2026 表指纹不变）。
-- PR #15 2/4 改坐 EK412（悉尼 09:00 → 基督城 14:15，托运 30kg），基督城住 HOTEL GIVE（12 Hereford Street，植物园旁），下午植物园、雅芳河、Riverside Market、Bridge of Remembrance、Cathedral Square；2/5 打车回机场 10:00 取车。清单 25 项。
+- PR #15 2/4 改坐 EK412（悉尼 09:00 → 基督城 14:15，托运 30kg），基督城住 HOTEL GIVE（12 Hereford Street，植物园旁），下午植物园、雅芳河、Riverside Market、Bridge of Remembrance、Cathedral Square；2/5 打车回机场 10:00 取车。
+- PR #17 三笔尾款（Fernhill 1/5、Wānaka 1/26、Te Anau 1/28）用付订金时留的卡自动扣，清单去掉付款项，住宿信息写明扣款日；账本仍记待付，扣款后再改已付。清单 22 项。
+- PR #18 2/7 High Country Salmon 改成轻松美食点（看养殖池、喂鱼、刺身和热食对比、可买一块带回），晚上在住处自己煎三文鱼。
 
-Node 24 下 361 个单测（含 8 个数据库测试，在 PR #14 上全部通过；PR #15 未改 SQL，跑 353 个、跳过数据库测试），lint、tsc、build 通过，34 个本地 e2e 全部通过。线上冒烟偶尔因本机网络（连接重置、代理错误）失败，网络恢复后重跑通过。
+Node 24 下 361 个单测（含 8 个数据库测试，在 PR #14 上全部通过；PR #15 未改 SQL，跑 353 个、跳过数据库测试），lint、tsc、build 通过，34 个本地 e2e 全部通过。线上冒烟之前的偶发失败是本机代理造成的，去掉代理变量后一次通过（见上面“运行版本与检查”）。
 
 生产账本 `nz2027_expenses` 共 16 条，有效 14 条：
 - 2026-10-25 补记南航往返 ¥16,800、NZ224+JQ296 ¥3,153、租车 ¥3,636（均已付），悉尼 Great Southern 改为三晚 ¥2,027.36 待付；备份在 `.backups/20261025-before-booking-ledger/`。
