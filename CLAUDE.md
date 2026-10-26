@@ -44,7 +44,7 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 
 ## 状态（2026-10-26）
 
-`main` = `origin/main` `ca39022`（PR #12 合并），已部署生产 `dpl_DeBSxSGQmdDmxwdRykGxRLnDxSpy`；线上只读检查和 `test:e2e:production` 冒烟通过，未登录时数据接口返回 401，公开页面和脚本不含私密行程内容。
+`main` = `origin/main` `59e73ee`（PR #15 合并），已部署生产 `dpl_DpjerW9pmnayg6XbsDW5G4JLfDnr`；线上只读检查和 `test:e2e:production` 冒烟通过，未登录时数据接口返回 401，公开页面和脚本不含私密行程内容。
 
 近期合并：
 - PR #3 上线 2027 首页，#4 更新本文件，#5 换成沉浸式深色界面。
@@ -52,18 +52,20 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 - PR #8 按日落时间安排每天傍晚（悉尼 20:00、南岛 21:00 前后、奥克兰 20:18），加 Kelvin 半岛、Diamond Lake、Moke Lake 等；写明租车合同禁开 Glenorchy–Paradise Road。
 - PR #9 取消 Te Anau 萤火虫洞和 Hobbiton 普通话团，2/15 改为 Klook Waitomo + Hobbiton 一日团（06:00–17:30），去掉导航11。
 - PR #11 写入 2/12 已订 Skyline 缆车＋Luge 3 圈（16:30–18:30），Kelvin 步道和入住提前。
-- PR #12 按两份外部审核（逐条核实后用户确认）修正：2/1、2/14 打车进城（奥克兰 SkyBus 已停）；2/2 Coogee→Bondi；2/4 基督城改住机场附近酒店（待订）；2/6 Hooker 新桥 2026-07 已通，备选 Tasman Glacier View + Blue Lakes；2/8 Diamond Lake、2/13 Moke Lake、2/14 日落改为可选，2/15 晚上休息；清单加 NZeTA 延长观察、NZTA 认可驾照翻译、NZTD、捷星随身 7kg、Hooker 提醒。清单 25 项。
+- PR #12 按两份外部审核（逐条核实后用户确认）修正：2/1、2/14 打车进城（奥克兰 SkyBus 已停）；2/2 Coogee→Bondi；2/4 基督城改住机场附近酒店（待订）；2/6 Hooker 新桥 2026-07 已通，备选 Tasman Glacier View + Blue Lakes；2/8 Diamond Lake、2/13 Moke Lake、2/14 日落改为可选，2/15 晚上休息；清单加 NZeTA 延长观察、NZTA 认可驾照翻译、NZTD、捷星随身 7kg、Hooker 提醒。
+- PR #14 新增“更新”tab（`/nz2027/updates`）：数据库触发器自动记录记账和清单改动，行程调整写在 `content/nz2027-updates.json`；迁移 `20261026114024 create_nz2027_activity` 已在生产执行（快照 `.backups/20261026T113932Z-before-nz2027-activity/`，回填 16 行，账本和 2026 表指纹不变）。
+- PR #15 2/4 改坐 EK412（悉尼 09:00 → 基督城 14:15，托运 30kg），基督城住 HOTEL GIVE（12 Hereford Street，植物园旁），下午植物园、雅芳河、Riverside Market、Bridge of Remembrance、Cathedral Square；2/5 打车回机场 10:00 取车。清单 25 项。
 
-Node 24 下 354 个单测（含 7 个数据库测试，在 PR #8 上全部通过；PR #9–#12 未改 SQL，跑 347 个、跳过数据库测试），lint、tsc、build 通过，32 个本地 e2e 全部通过。
+Node 24 下 361 个单测（含 8 个数据库测试，在 PR #14 上全部通过；PR #15 未改 SQL，跑 353 个、跳过数据库测试），lint、tsc、build 通过，34 个本地 e2e 全部通过。线上冒烟偶尔因本机网络（连接重置、代理错误）失败，网络恢复后重跑通过。
 
-生产账本 `nz2027_expenses` 共 15 条，有效 13 条：
+生产账本 `nz2027_expenses` 共 16 条，有效 14 条：
 - 2026-10-25 补记南航往返 ¥16,800、NZ224+JQ296 ¥3,153、租车 ¥3,636（均已付），悉尼 Great Southern 改为三晚 ¥2,027.36 待付；备份在 `.backups/20261025-before-booking-ledger/`。
 - 2026-10-26 Hobbiton 普通话团 NZ$260 全额退款，标记删除；新增 Klook 一日团 ¥3,138（已付）；备份在 `.backups/20261026-before-klook-ledger/`。
 - 2026-10-26 新增 Skyline 缆车＋Luge ¥644（已付）；基督城 Metropolitan ¥601.43 退订（全额退款），标记删除，备份在 `.backups/20261026-before-review-ledger/`。
-- 合计：CNY 已付 ¥27,371、待付 ¥2,027.36（只剩悉尼酒店）；NZD 已付 NZ$1,286.31、待付 NZ$1,454.87。
+- 2026-10-26 机票记录（id 仍是 `nz27-flight-nz224-jq296`）改为 EK412 + JQ296 ¥3,320；新增基督城 HOTEL GIVE ¥510.06（待付，到店付全款）。这两笔已由触发器记进 `nz2027_activity`。
+- 合计：CNY 已付 ¥27,538、待付 ¥2,537.42（悉尼和基督城两家酒店）；NZD 已付 NZ$1,286.31、待付 NZ$1,454.87。
 
 生产清单 `nz2027_checklist`：2026-10-26 代用户勾选 `licence`（翻译件已办好），其余未勾。
 
 待办：
-- 用户订好基督城机场附近酒店（2/4 一晚）后，把名称和金额写进行程（`lodging(30…)`、D04 住宿）和账本。
 - `aussie-split` 还留着旧的 `NEXT_PUBLIC_SUPABASE_URL`、`NEXT_PUBLIC_SUPABASE_ANON_KEY`，代码已不用，可在 Vercel 删除。
