@@ -4123,7 +4123,7 @@
       "checkIn": "2027-02-08",
       "checkOut": "2027-02-10",
       "name": "Hikuwai Haven 1",
-      "room": "",
+      "room": "尾款 NZ$346.84 1/26 自动扣卡，不用操作",
       "detail": "16:00后入住；10:00前退房；1 Outlet Road, Wānaka",
       "resource": {
         "id": "hikuwai-map",
@@ -4143,7 +4143,7 @@
       "checkIn": "2027-02-10",
       "checkOut": "2027-02-12",
       "name": "Private Ensuite in the Heart of Te Anau",
-      "room": "",
+      "room": "尾款 NZ$386.40 1/28 自动扣卡，不用操作",
       "detail": "15:00后入住；10:00前退房；3 Thomson Place",
       "resource": {
         "id": "te-anau-ensuite-map",
@@ -4163,7 +4163,7 @@
       "checkIn": "2027-02-12",
       "checkOut": "2027-02-14",
       "name": "山景独立单间公寓Fernhill",
-      "room": "房东Coral",
+      "room": "房东Coral；NZ$721.63 1/5 自动扣卡，不用操作",
       "detail": "15:00后入住；10:00前退房；15 Greenstone Place",
       "resource": {
         "id": "fernhill-map",
@@ -4345,15 +4345,6 @@
       "detail": "Wānaka、Te Anau、Fernhill：停车位置、门锁或钥匙、晚到怎么办。"
     },
     {
-      "id": "pay-fernhill",
-      "sortOrder": 200,
-      "kind": "pay",
-      "dueDate": "2027-01-05",
-      "dueLabel": "1/5",
-      "title": "皇后镇 Fernhill 付款 NZ$721.63",
-      "detail": "Apple Pay 付款。"
-    },
-    {
       "id": "cancel-fernhill",
       "sortOrder": 210,
       "kind": "deadline",
@@ -4361,24 +4352,6 @@
       "dueLabel": "1/13 15:00",
       "title": "皇后镇 Fernhill 免费取消截止",
       "detail": "之后到 2/5 15:00 前取消可退一部分。"
-    },
-    {
-      "id": "pay-hikuwai",
-      "sortOrder": 220,
-      "kind": "pay",
-      "dueDate": "2027-01-26",
-      "dueLabel": "1/26",
-      "title": "Wānaka Hikuwai 尾款 NZ$346.84",
-      "detail": "Apple Pay 扣款，订金 NZ$86.71 已付。"
-    },
-    {
-      "id": "pay-teanau",
-      "sortOrder": 230,
-      "kind": "pay",
-      "dueDate": "2027-01-28",
-      "dueLabel": "1/28",
-      "title": "Te Anau 尾款 NZ$386.40",
-      "detail": "Apple Pay 扣款，订金 NZ$96.60 已付。"
     },
     {
       "id": "cancel-hotelgive",
