@@ -7,7 +7,7 @@
     "endDate": "2027-02-17",
     "travelers": "2位成人",
     "route": "悉尼3晚 → 基督城1晚 → Twizel3晚 → Wānaka2晚 → Te Anau2晚 → Queenstown2晚 → Auckland2晚 → 夜航回国",
-    "summary": "每天保留一个主要体验：悉尼Bondi海岸与城市漫步、湖区公路与星空、Mt Cook徒步、Wānaka的一顿晚餐、Milford峡湾、Glenorchy公路、Hobbiton中文导览。",
+    "summary": "每天保留一个主要体验：悉尼Bondi海岸与城市漫步、湖区公路与星空、Mt Cook徒步、Wānaka的一顿晚餐、Milford峡湾、Glenorchy公路、Waitomo萤火虫洞和Hobbiton。",
     "statusNote": "所有日期和时间都是当地时间。",
     "updatedAt": "2026-10-25",
     "coverImageUrl": "/nz2027/cover.jpg",
@@ -61,7 +61,7 @@
         "d17"
       ],
       "imageUrl": "",
-      "summary": "南岛还车飞Auckland，Hobbiton中文团，城市日后夜航回国。"
+      "summary": "南岛还车飞Auckland，萤火虫洞＋霍比屯一日团，城市日后夜航回国。"
     }
   ],
   "days": [
@@ -2151,7 +2151,7 @@
       "coverImageUrl": "/nz2027/d10.jpg",
       "coverImageAlt": "D10 翻Crown Range、经Arrowtown去Te Anau",
       "transport": "自驾 · 纯驾驶约3.5–4.5小时",
-      "leaveBy": "09:00左右出发；17:15到RealNZ报到萤火虫团",
+      "leaveBy": "09:00左右出发；10:00前退房",
       "notes": [
         {
           "label": "住宿",
@@ -2164,10 +2164,6 @@
         {
           "label": "坏天气",
           "text": "起雾、大风或下雨时别翻Crown Range，改走Cromwell（导航里有备选链接），从Frankton起两条路一样。"
-        },
-        {
-          "label": "傍晚",
-          "text": "17:45 萤火虫洞团。Arrowtown 控制在 90 分钟内，15:00–16:30 到 Te Anau；改走 Cromwell 多 20–30 分钟也赶得上，最晚 16:30 前到住处。"
         }
       ],
       "lodgingResource": {
@@ -2368,68 +2364,19 @@
         {
           "dayId": "d10",
           "sortOrder": 50,
-          "period": "17:15–17:30",
-          "place": "RealNZ Visitor Centre",
-          "activity": "开几分钟到85 Lakefront Drive报到，就是明天Milford的集合点。",
-          "highlight": "报到",
-          "tip": "报到时间以确认单为准。",
-          "resources": [
-            {
-              "id": "realnz-map",
-              "title": "RealNZ Visitor Centre",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=RealNZ+Visitor+Centre%2C+85+Lakefront+Drive%2C+Te+Anau%2C+New+Zealand",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "集合点"
-            }
-          ]
-        },
-        {
-          "dayId": "d10",
-          "sortOrder": 55,
-          "period": "17:45–20:00",
-          "place": "Te Anau萤火虫洞",
-          "activity": "RealNZ萤火虫洞团：坐船过湖，步行进洞，再坐小船看萤火虫，约2小时15分。",
-          "highlight": "萤火虫",
-          "tip": "洞内8–12°C，带外套；洞里不能拍照。",
-          "resources": [
-            {
-              "id": "realnz-map",
-              "title": "RealNZ Visitor Centre",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=RealNZ+Visitor+Centre%2C+85+Lakefront+Drive%2C+Te+Anau%2C+New+Zealand",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "集合点"
-            },
-            {
-              "id": "glowworm-official",
-              "title": "Te Anau Glowworm Caves（RealNZ）",
-              "type": "official",
-              "url": "https://www.realnz.com/en/experiences/glowworm-caves/te-anau-glowworm-caves/",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "RealNZ"
-            }
-          ]
-        },
-        {
-          "dayId": "d10",
-          "sortOrder": 60,
-          "period": "20:15",
+          "period": "17:30",
           "place": "Te Anau镇上",
-          "activity": "回来直接吃晚饭；不少餐厅厨房21:00前后停止点餐，要提前订，选离湖边近的。",
-          "highlight": "晚饭",
+          "activity": "早点吃晚饭。",
+          "highlight": "",
           "tip": "",
           "resources": []
         },
         {
           "dayId": "d10",
-          "sortOrder": 70,
-          "period": "21:00–21:15",
+          "sortOrder": 60,
+          "period": "20:40–21:15",
           "place": "Te Anau Lakefront",
-          "activity": "饭后沿Lakefront Drive走走，湖岸朝西，看21:09的日落，然后回住宿早点睡。",
+          "activity": "沿Lakefront Drive散步，湖岸朝西，看21:09的日落落在湖上；离住处几分钟，看完回去早点睡。",
           "highlight": "湖上日落",
           "tip": "明早09:15去Milford报到。",
           "resources": [
@@ -2449,7 +2396,7 @@
           "sortOrder": 90,
           "period": "饮食",
           "place": "Frankton / Kingston / Te Anau",
-          "activity": "早餐：Wānaka；午餐：Arrowtown；晚餐：20:15在Te Anau镇上（要订）",
+          "activity": "早餐：Wānaka；午餐：Arrowtown；晚餐：17:30在Te Anau镇上",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -3486,7 +3433,7 @@
           "place": "Wynyard Quarter / Silo Park",
           "activity": "沿海边走到Wynyard Quarter / Silo Park，20:00–20:30朝西看海港大桥方向的日落（约20:19），再经Viaduct走回酒店。",
           "highlight": "海港日落",
-          "tip": "想换个角度可以上Sky Tower观景台，要另买票，人也多。",
+          "tip": "明早06:00出发，看完日落就回酒店早睡。",
           "resources": [
             {
               "id": "wynyard-map",
@@ -3516,40 +3463,36 @@
       "label": "D15",
       "date": "2027-02-15",
       "weekday": "周一",
-      "city": "Auckland ↔ Hobbiton",
+      "city": "Auckland ↔ Waitomo ↔ Hobbiton",
       "base": "Auckland",
       "lat": -37.8722,
       "lon": 175.683,
-      "title": "Hobbiton中文团，一天往返",
-      "focus": "保留已付13:50普通话导览，把往返时间留宽。",
+      "title": "Waitomo萤火虫洞 + Hobbiton一日团",
+      "focus": "跟团一天：上午坐船看萤火虫，下午走进霍比屯。",
       "lodging": "Auckland同一家酒店（待订）",
       "lodgingStatus": "待订",
-      "climateNote": "Waikato约15–26°C，午后日晒强，偶有阵雨。",
-      "clothingNote": "防晒、帽子、好走的鞋；车上备一件薄外套。",
+      "climateNote": "Waikato约15–26°C，午后日晒强，偶有阵雨；洞里常年凉。",
+      "clothingNote": "防晒、帽子、好走的鞋；带一件外套进洞。",
       "coverImageUrl": "/nz2027/d15.jpg",
-      "coverImageAlt": "D15 Hobbiton中文团，一天往返",
-      "transport": "交通待定：一日租车自驾，或大巴 / 接驳",
-      "leaveBy": "13:30前到The Shire’s Rest报到",
+      "coverImageAlt": "D15 Waitomo萤火虫洞 + Hobbiton一日团",
+      "transport": "跟团大巴（Klook，已订）· 06:00出发，约17:30回到Auckland",
+      "leaveBy": "06:00出发；上车地点以确认单为准",
       "notes": [
         {
           "label": "住宿",
           "text": "回同一家Auckland住宿，第二晚。"
         },
         {
-          "label": "交通待定",
-          "text": "还没决定租车还是公共交通。现票只含Shire’s Rest至片场巴士，不含Auckland往返。"
+          "label": "跟团",
+          "text": "Klook Hobbiton + Waitomo 一日团：先去Waitomo萤火虫洞（洞里约1小时，最后坐小船看萤火虫，洞内讲解是英文），再去Hobbiton片场；车上有中文讲解。06:00出发，约17:30回到Auckland。"
         },
         {
-          "label": "方案A 租车",
-          "text": "一日租车自驾，往返纯驾驶约4.5–5小时，须支持晚间还车；按下方导航11执行。"
+          "label": "以确认单为准",
+          "text": "上车地点（集合点还是酒店接送）、午餐是否包含，出发前一周在Klook确认。"
         },
         {
-          "label": "方案B 大巴 / 接驳",
-          "text": "Auckland没有直达Shire’s Rest的公共交通：可坐长途大巴到Matamata再打车到501 Buckland Road，或订接受自购票的纯接送。选这个方案前确认班次能13:30前送到Shire’s Rest、16:20后能接回Auckland。"
-        },
-        {
-          "label": "回程",
-          "text": "Hobbiton约16:20结束，随后返程，约19:00–20:00回到Auckland。"
+          "label": "准备",
+          "text": "前一晚早睡；早餐带上车；洞里凉、不能拍照，带外套；车程单程约2–2.5小时，带水和零食。"
         }
       ],
       "lodgingResource": {
@@ -3562,161 +3505,77 @@
         "sourceNote": "优先CBD/Britomart/SkyCity"
       },
       "primaryResource": {
-        "id": "shire-rest-map",
-        "title": "The Shire’s Rest报到点",
-        "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand",
+        "id": "waitomo-hobbiton-booking",
+        "title": "Hobbiton + Waitomo萤火虫洞一日团（Klook，已订）",
+        "type": "booking",
+        "url": "https://www.klook.cn/zh-CN/activity/23913-hobbiton-waitomo-caves-join-in-tour-auckland/",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "Google Maps"
+        "sourceNote": "06:00出发，约17:30回到Auckland"
       },
       "ticketResource": {
-        "id": "hobbiton-booking",
-        "title": "Hobbiton Mandarin Language Tour 13:50（已订）",
+        "id": "waitomo-hobbiton-booking",
+        "title": "Hobbiton + Waitomo萤火虫洞一日团（Klook，已订）",
         "type": "booking",
-        "url": "https://www.google.com/maps/search/?api=1&query=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand",
+        "url": "https://www.klook.cn/zh-CN/activity/23913-hobbiton-waitomo-caves-join-in-tour-auckland/",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "13:30前在Ticketing Office报到"
+        "sourceNote": "06:00出发，约17:30回到Auckland"
       },
-      "drive": {
-        "id": "nav11",
-        "dayId": "d15",
-        "title": "导航11 · （若租车）Auckland ↔ Hobbiton",
-        "duration": "08:30–09:00提车，09:30左右离开市区；去回各预留约3小时交通窗口含短休息，13:30前报到。",
-        "sequence": "Auckland市区实际取车点 → SH1南行 → 按当日导航经SH2 / SH27到Matamata → 501 Buckland Road / The Shire’s Rest；返程回实际还车点",
-        "notes": "取还车点尚未确定，地图先以Britomart作CBD参考；实际使用时替换成车行地址。优先支持晚间自助还车的网点；若必须次晨还，另计过夜停车和租期，2/16先还车再城市活动。现有票不含Auckland接送；纯接送只有确认接受自购票、13:30前送达且16:20后接回才可替代本页自驾。",
-        "legs": [
-          {
-            "sortOrder": 10,
-            "segment": "取车点 → Matamata",
-            "driveTime": "约2–2.5小时，路况另留量",
-            "stopNote": "可在Matamata短休息；i-SITE只是途中停靠参考，并非这张票的报到点。"
-          },
-          {
-            "sortOrder": 20,
-            "segment": "Matamata → The Shire’s Rest",
-            "driveTime": "约15–25分钟",
-            "stopNote": "最终目的地501 Buckland Road。乡村道路跟当日导航与标识，不套用旧攻略出口号。"
-          },
-          {
-            "sortOrder": 30,
-            "segment": "现场停车、午餐、报到",
-            "driveTime": "约30–60分钟缓冲",
-            "stopNote": "目标12:30–13:00到；停访客停车区，13:30前到Ticketing Office。"
-          },
-          {
-            "sortOrder": 40,
-            "segment": "13:50 → 约16:20",
-            "driveTime": "已订导览约2.5小时",
-            "stopNote": "乘运营商巴士进出片场，私家车停在Shire’s Rest。"
-          },
-          {
-            "sortOrder": 50,
-            "segment": "约16:30–17:00 → Auckland",
-            "driveTime": "约2.5–3小时",
-            "stopNote": "按19:00–20:00抵城安排；堵车、离场晚时顺延，不在当天衔接国际航班。"
-          }
-        ],
-        "resources": [
-          {
-            "id": "nav11-out-route",
-            "title": "市区参考起点经Matamata到现场",
-            "type": "map",
-            "url": "https://www.google.com/maps/dir/?api=1&origin=Britomart%2C+Auckland%2C+New+Zealand&destination=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand&travelmode=driving&waypoints=Matamata+i-SITE+Visitor+Information+Centre%2C+Matamata%2C+New+Zealand",
-            "imageUrl": "",
-            "imageAlt": "",
-            "sourceNote": "导航11"
-          },
-          {
-            "id": "nav11-matamata-route",
-            "title": "Matamata休息后到现场",
-            "type": "map",
-            "url": "https://www.google.com/maps/dir/?api=1&origin=Matamata+i-SITE+Visitor+Information+Centre%2C+Matamata%2C+New+Zealand&destination=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand&travelmode=driving",
-            "imageUrl": "",
-            "imageAlt": "",
-            "sourceNote": "导航11"
-          },
-          {
-            "id": "nav11-back-route",
-            "title": "现场回Auckland市中心参考",
-            "type": "map",
-            "url": "https://www.google.com/maps/dir/?api=1&origin=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand&destination=Britomart%2C+Auckland%2C+New+Zealand&travelmode=driving",
-            "imageUrl": "",
-            "imageAlt": "",
-            "sourceNote": "导航11"
-          },
-          {
-            "id": "shire-rest-map",
-            "title": "The Shire’s Rest报到点",
-            "type": "map",
-            "url": "https://www.google.com/maps/search/?api=1&query=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand",
-            "imageUrl": "",
-            "imageAlt": "",
-            "sourceNote": "Google Maps"
-          },
-          {
-            "id": "hobbiton-faq-official",
-            "title": "Hobbiton官方FAQ",
-            "type": "official",
-            "url": "https://www.hobbitontours.com/plan-visit/frequently-asked-questions/",
-            "imageUrl": "",
-            "imageAlt": "",
-            "sourceNote": "官网"
-          },
-          {
-            "id": "hobbiton-transfers-official",
-            "title": "Hobbiton官方交通伙伴",
-            "type": "official",
-            "url": "https://www.hobbitontours.com/plan-visit/transfers/",
-            "imageUrl": "",
-            "imageAlt": "",
-            "sourceNote": "官网"
-          }
-        ]
-      },
+      "drive": null,
       "blocks": [
         {
           "dayId": "d15",
           "sortOrder": 10,
-          "period": "08:30–09:30",
-          "place": "Auckland市区出发",
-          "activity": "交通方式待定：租车就08:30–09:00取车、09:30前出城；坐大巴或接驳就按班次出发，保证13:30前到Shire’s Rest。",
-          "highlight": "交通待定",
+          "period": "06:00",
+          "place": "Auckland出发",
+          "activity": "按确认单的时间和地点上车，早餐在车上吃。",
+          "highlight": "早起出发",
           "tip": "",
           "resources": [
             {
-              "id": "nav11-out-route",
-              "title": "市区参考起点经Matamata到现场",
-              "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Britomart%2C+Auckland%2C+New+Zealand&destination=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand&travelmode=driving&waypoints=Matamata+i-SITE+Visitor+Information+Centre%2C+Matamata%2C+New+Zealand",
+              "id": "waitomo-hobbiton-booking",
+              "title": "Hobbiton + Waitomo萤火虫洞一日团（Klook，已订）",
+              "type": "booking",
+              "url": "https://www.klook.cn/zh-CN/activity/23913-hobbiton-waitomo-caves-join-in-tour-auckland/",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "导航11"
-            },
-            {
-              "id": "hobbiton-transfers-official",
-              "title": "Hobbiton官方交通伙伴",
-              "type": "official",
-              "url": "https://www.hobbitontours.com/plan-visit/transfers/",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "官网"
+              "sourceNote": "06:00出发，约17:30回到Auckland"
             }
           ]
         },
         {
           "dayId": "d15",
           "sortOrder": 20,
-          "period": "12:30–13:00",
-          "place": "The Shire’s Rest",
-          "activity": "到The Shire’s Rest，吃简餐、上洗手间。",
-          "highlight": "",
+          "period": "上午",
+          "place": "Waitomo Glowworm Caves",
+          "activity": "萤火虫洞导览约1小时：先走溶洞，最后坐小船在黑暗里看满洞顶的萤火虫。",
+          "highlight": "萤火虫洞",
+          "tip": "洞里凉、不能拍照；讲解是英文。",
+          "resources": [
+            {
+              "id": "waitomo-map",
+              "title": "Waitomo Glowworm Caves",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Waitomo+Glowworm+Caves%2C+Waitomo%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d15",
+          "sortOrder": 30,
+          "period": "中午–下午",
+          "place": "Hobbiton Movie Set",
+          "activity": "霍比屯片场导览：44个霍比特人洞、磨坊、双拱桥、派对树，在Green Dragon Inn喝一杯，Bag End门口拍照。",
+          "highlight": "霍比屯",
           "tip": "",
           "resources": [
             {
               "id": "shire-rest-map",
-              "title": "The Shire’s Rest报到点",
+              "title": "Hobbiton Movie Set",
               "type": "map",
               "url": "https://www.google.com/maps/search/?api=1&query=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand",
               "imageUrl": "",
@@ -3727,62 +3586,32 @@
         },
         {
           "dayId": "d15",
-          "sortOrder": 30,
-          "period": "13:30前",
-          "place": "The Shire’s Rest Ticketing Office",
-          "activity": "在The Shire’s Rest Ticketing Office报到。",
-          "highlight": "已订报到",
-          "tip": "",
-          "resources": [
-            {
-              "id": "hobbiton-booking",
-              "title": "Hobbiton Mandarin Language Tour 13:50（已订）",
-              "type": "booking",
-              "url": "https://www.google.com/maps/search/?api=1&query=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "13:30前在Ticketing Office报到"
-            }
-          ]
-        },
-        {
-          "dayId": "d15",
           "sortOrder": 40,
-          "period": "13:50–约16:20",
-          "place": "Hobbiton Movie Set",
-          "activity": "已订Mandarin Language Tour；片场游览约2.5小时。",
-          "highlight": "中文导览",
+          "period": "约17:30",
+          "place": "回到Auckland",
+          "activity": "回到市区，回酒店歇一会儿。",
+          "highlight": "",
           "tip": "",
           "resources": []
         },
         {
           "dayId": "d15",
           "sortOrder": 50,
-          "period": "16:30–17:00左右返程",
-          "place": "Hobbiton → Auckland",
-          "activity": "回Auckland，按约19:00–20:00抵城安排晚餐；租车的话晚上还车，坐大巴或接驳按回程班次。",
-          "highlight": "晚间回城",
+          "period": "18:30",
+          "place": "Auckland市中心",
+          "activity": "酒店附近吃晚饭。",
+          "highlight": "",
           "tip": "",
-          "resources": [
-            {
-              "id": "nav11-back-route",
-              "title": "现场回Auckland市中心参考",
-              "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand&destination=Britomart%2C+Auckland%2C+New+Zealand&travelmode=driving",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "导航11"
-            }
-          ]
+          "resources": []
         },
         {
           "dayId": "d15",
           "sortOrder": 60,
-          "period": "19:45–20:40（可选，租车时）",
+          "period": "19:45–20:40（可选）",
           "place": "Mt Eden · Maungawhau",
-          "activity": "租车且19:30前回到奥克兰的话，顺路去Mt Eden：车停山脚，走15–20分钟上山顶，20:18看整座城的日落，下山再吃晚饭、还车。",
+          "activity": "打车约15分钟到山脚，走15–20分钟上山顶，20:18看整座城的日落，下山打车回酒店。",
           "highlight": "城市日落",
-          "tip": "山顶不能开车上去；坐大巴或接驳就跳过。",
+          "tip": "早起累了就跳过；山顶不能开车上去。",
           "resources": [
             {
               "id": "mt-eden-map",
@@ -3799,8 +3628,8 @@
           "dayId": "d15",
           "sortOrder": 90,
           "period": "饮食",
-          "place": "Shire’s Rest / Auckland",
-          "activity": "早餐：出发前；午餐：现场简餐或自备；晚餐：Auckland，避免绑定太早的餐厅时段",
+          "place": "车上 / 途中 / Auckland",
+          "activity": "早餐：带上车；午餐：途中或Hobbiton（以确认单为准）；晚餐：Auckland市中心",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -3874,7 +3703,7 @@
           "sortOrder": 10,
           "period": "早餐后",
           "place": "酒店",
-          "activity": "退房并寄存行李；如租车留到今天，先完成市区还车。",
+          "activity": "退房并寄存行李。",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -4278,13 +4107,13 @@
       "detail": "同一家连住，选 CBD / Britomart 附近，能在 2/16 退房后寄存行李。"
     },
     {
-      "id": "hobbiton-transport",
-      "sortOrder": 90,
-      "kind": "book",
+      "id": "tour-0215-pickup",
+      "sortOrder": 95,
+      "kind": "prep",
       "dueDate": "",
-      "dueLabel": "定了机票后",
-      "title": "定 2/15 去 Hobbiton 怎么走",
-      "detail": "租车自驾（要能晚上还车），或坐大巴 / 接驳（要 13:30 前送到 Shire’s Rest、16:20 后能接回）。"
+      "dueLabel": "出发前一周",
+      "title": "确认 2/15 一日团的上车地点",
+      "detail": "06:00 出发：在 Klook 确认单或客服问清是集合点还是酒店接送、午餐包不包含；订好奥克兰酒店后把地址发给他们。"
     },
     {
       "id": "stargazing",
@@ -4348,15 +4177,6 @@
       "dueLabel": "可选",
       "title": "订 Rippon 品酒（2/9 下午）",
       "detail": "订不到就跳过。"
-    },
-    {
-      "id": "glowworm",
-      "sortOrder": 155,
-      "kind": "book",
-      "dueDate": "",
-      "dueLabel": "尽早",
-      "title": "订 Te Anau 萤火虫洞 2/10 17:45 场",
-      "detail": "RealNZ 坐船过湖进洞，约 2 小时 15 分，约 20:00 回来，每人约 NZ$154；先在官网确认这天有 17:45 场。同时订 20:15 的晚饭（不少餐厅 21:00 前后停止点餐）。"
     },
     {
       "id": "skyline",
@@ -4500,14 +4320,24 @@
     },
     {
       "sortOrder": 20,
-      "title": "Hobbiton 那天是长日子",
+      "title": "2/15 要早起",
       "verdict": "2/15",
       "dayIds": [
         "d15"
       ],
-      "detail": "奥克兰到 Shire’s Rest 单程约 175 公里，来回 4.5–5 小时，加上 2.5 小时导览，全天 10 小时左右，前一天还刚飞过来。",
-      "action": "租车的话两人轮流开，09:00 出发更从容；坐大巴或接驳就盯紧 13:30 报到和 16:20 结束。两种都建议 2/14 早点睡、午饭在 Shire’s Rest 解决、晚饭订 20:00 以后。",
-      "resources": []
+      "detail": "一日团 06:00 出发、约 17:30 回来，单程车程约 2–2.5 小时，前一天还刚从皇后镇飞过来。",
+      "action": "2/14 看完日落就回酒店早睡；早餐带上车；回来后晚上不排硬行程，Mt Eden 看日落只在有精神时去。",
+      "resources": [
+        {
+          "id": "waitomo-hobbiton-booking",
+          "title": "Hobbiton + Waitomo萤火虫洞一日团（Klook，已订）",
+          "type": "booking",
+          "url": "https://www.klook.cn/zh-CN/activity/23913-hobbiton-waitomo-caves-join-in-tour-auckland/",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "06:00出发，约17:30回到Auckland"
+        }
+      ]
     },
     {
       "sortOrder": 30,
@@ -4652,13 +4482,13 @@
       "sourceNote": "09:30前报到，09:50–17:00"
     },
     {
-      "id": "hobbiton-booking",
-      "title": "Hobbiton Mandarin Language Tour 13:50（已订）",
+      "id": "waitomo-hobbiton-booking",
+      "title": "Hobbiton + Waitomo萤火虫洞一日团（Klook，已订）",
       "type": "booking",
-      "url": "https://www.google.com/maps/search/?api=1&query=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand",
+      "url": "https://www.klook.cn/zh-CN/activity/23913-hobbiton-waitomo-caves-join-in-tour-auckland/",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "13:30前在Ticketing Office报到"
+      "sourceNote": "06:00出发，约17:30回到Auckland"
     },
     {
       "id": "haymarket-map",
@@ -4977,30 +4807,12 @@
     },
     {
       "id": "shire-rest-map",
-      "title": "The Shire’s Rest报到点",
+      "title": "Hobbiton Movie Set",
       "type": "map",
       "url": "https://www.google.com/maps/search/?api=1&query=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand",
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
-    },
-    {
-      "id": "hobbiton-faq-official",
-      "title": "Hobbiton官方FAQ",
-      "type": "official",
-      "url": "https://www.hobbitontours.com/plan-visit/frequently-asked-questions/",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "官网"
-    },
-    {
-      "id": "hobbiton-transfers-official",
-      "title": "Hobbiton官方交通伙伴",
-      "type": "official",
-      "url": "https://www.hobbitontours.com/plan-visit/transfers/",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "官网"
     },
     {
       "id": "art-gallery-map",
@@ -5390,19 +5202,19 @@
       "sourceNote": "Transport for NSW"
     },
     {
-      "id": "glowworm-official",
-      "title": "Te Anau Glowworm Caves（RealNZ）",
-      "type": "official",
-      "url": "https://www.realnz.com/en/experiences/glowworm-caves/te-anau-glowworm-caves/",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "RealNZ"
-    },
-    {
       "id": "earnslaw-park-map",
       "title": "Earnslaw Park",
       "type": "map",
       "url": "https://www.google.com/maps/search/?api=1&query=Earnslaw+Park%2C+Queenstown%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "waitomo-map",
+      "title": "Waitomo Glowworm Caves",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Waitomo+Glowworm+Caves%2C+Waitomo%2C+New+Zealand",
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
@@ -5523,33 +5335,6 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "导航10"
-    },
-    {
-      "id": "nav11-out-route",
-      "title": "市区参考起点经Matamata到现场",
-      "type": "map",
-      "url": "https://www.google.com/maps/dir/?api=1&origin=Britomart%2C+Auckland%2C+New+Zealand&destination=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand&travelmode=driving&waypoints=Matamata+i-SITE+Visitor+Information+Centre%2C+Matamata%2C+New+Zealand",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "导航11"
-    },
-    {
-      "id": "nav11-matamata-route",
-      "title": "Matamata休息后到现场",
-      "type": "map",
-      "url": "https://www.google.com/maps/dir/?api=1&origin=Matamata+i-SITE+Visitor+Information+Centre%2C+Matamata%2C+New+Zealand&destination=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand&travelmode=driving",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "导航11"
-    },
-    {
-      "id": "nav11-back-route",
-      "title": "现场回Auckland市中心参考",
-      "type": "map",
-      "url": "https://www.google.com/maps/dir/?api=1&origin=The+Shire%27s+Rest%2C+501+Buckland+Road%2C+Hinuera%2C+Matamata+3472%2C+New+Zealand&destination=Britomart%2C+Auckland%2C+New+Zealand&travelmode=driving",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "导航11"
     }
   ]
 }

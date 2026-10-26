@@ -52,18 +52,19 @@ describe("2027 two-person itinerary data", () => {
     assert.equal(dayById("d11").ticketResource.type, "booking");
     assert.match(dayById("d11").leaveBy, /09:30前/);
     assert.ok(dayById("d11").blocks.some((block) => block.period === "09:50–17:00"));
-    assert.match(dayById("d15").leaveBy, /13:30前.*报到/);
-    assert.match(dayById("d15").transport, /交通待定/);
-    assert.ok(dayById("d15").blocks.some((block) => /13:50/.test(block.period) && /Mandarin/.test(block.activity)));
+    assert.match(dayById("d15").transport, /06:00出发，约17:30回到Auckland/);
+    assert.equal(dayById("d15").drive, null);
+    assert.equal(dayById("d15").ticketResource.id, "waitomo-hobbiton-booking");
+    assert.deepEqual(dayById("d15").blocks.filter((block) => /Waitomo|Hobbiton/.test(block.place)).map((block) => block.place), ["Waitomo Glowworm Caves", "Hobbiton Movie Set"]);
   });
 
-  it("attaches all 10 driving guides with their segments", () => {
+  it("attaches all 9 driving guides with their segments", () => {
     assert.deepEqual(
       itinerary.days.filter((day) => day.drive).map((day) => [day.date.slice(5), day.drive.id, day.drive.legs.length]),
       [
         ["02-05", "nav02", 5], ["02-06", "nav03", 4], ["02-07", "nav04", 5],
         ["02-08", "nav05", 4], ["02-09", "nav06", 3], ["02-10", "nav07", 5], ["02-12", "nav08", 5],
-        ["02-13", "nav09", 5], ["02-14", "nav10", 3], ["02-15", "nav11", 5],
+        ["02-13", "nav09", 5], ["02-14", "nav10", 3],
       ],
     );
     assert.match(dayById("d10").drive.sequence, /Crown Range Summit → Arrow Junction \/ Arrowtown/);
@@ -101,12 +102,13 @@ describe("2027 two-person itinerary data", () => {
     assert.ok(has("d3", /渡轮/));
     assert.ok(has("d7", /Pukaki.*日落/));
     assert.ok(has("d9", /That Wānaka Tree.*日落/));
-    assert.ok(has("d10", /萤火虫/));
+    assert.ok(has("d10", /Lakefront.*日落/));
+    assert.ok(!JSON.stringify(dayById("d10")).includes("萤火虫"));
     assert.ok(has("d12", /Earnslaw Park/));
     assert.ok(has("d14", /Wynyard Quarter/));
     assert.ok(has("d15", /Mt Eden/));
     const ids = itinerary.todos.map((todo) => todo.id);
-    for (const id of ["glowworm", "dinner-valentine"]) assert.ok(ids.includes(id), id);
+    for (const id of ["tour-0215-pickup", "dinner-valentine"]) assert.ok(ids.includes(id), id);
     assert.match(JSON.stringify(dayById("d13").notes), /Glenorchy–Paradise Road/);
   });
 
@@ -127,7 +129,7 @@ describe("2027 two-person itinerary data", () => {
     const ids = itinerary.todos.map((todo) => todo.id);
     assert.equal(new Set(ids).size, ids.length);
     assert.ok(ids.every((id) => /^[a-z0-9][a-z0-9-]{0,63}$/.test(id)));
-    for (const id of ["visa", "licence", "late-checkin-chc", "baggage-jq296", "auckland-hotel", "hobbiton-transport", "stargazing", "dinner-kika", "milford-terms", "pay-fernhill", "cancel-teanau"]) {
+    for (const id of ["visa", "licence", "late-checkin-chc", "baggage-jq296", "auckland-hotel", "stargazing", "dinner-kika", "milford-terms", "pay-fernhill", "cancel-teanau"]) {
       assert.ok(ids.includes(id), id);
     }
     assert.ok(itinerary.todos.every((todo) => ["book", "pay", "deadline", "prep"].includes(todo.kind)));
