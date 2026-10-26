@@ -108,7 +108,8 @@ describe("2027 two-person itinerary data", () => {
     assert.ok(has("d13", /Moke Lake/));
     assert.ok(has("d1", /Barangaroo/));
     assert.ok(has("d2", /Mrs Macquarie/));
-    assert.ok(has("d3", /渡轮/));
+    assert.ok(has("d3", /Margaret/) && !has("d3", /Manly|渡轮/));
+    assert.equal(itinerary.todos.find((todo) => todo.id === "dinner-margaret").dueDate, "2026-11-15");
     assert.ok(has("d7", /Pukaki.*日落/));
     assert.ok(has("d9", /That Wānaka Tree.*日落/));
     assert.ok(has("d10", /Lakefront.*日落/));
