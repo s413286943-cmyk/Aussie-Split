@@ -82,7 +82,7 @@
       "clothingNote": "轻薄夏装、防晒、帽子；机舱和室内空调带一件薄外套。",
       "coverImageUrl": "/nz2027/d01.jpg",
       "coverImageAlt": "D01 抵达悉尼，慢慢进入假期",
-      "transport": "航班 CZ601 06:35 到悉尼T1 · 火车进城",
+      "transport": "航班 CZ601 06:35 到悉尼T1 · 打车进城",
       "leaveBy": "06:35 落地悉尼T1",
       "notes": [
         {
@@ -95,7 +95,7 @@
         },
         {
           "label": "进城",
-          "text": "机场 T1 坐 Airport Link 火车到 Central，约 15 分钟，再走到酒店；Opal 卡或手机刷卡。"
+          "text": "出机场打车或 Uber 到酒店，约 20–30 分钟。机场火车另收站台费，两人约 A$45，和打车差不多，带着行李不划算。"
         }
       ],
       "lodgingResource": {
@@ -132,7 +132,7 @@
           "sortOrder": 10,
           "period": "06:35–08:30",
           "place": "Sydney Airport T1 → Haymarket",
-          "activity": "落地后入境、过检疫、取行李，坐火车到 Central，走到酒店寄存行李。",
+          "activity": "落地后入境、过检疫、取行李，打车或 Uber 到酒店寄存行李。",
           "highlight": "夜航落地",
           "tip": "",
           "resources": [
@@ -255,8 +255,8 @@
       "clothingNote": "防晒霜、帽子、墨镜、好走的鞋；想下水就带泳衣和毛巾。",
       "coverImageUrl": "/nz2027/d02.jpg",
       "coverImageAlt": "D02 Bondi海滩与海岸步道",
-      "transport": "火车＋巴士往返Bondi · 海岸步行",
-      "leaveBy": "09:00–10:00早餐后出门",
+      "transport": "巴士去Coogee · 海岸步行到Bondi · 巴士＋火车回城",
+      "leaveBy": "09:00早餐后出门",
       "notes": [
         {
           "label": "住宿",
@@ -286,9 +286,9 @@
       },
       "primaryResource": {
         "id": "bondi-transit-route",
-        "title": "Great Southern → Bondi Beach公共交通",
+        "title": "Great Southern → Coogee Beach公共交通",
         "type": "map",
-        "url": "https://www.google.com/maps/dir/?api=1&origin=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia&destination=Bondi+Beach%2C+NSW%2C+Australia&travelmode=transit",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia&destination=Coogee+Beach%2C+NSW%2C+Australia&travelmode=transit",
         "imageUrl": "",
         "imageAlt": "",
         "sourceNote": "Google Maps"
@@ -308,16 +308,16 @@
           "dayId": "d2",
           "sortOrder": 10,
           "period": "09:00–10:00",
-          "place": "Haymarket → Bondi Beach",
-          "activity": "Haymarket吃早餐；Central坐火车到Bondi Junction，换巴士到Bondi Beach。",
+          "place": "Haymarket → Coogee Beach",
+          "activity": "Haymarket吃早餐；坐巴士去Coogee Beach，约40分钟，或打车约20分钟。",
           "highlight": "出发去海边",
           "tip": "",
           "resources": [
             {
               "id": "bondi-transit-route",
-              "title": "Great Southern → Bondi Beach公共交通",
+              "title": "Great Southern → Coogee Beach公共交通",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia&destination=Bondi+Beach%2C+NSW%2C+Australia&travelmode=transit",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia&destination=Coogee+Beach%2C+NSW%2C+Australia&travelmode=transit",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -328,39 +328,10 @@
           "dayId": "d2",
           "sortOrder": 20,
           "period": "10:00–12:30",
-          "place": "Bondi → Tamarama → Bronte → Coogee",
-          "activity": "走Bondi to Coogee海岸步道，约6公里，含拍照和休息按2–2.5小时；Tamarama、Bronte都可以停。",
+          "place": "Coogee → Bronte → Tamarama → Bondi",
+          "activity": "从Coogee往北走海岸步道到Bondi，约6公里，含拍照和休息按2–2.5小时；Gordon's Bay、Bronte、Tamarama都可以停。",
           "highlight": "悬崖海岸线",
-          "tip": "累了就在Bronte结束。",
-          "resources": [
-            {
-              "id": "bondi-beach-map",
-              "title": "Bondi Beach",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Beach%2C+NSW%2C+Australia",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            },
-            {
-              "id": "bondi-coogee-walk-map",
-              "title": "Bondi to Coogee Coastal Walk",
-              "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Bondi+Beach%2C+NSW%2C+Australia&destination=Coogee+Beach%2C+NSW%2C+Australia&travelmode=walking&waypoints=Tamarama+Beach%2C+NSW%2C+Australia%7CBronte+Beach%2C+NSW%2C+Australia",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps步行"
-            }
-          ]
-        },
-        {
-          "dayId": "d2",
-          "sortOrder": 30,
-          "period": "12:30–14:00",
-          "place": "Coogee / Bronte",
-          "activity": "在Coogee或Bronte海边吃午餐。",
-          "highlight": "海边午餐",
-          "tip": "",
+          "tip": "累了就在Bronte坐车去Bondi。",
           "resources": [
             {
               "id": "coogee-beach-map",
@@ -372,10 +343,30 @@
               "sourceNote": "Google Maps"
             },
             {
-              "id": "bronte-beach-map",
-              "title": "Bronte Beach",
+              "id": "bondi-coogee-walk-map",
+              "title": "Coogee to Bondi Coastal Walk",
               "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Bronte+Beach%2C+NSW%2C+Australia",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Coogee+Beach%2C+NSW%2C+Australia&destination=Bondi+Beach%2C+NSW%2C+Australia&travelmode=walking&waypoints=Bronte+Beach%2C+NSW%2C+Australia%7CTamarama+Beach%2C+NSW%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps步行"
+            }
+          ]
+        },
+        {
+          "dayId": "d2",
+          "sortOrder": 30,
+          "period": "12:30–14:00",
+          "place": "Bondi Beach",
+          "activity": "在Bondi吃午饭，Icebergs一带或Campbell Parade。",
+          "highlight": "海边午餐",
+          "tip": "",
+          "resources": [
+            {
+              "id": "bondi-beach-map",
+              "title": "Bondi Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Bondi+Beach%2C+NSW%2C+Australia",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
@@ -387,7 +378,7 @@
           "sortOrder": 40,
           "period": "14:00–16:30",
           "place": "Bondi Beach",
-          "activity": "坐巴士回Bondi，海滩晒太阳、下水（只在红黄旗之间），或沿Campbell Parade喝咖啡。",
+          "activity": "海滩晒太阳、下水（只在红黄旗之间），或沿Campbell Parade喝咖啡。不用再走回头路。",
           "highlight": "Bondi海滩时间",
           "tip": "",
           "resources": [
@@ -401,6 +392,16 @@
               "sourceNote": "Google Maps"
             }
           ]
+        },
+        {
+          "dayId": "d2",
+          "sortOrder": 45,
+          "period": "16:30–17:30",
+          "place": "Bondi → Haymarket",
+          "activity": "坐巴士到Bondi Junction换火车回Central，或直接打车。",
+          "highlight": "",
+          "tip": "",
+          "resources": []
         },
         {
           "dayId": "d2",
@@ -456,8 +457,8 @@
           "dayId": "d2",
           "sortOrder": 90,
           "period": "饮食",
-          "place": "Coogee / Bondi / Haymarket",
-          "activity": "早餐：住宿附近咖啡店；午餐：Coogee或Bronte海边；晚餐：Circular Quay或The Rocks",
+          "place": "Bondi / Circular Quay",
+          "activity": "早餐：住宿附近咖啡店；午餐：Bondi海边；晚餐：Circular Quay或The Rocks",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -687,13 +688,13 @@
       "lon": 172.6045,
       "title": "悉尼最后一个白天，夜航飞基督城",
       "focus": "白天在悉尼轻松走走，晚上飞到基督城，先睡一觉。",
-      "lodging": "Metropolitan Motel on Riccarton",
-      "lodgingStatus": "已订",
+      "lodging": "基督城机场附近酒店（待订）",
+      "lodgingStatus": "待订",
       "climateNote": "基督城2月约12–22°C，早晚凉，常有东北风。",
       "clothingNote": "短袖加抓绒或薄羽绒；机舱随身带外套。",
       "coverImageUrl": "/nz2027/d04.jpg",
       "coverImageAlt": "D04 悉尼最后一个白天，夜航飞基督城",
-      "transport": "航班 NZ224 悉尼 18:15 → 基督城 23:20 · 打车去住处",
+      "transport": "航班 NZ224 悉尼 18:15 → 基督城 23:20 · 走到机场旁的酒店",
       "leaveBy": "10:00 前退房；15:15 左右去机场",
       "notes": [
         {
@@ -702,11 +703,11 @@
         },
         {
           "label": "住宿",
-          "text": "Metropolitan Motel on Riccarton，175 Riccarton Road。前台 07:30–21:00，到店已过半夜，一定要提前拿到晚到入住方式（钥匙盒或门禁码）。"
+          "text": "改住基督城机场附近的酒店（待订），选走几分钟就到航站楼、24 小时前台的。23:20 落地，订单里注明约 23:45 到店。"
         },
         {
-          "label": "当晚交通",
-          "text": "今晚还没有车。出机场打车或 Uber 去住处，约 20 分钟；车明天 10:00 在机场取。"
+          "label": "当晚",
+          "text": "今晚还没有车，出了到达厅走到酒店，直接睡；明早 10:00 在机场取车，不用来回打车。"
         },
         {
           "label": "入境检疫",
@@ -714,22 +715,22 @@
         }
       ],
       "lodgingResource": {
-        "id": "metropolitan-map",
-        "title": "Metropolitan Motel on Riccarton",
-        "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand",
+        "id": "chc-airport-hotel-note",
+        "title": "基督城机场附近酒店（待订）",
+        "type": "note",
+        "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "确认邮件地址"
+        "sourceNote": "走到航站楼几分钟、24 小时前台"
       },
       "primaryResource": {
-        "id": "chc-airport-route",
-        "title": "基督城机场至住宿参考路线",
+        "id": "syd-t1-map",
+        "title": "悉尼机场国际航站楼 T1",
         "type": "map",
-        "url": "https://www.google.com/maps/dir/?api=1&origin=Christchurch+Airport%2C+New+Zealand&destination=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand&travelmode=driving",
+        "url": "https://www.google.com/maps/search/?api=1&query=Sydney+Airport+International+Terminal+T1",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "导航01"
+        "sourceNote": "Google Maps"
       },
       "ticketResource": {
         "id": "no-fixed-ticket",
@@ -806,28 +807,19 @@
           "dayId": "d4",
           "sortOrder": 50,
           "period": "23:20后",
-          "place": "Christchurch Airport → Riccarton",
-          "activity": "打车或 Uber 去 Metropolitan，约 20 分钟，按晚到方式拿钥匙入住，直接睡觉。",
+          "place": "Christchurch Airport → 机场酒店",
+          "activity": "入境取行李后走到机场旁的酒店入住，直接睡觉。",
           "highlight": "今晚没有车",
           "tip": "",
           "resources": [
             {
-              "id": "chc-airport-route",
-              "title": "基督城机场至住宿参考路线",
-              "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Christchurch+Airport%2C+New+Zealand&destination=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand&travelmode=driving",
+              "id": "chc-airport-hotel-note",
+              "title": "基督城机场附近酒店（待订）",
+              "type": "note",
+              "url": "",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "导航01"
-            },
-            {
-              "id": "metropolitan-map",
-              "title": "Metropolitan Motel on Riccarton",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "确认邮件地址"
+              "sourceNote": "走到航站楼几分钟、24 小时前台"
             }
           ]
         },
@@ -861,7 +853,7 @@
       "coverImageUrl": "/nz2027/d05.jpg",
       "coverImageAlt": "D05 机场取车，两座湖串起的转场日",
       "transport": "自驾 · 纯驾驶约4–4.5小时",
-      "leaveBy": "09:30 到机场，10:00 取车",
+      "leaveBy": "10:00 机场取车",
       "notes": [
         {
           "label": "取车",
@@ -890,13 +882,13 @@
         "sourceNote": "住宿官网地址"
       },
       "primaryResource": {
-        "id": "chc-airport-route",
-        "title": "基督城机场至住宿参考路线",
+        "id": "nav02-a-route",
+        "title": "前半程至Tekapo",
         "type": "map",
-        "url": "https://www.google.com/maps/dir/?api=1&origin=Christchurch+Airport%2C+New+Zealand&destination=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand&travelmode=driving",
+        "url": "https://www.google.com/maps/dir/?api=1&origin=Christchurch+Airport%2C+New+Zealand&destination=Church+of+the+Good+Shepherd%2C+Pioneer+Drive%2C+Lake+Tekapo%2C+New+Zealand&travelmode=driving&waypoints=Ashburton%2C+New+Zealand%7CGeraldine%2C+Canterbury%2C+New+Zealand%7CFairlie+Bakehouse%2C+Fairlie%2C+New+Zealand",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "导航01"
+        "sourceNote": "导航02"
       },
       "ticketResource": {
         "id": "rental-car-booking",
@@ -980,20 +972,20 @@
         {
           "dayId": "d5",
           "sortOrder": 10,
-          "period": "09:00–10:00",
-          "place": "Riccarton → Christchurch Airport",
-          "activity": "早餐后退房，打车回机场，10:00 取车，绕车检查一圈、拍照留底。",
+          "period": "08:30–10:00",
+          "place": "机场酒店 → 租车柜台",
+          "activity": "酒店吃早餐、退房，走到机场租车柜台，10:00 取车，绕车检查一圈、拍照留底。",
           "highlight": "取车",
           "tip": "",
           "resources": [
             {
-              "id": "chc-airport-route",
-              "title": "基督城机场至住宿参考路线",
-              "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Christchurch+Airport%2C+New+Zealand&destination=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand&travelmode=driving",
+              "id": "rental-car-booking",
+              "title": "南岛租车：起亚 Seltos 或同级（已订）",
+              "type": "booking",
+              "url": "https://www.google.com/maps/search/?api=1&query=Christchurch+Airport%2C+New+Zealand",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "导航01"
+              "sourceNote": "2/5 10:00 基督城机场取，2/14 10:00 皇后镇机场还"
             }
           ]
         },
@@ -1111,7 +1103,7 @@
           "sortOrder": 90,
           "period": "饮食",
           "place": "Fairlie / Twizel",
-          "activity": "早餐：Riccarton；午餐：Fairlie Bakehouse；晚餐：Twizel镇上",
+          "activity": "早餐：机场酒店；午餐：Fairlie Bakehouse；晚餐：Twizel镇上",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -1143,8 +1135,12 @@
           "text": "Twizel Holiday Park，第二晚。"
         },
         {
+          "label": "步道",
+          "text": "Hooker 新吊桥 2026 年 7 月已开通，步道通到 Hooker Lake，单程约 5km、90 分钟。第一座吊桥一次限 20 人，长周末可能排队。出发前一周看 DOC 提醒。"
+        },
+        {
           "label": "天气备选",
-          "text": "2/6与2/7可互换；体力不足时改Kea Point短线。Hooker现行全程10km、官方3小时往返，2027出发前看开放提醒。"
+          "text": "2/6 与 2/7 可互换。下雨或步道关闭就改 Tasman Glacier View + Blue Lakes（Tasman 停车场，往返约 1 小时），再加 Kea Point。"
         },
         {
           "label": "长周末",
@@ -1294,15 +1290,24 @@
           "sortOrder": 20,
           "period": "09:15–14:00左右",
           "place": "Hooker Valley Track",
-          "activity": "Hooker Valley徒步，含拍照、路餐和休息预留4–5小时。",
+          "activity": "Hooker Valley徒步到Hooker Lake，含拍照、路餐和休息预留4–5小时。",
           "highlight": "全天主角",
-          "tip": "全程10km，官方约3小时往返。",
+          "tip": "往返约10km、3小时；步道关闭就改Tasman Glacier View + Blue Lakes。",
           "resources": [
             {
               "id": "doc-hooker-official",
               "title": "DOC Hooker Valley步道",
               "type": "official",
               "url": "https://www.doc.govt.nz/hooker-valley-track",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "DOC"
+            },
+            {
+              "id": "tasman-valley-official",
+              "title": "Tasman Glacier View步道",
+              "type": "official",
+              "url": "https://www.doc.govt.nz/parks-and-recreation/places-to-go/canterbury/places/aoraki-mount-cook-national-park/things-to-do/tracks/tasman-glacier-view-track/",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "DOC"
@@ -1813,11 +1818,11 @@
         {
           "dayId": "d8",
           "sortOrder": 50,
-          "period": "18:45–21:15",
+          "period": "18:45–21:15（天气好再去）",
           "place": "Diamond Lake / Lake Wānaka Lookout",
-          "activity": "18:45出发，开约 20 分钟到 Diamond Lake 停车场：先到 Diamond Lake 湖边，再上 Lake Wānaka Lookout 俯瞰整个湖，往返约 2 小时，台阶多。只想轻松走就绕 Diamond Lake 一圈，约 45 分钟。",
+          "activity": "天气好、有精神才去：18:45出发，开约 20 分钟到 Diamond Lake 停车场，先到 Diamond Lake 湖边，再上 Lake Wānaka Lookout 俯瞰整个湖，往返约 2 小时，台阶多。只想轻松走就绕 Diamond Lake 一圈，约 45 分钟。累了就在 Wānaka 湖边散步看日落。",
           "highlight": "傍晚俯瞰 Wānaka 湖",
-          "tip": "20:00–20:30在观景台看斜阳照湖；21:15前回到停车场，趁天没黑开回住处。",
+          "tip": "去了的话，明早不再爬 Mount Iron；21:15前回到停车场。",
           "resources": [
             {
               "id": "diamond-lake-map",
@@ -1869,15 +1874,15 @@
       "coverImageUrl": "/nz2027/d09.jpg",
       "coverImageAlt": "D09 Wānaka慢慢过一天",
       "transport": "市内短途自驾 · 合计30–60分钟",
-      "leaveBy": "09:00出发去Mount Iron；Kika约18:00",
+      "leaveBy": "09:00出门；Kika约18:00",
       "notes": [
         {
           "label": "住宿",
           "text": "Hikuwai Haven 1，第二晚。"
         },
         {
-          "label": "备选",
-          "text": "不想爬坡就用湖边Waterfall Creek方向散步60–90分钟替换Mount Iron；电影依当周场次，不叠加硬预约。"
+          "label": "上午",
+          "text": "2/8 去过 Diamond Lake 就走平路：沿湖走到 Waterfall Creek，60–90 分钟；2/8 没去才爬 Mount Iron。电影依当周场次，不叠加硬预约。"
         }
       ],
       "lodgingResource": {
@@ -1978,9 +1983,9 @@
           "dayId": "d9",
           "sortOrder": 10,
           "period": "09:00–11:00",
-          "place": "Mount Iron",
-          "activity": "Mount Iron步道，按1.5–2小时准备，有上下坡。",
-          "highlight": "轻徒步",
+          "place": "Mount Iron / 湖边平路",
+          "activity": "2/8 没去 Diamond Lake：爬 Mount Iron，按 1.5–2 小时准备，有上下坡。去过了：从镇上沿湖走到 Waterfall Creek，平路 60–90 分钟。",
+          "highlight": "上午走走",
           "tip": "",
           "resources": [
             {
@@ -1997,6 +2002,15 @@
               "title": "去Mount Iron",
               "type": "map",
               "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Mount+Iron+Track+Car+Park%2C+Wanaka%2C+New+Zealand&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "导航06"
+            },
+            {
+              "id": "wanaka-lakefront-route",
+              "title": "去湖滨",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Mount+Iron+Track+Car+Park%2C+Wanaka%2C+New+Zealand&destination=Wanaka+Lakefront%2C+Ardmore+Street%2C+Wanaka%2C+New+Zealand&travelmode=driving",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "导航06"
@@ -2640,7 +2654,7 @@
         "id": "nav08",
         "dayId": "d12",
         "title": "导航08 · Te Anau → Queenstown Fernhill",
-        "duration": "09:30左右出发、10:00前退房；纯驾驶约2–2.5小时，12:00–13:00到Frankton；Kelvin半岛步道后15:10–15:50入住，16:30坐缆车（已订）。",
+        "duration": "09:30左右出发、10:00前退房；纯驾驶约2–2.5小时，12:00–13:00到Frankton；Kelvin半岛步道后15:00入住，16:30坐缆车（已订）。",
         "sequence": "3 Thomson Place → SH94 / Mossburn → SH97 / Five Rivers → SH6 / Kingston → Frankton → Kelvin Heights → SH6A / Queenstown → Fernhill → 15 Greenstone Place",
         "notes": "住处在山坡，回房要考虑上坡和天气。晚餐若打车，按往返安排；若开车，使用有明确收费/限时标识的市区车位。",
         "legs": [
@@ -2758,11 +2772,11 @@
         {
           "dayId": "d12",
           "sortOrder": 30,
-          "period": "13:15–14:45",
+          "period": "13:15–14:30（晚了就跳过）",
           "place": "Kelvin Peninsula Sculpture Trail",
-          "activity": "Kelvin Heights湖畔雕塑环线，绕高尔夫球场一圈约3.5km、1小时，平路好走，对岸是Walter Peak和皇后镇。",
+          "activity": "Kelvin Heights湖畔雕塑环线，绕高尔夫球场约3.5km、1小时，平路好走，对岸是Walter Peak和皇后镇。",
           "highlight": "湖畔雕塑步道",
-          "tip": "起点在Peninsula Road和Grove Lane路口；14:45前走完，留出入住和去缆车的时间。",
+          "tip": "午饭晚了或累了就跳过，直接去Fernhill，优先保证16:30的缆车；起点在Peninsula Road和Grove Lane路口。",
           "resources": [
             {
               "id": "kelvin-trail-map",
@@ -2787,9 +2801,9 @@
         {
           "dayId": "d12",
           "sortOrder": 35,
-          "period": "15:10–15:50",
+          "period": "15:00–15:45",
           "place": "15 Greenstone Place",
-          "activity": "开约20分钟到Fernhill，入住15 Greenstone Place，放下行李；车留在住处，晚上在市区吃饭。",
+          "activity": "开约20分钟到Fernhill，15:00入住，放下行李；车留在住处，15:50出发去缆车站。",
           "highlight": "入住Fernhill",
           "tip": "",
           "resources": [
@@ -2903,14 +2917,14 @@
       "base": "Queenstown",
       "lat": -44.8496,
       "lon": 168.387,
-      "title": "沿湖开去Glenorchy，傍晚Moke Lake",
-      "focus": "公路、红船屋、湿地步道，傍晚绕Moke Lake走一圈。",
+      "title": "沿湖开去Glenorchy，傍晚可选Moke Lake",
+      "focus": "公路、红船屋、湿地步道；有精神傍晚再去Moke Lake看倒影。",
       "lodging": "山景独立单间公寓Fernhill",
       "lodgingStatus": "已订",
       "climateNote": "Wakatipu湖区约10–24°C，晴天日照强，湖边风大。",
       "clothingNote": "防晒＋防风外套、驱蚊液；Lagoon步道雨后可能积水，穿防水鞋。",
       "coverImageUrl": "/nz2027/d13.jpg",
-      "coverImageAlt": "D13 沿湖开去Glenorchy，傍晚Moke Lake",
+      "coverImageAlt": "D13 沿湖开去Glenorchy，傍晚可选Moke Lake",
       "transport": "自驾往返Glenorchy · 往返约2小时",
       "leaveBy": "09:00左右出发",
       "notes": [
@@ -3147,11 +3161,11 @@
         {
           "dayId": "d13",
           "sortOrder": 50,
-          "period": "18:00–20:30",
+          "period": "18:00–19:30（可选）",
           "place": "Moke Lake",
-          "activity": "从Glenorchy路岔进Moke Lake Road，约30分钟到湖边。环湖步道约6km、2–2.5小时；不想走完就在营地一侧湖边看倒影，傍晚无风时最好。",
+          "activity": "有精神才去：从Glenorchy路岔进Moke Lake Road，约30分钟到湖边，在营地一侧湖边停30–45分钟看倒影，傍晚无风时最好。还想走再绕湖一圈（约6km、2–2.5小时，20:30前回到车上）。",
           "highlight": "傍晚湖面倒影",
-          "tip": "后半圈是傍晚斜光；20:30开回碎石路，21:00日落前回到铺装路。",
+          "tip": "累了或下雨就不去；21:00日落前回到铺装路。",
           "resources": [
             {
               "id": "moke-lake-map",
@@ -3176,9 +3190,9 @@
         {
           "dayId": "d13",
           "sortOrder": 60,
-          "period": "21:00左右",
+          "period": "20:00–21:00",
           "place": "Fergburger",
-          "activity": "回市中心吃Fergburger，这个点排队短一些，也可以打包到湖边吃；之后整理行李，准备次日加油还车。",
+          "activity": "回市中心吃Fergburger。可以先打电话点单，到店直接付款取餐，不用排外面的长队；隔壁Fergbaker的派也可以带一个。之后整理行李，准备次日加油还车。",
           "highlight": "皇后镇招牌汉堡",
           "tip": "",
           "resources": [
@@ -3400,7 +3414,7 @@
           "sortOrder": 40,
           "period": "15:20后",
           "place": "Auckland Airport → CBD",
-          "activity": "取行李，坐 SkyBus 或打车进城（约 45–60 分钟），入住 2/14–16 连续两晚。",
+          "activity": "取行李，打车或 Uber 进城（约 40–60 分钟），入住 2/14–16 连续两晚。",
           "highlight": "连住两晚",
           "tip": "",
           "resources": [
@@ -3438,11 +3452,11 @@
         {
           "dayId": "d14",
           "sortOrder": 60,
-          "period": "19:45–20:45",
-          "place": "Wynyard Quarter / Silo Park",
-          "activity": "沿海边走到Wynyard Quarter / Silo Park，20:00–20:30朝西看海港大桥方向的日落（约20:19），再经Viaduct走回酒店。",
-          "highlight": "海港日落",
-          "tip": "明早06:00出发，看完日落就回酒店早睡。",
+          "period": "19:30–20:30（可选）",
+          "place": "Viaduct Harbour / Wynyard Quarter",
+          "activity": "饭后在Viaduct海边走走就回酒店早睡；有精神再走10分钟到Wynyard Quarter / Silo Park，看20:19的日落。",
+          "highlight": "海边散步",
+          "tip": "明早06:00出发，早点睡。",
           "resources": [
             {
               "id": "wynyard-map",
@@ -3608,30 +3622,10 @@
           "sortOrder": 50,
           "period": "18:30",
           "place": "Auckland市中心",
-          "activity": "酒店附近吃晚饭。",
-          "highlight": "",
+          "activity": "酒店附近吃晚饭，之后回酒店休息，不再出门。",
+          "highlight": "休息",
           "tip": "",
           "resources": []
-        },
-        {
-          "dayId": "d15",
-          "sortOrder": 60,
-          "period": "19:45–20:40（可选）",
-          "place": "Mt Eden · Maungawhau",
-          "activity": "打车约15分钟到山脚，走15–20分钟上山顶，20:18看整座城的日落，下山打车回酒店。",
-          "highlight": "城市日落",
-          "tip": "早起累了就跳过；山顶不能开车上去。",
-          "resources": [
-            {
-              "id": "mt-eden-map",
-              "title": "Mt Eden · Maungawhau",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Maungawhau+Mount+Eden+Summit%2C+Auckland%2C+New+Zealand",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "Google Maps"
-            }
-          ]
         },
         {
           "dayId": "d15",
@@ -3952,21 +3946,21 @@
       "sortOrder": 30,
       "checkIn": "2027-02-04",
       "checkOut": "2027-02-05",
-      "name": "Metropolitan Motel on Riccarton",
-      "room": "行政开间、按摩浴缸",
-      "detail": "14:00后入住；07:30–10:00退房；175 Riccarton Road",
+      "name": "基督城机场附近酒店（待订）",
+      "room": "走几分钟到航站楼、24 小时前台",
+      "detail": "23:45 左右到店；2/5 早上走去租车柜台",
       "resource": {
-        "id": "metropolitan-map",
-        "title": "Metropolitan Motel on Riccarton",
-        "type": "map",
-        "url": "https://www.google.com/maps/search/?api=1&query=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand",
+        "id": "chc-airport-hotel-note",
+        "title": "基督城机场附近酒店（待订）",
+        "type": "note",
+        "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "确认邮件地址"
+        "sourceNote": "走到航站楼几分钟、24 小时前台"
       },
-      "status": "已订1晚",
-      "freeCancelUntil": "2027-02-03 14:00",
-      "afterDeadline": "之后不可取消；未入住收全额"
+      "status": "待订1晚",
+      "freeCancelUntil": "",
+      "afterDeadline": ""
     },
     {
       "sortOrder": 40,
@@ -4075,9 +4069,9 @@
       "sortOrder": 10,
       "kind": "prep",
       "dueDate": "",
-      "dueLabel": "最先办",
-      "title": "办澳大利亚、新西兰签证",
-      "detail": "持中国护照两国都要单独办旅游签证，办好再出机票。材料和时长以两国官方为准。"
+      "dueLabel": "出发前",
+      "title": "盯 NZeTA 试行是否延长",
+      "detail": "NZeTA 已办：从澳洲出发、持澳洲签证的中国护照可用。这项安排 2025-11-03 起试行 12 个月，留意新西兰移民局公告；到期没延长就要改办新西兰旅游签证。"
     },
     {
       "id": "licence",
@@ -4086,16 +4080,16 @@
       "dueDate": "",
       "dueLabel": "出发前",
       "title": "两人的驾照英文翻译件",
-      "detail": "新西兰开车要带中国驾照和认可的英文翻译件（或国际驾照认证件），2/5 取车时会查。"
+      "detail": "要 NZTA 认可翻译员或中国公证处出具的英文翻译件，国内平台卖的“认证件”不算；2/5 取车时连同中国驾照一起查。"
     },
     {
-      "id": "late-checkin-chc",
+      "id": "chc-airport-hotel",
       "sortOrder": 25,
-      "kind": "prep",
+      "kind": "book",
       "dueDate": "",
-      "dueLabel": "出发前",
-      "title": "拿到基督城 Metropolitan 的晚到入住方式",
-      "detail": "2/4 23:20 才落地，到店过了半夜，前台 21:00 就下班；让旅馆发钥匙盒或门禁码。"
+      "dueLabel": "尽早",
+      "title": "订基督城机场附近酒店（2/4 一晚）",
+      "detail": "选走几分钟到航站楼、24 小时前台的，比如 Novotel Christchurch Airport；23:20 落地，订单里注明约 23:45 到店并拿到书面确认。"
     },
     {
       "id": "baggage-jq296",
@@ -4103,8 +4097,17 @@
       "kind": "prep",
       "dueDate": "",
       "dueLabel": "2/13 晚上",
-      "title": "按捷星 20kg 托运整理行李",
-      "detail": "JQ296 每人托运 20kg，机场补交很贵；南航国际段是每人 2 件。"
+      "title": "按捷星规定整理行李",
+      "detail": "JQ296 每人托运 20kg；随身两件合计 7kg，登机口常称重。重东西放托运，厚外套穿在身上；南航国际段是每人托运 2 件。"
+    },
+    {
+      "id": "nztd",
+      "sortOrder": 27,
+      "kind": "prep",
+      "dueDate": "",
+      "dueLabel": "2/3 晚–2/4 起飞前",
+      "title": "填新西兰入境申报 NZTD（每人一份）",
+      "detail": "起飞前 24 小时内在官网或 App 填；徒步鞋、食品、药品如实勾选。"
     },
     {
       "id": "auckland-hotel",
@@ -4113,7 +4116,7 @@
       "dueDate": "",
       "dueLabel": "尽早",
       "title": "订奥克兰两晚（2/14–16）",
-      "detail": "同一家连住，选 CBD / Britomart 附近，能在 2/16 退房后寄存行李。"
+      "detail": "先看 Klook 确认单的 2/15 上车点，选走路能到的酒店；同一家连住，能在 2/16 退房后寄存行李。"
     },
     {
       "id": "tour-0215-pickup",
@@ -4125,11 +4128,20 @@
       "detail": "06:00 出发：在 Klook 确认单或客服问清是集合点还是酒店接送、午餐包不包含；订好奥克兰酒店后把地址发给他们。"
     },
     {
+      "id": "hooker-alerts",
+      "sortOrder": 95,
+      "kind": "prep",
+      "dueDate": "",
+      "dueLabel": "出发前一周",
+      "title": "看 DOC 的 Hooker Valley 提醒",
+      "detail": "确认 2/6 步道开放到 Hooker Lake；关闭就按 Tasman Glacier View + Blue Lakes 走。"
+    },
+    {
       "id": "stargazing",
       "sortOrder": 100,
       "kind": "book",
       "dueDate": "",
-      "dueLabel": "尽早",
+      "dueLabel": "可选",
       "title": "订 2/7 Twizel 观星",
       "detail": "2/6 前后是新月，星空最好；23:00左右才完全天黑，订22:30以后的场次。长周末场次紧，确认集合点、语言和天气改期规则。"
     },
@@ -4251,15 +4263,6 @@
       "detail": "之后不能取消。三晚共 ¥2,027.36，离店扣款；具体取消条款以订单为准。"
     },
     {
-      "id": "cancel-metropolitan",
-      "sortOrder": 250,
-      "kind": "deadline",
-      "dueDate": "2027-02-03",
-      "dueLabel": "2/3 14:00",
-      "title": "基督城 Metropolitan 免费取消截止",
-      "detail": "之后不能取消，房费 ¥601.43 离店扣款；另有 NZ$200 押金会退。"
-    },
-    {
       "id": "cancel-hikuwai",
       "sortOrder": 260,
       "kind": "deadline",
@@ -4326,7 +4329,7 @@
         "d15"
       ],
       "detail": "一日团 06:00 出发、约 17:30 回来，单程车程约 2–2.5 小时，前一天还刚从皇后镇飞过来。",
-      "action": "2/14 看完日落就回酒店早睡；早餐带上车；回来后晚上不排硬行程，Mt Eden 看日落只在有精神时去。",
+      "action": "2/14 晚饭后早点回酒店睡；早餐带上车；回来后晚上就休息，不排活动。",
       "resources": [
         {
           "id": "waitomo-hobbiton-booking",
@@ -4365,13 +4368,13 @@
       "sourceNote": "确认邮件地址"
     },
     {
-      "id": "metropolitan-map",
-      "title": "Metropolitan Motel on Riccarton",
-      "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand",
+      "id": "chc-airport-hotel-note",
+      "title": "基督城机场附近酒店（待订）",
+      "type": "note",
+      "url": "",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "确认邮件地址"
+      "sourceNote": "走到航站楼几分钟、24 小时前台"
     },
     {
       "id": "twizel-holiday-park-map",
@@ -4501,9 +4504,9 @@
     },
     {
       "id": "bondi-transit-route",
-      "title": "Great Southern → Bondi Beach公共交通",
+      "title": "Great Southern → Coogee Beach公共交通",
       "type": "map",
-      "url": "https://www.google.com/maps/dir/?api=1&origin=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia&destination=Bondi+Beach%2C+NSW%2C+Australia&travelmode=transit",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia&destination=Coogee+Beach%2C+NSW%2C+Australia&travelmode=transit",
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
@@ -4537,9 +4540,9 @@
     },
     {
       "id": "bondi-coogee-walk-map",
-      "title": "Bondi to Coogee Coastal Walk",
+      "title": "Coogee to Bondi Coastal Walk",
       "type": "map",
-      "url": "https://www.google.com/maps/dir/?api=1&origin=Bondi+Beach%2C+NSW%2C+Australia&destination=Coogee+Beach%2C+NSW%2C+Australia&travelmode=walking&waypoints=Tamarama+Beach%2C+NSW%2C+Australia%7CBronte+Beach%2C+NSW%2C+Australia",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Coogee+Beach%2C+NSW%2C+Australia&destination=Bondi+Beach%2C+NSW%2C+Australia&travelmode=walking&waypoints=Bronte+Beach%2C+NSW%2C+Australia%7CTamarama+Beach%2C+NSW%2C+Australia",
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps步行"
@@ -4941,15 +4944,6 @@
       "sourceNote": "govt.nz"
     },
     {
-      "id": "chc-airport-route",
-      "title": "基督城机场至住宿参考路线",
-      "type": "map",
-      "url": "https://www.google.com/maps/dir/?api=1&origin=Christchurch+Airport%2C+New+Zealand&destination=175+Riccarton+Road%2C+Riccarton%2C+Christchurch%2C+New+Zealand&travelmode=driving",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "导航01"
-    },
-    {
       "id": "nav02-a-route",
       "title": "前半程至Tekapo",
       "type": "map",
@@ -5233,15 +5227,6 @@
       "title": "Silo Park / Wynyard Quarter",
       "type": "map",
       "url": "https://www.google.com/maps/search/?api=1&query=Silo+Park%2C+Wynyard+Quarter%2C+Auckland%2C+New+Zealand",
-      "imageUrl": "",
-      "imageAlt": "",
-      "sourceNote": "Google Maps"
-    },
-    {
-      "id": "mt-eden-map",
-      "title": "Mt Eden · Maungawhau",
-      "type": "map",
-      "url": "https://www.google.com/maps/search/?api=1&query=Maungawhau+Mount+Eden+Summit%2C+Auckland%2C+New+Zealand",
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
