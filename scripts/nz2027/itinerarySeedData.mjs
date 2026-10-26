@@ -471,9 +471,9 @@ export const lodgings = [
   lodging(20, "2027-02-01", "2027-02-04", "Great Southern Hotel Sydney", "三晚共 ¥2,027.36，离店扣款", "14:00–次日00:00入住；10:00前退房；717 George St, Haymarket", "great-southern-map", "已订3晚", "2027-02-01 14:00", "之后不可取消；未入住收全额"),
   lodging(30, "2027-02-04", "2027-02-05", "HOTEL GIVE", "¥510.06，到店付全款", "15:00后入住；10:00前退房；12 Hereford Street，植物园旁；前台24小时", "hotel-give-map", "已订1晚", "2027-02-02 23:59", "之后取消或改订收全额"),
   lodging(40, "2027-02-05", "2027-02-08", "Twizel Holiday Park", "One Bedroom Unit", "入退房时间看订单确认；122 Mackenzie Drive", "twizel-holiday-park-map", "已订3晚，已付", "", "原确认凭证未在本次展开，不预设免费取消"),
-  lodging(50, "2027-02-08", "2027-02-10", "Hikuwai Haven 1", "", "16:00后入住；10:00前退房；1 Outlet Road, Wānaka", "hikuwai-map", "已订2晚", "2027-02-03 16:00", "入住前部分退款，比例按订单"),
-  lodging(60, "2027-02-10", "2027-02-12", "Private Ensuite in the Heart of Te Anau", "", "15:00后入住；10:00前退房；3 Thomson Place", "te-anau-ensuite-map", "已订2晚", "2027-02-05 15:00", "入住前部分退款，比例按订单"),
-  lodging(70, "2027-02-12", "2027-02-14", "山景独立单间公寓Fernhill", "房东Coral", "15:00后入住；10:00前退房；15 Greenstone Place", "fernhill-map", "已订2晚", "2027-01-13 15:00", "2/5 15:00前取消可获部分退款，具体金额按订单"),
+  lodging(50, "2027-02-08", "2027-02-10", "Hikuwai Haven 1", "尾款 NZ$346.84 1/26 自动扣卡，不用操作", "16:00后入住；10:00前退房；1 Outlet Road, Wānaka", "hikuwai-map", "已订2晚", "2027-02-03 16:00", "入住前部分退款，比例按订单"),
+  lodging(60, "2027-02-10", "2027-02-12", "Private Ensuite in the Heart of Te Anau", "尾款 NZ$386.40 1/28 自动扣卡，不用操作", "15:00后入住；10:00前退房；3 Thomson Place", "te-anau-ensuite-map", "已订2晚", "2027-02-05 15:00", "入住前部分退款，比例按订单"),
+  lodging(70, "2027-02-12", "2027-02-14", "山景独立单间公寓Fernhill", "房东Coral；NZ$721.63 1/5 自动扣卡，不用操作", "15:00后入住；10:00前退房；15 Greenstone Place", "fernhill-map", "已订2晚", "2027-01-13 15:00", "2/5 15:00前取消可获部分退款，具体金额按订单"),
   lodging(80, "2027-02-14", "2027-02-16", "Auckland同一家酒店连续两晚", "优先CBD/Britomart/SkyCity", "须确认退房后寄存", "auckland-lodging-note", "待订2晚", "", ""),
 ];
 
@@ -497,10 +497,7 @@ export const todos = [
   todo("milford-terms", 170, "prep", "", "出发前", "查 Milford 订单的天气退改规则", "Milford Road 封路时是全额退款还是改期，能改到哪天。"),
   todo("host-notes", 180, "prep", "", "入住前", "拿到三处民宿的入住说明", "Wānaka、Te Anau、Fernhill：停车位置、门锁或钥匙、晚到怎么办。"),
   // Payments and cancellation deadlines (local time where the stay is).
-  todo("pay-fernhill", 200, "pay", "2027-01-05", "1/5", "皇后镇 Fernhill 付款 NZ$721.63", "Apple Pay 付款。"),
   todo("cancel-fernhill", 210, "deadline", "2027-01-13", "1/13 15:00", "皇后镇 Fernhill 免费取消截止", "之后到 2/5 15:00 前取消可退一部分。"),
-  todo("pay-hikuwai", 220, "pay", "2027-01-26", "1/26", "Wānaka Hikuwai 尾款 NZ$346.84", "Apple Pay 扣款，订金 NZ$86.71 已付。"),
-  todo("pay-teanau", 230, "pay", "2027-01-28", "1/28", "Te Anau 尾款 NZ$386.40", "Apple Pay 扣款，订金 NZ$96.60 已付。"),
   todo("cancel-greatsouthern", 240, "deadline", "2027-02-01", "2/1 14:00", "悉尼 Great Southern 免费取消截止", "之后不能取消。三晚共 ¥2,027.36，离店扣款；具体取消条款以订单为准。"),
   todo("cancel-hikuwai", 260, "deadline", "2027-02-03", "2/3 16:00", "Wānaka Hikuwai 免费取消截止", "之后取消只退一部分。"),
   todo("cancel-teanau", 270, "deadline", "2027-02-05", "2/5 15:00", "Te Anau 免费取消截止", "之后取消只退一部分。"),

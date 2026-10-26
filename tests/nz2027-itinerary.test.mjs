@@ -131,17 +131,18 @@ describe("2027 two-person itinerary data", () => {
     assert.equal(deadlines["HOTEL GIVE"], "2027-02-02 23:59");
     assert.equal(deadlines["Hikuwai Haven 1"], "2027-02-03 16:00");
     assert.equal(deadlines["Private Ensuite in the Heart of Te Anau"], "2027-02-05 15:00");
-    assert.deepEqual(
-      itinerary.todos.filter((todo) => todo.kind === "pay").map((todo) => todo.dueDate),
-      ["2027-01-05", "2027-01-26", "2027-01-28"],
-    );
+    assert.deepEqual(itinerary.todos.filter((todo) => todo.kind === "pay"), [], "balances are charged to the card automatically");
+    const rooms = Object.fromEntries(itinerary.lodgings.map((lodging) => [lodging.name, lodging.room]));
+    for (const name of ["Hikuwai Haven 1", "Private Ensuite in the Heart of Te Anau", "山景独立单间公寓Fernhill"]) {
+      assert.match(rooms[name], /自动扣卡/, name);
+    }
   });
 
   it("gives every to-do a stable id so ticks survive content edits", () => {
     const ids = itinerary.todos.map((todo) => todo.id);
     assert.equal(new Set(ids).size, ids.length);
     assert.ok(ids.every((id) => /^[a-z0-9][a-z0-9-]{0,63}$/.test(id)));
-    for (const id of ["visa", "licence", "cancel-hotelgive", "nztd", "hooker-alerts", "baggage-jq296", "auckland-hotel", "stargazing", "dinner-kika", "milford-terms", "pay-fernhill", "cancel-teanau"]) {
+    for (const id of ["visa", "licence", "cancel-hotelgive", "nztd", "hooker-alerts", "baggage-jq296", "auckland-hotel", "stargazing", "dinner-kika", "milford-terms", "cancel-teanau"]) {
       assert.ok(ids.includes(id), id);
     }
     assert.ok(itinerary.todos.every((todo) => ["book", "pay", "deadline", "prep"].includes(todo.kind)));
