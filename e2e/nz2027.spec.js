@@ -121,10 +121,10 @@ test("the updates tab still shows itinerary notes when the change log is unreach
 });
 
 test("ticks made on the other phone show up here", async ({ page, mockApi }) => {
-  mockApi.nz2027Checklist = [{ id: "chc-airport-hotel", done: true, updatedAt: "2026-11-02T00:00:00.000Z" }];
+  mockApi.nz2027Checklist = [{ id: "nztd", done: true, updatedAt: "2026-11-02T00:00:00.000Z" }];
   await page.clock.setFixedTime(beforeTrip);
   await page.goto("/nz2027/checklist");
-  await expect(page.locator(".nz-check").filter({ hasText: "订基督城机场附近酒店（2/4 一晚）" })).toHaveClass(/is-done/);
+  await expect(page.locator(".nz-check").filter({ hasText: "填新西兰入境申报 NZTD（每人一份）" })).toHaveClass(/is-done/);
 });
 
 test("two-person ledger adds, edits, marks paid, deletes and undoes, apart from the 2026 ledger", async ({ page, mockApi }) => {
