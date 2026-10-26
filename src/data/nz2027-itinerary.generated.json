@@ -474,14 +474,14 @@
       "base": "Sydney",
       "lat": -33.8862,
       "lon": 151.199,
-      "title": "当代艺术、餐饮巷与Newtown",
-      "focus": "White Rabbit加一段有生活感的城市散步。",
+      "title": "当代艺术、Newtown，晚上 Margaret",
+      "focus": "White Rabbit 和 Newtown 走走，悉尼最后一晚去 Double Bay 好好吃一顿。",
       "lodging": "Great Southern Hotel Sydney",
       "lodgingStatus": "已订",
       "climateNote": "2月悉尼盛夏，约20–27°C，湿热，午后可能有雷阵雨。",
-      "clothingNote": "夏装＋美术馆空调用薄外套；晚上整理行李。",
+      "clothingNote": "夏装＋美术馆空调用薄外套；晚饭换一身整洁的衣服。",
       "coverImageUrl": "/nz2027/d03.jpg",
-      "coverImageAlt": "D03 当代艺术、餐饮巷与Newtown",
+      "coverImageAlt": "D03 当代艺术、Newtown，晚上 Margaret",
       "transport": "步行＋公共交通",
       "leaveBy": "美术馆10:00开门",
       "notes": [
@@ -496,6 +496,10 @@
         {
           "label": "开放时间",
           "text": "美术馆现行周三至周日10:00–17:00，因此放在周三；2027展览按届时安排。"
+        },
+        {
+          "label": "晚餐",
+          "text": "Margaret，30–36 Bay Street, Double Bay；周三晚上营业，要提前订，11 月中旬去订位：官网点 Book Now 在线订，或打电话 +61 2 9068 8888。"
         }
       ],
       "lodgingResource": {
@@ -579,7 +583,7 @@
         {
           "dayId": "d3",
           "sortOrder": 30,
-          "period": "14:00–16:30",
+          "period": "14:00–16:00",
           "place": "Newtown · King Street / Enmore Road",
           "activity": "沿King Street走走停停，看独立书店、古着、小店和街头艺术，再拐进Enmore Road喝咖啡；有购物需求就在今天完成。",
           "highlight": "书店、古着、街头艺术",
@@ -608,61 +612,100 @@
         {
           "dayId": "d3",
           "sortOrder": 40,
-          "period": "17:30–18:15",
-          "place": "Newtown → Circular Quay",
-          "activity": "从Newtown坐火车去Circular Quay，约30分钟。",
-          "highlight": "",
-          "tip": "",
-          "resources": []
+          "period": "16:30–17:30",
+          "place": "Great Southern Hotel",
+          "activity": "回酒店冲澡、换衣服，顺手把行李收好。",
+          "highlight": "收行李",
+          "tip": "明早 05:15 起床，今晚回来就直接睡。",
+          "resources": [
+            {
+              "id": "great-southern-map",
+              "title": "Great Southern Hotel Sydney",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Great+Southern+Hotel+Sydney%2C+717+George+Street%2C+Haymarket+NSW+2000%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "确认邮件地址"
+            }
+          ]
         },
         {
           "dayId": "d3",
           "sortOrder": 50,
-          "period": "18:30–19:45",
-          "place": "Manly",
-          "activity": "坐渡轮去Manly，约30分钟；在Manly海滩和The Corso走走，吃晚饭。",
-          "highlight": "坐渡轮出海",
-          "tip": "渡轮也刷Opal卡或手机。",
+          "period": "17:30–18:00",
+          "place": "Haymarket → Double Bay",
+          "activity": "打车约 20 分钟到 Double Bay；也可以坐火车到 Edgecliff 再走 10 分钟。",
+          "highlight": "",
+          "tip": "",
           "resources": [
             {
-              "id": "manly-ferry-official",
-              "title": "悉尼渡轮（F1 Manly线）",
-              "type": "official",
-              "url": "https://transportnsw.info/travel-info/ways-to-get-around/ferry",
+              "id": "margaret-map",
+              "title": "Margaret, 30–36 Bay Street, Double Bay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Margaret%2C+30+Bay+Street%2C+Double+Bay+NSW+2028%2C+Australia",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Transport for NSW"
+              "sourceNote": "Google Maps"
             }
           ]
         },
         {
           "dayId": "d3",
           "sortOrder": 60,
-          "period": "19:45–20:15",
-          "place": "Manly → Circular Quay",
-          "activity": "坐渡轮回城，日落时正好经过歌剧院和海港大桥。",
-          "highlight": "海上看日落",
-          "tip": "回程坐左侧（南侧）看歌剧院，正前方是海港大桥。",
+          "period": "18:00–19:45",
+          "place": "Margaret",
+          "activity": "悉尼最后一晚，在 Margaret 好好吃一顿。订 18:00 的位子，吃完不拖太晚。",
+          "highlight": "最后一晚的大餐",
+          "tip": "要提前订位，11 月中旬去订。",
           "resources": [
             {
-              "id": "manly-ferry-official",
-              "title": "悉尼渡轮（F1 Manly线）",
-              "type": "official",
-              "url": "https://transportnsw.info/travel-info/ways-to-get-around/ferry",
+              "id": "margaret-official",
+              "title": "Margaret（Neil Perry）",
+              "type": "restaurant",
+              "url": "https://themargaretfamily.com/venue/margaret/",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "Transport for NSW"
+              "sourceNote": "待预约"
+            },
+            {
+              "id": "margaret-map",
+              "title": "Margaret, 30–36 Bay Street, Double Bay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Margaret%2C+30+Bay+Street%2C+Double+Bay+NSW+2028%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
             }
           ]
         },
         {
           "dayId": "d3",
           "sortOrder": 70,
-          "period": "晚上",
-          "place": "Haymarket",
-          "activity": "回酒店收好行李、早点睡；明早 05:15 起床，06:00 打车去机场。",
+          "period": "19:45–20:15",
+          "place": "Double Bay 海边",
+          "activity": "饭后走几分钟到 Steyne Park 海边，看 20:00 左右的日落。",
+          "highlight": "海边日落",
+          "tip": "",
+          "resources": [
+            {
+              "id": "margaret-map",
+              "title": "Margaret, 30–36 Bay Street, Double Bay",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Margaret%2C+30+Bay+Street%2C+Double+Bay+NSW+2028%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d3",
+          "sortOrder": 80,
+          "period": "20:15–21:00",
+          "place": "Double Bay → Haymarket",
+          "activity": "打车回酒店，早点睡；明早 06:00 打车去机场。",
           "highlight": "早点睡",
-          "tip": "最好下午就把行李收好。",
+          "tip": "",
           "resources": [
             {
               "id": "great-southern-map",
@@ -679,8 +722,8 @@
           "dayId": "d3",
           "sortOrder": 90,
           "period": "饮食",
-          "place": "Spice Alley / Newtown",
-          "activity": "早餐：咖啡＋简单早餐；午餐：Spice Alley；晚餐：Manly",
+          "place": "Spice Alley / Margaret",
+          "activity": "早餐：咖啡＋简单早餐；午餐：Spice Alley；晚餐：Margaret（Double Bay，要订）",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -4283,6 +4326,15 @@
       "detail": "2/6 前后是新月，星空最好；23:00左右才完全天黑，订22:30以后的场次。长周末场次紧，确认集合点、语言和天气改期规则。"
     },
     {
+      "id": "dinner-margaret",
+      "sortOrder": 104,
+      "kind": "book",
+      "dueDate": "2026-11-15",
+      "dueLabel": "11 月中旬",
+      "title": "订 Margaret（2/3 悉尼最后一晚，Double Bay）",
+      "detail": "周三晚 18:00 两人。官网点 Book Now 在线订，或打电话 +61 2 9068 8888；订不到就留候补，或者问问吧台和户外散座。"
+    },
+    {
       "id": "dinner-valentine",
       "sortOrder": 105,
       "kind": "book",
@@ -5360,13 +5412,22 @@
       "sourceNote": "Google Maps"
     },
     {
-      "id": "manly-ferry-official",
-      "title": "悉尼渡轮（F1 Manly线）",
-      "type": "official",
-      "url": "https://transportnsw.info/travel-info/ways-to-get-around/ferry",
+      "id": "margaret-official",
+      "title": "Margaret（Neil Perry）",
+      "type": "restaurant",
+      "url": "https://themargaretfamily.com/venue/margaret/",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "Transport for NSW"
+      "sourceNote": "待预约"
+    },
+    {
+      "id": "margaret-map",
+      "title": "Margaret, 30–36 Bay Street, Double Bay",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Margaret%2C+30+Bay+Street%2C+Double+Bay+NSW+2028%2C+Australia",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
     },
     {
       "id": "earnslaw-park-map",
