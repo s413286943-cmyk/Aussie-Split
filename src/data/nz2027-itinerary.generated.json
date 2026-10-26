@@ -1580,7 +1580,7 @@
             "sortOrder": 20,
             "segment": "湖边 → High Country Salmon",
             "driveTime": "约10–15分钟",
-            "stopNote": "目的地2602 Twizel–Omarama Highway；午餐留60–90分钟。"
+            "stopNote": "目的地2602 Twizel–Omarama Highway；看养殖池、喂鱼加午餐留60–90分钟。"
           },
           {
             "sortOrder": 30,
@@ -1646,11 +1646,11 @@
         {
           "dayId": "d7",
           "sortOrder": 20,
-          "period": "中午",
+          "period": "12:00–13:30",
           "place": "High Country Salmon",
-          "activity": "High Country Salmon / Logans吃一顿鲑鱼午餐。",
-          "highlight": "鲑鱼午餐",
-          "tip": "",
+          "activity": "轻松的美食点：先看看养殖池、喂喂鱼，再在店里点一份刺身和一份热食，对比生吃和熟吃。喜欢的话买一块适合煎的三文鱼带回 Twizel，晚上自己做。",
+          "highlight": "三文鱼两种吃法",
+          "tip": "鱼食和菜单以当天为准；买生鱼请店里帮忙冷藏包好，回住处马上放冰箱。",
           "resources": [
             {
               "id": "logans-official",
@@ -1668,7 +1668,7 @@
           "sortOrder": 30,
           "period": "下午",
           "place": "住宿",
-          "activity": "回住宿休息、洗衣或整理行李。",
+          "activity": "回住宿休息、洗衣或整理行李；三文鱼先放冰箱。",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -1677,11 +1677,21 @@
           "dayId": "d7",
           "sortOrder": 35,
           "period": "18:30",
-          "place": "Twizel",
-          "activity": "镇上早点吃晚饭。",
-          "highlight": "",
+          "place": "Twizel Holiday Park",
+          "activity": "用房间厨房煎中午买的三文鱼（房间没灶台就用营地公共厨房），配点沙拉或面包；没买就去镇上吃。早点吃完，20:15 出发去 Pukaki。",
+          "highlight": "自己煎三文鱼",
           "tip": "",
-          "resources": []
+          "resources": [
+            {
+              "id": "twizel-holiday-park-map",
+              "title": "Twizel Holiday Park",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Twizel+Holiday+Park%2C+122+Mackenzie+Drive%2C+Twizel%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "住宿官网地址"
+            }
+          ]
         },
         {
           "dayId": "d7",
@@ -1728,7 +1738,7 @@
           "sortOrder": 90,
           "period": "饮食",
           "place": "Twizel",
-          "activity": "早餐：镇上或住宿；午餐：High Country Salmon；晚餐：18:30在Twizel",
+          "activity": "早餐：镇上或住宿；午餐：High Country Salmon 刺身＋热食；晚餐：住处自己煎三文鱼",
           "highlight": "",
           "tip": "",
           "resources": []
