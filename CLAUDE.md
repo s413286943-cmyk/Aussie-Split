@@ -29,6 +29,7 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 
 - **2027 行程**：改 `scripts/nz2027/itinerarySeedData.mjs` 后 `npm run nz2027:seed -- --force` 再 `npm run nz2027:import`；或直接改 `content/nz2027-itinerary.xlsx` 后只跑 `npm run nz2027:import`。清单条目的 `todo_id` 是勾选状态的主键，改文字可以，不要改 id。
 - **2027 更新页**：每次行程调整上线，在 `content/nz2027-updates.json` 最上面加一条（旅行者口吻，`at` 用实际上线时间，不要写未来时间）。记账和清单改动由数据库触发器自动记录，不用手写。
+- **2027 行程文字版（每次都要）**：每次行程或账本有改动并上线后，跑 `npm run nz2027:md` 生成 `outputs/澳新2027-行程-YYYYMMDD.md`（含“最近更新”），并把文件发给用户。`outputs/` 不进仓库。
 - **2027 每日主题图**：`public/nz2027/d01.jpg` … `d17.jpg`、`cover.jpg`，换图后跑 `npm run nz2027:import`。prompt 在 `docs/nz2027-day-image-prompts.md`。
 - **2026 行程**：`content/aussie-itinerary.xlsx` 用 `npm run itinerary:import` 导入。
 
