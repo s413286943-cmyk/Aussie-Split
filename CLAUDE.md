@@ -12,7 +12,7 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 - Node 24（`package.json` `engines` 为 `24.x`，`.nvmrc` 为 24）。本机默认 Node 26 加载失败，先 `export PATH="/opt/homebrew/opt/node@24/bin:$PATH"`。
 - `npm ci` → `npm test` → `npm run lint` → `npm run build` → `npm run test:e2e`
 - `test:e2e` 只跑本地构建 + mock API，可放心运行。**不要运行 `test:e2e:production`**，除非用户本轮明确要求线上冒烟。
-- 7 个数据库集成测试在没有 `AUSSIE_TEST_PG*` 环境变量时跳过，属正常；要跑就用临时、隔离的本地 PostgreSQL 17，用完删除。
+- 7 个数据库集成测试在没有 `AUSSIE_TEST_PG*` 环境变量时跳过，属正常；要跑就用临时、隔离的本地 PostgreSQL 17，用完删除。本机启动时要 `export LC_ALL=C LANG=C`（否则 postmaster 报 multithreaded 退出），并用 `-c listen_addresses=127.0.0.1 -c unix_socket_directories=''` 走 TCP。
 
 ## 不可破坏的约束
 
@@ -41,11 +41,22 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 
 主目录在最新 `main`。以下旧分支只在本机、未推到 GitHub，按用户要求只用最新版本，**保留但不在其上继续开发，也不要删除**：`codex/aussie-reliability-hardening`、`.worktrees/reliability-implementation`、`.worktrees/deploy-d13-d15`、`/Users/SeanSun/Documents/Aussie/.codex-worktrees/protected-recovery`。`feat/nz-2027-ledger-schedule` 已经合并（PR #3）。未跟踪的 `outputs/` 和带 ` 2.sql` 的重复 migration / rollback 文件保留，先比较再处理。
 
-## 状态（2026-10-25）
+## 状态（2026-10-26）
 
-`main` = `origin/main` `46092f1`（PR #6 合并：已订机票、南岛租车、悉尼三晚写入日程和清单），已部署生产 `dpl_DSm2cWvJoRbiJxJa2xkoxitYNoqp`。此前 PR #3 上线 2027 首页，#4 更新本文件，#5 换成沉浸式深色界面。Node 24 下 353 个单测中 346 通过、7 个数据库测试跳过（PR #6 未改 SQL；数据库测试最近一次全部通过是在 PR #3），lint、tsc、build 通过，32 个本地 e2e 全部通过；未登录时数据接口返回 401。
+`main` = `origin/main` `c8dc40b`（PR #9 合并），已部署生产 `dpl_3nFeRV2BWY3L82Kx5sDiVQYm9bEv`；线上只读检查和 `test:e2e:production` 冒烟通过，未登录时数据接口返回 401，公开页面和脚本不含私密行程内容。
 
-生产账本 `nz2027_expenses` 共 13 条：2026-10-25 补记南航往返 ¥16,800、NZ224+JQ296 ¥3,153、租车 ¥3,636（均已付），悉尼 Great Southern 改为三晚 ¥2,027.36 待付；改动前的行备份在 `.backups/20261025-before-booking-ledger/`。
+近期合并：
+- PR #3 上线 2027 首页，#4 更新本文件，#5 换成沉浸式深色界面。
+- PR #6 写入已订机票、南岛租车、悉尼三晚。
+- PR #8 按日落时间安排每天傍晚（悉尼 20:00、南岛 21:00 前后、奥克兰 20:18），加 Kelvin 半岛、Diamond Lake、Moke Lake 等；写明租车合同禁开 Glenorchy–Paradise Road。
+- PR #9 取消 Te Anau 萤火虫洞和 Hobbiton 普通话团，2/15 改为 Klook Waitomo + Hobbiton 一日团（06:00–17:30），去掉导航11；清单 25 项。
+
+Node 24 下 354 个单测（含 7 个数据库测试，在 PR #8 上全部通过；PR #9 未改 SQL，跑 347 个、跳过数据库测试），lint、tsc、build 通过，32 个本地 e2e 全部通过。
+
+生产账本 `nz2027_expenses` 共 14 条，有效 13 条：
+- 2026-10-25 补记南航往返 ¥16,800、NZ224+JQ296 ¥3,153、租车 ¥3,636（均已付），悉尼 Great Southern 改为三晚 ¥2,027.36 待付；备份在 `.backups/20261025-before-booking-ledger/`。
+- 2026-10-26 Hobbiton 普通话团 NZ$260 全额退款，标记删除；新增 Klook 一日团 ¥3,138（已付）；备份在 `.backups/20261026-before-klook-ledger/`。
+- 合计：CNY 已付 ¥26,727、待付 ¥2,628.79；NZD 已付 NZ$1,286.31、待付 NZ$1,454.87。
 
 待办：
 - `aussie-split` 还留着旧的 `NEXT_PUBLIC_SUPABASE_URL`、`NEXT_PUBLIC_SUPABASE_ANON_KEY`，代码已不用，可在 Vercel 删除。
