@@ -61,7 +61,7 @@ describe("2027 two-person itinerary data", () => {
     assert.deepEqual(
       itinerary.days.filter((day) => day.drive).map((day) => [day.date.slice(5), day.drive.id, day.drive.legs.length]),
       [
-        ["02-05", "nav02", 5], ["02-06", "nav03", 4], ["02-07", "nav04", 4],
+        ["02-05", "nav02", 5], ["02-06", "nav03", 4], ["02-07", "nav04", 5],
         ["02-08", "nav05", 4], ["02-09", "nav06", 3], ["02-10", "nav07", 5], ["02-12", "nav08", 5],
         ["02-13", "nav09", 5], ["02-14", "nav10", 3], ["02-15", "nav11", 5],
       ],
@@ -96,6 +96,17 @@ describe("2027 two-person itinerary data", () => {
     assert.ok(has("d12", /Kelvin Peninsula Sculpture Trail/));
     assert.ok(has("d12", /Skyline/));
     assert.ok(has("d13", /Moke Lake/));
+    assert.ok(has("d1", /Barangaroo/));
+    assert.ok(has("d2", /Mrs Macquarie/));
+    assert.ok(has("d3", /渡轮/));
+    assert.ok(has("d7", /Pukaki.*日落/));
+    assert.ok(has("d9", /That Wānaka Tree.*日落/));
+    assert.ok(has("d10", /萤火虫/));
+    assert.ok(has("d12", /Earnslaw Park/));
+    assert.ok(has("d14", /Wynyard Quarter/));
+    assert.ok(has("d15", /Mt Eden/));
+    const ids = itinerary.todos.map((todo) => todo.id);
+    for (const id of ["glowworm", "dinner-valentine"]) assert.ok(ids.includes(id), id);
     assert.match(JSON.stringify(dayById("d13").notes), /Glenorchy–Paradise Road/);
   });
 
