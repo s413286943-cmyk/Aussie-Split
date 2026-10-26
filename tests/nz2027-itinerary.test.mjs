@@ -41,7 +41,7 @@ describe("2027 two-person itinerary data", () => {
       "Queenstown", "Queenstown",
       "Auckland", "Auckland",
     ]);
-    assert.deepEqual(itinerary.days.filter((day) => day.lodgingStatus === "待订").map((day) => day.id), ["d14", "d15"]);
+    assert.deepEqual(itinerary.days.filter((day) => day.lodgingStatus === "待订").map((day) => day.id), ["d4", "d14", "d15"]);
     for (const day of itinerary.days.filter((item) => item.lodgingStatus === "已订")) {
       assert.equal(day.lodgingResource.title, day.lodging, day.id);
       assert.match(day.lodgingResource.url, /^https:\/\/www\.google\.com\/maps\//);
@@ -77,7 +77,10 @@ describe("2027 two-person itinerary data", () => {
     assert.match(dayById("d1").transport, /CZ601 06:35/);
     assert.match(dayById("d4").transport, /NZ224 悉尼 18:15 → 基督城 23:20/);
     assert.equal(dayById("d4").drive, null);
-    assert.match(text("d4"), /晚到入住/);
+    assert.match(text("d4"), /机场附近的酒店/);
+    assert.match(dayById("d1").transport, /打车进城/);
+    assert.ok(!JSON.stringify(itinerary).includes("SkyBus"));
+    assert.ok(!JSON.stringify(itinerary).includes("Metropolitan"));
     assert.match(text("d5"), /10:00 基督城机场/);
     assert.match(dayById("d5").drive.duration, /10:00 机场取车/);
     assert.match(dayById("d14").transport, /JQ296 13:30 → 15:20/);
@@ -108,7 +111,10 @@ describe("2027 two-person itinerary data", () => {
     assert.ok(!JSON.stringify(dayById("d10")).includes("萤火虫"));
     assert.ok(has("d12", /Earnslaw Park/));
     assert.ok(has("d14", /Wynyard Quarter/));
-    assert.ok(has("d15", /Mt Eden/));
+    assert.ok(!has("d15", /Mt Eden/));
+    assert.ok(dayById("d2").blocks[1].place.startsWith("Coogee"));
+    assert.match(dayById("d12").blocks.find((block) => /Kelvin/.test(block.place)).period, /晚了就跳过/);
+    assert.match(dayById("d13").blocks.find((block) => block.place === "Moke Lake").period, /可选/);
     const ids = itinerary.todos.map((todo) => todo.id);
     for (const id of ["tour-0215-pickup", "dinner-valentine"]) assert.ok(ids.includes(id), id);
     assert.match(JSON.stringify(dayById("d13").notes), /Glenorchy–Paradise Road/);
@@ -118,7 +124,6 @@ describe("2027 two-person itinerary data", () => {
     const deadlines = Object.fromEntries(itinerary.lodgings.map((lodging) => [lodging.name, lodging.freeCancelUntil]));
     assert.equal(deadlines["山景独立单间公寓Fernhill"], "2027-01-13 15:00");
     assert.equal(deadlines["Great Southern Hotel Sydney"], "2027-02-01 14:00");
-    assert.equal(deadlines["Metropolitan Motel on Riccarton"], "2027-02-03 14:00");
     assert.equal(deadlines["Hikuwai Haven 1"], "2027-02-03 16:00");
     assert.equal(deadlines["Private Ensuite in the Heart of Te Anau"], "2027-02-05 15:00");
     assert.deepEqual(
@@ -131,7 +136,7 @@ describe("2027 two-person itinerary data", () => {
     const ids = itinerary.todos.map((todo) => todo.id);
     assert.equal(new Set(ids).size, ids.length);
     assert.ok(ids.every((id) => /^[a-z0-9][a-z0-9-]{0,63}$/.test(id)));
-    for (const id of ["visa", "licence", "late-checkin-chc", "baggage-jq296", "auckland-hotel", "stargazing", "dinner-kika", "milford-terms", "pay-fernhill", "cancel-teanau"]) {
+    for (const id of ["visa", "licence", "chc-airport-hotel", "nztd", "hooker-alerts", "baggage-jq296", "auckland-hotel", "stargazing", "dinner-kika", "milford-terms", "pay-fernhill", "cancel-teanau"]) {
       assert.ok(ids.includes(id), id);
     }
     assert.ok(itinerary.todos.every((todo) => ["book", "pay", "deadline", "prep"].includes(todo.kind)));
