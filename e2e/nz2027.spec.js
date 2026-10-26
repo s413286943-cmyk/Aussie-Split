@@ -15,7 +15,7 @@ test("the home page opens the 2027 trip and tucks the finished trip away", async
   const hero = page.getByRole("region", { name: "今天的行程" });
   await expect(hero).toContainText(/还有 \d+ 天/);
   await expect(hero.getByRole("heading", { level: 1 })).toContainText("抵达悉尼");
-  await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link")).toHaveText(["日程", "清单25", "记账"]);
+  await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link")).toHaveText(["日程", "清单25", "记账", "更新"]);
 
   const past = page.locator(".nz-past");
   await expect(past.getByRole("link", { name: "看那次的行程" })).toBeHidden();
@@ -27,7 +27,7 @@ test("the home page opens the 2027 trip and tucks the finished trip away", async
 
 test("copy reads from the travellers' side, not the builders'", async ({ page }) => {
   await page.clock.setFixedTime(beforeTrip);
-  for (const path of ["/", "/nz2027/checklist", "/nz2027/ledger"]) {
+  for (const path of ["/", "/nz2027/checklist", "/nz2027/ledger", "/nz2027/updates"]) {
     await page.goto(path);
     await expect(page.locator(".nz-main")).toBeVisible();
     const text = await page.locator(".nz").innerText();
@@ -81,6 +81,43 @@ test("checklist items can be ticked off and the tick syncs", async ({ page, mock
 
   await page.goto("/");
   await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link", { name: /清单/ })).toContainText("24");
+});
+
+test("the updates tab lists itinerary notes and every ledger and checklist change", async ({ page, mockApi }) => {
+  await page.goto("/nz2027/updates");
+  await expect(page.getByRole("heading", { name: "最近的改动", level: 1 })).toBeVisible();
+  await expect(page.locator(".nz-update.is-release").filter({ hasText: "澳新 2027 上线" })).toBeVisible();
+  const updatesTab = page.getByRole("navigation", { name: "主导航" }).getByRole("link", { name: /更新/ });
+  await expect(updatesTab).toHaveAttribute("aria-current", "page");
+  // Pretend the tab was last opened before any update, so new changes raise the badge.
+  await page.evaluate(() => localStorage.setItem("nz2027-updates-seen", "2026-01-01T00:00:00.000Z"));
+
+  await page.goto("/nz2027/ledger");
+  await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link", { name: /更新/ })).toHaveText(/^更新\d+$/);
+  const form = page.getByRole("form", { name: "记一笔" });
+  await form.getByLabel("项目").fill("E2E 更新测试");
+  await form.getByLabel("金额").fill("42");
+  await form.getByRole("button", { name: "保存" }).click();
+  await expect.poll(() => mockApi.nz2027Activity.some((entry) => entry.detail.item === "E2E 更新测试")).toBe(true);
+
+  await page.goto("/nz2027/checklist");
+  await page.locator(".nz-check").filter({ hasText: "盯 NZeTA 试行是否延长" }).locator("label").click();
+  await expect.poll(() => mockApi.nz2027Activity.some((entry) => entry.kind === "check" && entry.refId === "visa")).toBe(true);
+
+  await page.goto("/nz2027/updates");
+  const changes = page.locator(".nz-update");
+  await expect(changes.first()).toContainText("勾掉：盯 NZeTA 试行是否延长");
+  await expect(changes.filter({ hasText: "记了一笔：E2E 更新测试" })).toContainText("NZ$42.00");
+  await expect(page.locator(".nz-updates-note")).toHaveCount(0);
+  await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link", { name: /更新/ })).toHaveText("更新");
+  expect(await documentOverflowsHorizontally(page)).toBe(false);
+});
+
+test("the updates tab still shows itinerary notes when the change log is unreachable", async ({ page, mockApi }) => {
+  mockApi.nz2027ActivityAvailable = false;
+  await page.goto("/nz2027/updates");
+  await expect(page.locator(".nz-updates-note")).toContainText("记账和清单的改动暂时读不到");
+  await expect(page.locator(".nz-update.is-release").first()).toBeVisible();
 });
 
 test("ticks made on the other phone show up here", async ({ page, mockApi }) => {
@@ -149,7 +186,7 @@ test("records saved without signal stay on the phone and sync later", async ({ p
 test("phone layout keeps the tab bar at the bottom and nothing overflows", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.clock.setFixedTime(duringTrip);
-  for (const path of ["/", "/nz2027/checklist", "/nz2027/ledger"]) {
+  for (const path of ["/", "/nz2027/checklist", "/nz2027/ledger", "/nz2027/updates"]) {
     await page.goto(path);
     await expect(page.locator(".nz-main")).toBeVisible();
     const tabs = await page.getByRole("navigation", { name: "主导航" }).boundingBox();

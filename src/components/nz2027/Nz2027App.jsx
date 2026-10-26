@@ -7,10 +7,12 @@ import UnlockGate from "@/components/UnlockGate";
 import Nz2027Checklist from "@/components/nz2027/Nz2027Checklist";
 import Nz2027Ledger from "@/components/nz2027/Nz2027Ledger";
 import Nz2027Schedule from "@/components/nz2027/Nz2027Schedule";
+import Nz2027Updates from "@/components/nz2027/Nz2027Updates";
 import {
   fetchNz2027Checklist,
   fetchNz2027Expenses,
   fetchNz2027Itinerary,
+  fetchNz2027Updates,
   pushNz2027Checklist,
   pushNz2027Expenses,
 } from "@/lib/apiClient";
@@ -33,6 +35,14 @@ import {
   saveState,
   upsertLocal,
 } from "@/lib/nz2027/store";
+import {
+  UPDATES_CACHE_KEY,
+  UPDATES_SEEN_KEY,
+  buildTimeline,
+  countUnseen,
+  latestAt,
+  validUpdates,
+} from "@/lib/nz2027/updates";
 
 const itineraryCacheKey = "nz2027-itinerary-v1";
 
@@ -40,6 +50,7 @@ const tabs = [
   { id: "schedule", href: "/", label: "日程" },
   { id: "checklist", href: "/nz2027/checklist", label: "清单" },
   { id: "ledger", href: "/nz2027/ledger", label: "记账" },
+  { id: "updates", href: "/nz2027/updates", label: "更新" },
 ];
 
 export default function Nz2027App({ view }) {
@@ -54,6 +65,7 @@ function Nz2027Content({ view }) {
   const itinerary = useItinerary();
   const ledger = useLedger();
   const checklist = useChecklist();
+  const updates = useUpdates(view, ledger.syncedAt, checklist.syncedAt);
   const openCount = itinerary.data ? itinerary.data.todos.filter((todo) => !checklist.isDone(todo.id)).length : 0;
 
   return (
@@ -69,12 +81,15 @@ function Nz2027Content({ view }) {
           <Link key={tab.id} href={tab.href} className={tab.id === view ? "is-active" : ""} aria-current={tab.id === view ? "page" : undefined}>
             {tab.label}
             {tab.id === "checklist" && openCount > 0 && <span className="nz-tab-count" aria-label={`还有 ${openCount} 件`}>{openCount}</span>}
+            {tab.id === "updates" && view !== "updates" && updates.unseen > 0 && <span className="nz-tab-count" aria-label={`${updates.unseen} 条新改动`}>{updates.unseen}</span>}
           </Link>
         ))}
       </nav>
 
       <main className="nz-main">
-        {!itinerary.data && view !== "ledger" ? (
+        {view === "updates" ? (
+          <Nz2027Updates updates={updates} todos={itinerary.data?.todos || []} />
+        ) : !itinerary.data && view !== "ledger" ? (
           <LoadState state={itinerary.state} />
         ) : view === "schedule" ? (
           <Nz2027Schedule itinerary={itinerary.data} records={ledger.records} checklist={checklist} />
@@ -160,6 +175,7 @@ function useSyncedState({ initial, load, save, pending, push, fetchAll, merge })
   const [state, setState] = useState(initial);
   const [loaded, setLoaded] = useState(false);
   const [status, setStatus] = useState("idle");
+  const [syncedAt, setSyncedAt] = useState("");
   const stateRef = useRef(state);
   const busyRef = useRef(false);
   const againRef = useRef(false);
@@ -193,6 +209,7 @@ function useSyncedState({ initial, load, save, pending, push, fetchAll, merge })
         commit(merge(stateRef.current, sent, response));
       } while (againRef.current);
       setStatus("synced");
+      setSyncedAt(new Date().toISOString());
     } catch {
       setStatus("failed");
     } finally {
@@ -223,7 +240,7 @@ function useSyncedState({ initial, load, save, pending, push, fetchAll, merge })
     sync();
   }, [commit, sync]);
 
-  return { state, loaded, status, sync, update };
+  return { state, loaded, status, syncedAt, sync, update };
 }
 
 function syncText(loaded, status, pendingCount, noun) {
@@ -256,6 +273,7 @@ function useLedger() {
     records,
     syncLabel: syncText(synced.loaded, synced.status, synced.state.pendingIds.length, "笔"),
     syncing: synced.status === "syncing",
+    syncedAt: synced.syncedAt,
     sync: synced.sync,
     save: useCallback((record) => update((state) => upsertLocal(state, record)), [update]),
     remove: useCallback((id) => update((state) => deleteLocal(state, id)), [update]),
@@ -280,5 +298,73 @@ function useChecklist() {
     isDone: useCallback((id) => Boolean(state.items[id]?.done), [state]),
     toggle: useCallback((id, done) => update((current) => setCheck(current, id, done)), [update]),
     syncLabel: syncText(synced.loaded, synced.status, state.pendingIds.length, "项"),
+    syncedAt: synced.syncedAt,
   };
+}
+
+// Recent changes: cached for offline use, refreshed when the tab opens, when the
+// phone comes back online and after the ledger or checklist finishes syncing.
+function useUpdates(view, ledgerSyncedAt, checklistSyncedAt) {
+  const [data, setData] = useState(null);
+  const [state, setState] = useState("loading");
+  const [seenAt, setSeenAt] = useState("");
+
+  const load = useCallback(async () => {
+    if (!navigator.onLine) {
+      setState("offline");
+      return;
+    }
+    try {
+      const response = await fetchNz2027Updates();
+      if (!validUpdates(response)) throw new Error("invalid updates");
+      const next = { releases: response.releases, activity: response.activity, activityAvailable: response.activityAvailable !== false };
+      setData(next);
+      setState("current");
+      try {
+        localStorage.setItem(UPDATES_CACHE_KEY, JSON.stringify(next));
+      } catch {
+        // Still shown for this visit.
+      }
+    } catch {
+      setState("failed");
+    }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.resolve().then(() => {
+      if (cancelled) return;
+      try {
+        const cached = JSON.parse(localStorage.getItem(UPDATES_CACHE_KEY) || "null");
+        if (validUpdates(cached)) setData(cached);
+        setSeenAt(localStorage.getItem(UPDATES_SEEN_KEY) || "");
+      } catch {
+        // Nothing cached yet.
+      }
+    });
+    window.addEventListener("online", load);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("online", load);
+    };
+  }, [load]);
+
+  useEffect(() => {
+    Promise.resolve().then(load);
+  }, [load, view, ledgerSyncedAt, checklistSyncedAt]);
+
+  const entries = useMemo(() => (data ? buildTimeline({ releases: data.releases, activity: data.activity }) : []), [data]);
+  const newest = latestAt(entries);
+
+  useEffect(() => {
+    if (view !== "updates" || !newest) return;
+    try {
+      localStorage.setItem(UPDATES_SEEN_KEY, newest);
+    } catch {
+      // Badge simply shows again next time.
+    }
+    Promise.resolve().then(() => setSeenAt(newest));
+  }, [view, newest]);
+
+  return { data, state, unseen: countUnseen(entries, seenAt) };
 }

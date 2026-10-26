@@ -58,6 +58,10 @@ export function fetchNz2027Checklist() {
   return requestJson("/api/nz2027/checklist");
 }
 
+export function fetchNz2027Updates() {
+  return requestJson("/api/nz2027/updates");
+}
+
 export async function pushNz2027Checklist(items) {
   const response = await requestJson("/api/nz2027/checklist", {
     method: "POST",
