@@ -14,6 +14,7 @@
     "itinerary:import": "node scripts/import-itinerary.mjs",
     "nz2027:seed": "node scripts/nz2027/create-workbook.mjs",
     "nz2027:import": "node scripts/nz2027/import-itinerary.mjs",
+    "nz2027:md": "node scripts/nz2027/export-markdown.mjs",
     "ledger:snapshot": "node scripts/export-ledger-snapshot.mjs",
     "lint": "node node_modules/eslint/bin/eslint.js",
     "test": "node --conditions=react-server --test --test-concurrency=1 tests/*.test.mjs",
