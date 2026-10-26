@@ -988,6 +988,26 @@
         },
         {
           "dayId": "d5",
+          "sortOrder": 60,
+          "period": "20:00–21:00",
+          "place": "Lake Ruataniwha",
+          "activity": "晚饭后开 5–10 分钟到湖边散步，看 Ben Ohau 山脉后面的日落（约 21:00）。",
+          "highlight": "湖边日落",
+          "tip": "累了就跳过，2/7 上午还会来。",
+          "resources": [
+            {
+              "id": "ruataniwha-map",
+              "title": "Lake Ruataniwha Reserve",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Lake+Ruataniwha+Reserve%2C+Twizel%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d5",
           "sortOrder": 90,
           "period": "饮食",
           "place": "Fairlie / Twizel",
@@ -1468,7 +1488,11 @@
         },
         {
           "label": "长周末",
-          "text": "今天是Waitangi Day补休日，Wānaka餐厅和超市人多，晚餐提前订或早点吃。"
+          "text": "今天是Waitangi Day补休日，Wānaka餐厅和超市人多，晚餐提前订，约 20:00。"
+        },
+        {
+          "label": "傍晚",
+          "text": "Diamond Lake 停车场在 Mt Aspiring Road，离住处约 20 分钟，全程铺装路；步道上没有厕所，停车场有。"
         }
       ],
       "lodgingResource": {
@@ -1625,7 +1649,7 @@
           "sortOrder": 40,
           "period": "16:00后",
           "place": "Hikuwai Haven 1",
-          "activity": "入住Hikuwai Haven 1，再按体力安排湖边散步和晚餐。",
+          "activity": "入住Hikuwai Haven 1，放下行李歇一会儿。",
           "highlight": "入住两晚",
           "tip": "",
           "resources": [
@@ -1639,6 +1663,45 @@
               "sourceNote": "确认邮件地址"
             }
           ]
+        },
+        {
+          "dayId": "d8",
+          "sortOrder": 50,
+          "period": "17:00–19:30",
+          "place": "Diamond Lake / Lake Wānaka Lookout",
+          "activity": "开约 20 分钟到 Diamond Lake 停车场：先到 Diamond Lake 湖边，再上 Lake Wānaka Lookout 俯瞰整个湖，往返约 2 小时，台阶多。只想轻松走就绕 Diamond Lake 一圈，约 45 分钟。",
+          "highlight": "傍晚俯瞰 Wānaka 湖",
+          "tip": "日落约 21:00，天亮着时间很宽。",
+          "resources": [
+            {
+              "id": "diamond-lake-map",
+              "title": "Diamond Lake 停车场",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Diamond+Lake+Track+Car+Park%2C+Wanaka-Mount+Aspiring+Road%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "diamond-lake-official",
+              "title": "Lake Wānaka Lookout Track",
+              "type": "official",
+              "url": "https://www.doc.govt.nz/parks-and-recreation/places-to-go/otago/places/diamond-lake-and-hospital-flat/things-to-do/lake-wanaka-lookout-track",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "DOC"
+            }
+          ]
+        },
+        {
+          "dayId": "d8",
+          "sortOrder": 60,
+          "period": "20:00左右",
+          "place": "Wānaka镇上",
+          "activity": "回镇上吃晚饭。",
+          "highlight": "",
+          "tip": "",
+          "resources": []
         },
         {
           "dayId": "d8",
@@ -2320,16 +2383,16 @@
       "base": "Queenstown",
       "lat": -45.0312,
       "lon": 168.6626,
-      "title": "进入Queenstown，住进Fernhill",
-      "focus": "下午湖边散步，晚上用一顿饭开启皇后镇。",
+      "title": "Kelvin半岛湖边步道，傍晚坐缆车",
+      "focus": "下午在Kelvin半岛沿湖走一圈，傍晚坐缆车看皇后镇。",
       "lodging": "山景独立单间公寓Fernhill",
       "lodgingStatus": "已订",
       "climateNote": "Queenstown约10–24°C，晴天干燥、紫外线强，傍晚转凉。",
       "clothingNote": "夏装＋晚间外套；Fernhill上坡穿好走的鞋；湖边带驱蚊液。",
       "coverImageUrl": "/nz2027/d12.jpg",
-      "coverImageAlt": "D12 进入Queenstown，住进Fernhill",
+      "coverImageAlt": "D12 Kelvin半岛湖边步道，傍晚坐缆车",
       "transport": "自驾 · 纯驾驶约2–2.5小时",
-      "leaveBy": "09:30左右出发；最迟10:00前退房",
+      "leaveBy": "09:30左右出发；15:30–16:00入住",
       "notes": [
         {
           "label": "住宿",
@@ -2371,8 +2434,8 @@
         "id": "nav08",
         "dayId": "d12",
         "title": "导航08 · Te Anau → Queenstown Fernhill",
-        "duration": "09:30左右出发、10:00前退房；纯驾驶约2–2.5小时，加休息午餐留3–4小时；15:00后入住。",
-        "sequence": "3 Thomson Place → SH94 / Mossburn → SH97 / Five Rivers → SH6 / Kingston → Frankton → SH6A / Queenstown → Fernhill → 15 Greenstone Place",
+        "duration": "09:30左右出发、10:00前退房；纯驾驶约2–2.5小时，12:00–13:00到Frankton；Kelvin半岛步道后15:30–16:00入住。",
+        "sequence": "3 Thomson Place → SH94 / Mossburn → SH97 / Five Rivers → SH6 / Kingston → Frankton → Kelvin Heights → SH6A / Queenstown → Fernhill → 15 Greenstone Place",
         "notes": "住处在山坡，回房要考虑上坡和天气。晚餐若打车，按往返安排；若开车，使用有明确收费/限时标识的市区车位。",
         "legs": [
           {
@@ -2389,15 +2452,21 @@
           },
           {
             "sortOrder": 30,
-            "segment": "Kingston → Queenstown中心",
-            "driveTime": "约45–60分钟",
-            "stopNote": "市区午餐；停车可查Boundary Street等正规车场，按牌付费。"
+            "segment": "Kingston → Frankton",
+            "driveTime": "约40–50分钟",
+            "stopNote": "Frankton一带午餐，停商场或有标识的车位。"
           },
           {
             "sortOrder": 40,
-            "segment": "中心 → 15 Greenstone Place",
-            "driveTime": "约10–15分钟",
-            "stopNote": "上Fernhill后按房东说明停车，15:00前不默认能入房。"
+            "segment": "Frankton → Kelvin Heights",
+            "driveTime": "约10分钟",
+            "stopNote": "停Peninsula Road / Grove Lane附近的公共车位，走雕塑环线约1小时。"
+          },
+          {
+            "sortOrder": 50,
+            "segment": "Kelvin Heights → 15 Greenstone Place",
+            "driveTime": "约20–25分钟",
+            "stopNote": "穿过市区上Fernhill，按房东说明停车；缆车站在Brecon Street，离住处很近。"
           }
         ],
         "resources": [
@@ -2411,13 +2480,13 @@
             "sourceNote": "导航08"
           },
           {
-            "id": "boundary-street-map",
-            "title": "Boundary Street停车场",
+            "id": "kelvin-trail-map",
+            "title": "Kelvin Heights 雕塑环线起点",
             "type": "map",
-            "url": "https://www.google.com/maps/search/?api=1&query=Boundary+Street+Car+Park%2C+Queenstown%2C+New+Zealand",
+            "url": "https://www.google.com/maps/search/?api=1&query=Peninsula+Road+and+Grove+Lane%2C+Kelvin+Heights%2C+Queenstown%2C+New+Zealand",
             "imageUrl": "",
             "imageAlt": "",
-            "sourceNote": "中心停车参考"
+            "sourceNote": "Google Maps"
           },
           {
             "id": "fernhill-map",
@@ -2463,47 +2532,58 @@
         {
           "dayId": "d12",
           "sortOrder": 20,
-          "period": "中午",
-          "place": "Fergburger",
-          "activity": "经Kingston到Queenstown，午餐吃Fergburger；店在市中心Shotover Street，饭点排队常很长，尽量错开12:00–13:30，或打包到湖边吃。",
-          "highlight": "皇后镇招牌汉堡",
+          "period": "12:00–13:00",
+          "place": "Frankton",
+          "activity": "经Kingston到皇后镇附近，在Frankton一带吃午饭，不进市中心。",
+          "highlight": "午餐",
           "tip": "",
           "resources": [
             {
-              "id": "fergburger-map",
-              "title": "Fergburger",
-              "type": "restaurant",
-              "url": "https://www.google.com/maps/search/?api=1&query=Fergburger%2C+Shotover+Street%2C+Queenstown%2C+New+Zealand",
+              "id": "frankton-map",
+              "title": "Frankton / Remarkables Park",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Remarkables+Park%2C+Frankton%2C+Queenstown%2C+New+Zealand",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            },
-            {
-              "id": "fergburger-official",
-              "title": "Fergburger官网",
-              "type": "restaurant",
-              "url": "https://www.fergburger.com/",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "官网"
-            },
-            {
-              "id": "boundary-street-map",
-              "title": "Boundary Street停车场",
-              "type": "map",
-              "url": "https://www.google.com/maps/search/?api=1&query=Boundary+Street+Car+Park%2C+Queenstown%2C+New+Zealand",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "中心停车参考"
             }
           ]
         },
         {
           "dayId": "d12",
           "sortOrder": 30,
-          "period": "15:00后",
+          "period": "13:30–15:00",
+          "place": "Kelvin Peninsula Sculpture Trail",
+          "activity": "Kelvin Heights湖畔雕塑环线，绕高尔夫球场一圈约3.5km、1小时，平路好走，对岸是Walter Peak和皇后镇。",
+          "highlight": "湖畔雕塑步道",
+          "tip": "起点在Peninsula Road和Grove Lane路口。",
+          "resources": [
+            {
+              "id": "kelvin-trail-map",
+              "title": "Kelvin Heights 雕塑环线起点",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Peninsula+Road+and+Grove+Lane%2C+Kelvin+Heights%2C+Queenstown%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "kelvin-trail-official",
+              "title": "Kelvin Heights Peninsula Trail",
+              "type": "official",
+              "url": "https://www.queenstownnz.co.nz/listing/kelvin-heights-peninsula-trail/9101/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Queenstown NZ"
+            }
+          ]
+        },
+        {
+          "dayId": "d12",
+          "sortOrder": 35,
+          "period": "15:30–16:00",
           "place": "15 Greenstone Place",
-          "activity": "入住15 Greenstone Place，放下行李休息。",
+          "activity": "开约20分钟到Fernhill，入住15 Greenstone Place，放下行李休息。",
           "highlight": "入住Fernhill",
           "tip": "",
           "resources": [
@@ -2521,11 +2601,11 @@
         {
           "dayId": "d12",
           "sortOrder": 40,
-          "period": "16:30–18:30",
+          "period": "傍晚 17:00–19:00",
           "place": "Skyline Gondola · Bob’s Peak",
           "activity": "坐Skyline缆车上Bob’s Peak看湖和Remarkables山脉，按1.5–2小时安排；想玩可加Luge滑道。缆车站在Brecon Street，离Fernhill很近。",
           "highlight": "俯瞰皇后镇",
-          "tip": "缆车票可网上或现场买；大风时可能停运。",
+          "tip": "日落约21:00；想在山上看日落，就先吃晚饭、19:30后再上山。缆车票网上或现场买，大风时可能停运。",
           "resources": [
             {
               "id": "skyline-map",
@@ -2550,9 +2630,9 @@
         {
           "dayId": "d12",
           "sortOrder": 50,
-          "period": "19:00–晚上",
+          "period": "19:30–晚上",
           "place": "Blue Kanu / 湖边",
-          "activity": "下山后湖边走走，晚餐Blue Kanu。不去缆车就改Queenstown Gardens湖边轻走。",
+          "activity": "下山后湖边走走，晚餐Blue Kanu。缆车停运就改Queenstown Gardens湖边轻走。",
           "highlight": "晚餐",
           "tip": "",
           "resources": [
@@ -2571,8 +2651,8 @@
           "dayId": "d12",
           "sortOrder": 90,
           "period": "饮食",
-          "place": "Fergburger / Blue Kanu",
-          "activity": "早餐：Te Anau；午餐：Fergburger；晚餐：Blue Kanu",
+          "place": "Frankton / Blue Kanu",
+          "activity": "早餐：Te Anau；午餐：Frankton；晚餐：Blue Kanu",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -2588,14 +2668,14 @@
       "base": "Queenstown",
       "lat": -44.8496,
       "lon": 168.387,
-      "title": "沿湖开去Glenorchy",
-      "focus": "公路、红船屋、湿地步道和小镇午餐。",
+      "title": "沿湖开去Glenorchy，傍晚Moke Lake",
+      "focus": "公路、红船屋、湿地步道，傍晚绕Moke Lake走一圈。",
       "lodging": "山景独立单间公寓Fernhill",
       "lodgingStatus": "已订",
       "climateNote": "Wakatipu湖区约10–24°C，晴天日照强，湖边风大。",
       "clothingNote": "防晒＋防风外套、驱蚊液；Lagoon步道雨后可能积水，穿防水鞋。",
       "coverImageUrl": "/nz2027/d13.jpg",
-      "coverImageAlt": "D13 沿湖开去Glenorchy",
+      "coverImageAlt": "D13 沿湖开去Glenorchy，傍晚Moke Lake",
       "transport": "自驾往返Glenorchy · 往返约2小时",
       "leaveBy": "09:00左右出发",
       "notes": [
@@ -2609,7 +2689,11 @@
         },
         {
           "label": "天气备选",
-          "text": "小雨时缩短Lagoon段；大雨、路况或能见度不适合时留Queenstown城市活动。只到Glenorchy，不走碎石支路。"
+          "text": "小雨时缩短Lagoon段；大雨、路况或能见度不适合时留Queenstown城市活动。只到Glenorchy，不往Paradise方向开（租车合同禁止Glenorchy–Paradise Road）。"
+        },
+        {
+          "label": "碎石路",
+          "text": "Moke Lake Road后段约8km碎石路，窄、陡、有弯，有对向来车；车速压到30–40km/h。大雨后不去，改Queenstown Gardens湖边散步。碎石路造成的玻璃、轮胎、底盘损伤保险可能不赔，出发前看一眼保险条款。"
         }
       ],
       "lodgingResource": {
@@ -2643,9 +2727,9 @@
         "id": "nav09",
         "dayId": "d13",
         "title": "导航09 · Fernhill ↔ Glenorchy",
-        "duration": "09:00左右出发；单程约50–70分钟，往返按约2小时，连步道午餐留5–6小时。",
-        "sequence": "15 Greenstone Place → Queenstown–Glenorchy Road → Bennetts Bluff Viewpoint → Glenorchy Waterfront / Wharf → Lagoon步道 → 原路回Fernhill",
-        "notes": "Bennetts Bluff是途中观景站；Glenorchy Waterfront/Wharf是小镇主停车区域。Paradise及未铺装支线不纳入本日主路线。",
+        "duration": "09:00左右出发；单程约50–70分钟，往返按约2小时，连步道午餐留5–6小时；傍晚再去Moke Lake，单程约30分钟。",
+        "sequence": "15 Greenstone Place → Queenstown–Glenorchy Road → Bennetts Bluff Viewpoint → Glenorchy Waterfront / Wharf → Lagoon步道 → 原路回Fernhill → 傍晚 Moke Lake Road → Moke Lake → 市中心",
+        "notes": "Bennetts Bluff是途中观景站；Glenorchy Waterfront/Wharf是小镇主停车区域。不往Paradise方向开（租车合同禁止）。Moke Lake Road后段是碎石路，慢开。",
         "legs": [
           {
             "sortOrder": 10,
@@ -2669,7 +2753,13 @@
             "sortOrder": 40,
             "segment": "Glenorchy → Fernhill",
             "driveTime": "约50–70分钟",
-            "stopNote": "午餐后原路返；途中最多选一处正规停车点，下午回城。"
+            "stopNote": "午餐后原路返；途中最多选一处正规停车点，下午回城休息。"
+          },
+          {
+            "sortOrder": 50,
+            "segment": "Fernhill → Moke Lake",
+            "driveTime": "约25–35分钟",
+            "stopNote": "Glenorchy路走约10分钟后右转Moke Lake Road，先是陡弯铺装路，后段约8km碎石路；停湖边营地停车场。"
           }
         ],
         "resources": [
@@ -2699,6 +2789,15 @@
             "imageUrl": "",
             "imageAlt": "",
             "sourceNote": "导航09"
+          },
+          {
+            "id": "moke-lake-map",
+            "title": "Moke Lake",
+            "type": "map",
+            "url": "https://www.google.com/maps/search/?api=1&query=Moke+Lake%2C+Queenstown%2C+New+Zealand",
+            "imageUrl": "",
+            "imageAlt": "",
+            "sourceNote": "Google Maps"
           },
           {
             "id": "bennetts-bluff-official",
@@ -2813,19 +2912,76 @@
         {
           "dayId": "d13",
           "sortOrder": 50,
-          "period": "晚上",
-          "place": "Queenstown",
-          "activity": "湖边晚餐，整理行李、准备次日加油还车。",
-          "highlight": "",
+          "period": "17:30–20:00",
+          "place": "Moke Lake",
+          "activity": "从Glenorchy路岔进Moke Lake Road，约30分钟到湖边。环湖步道约6km、2–2.5小时；不想走完就在营地一侧湖边看倒影，傍晚无风时最好。",
+          "highlight": "傍晚湖面倒影",
+          "tip": "20:30前开回铺装路。",
+          "resources": [
+            {
+              "id": "moke-lake-map",
+              "title": "Moke Lake",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Moke+Lake%2C+Queenstown%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "moke-lake-official",
+              "title": "Moke Lake Loop Track",
+              "type": "official",
+              "url": "https://doc.govt.nz/parks-and-recreation/places-to-go/otago/places/queenstown-area/things-to-do/moke-lake-loop-track",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "DOC"
+            }
+          ]
+        },
+        {
+          "dayId": "d13",
+          "sortOrder": 60,
+          "period": "20:30左右",
+          "place": "Fergburger",
+          "activity": "回市中心吃Fergburger，饭点后排队短一些，也可以打包到湖边吃；之后整理行李，准备次日加油还车。",
+          "highlight": "皇后镇招牌汉堡",
           "tip": "",
-          "resources": []
+          "resources": [
+            {
+              "id": "fergburger-map",
+              "title": "Fergburger",
+              "type": "restaurant",
+              "url": "https://www.google.com/maps/search/?api=1&query=Fergburger%2C+Shotover+Street%2C+Queenstown%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "fergburger-official",
+              "title": "Fergburger官网",
+              "type": "restaurant",
+              "url": "https://www.fergburger.com/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "官网"
+            },
+            {
+              "id": "boundary-street-map",
+              "title": "Boundary Street停车场",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Boundary+Street+Car+Park%2C+Queenstown%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "中心停车参考"
+            }
+          ]
         },
         {
           "dayId": "d13",
           "sortOrder": 90,
           "period": "饮食",
-          "place": "Glenorchy / Queenstown",
-          "activity": "早餐：Queenstown/住宿；午餐：Glenorchy镇上；晚餐：Queenstown",
+          "place": "Glenorchy / Fergburger",
+          "activity": "早餐：Queenstown/住宿；午餐：Glenorchy镇上；晚餐：Fergburger",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -4795,6 +4951,69 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
+    },
+    {
+      "id": "diamond-lake-map",
+      "title": "Diamond Lake 停车场",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Diamond+Lake+Track+Car+Park%2C+Wanaka-Mount+Aspiring+Road%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "diamond-lake-official",
+      "title": "Lake Wānaka Lookout Track",
+      "type": "official",
+      "url": "https://www.doc.govt.nz/parks-and-recreation/places-to-go/otago/places/diamond-lake-and-hospital-flat/things-to-do/lake-wanaka-lookout-track",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "DOC"
+    },
+    {
+      "id": "frankton-map",
+      "title": "Frankton / Remarkables Park",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Remarkables+Park%2C+Frankton%2C+Queenstown%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "kelvin-trail-map",
+      "title": "Kelvin Heights 雕塑环线起点",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Peninsula+Road+and+Grove+Lane%2C+Kelvin+Heights%2C+Queenstown%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "kelvin-trail-official",
+      "title": "Kelvin Heights Peninsula Trail",
+      "type": "official",
+      "url": "https://www.queenstownnz.co.nz/listing/kelvin-heights-peninsula-trail/9101/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Queenstown NZ"
+    },
+    {
+      "id": "moke-lake-map",
+      "title": "Moke Lake",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Moke+Lake%2C+Queenstown%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "moke-lake-official",
+      "title": "Moke Lake Loop Track",
+      "type": "official",
+      "url": "https://doc.govt.nz/parks-and-recreation/places-to-go/otago/places/queenstown-area/things-to-do/moke-lake-loop-track",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "DOC"
     },
     {
       "id": "fergburger-map",

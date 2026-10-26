@@ -62,8 +62,8 @@ describe("2027 two-person itinerary data", () => {
       itinerary.days.filter((day) => day.drive).map((day) => [day.date.slice(5), day.drive.id, day.drive.legs.length]),
       [
         ["02-05", "nav02", 5], ["02-06", "nav03", 4], ["02-07", "nav04", 4],
-        ["02-08", "nav05", 4], ["02-09", "nav06", 3], ["02-10", "nav07", 5], ["02-12", "nav08", 4],
-        ["02-13", "nav09", 4], ["02-14", "nav10", 3], ["02-15", "nav11", 5],
+        ["02-08", "nav05", 4], ["02-09", "nav06", 3], ["02-10", "nav07", 5], ["02-12", "nav08", 5],
+        ["02-13", "nav09", 5], ["02-14", "nav10", 3], ["02-15", "nav11", 5],
       ],
     );
     assert.match(dayById("d10").drive.sequence, /Crown Range Summit → Arrow Junction \/ Arrowtown/);
@@ -87,6 +87,16 @@ describe("2027 two-person itinerary data", () => {
     assert.deepEqual(sydney.map((lodging) => [lodging.checkIn, lodging.checkOut]), [["2027-02-01", "2027-02-04"]]);
     const all = JSON.stringify(itinerary);
     for (const phrase of ["待购", "（补订）", "换房"]) assert.ok(!all.includes(phrase), phrase);
+  });
+
+  it("uses the late February evenings for lakeside walks", () => {
+    const has = (id, pattern) => dayById(id).blocks.some((block) => pattern.test(`${block.place} ${block.activity}`));
+    assert.ok(has("d5", /Lake Ruataniwha.*日落/));
+    assert.ok(has("d8", /Diamond Lake/));
+    assert.ok(has("d12", /Kelvin Peninsula Sculpture Trail/));
+    assert.ok(has("d12", /Skyline/));
+    assert.ok(has("d13", /Moke Lake/));
+    assert.match(JSON.stringify(dayById("d13").notes), /Glenorchy–Paradise Road/);
   });
 
   it("lists free-cancellation deadlines and payment dates", () => {
