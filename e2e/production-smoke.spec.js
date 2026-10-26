@@ -14,7 +14,7 @@ test("production routes answer without issuing mutation requests", async ({ page
     await route.continue();
   });
 
-  for (const path of ["/", "/ledger", "/expenses", "/add", "/activity", "/settlement", "/itinerary", "/nz2027/checklist", "/nz2027/ledger"]) {
+  for (const path of ["/", "/ledger", "/expenses", "/add", "/activity", "/settlement", "/itinerary", "/nz2027/checklist", "/nz2027/ledger", "/nz2027/updates"]) {
     const response = await page.goto(path, { waitUntil: "domcontentloaded" });
     expect(response?.status(), `${path} should answer`).toBeLessThan(400);
     await expect(page).toHaveTitle(/澳新 2027|Aussie Chill/);

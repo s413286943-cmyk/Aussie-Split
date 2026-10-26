@@ -50,7 +50,8 @@ body:has(.nz) {
 }
 
 .nz-view-checklist .nz-main,
-.nz-view-ledger .nz-main {
+.nz-view-ledger .nz-main,
+.nz-view-updates .nz-main {
   padding: 8px 16px 120px;
 }
 
@@ -82,7 +83,7 @@ body:has(.nz) {
   z-index: 40;
   display: flex;
   gap: 4px;
-  width: min(320px, calc(100vw - 32px));
+  width: min(380px, calc(100vw - 32px));
   padding: 6px;
   border-radius: 999px;
   background: rgba(28, 45, 52, 0.92);
@@ -1416,4 +1417,104 @@ body:has(.nz) {
   .nz-progress span {
     transition: none;
   }
+}
+
+/* 更新 */
+.nz-page-head {
+  padding: 18px 4px 8px;
+}
+
+.nz-page-head h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.nz-page-head p {
+  margin: 10px 0 0;
+  color: var(--nz-soft);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.nz-updates-note {
+  margin: 12px 4px 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--nz-surface);
+  color: var(--nz-soft);
+  font-size: 13px;
+}
+
+.nz-updates-day {
+  margin-top: 22px;
+}
+
+.nz-updates-day h2 {
+  margin: 0 4px 10px;
+  color: var(--nz-faint);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.nz-updates-day > ol {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nz-update {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--nz-line);
+  border-radius: 16px;
+  background: var(--nz-surface);
+}
+
+.nz-update time {
+  padding-top: 2px;
+  color: var(--nz-faint);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.nz-update strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 15px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.nz-update ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  color: var(--nz-soft);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.nz-update-tag {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--nz-surface-2);
+  color: var(--nz-soft);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.nz-update.is-release .nz-update-tag {
+  background: rgba(159, 224, 207, 0.16);
+  color: var(--nz-mint);
+}
+
+.nz-update.is-expense .nz-update-tag {
+  background: rgba(240, 179, 90, 0.16);
+  color: var(--nz-amber);
 }

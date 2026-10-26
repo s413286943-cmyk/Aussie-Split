@@ -1,6 +1,7 @@
 import { defaultSnapshot } from "./data.js";
 import itinerary from "../../src/data/itinerary.generated.json" with { type: "json" };
 import nz2027Itinerary from "../../src/data/nz2027-itinerary.generated.json" with { type: "json" };
+import nz2027Releases from "../../content/nz2027-updates.json" with { type: "json" };
 
 export class MockApi {
   constructor(options = {}) {
@@ -16,6 +17,9 @@ export class MockApi {
     this.nz2027Expenses = structuredClone(options.nz2027Expenses || defaultNz2027Expenses());
     this.nz2027Available = options.nz2027Available ?? true;
     this.nz2027Checklist = structuredClone(options.nz2027Checklist || []);
+    // Mirrors the database triggers that log every applied 2027 change.
+    this.nz2027Activity = structuredClone(options.nz2027Activity || []);
+    this.nz2027ActivityAvailable = options.nz2027ActivityAvailable ?? true;
     this.finalizedReceipts = new Map();
   }
 
@@ -57,6 +61,13 @@ export class MockApi {
     if (url.pathname === "/api/nz2027/itinerary") return json(route, { itinerary: structuredClone(nz2027Itinerary) });
     if (url.pathname === "/api/nz2027/expenses") return this.#handleNz2027(route);
     if (url.pathname === "/api/nz2027/checklist") return this.#handleNz2027Checklist(route);
+    if (url.pathname === "/api/nz2027/updates") {
+      return json(route, {
+        releases: structuredClone(nz2027Releases),
+        activity: this.nz2027ActivityAvailable ? structuredClone(this.nz2027Activity) : [],
+        activityAvailable: this.nz2027ActivityAvailable,
+      });
+    }
     if (url.pathname === "/api/sync") return this.#handleSync(route);
     if (url.pathname === "/api/activity") return json(route, { activity: structuredClone(this.activity) });
     if (url.pathname === "/api/receipts/upload-url") return this.#createUpload(route);
@@ -108,6 +119,9 @@ export class MockApi {
           continue;
         }
         this.nz2027Checklist = [structuredClone(item), ...this.nz2027Checklist.filter((entry) => entry.id !== item.id)];
+        if (Boolean(existing?.done) !== item.done && (existing || item.done)) {
+          this.#logNz2027({ kind: "check", action: item.done ? "done" : "undone", refId: item.id, detail: {} });
+        }
         results.push({ id: item.id, status: "applied" });
       }
       return json(route, { results, items: structuredClone(this.nz2027Checklist) });
@@ -128,12 +142,34 @@ export class MockApi {
           continue;
         }
         this.nz2027Expenses = [structuredClone(record), ...this.nz2027Expenses.filter((item) => item.id !== record.id)];
+        this.#logNz2027Expense(existing, record);
         results.push({ id: record.id, status: "applied" });
       }
       return json(route, { results, expenses: structuredClone(this.nz2027Expenses), serverTime: new Date().toISOString() });
     }
     if (method !== "GET") return json(route, { error: "method_not_allowed" }, 405);
     return json(route, { expenses: structuredClone(this.nz2027Expenses), serverTime: new Date().toISOString() });
+  }
+
+  #logNz2027(entry) {
+    this.nz2027Activity = [{ id: String(this.nz2027Activity.length + 1), at: new Date().toISOString(), ...entry }, ...this.nz2027Activity];
+  }
+
+  #logNz2027Expense(before, after) {
+    const detail = (record) => ({ item: record.item, currency: record.currency, amount: record.amount, status: record.status, date: record.date || undefined });
+    let action;
+    if (!before) action = after.deletedAt ? "removed" : "added";
+    else if (!before.deletedAt && after.deletedAt) action = "removed";
+    else if (before.deletedAt && !after.deletedAt) action = "restored";
+    else if (after.deletedAt) return;
+    else if (["date", "category", "item", "currency", "amount", "status", "note"].every((key) => before[key] === after[key])) return;
+    else action = "changed";
+    this.#logNz2027({
+      kind: "expense",
+      action,
+      refId: after.id,
+      detail: action === "changed" ? { ...detail(after), before: detail(before) } : detail(after),
+    });
   }
 
   #applyOperation(operation) {

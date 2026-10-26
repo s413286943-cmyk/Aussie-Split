@@ -4,7 +4,7 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 
 ## 页面
 
-- **澳新 2027（首页）**：`/` 日程、`/nz2027/checklist` 出发前清单、`/nz2027/ledger` 两人记账（`/nz2027` 跳到首页）。说明见 `docs/operations/nz2027-tab.md`。
+- **澳新 2027（首页）**：`/` 日程、`/nz2027/checklist` 出发前清单、`/nz2027/ledger` 两人记账、`/nz2027/updates` 最近的改动（`/nz2027` 跳到首页）。说明见 `docs/operations/nz2027-tab.md`。
 - **澳洲 2026（已结束，存档）**：`/itinerary`、`/ledger`、`/expenses`、`/add`、`/settlement`、`/activity`，收在首页底部“已结束的旅行”。页面、数据和行为保持不变。
 
 ## 运行版本与检查
@@ -18,7 +18,7 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 
 - **2027 业务模型**：两人共同记账，不分摊；NZD / CNY / AUD 按原币种分别累计已付和待付，不换算合并。机票价格监控（Codex 那边）的数据不要导入这里。
 - **2026 业务模型**：两对同行者，按币种分别结算，两组各 50%，机票排除在共享账目外。旧页面、旧表和旧行为不改。
-- **两次旅行的数据完全分开**：2027 用 `nz2027_*` 表、`/api/nz2027/*` 接口、localStorage `nz2027-*` 键；2026 用 `expenses` / `expense_activity` 等表、`/api/sync`、IndexedDB `aussie-chill-v2`。只共用访问码和登录会话。
+- **两次旅行的数据完全分开**：2027 用 `nz2027_*` 表（含 `nz2027_activity` 更新记录）、`/api/nz2027/*` 接口、localStorage `nz2027-*` 键；2026 用 `expenses` / `expense_activity` 等表、`/api/sync`、IndexedDB `aussie-chill-v2`。只共用访问码和登录会话。
 - 只在服务端配置 `TRIP_CODE`、`SESSION_SECRET`、`SUPABASE_URL`、`SUPABASE_SERVICE_ROLE_KEY`；不沿用旧 README 的公开密钥方案。
 - 不对现存生产库重跑初始化 schema / seed。新迁移只做新增，执行前先做只读快照（`.backups/`，不进仓库）。
 - 部署顺序：先保护 API，再收紧数据库。改部署前读 `docs/operations/deploy-and-rollback.md`。
@@ -28,6 +28,7 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 ## 内容更新
 
 - **2027 行程**：改 `scripts/nz2027/itinerarySeedData.mjs` 后 `npm run nz2027:seed -- --force` 再 `npm run nz2027:import`；或直接改 `content/nz2027-itinerary.xlsx` 后只跑 `npm run nz2027:import`。清单条目的 `todo_id` 是勾选状态的主键，改文字可以，不要改 id。
+- **2027 更新页**：每次行程调整上线，在 `content/nz2027-updates.json` 最上面加一条（旅行者口吻，`at` 用实际上线时间，不要写未来时间）。记账和清单改动由数据库触发器自动记录，不用手写。
 - **2027 每日主题图**：`public/nz2027/d01.jpg` … `d17.jpg`、`cover.jpg`，换图后跑 `npm run nz2027:import`。prompt 在 `docs/nz2027-day-image-prompts.md`。
 - **2026 行程**：`content/aussie-itinerary.xlsx` 用 `npm run itinerary:import` 导入。
 
