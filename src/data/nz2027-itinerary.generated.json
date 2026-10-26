@@ -2151,7 +2151,7 @@
       "coverImageUrl": "/nz2027/d10.jpg",
       "coverImageAlt": "D10 翻Crown Range、经Arrowtown去Te Anau",
       "transport": "自驾 · 纯驾驶约3.5–4.5小时",
-      "leaveBy": "09:00左右出发；10:00前退房",
+      "leaveBy": "09:00左右出发；17:15到RealNZ报到萤火虫团",
       "notes": [
         {
           "label": "住宿",
@@ -2164,6 +2164,10 @@
         {
           "label": "坏天气",
           "text": "起雾、大风或下雨时别翻Crown Range，改走Cromwell（导航里有备选链接），从Frankton起两条路一样。"
+        },
+        {
+          "label": "傍晚",
+          "text": "17:45 萤火虫洞团。Arrowtown 控制在 90 分钟内，15:00–16:30 到 Te Anau；改走 Cromwell 多 20–30 分钟也赶得上，最晚 16:30 前到住处。"
         }
       ],
       "lodgingResource": {
@@ -2364,41 +2368,31 @@
         {
           "dayId": "d10",
           "sortOrder": 50,
-          "period": "17:30",
-          "place": "Te Anau镇上",
-          "activity": "早点吃晚饭。",
-          "highlight": "",
-          "tip": "",
-          "resources": []
-        },
-        {
-          "dayId": "d10",
-          "sortOrder": 60,
-          "period": "20:40–21:15",
-          "place": "Te Anau Lakefront",
-          "activity": "沿Lakefront Drive散步，湖岸朝西，看日落落在湖上；离住处几分钟。",
-          "highlight": "湖上日落",
-          "tip": "",
+          "period": "17:15–17:30",
+          "place": "RealNZ Visitor Centre",
+          "activity": "开几分钟到85 Lakefront Drive报到，就是明天Milford的集合点。",
+          "highlight": "报到",
+          "tip": "报到时间以确认单为准。",
           "resources": [
             {
-              "id": "realnz-walk-route",
-              "title": "住宿步行到RealNZ集合点",
+              "id": "realnz-map",
+              "title": "RealNZ Visitor Centre",
               "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=3+Thomson+Place%2C+Te+Anau%2C+New+Zealand&destination=RealNZ+Visitor+Centre%2C+85+Lakefront+Drive%2C+Te+Anau%2C+New+Zealand&travelmode=walking",
+              "url": "https://www.google.com/maps/search/?api=1&query=RealNZ+Visitor+Centre%2C+85+Lakefront+Drive%2C+Te+Anau%2C+New+Zealand",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "步行约15–20分钟"
+              "sourceNote": "集合点"
             }
           ]
         },
         {
           "dayId": "d10",
-          "sortOrder": 65,
-          "period": "19:00–21:15（可选）",
+          "sortOrder": 55,
+          "period": "17:45–20:00",
           "place": "Te Anau萤火虫洞",
-          "activity": "可选：RealNZ萤火虫洞夜游，坐船过湖再进洞，约2小时15分；19:00那班回程的船差不多赶上日落。订了就不再单独去湖边。",
+          "activity": "RealNZ萤火虫洞团：坐船过湖，步行进洞，再坐小船看萤火虫，约2小时15分。",
           "highlight": "萤火虫",
-          "tip": "要预约，场次以RealNZ官网为准；第二天09:15要去Milford报到，累了就不订。",
+          "tip": "洞内8–12°C，带外套；洞里不能拍照。",
           "resources": [
             {
               "id": "realnz-map",
@@ -2422,10 +2416,40 @@
         },
         {
           "dayId": "d10",
+          "sortOrder": 60,
+          "period": "20:15",
+          "place": "Te Anau镇上",
+          "activity": "回来直接吃晚饭；不少餐厅厨房21:00前后停止点餐，要提前订，选离湖边近的。",
+          "highlight": "晚饭",
+          "tip": "",
+          "resources": []
+        },
+        {
+          "dayId": "d10",
+          "sortOrder": 70,
+          "period": "21:00–21:15",
+          "place": "Te Anau Lakefront",
+          "activity": "饭后沿Lakefront Drive走走，湖岸朝西，看21:09的日落，然后回住宿早点睡。",
+          "highlight": "湖上日落",
+          "tip": "明早09:15去Milford报到。",
+          "resources": [
+            {
+              "id": "realnz-walk-route",
+              "title": "住宿步行到RealNZ集合点",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=3+Thomson+Place%2C+Te+Anau%2C+New+Zealand&destination=RealNZ+Visitor+Centre%2C+85+Lakefront+Drive%2C+Te+Anau%2C+New+Zealand&travelmode=walking",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "步行约15–20分钟"
+            }
+          ]
+        },
+        {
+          "dayId": "d10",
           "sortOrder": 90,
           "period": "饮食",
           "place": "Frankton / Kingston / Te Anau",
-          "activity": "早餐：Wānaka；午餐：Arrowtown；晚餐：17:30在Te Anau镇上",
+          "activity": "早餐：Wānaka；午餐：Arrowtown；晚餐：20:15在Te Anau镇上（要订）",
           "highlight": "",
           "tip": "",
           "resources": []
@@ -4330,9 +4354,9 @@
       "sortOrder": 155,
       "kind": "book",
       "dueDate": "",
-      "dueLabel": "可选",
-      "title": "订 Te Anau 萤火虫洞夜游（2/10 19:00）",
-      "detail": "RealNZ 坐船过湖进洞，约 2 小时 15 分，每人约 NZ$154；洞内 8–12°C 要带外套，洞里不能拍照。场次以官网为准；第二天要去 Milford，累了就不订。"
+      "dueLabel": "尽早",
+      "title": "订 Te Anau 萤火虫洞 2/10 17:45 场",
+      "detail": "RealNZ 坐船过湖进洞，约 2 小时 15 分，约 20:00 回来，每人约 NZ$154；先在官网确认这天有 17:45 场。同时订 20:15 的晚饭（不少餐厅 21:00 前后停止点餐）。"
     },
     {
       "id": "skyline",
