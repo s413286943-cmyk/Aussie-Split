@@ -95,7 +95,9 @@ describe("2027 two-person itinerary data", () => {
     assert.ok(has("d5", /Lake Ruataniwha.*日落/));
     assert.ok(has("d8", /Diamond Lake/));
     assert.ok(has("d12", /Kelvin Peninsula Sculpture Trail/));
-    assert.ok(has("d12", /Skyline/));
+    assert.ok(dayById("d12").blocks.some((block) => block.period === "16:30–18:30" && /Luge/.test(block.place)));
+    assert.equal(dayById("d12").ticketResource.id, "skyline-booking");
+    assert.ok(!itinerary.todos.some((todo) => todo.id === "skyline"));
     assert.ok(has("d13", /Moke Lake/));
     assert.ok(has("d1", /Barangaroo/));
     assert.ok(has("d2", /Mrs Macquarie/));

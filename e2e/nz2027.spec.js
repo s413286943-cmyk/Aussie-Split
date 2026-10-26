@@ -15,7 +15,7 @@ test("the home page opens the 2027 trip and tucks the finished trip away", async
   const hero = page.getByRole("region", { name: "今天的行程" });
   await expect(hero).toContainText(/还有 \d+ 天/);
   await expect(hero.getByRole("heading", { level: 1 })).toContainText("抵达悉尼");
-  await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link")).toHaveText(["日程", "清单25", "记账"]);
+  await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link")).toHaveText(["日程", "清单24", "记账"]);
 
   const past = page.locator(".nz-past");
   await expect(past.getByRole("link", { name: "看那次的行程" })).toBeHidden();
@@ -68,19 +68,19 @@ test("checklist items can be ticked off and the tick syncs", async ({ page, mock
   await page.clock.setFixedTime(beforeTrip);
   await page.goto("/nz2027/checklist");
 
-  await expect(page.getByRole("region", { name: "清单进度" })).toContainText("0 / 25 已办完");
+  await expect(page.getByRole("region", { name: "清单进度" })).toContainText("0 / 24 已办完");
   const visa = page.locator(".nz-check").filter({ hasText: "办澳大利亚、新西兰签证" });
   await visa.locator("label").click();
   await expect(visa).toHaveClass(/is-done/);
   await expect(visa.locator("strong")).toHaveCSS("text-decoration-line", "line-through");
-  await expect(page.getByRole("region", { name: "清单进度" })).toContainText("1 / 25 已办完");
+  await expect(page.getByRole("region", { name: "清单进度" })).toContainText("1 / 24 已办完");
   await expect.poll(() => mockApi.nz2027Checklist.find((item) => item.id === "visa")?.done).toBe(true);
 
   await page.getByLabel("隐藏已办完的").check();
   await expect(visa).toHaveCount(0);
 
   await page.goto("/");
-  await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link", { name: /清单/ })).toContainText("24");
+  await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link", { name: /清单/ })).toContainText("23");
 });
 
 test("ticks made on the other phone show up here", async ({ page, mockApi }) => {
