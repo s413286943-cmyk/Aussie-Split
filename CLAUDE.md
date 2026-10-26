@@ -34,7 +34,7 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 
 ## 生产环境
 
-- **Supabase**：项目 `ycbkpkqrucukyyfjphiu`（`aussie-split-bill`，ap-southeast-2）。已应用迁移：`20260710080657 shared_ledger_compatibility`、`20260711134547 private_receipts`、`20260711134644 lock_down_shared_ledger`、`20261025110407 create_nz2027_ledger`（仓库文件 `20261025090000_create_nz2027_ledger.sql`）。
+- **Supabase**：项目 `ycbkpkqrucukyyfjphiu`（`aussie-split-bill`，ap-southeast-2）。已应用迁移：`20260710080657 shared_ledger_compatibility`、`20260711134547 private_receipts`、`20260711134644 lock_down_shared_ledger`、`20261025110407 create_nz2027_ledger`（仓库文件 `20261025090000_create_nz2027_ledger.sql`）、`20261026114024 create_nz2027_activity`（仓库文件 `20261026090000_create_nz2027_activity.sql`，更新记录表和触发器）。
 - **Vercel**：团队 `silhouette2`，只有项目 `aussie-split`，从 `main` 自动部署生产。重复项目 `aussie-split-bill`（无服务端密钥、无法登录）已于 2026-10-25 删除。
 - Vercel MCP 连接器对 `silhouette2` 返回 403；只读查询改用本机 CLI：`node $(readlink -f /opt/homebrew/bin/vercel) …`（在 Node 24 下运行）。
 

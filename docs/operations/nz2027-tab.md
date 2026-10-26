@@ -25,7 +25,7 @@
 
 行程更新：改 `scripts/nz2027/itinerarySeedData.mjs` 后运行 `npm run nz2027:seed -- --force` 和 `npm run nz2027:import`；或直接改 Excel 后只运行 `npm run nz2027:import`。**每次行程调整上线，在 `content/nz2027-updates.json` 最上面加一条说明**（`id`、`at`、`title`、`items`，旅行者口吻），它会出现在“更新”页。记账和清单的改动不用手写，数据库触发器自动记录，直接在生产库写入的也会记上。
 
-## 更新记录迁移（待在生产执行）
+## 更新记录迁移（2026-10-26 已在生产执行，版本 20261026114024）
 
 `supabase/migrations/20261026090000_create_nz2027_activity.sql`，只新增：
 
@@ -33,6 +33,8 @@
 - 触发器 `nz2027_expenses_activity`、`nz2027_checklist_activity`（security definer 函数 `nz2027_log_expense`、`nz2027_log_check`）：每次记账新增 / 改动 / 删除 / 恢复、清单勾选 / 取消各记一行；过期写入和值没变的重发不记。
 - 回填一次：每条现有记账按最新状态记一行，已勾选的清单项各记一行。
 - 不改 `nz2027_expenses`、`nz2027_checklist` 的数据，不碰 2026 表。重复执行安全。
+
+已执行：执行前做了只读快照（`.backups/20261026T113932Z-before-nz2027-activity/`，不进仓库）；执行后回填 16 行（15 笔记账 + 1 项已勾清单），`nz2027_expenses` 和 2026 `expenses` 的内容指纹与快照一致，权限和 RLS 符合预期。
 
 执行顺序：网页先上线也可以，记录表不存在时“更新”页只显示行程调整，并提示记账和清单改动暂时读不到；执行迁移后自动有。执行前照例做只读快照。
 
