@@ -3050,7 +3050,7 @@
         },
         {
           "label": "天气",
-          "text": "暴雨、落石时Milford Road（SH94）会临时封路，RealNZ可能取消或改期。前一晚和当天早上看RealNZ通知；若取消，当天改为Te Anau湖边步道和休息，不临时补订其他项目。"
+          "text": "暴雨、落石时Milford Road（SH94）会临时封路，RealNZ可能取消或改期。前一晚和当天早上看RealNZ通知；若取消，按时间线里的“雨天备选”在 Te Anau 走走，不临时补订其他项目。"
         },
         {
           "label": "沙蝇",
@@ -3152,6 +3152,37 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "09:30前报到，09:50–17:00"
+            }
+          ]
+        },
+        {
+          "dayId": "d11",
+          "sortOrder": 35,
+          "period": "Milford 取消时",
+          "place": "Te Anau 湖边 · 鸟类保护区 · Kepler 湖边段",
+          "activity": "沿湖往南走到 Punanga Manu o Te Anau 鸟类保护区（日出到日落开放，免费，欢迎捐款），再到 Kepler Track 停车场，走一段湖边林间步道到 Dock Bay，往返约 1 小时。",
+          "highlight": "雨天备选",
+          "tip": "DOC 讲解团每天 10:30，每人约 NZ$10，在 DOC 游客中心买票，以当天为准。",
+          "choice": "雨天备选",
+          "miss": "Milford 峡湾和整条 Milford Road。",
+          "resources": [
+            {
+              "id": "teanau-bird-sanctuary-official",
+              "title": "Punanga Manu o Te Anau 鸟类保护区",
+              "type": "official",
+              "url": "https://www.fiordland.org.nz/see-and-do/activities/show/punanga-manu-o-te-anau-bird-sanctuary/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Fiordland NZ"
+            },
+            {
+              "id": "kepler-dock-bay-official",
+              "title": "DOC：游客中心到 Kepler Track 停车场",
+              "type": "official",
+              "url": "https://doc.govt.nz/parks-and-recreation/places-to-go/fiordland/places/fiordland-national-park/things-to-do/tracks/visitor-centre-to-kepler-track-carpark-walk",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "DOC"
             }
           ]
         },
@@ -3395,13 +3426,13 @@
         {
           "dayId": "d12",
           "sortOrder": 30,
-          "period": "13:15–14:30（晚了就跳过）",
+          "period": "13:15–14:30",
           "place": "Kelvin Peninsula Sculpture Trail",
           "activity": "Kelvin Heights湖畔雕塑环线，绕高尔夫球场约3.5km、1小时，平路好走，对岸是Walter Peak和皇后镇。",
           "highlight": "湖畔雕塑步道",
-          "tip": "午饭晚了或累了就跳过，直接去Fernhill，优先保证16:30的缆车；起点在Peninsula Road和Grove Lane路口。",
-          "choice": "",
-          "miss": "",
+          "tip": "起点在Peninsula Road和Grove Lane路口；午饭晚了就跳过，直接去 Fernhill。",
+          "choice": "可加 · Kelvin 半岛",
+          "miss": "午饭后歇一会儿的时间；14:30 前要走完，才赶得上 16:30 的缆车。",
           "resources": [
             {
               "id": "kelvin-trail-map",
@@ -3803,14 +3834,36 @@
         },
         {
           "dayId": "d13",
+          "sortOrder": 45,
+          "period": "下午 · 约 30 分钟–1.5 小时",
+          "place": "Bob's Cove",
+          "activity": "回程在 Glenorchy 路边的 Bob's Cove 停车场停下，林间小路走到碧绿色的湖湾，约 20 分钟单程；加走到 Picnic Point 的环线就留 1.5 小时。",
+          "highlight": "碧绿湖湾",
+          "tip": "离皇后镇约 14km；夏天停车场很满，不要停路边或倒车上路。",
+          "choice": "可加 · Bob's Cove",
+          "miss": "回城晚半小时到一小时，傍晚的 Moke Lake 可能就不去了。",
+          "resources": [
+            {
+              "id": "bobs-cove-official",
+              "title": "Bob's Cove Track & Nature Walk",
+              "type": "official",
+              "url": "https://www.queenstownnz.co.nz/listing/bobs-cove-track-%26-nature-walk/9103/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Queenstown NZ"
+            }
+          ]
+        },
+        {
+          "dayId": "d13",
           "sortOrder": 50,
-          "period": "18:00–19:30（可选）",
+          "period": "18:00–19:30",
           "place": "Moke Lake",
           "activity": "有精神才去：从Glenorchy路岔进Moke Lake Road，约30分钟到湖边，在营地一侧湖边停30–45分钟看倒影，傍晚无风时最好。还想走再绕湖一圈（约6km、2–2.5小时，20:30前回到车上）。",
           "highlight": "傍晚湖面倒影",
           "tip": "累了或下雨就不去；21:00日落前回到铺装路。",
-          "choice": "",
-          "miss": "",
+          "choice": "可加 · Moke Lake",
+          "miss": "早点休息；来回要开约 8km 碎石路。",
           "resources": [
             {
               "id": "moke-lake-map",
@@ -4111,13 +4164,13 @@
         {
           "dayId": "d14",
           "sortOrder": 60,
-          "period": "19:30–20:30（可选）",
+          "period": "19:30–20:30",
           "place": "Viaduct Harbour / Wynyard Quarter",
-          "activity": "饭后在Viaduct海边走走就回酒店早睡；有精神再走10分钟到Wynyard Quarter / Silo Park，看20:19的日落。",
-          "highlight": "海边散步",
+          "activity": "饭后在Viaduct海边走走；有精神再走10分钟到Wynyard Quarter / Silo Park，看20:19的日落。",
+          "highlight": "海边日落",
           "tip": "明早06:00出发，早点睡。",
-          "choice": "",
-          "miss": "",
+          "choice": "可加 · Wynyard 日落",
+          "miss": "早睡一小时，明早 06:00 就要出发。",
           "resources": [
             {
               "id": "wynyard-map",
@@ -4396,8 +4449,8 @@
           "activity": "Auckland Art Gallery Toi o Tāmaki，按1.5–2小时安排。",
           "highlight": "美术馆",
           "tip": "",
-          "choice": "",
-          "miss": "",
+          "choice": "上午 A · 美术馆",
+          "miss": "Mt Eden 山顶看整座城。",
           "resources": [
             {
               "id": "art-gallery-map",
@@ -4416,6 +4469,28 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "官网"
+            }
+          ]
+        },
+        {
+          "dayId": "d16",
+          "sortOrder": 22,
+          "period": "10:00–12:00",
+          "place": "Mt Eden · Maungawhau",
+          "activity": "打车约 15 分钟到山脚，走 15–20 分钟上山顶，看火山口和奥克兰全景，按 1.5 小时安排，再打车回 Britomart 吃午饭。",
+          "highlight": "火山口全景",
+          "tip": "山顶不能开车上去。",
+          "choice": "上午 B · Mt Eden",
+          "miss": "美术馆。",
+          "resources": [
+            {
+              "id": "mt-eden-map",
+              "title": "Mt Eden · Maungawhau",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Maungawhau+Mount+Eden+Summit%2C+Auckland%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
             }
           ]
         },
@@ -4453,14 +4528,36 @@
         {
           "dayId": "d16",
           "sortOrder": 40,
-          "period": "下午",
+          "period": "14:00–17:30",
           "place": "Britomart",
-          "activity": "GIAPO甜点或咖啡、短距离购物；按航班倒推结束城市活动。",
+          "activity": "GIAPO甜点或咖啡、短距离购物，就在住处附近；17:30 前回酒店取行李。",
           "highlight": "",
           "tip": "",
-          "choice": "",
-          "miss": "",
+          "choice": "下午 C · Britomart",
+          "miss": "从海上回看奥克兰天际线。",
           "resources": []
+        },
+        {
+          "dayId": "d16",
+          "sortOrder": 45,
+          "period": "14:00–17:00",
+          "place": "Devonport",
+          "activity": "从 Downtown 码头坐渡轮约 12–15 分钟到 Devonport，走上 Mt Victoria（Takarunga）回看市中心和海港，镇上喝杯咖啡再坐船回来，约 2–3 小时。",
+          "highlight": "渡轮和海港天际线",
+          "tip": "渡轮班次约每半小时，周末更少，以当天为准；刷 AT HOP 卡或银行卡感应支付。17:30 前回到酒店。",
+          "choice": "下午 D · Devonport 渡轮",
+          "miss": "逛街和慢慢吃甜点的时间。",
+          "resources": [
+            {
+              "id": "devonport-ferry-map",
+              "title": "Downtown Ferry Terminal → Devonport",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Downtown+Ferry+Terminal%2C+Auckland%2C+New+Zealand&destination=Devonport+Wharf%2C+Auckland%2C+New+Zealand&travelmode=transit",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
         },
         {
           "dayId": "d16",
@@ -5932,6 +6029,51 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "AJ Hackett"
+    },
+    {
+      "id": "teanau-bird-sanctuary-official",
+      "title": "Punanga Manu o Te Anau 鸟类保护区",
+      "type": "official",
+      "url": "https://www.fiordland.org.nz/see-and-do/activities/show/punanga-manu-o-te-anau-bird-sanctuary/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Fiordland NZ"
+    },
+    {
+      "id": "kepler-dock-bay-official",
+      "title": "DOC：游客中心到 Kepler Track 停车场",
+      "type": "official",
+      "url": "https://doc.govt.nz/parks-and-recreation/places-to-go/fiordland/places/fiordland-national-park/things-to-do/tracks/visitor-centre-to-kepler-track-carpark-walk",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "DOC"
+    },
+    {
+      "id": "bobs-cove-official",
+      "title": "Bob's Cove Track & Nature Walk",
+      "type": "official",
+      "url": "https://www.queenstownnz.co.nz/listing/bobs-cove-track-%26-nature-walk/9103/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Queenstown NZ"
+    },
+    {
+      "id": "mt-eden-map",
+      "title": "Mt Eden · Maungawhau",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Maungawhau+Mount+Eden+Summit%2C+Auckland%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "devonport-ferry-map",
+      "title": "Downtown Ferry Terminal → Devonport",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Downtown+Ferry+Terminal%2C+Auckland%2C+New+Zealand&destination=Devonport+Wharf%2C+Auckland%2C+New+Zealand&travelmode=transit",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
     },
     {
       "id": "mt-john-official",
