@@ -28,6 +28,7 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 ## 内容更新
 
 - **2027 行程**：改 `scripts/nz2027/itinerarySeedData.mjs` 后 `npm run nz2027:seed -- --force` 再 `npm run nz2027:import`；或直接改 `content/nz2027-itinerary.xlsx` 后只跑 `npm run nz2027:import`。清单条目的 `todo_id` 是勾选状态的主键，改文字可以，不要改 id。
+- **2027 选项写法（用户的规划方式）**：计划尽量写满细节，当天按天气和体力挑。只有真正二选一的地方才写成选项，可做可不做的写成“可加”，雨天方案写“雨天备选”；“累了回去休息”不单独列。时间线步骤用 `block(…, { choice, miss })`：`choice` 是标签（如“上午 A · 全程”“可加 · Mount John”“雨天备选”），`miss` 是“选这个会错过什么”，有 `choice` 就必须有 `miss`（有单测）。页面显示琥珀色标签和红字“选这个会错过：…”，md 导出也带上。
 - **2027 更新页**：每次行程调整上线，在 `content/nz2027-updates.json` 最上面加一条（旅行者口吻，`at` 用实际上线时间，不要写未来时间）。记账和清单改动由数据库触发器自动记录，不用手写。
 - **2027 行程文字版（每次都要）**：每次行程或账本有改动并上线后，跑 `npm run nz2027:md` 生成 `outputs/澳新2027-行程-YYYYMMDD.md`（含“最近更新”），并把文件发给用户。`outputs/` 不进仓库。
 - **2027 每日主题图**：`public/nz2027/d01.jpg` … `d17.jpg`、`cover.jpg`，换图后跑 `npm run nz2027:import`。prompt 在 `docs/nz2027-day-image-prompts.md`。
@@ -45,7 +46,7 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 
 ## 状态（2026-10-26）
 
-`main` = `origin/main` `044d874`（PR #18 合并），已部署生产 `dpl_3jsXeMyamC4FiquzF17gBLNnbZax`；线上只读检查和 `test:e2e:production` 冒烟通过，未登录时数据接口返回 401，公开页面和脚本不含私密行程内容。
+`main` = `origin/main` `d3c2252`（PR #22 合并），已部署生产 `dpl_B3JkQAiRW4DtF6vdqKzsW7b9ZL7i`；线上只读检查和 `test:e2e:production` 冒烟通过，未登录时数据接口返回 401，公开页面和脚本不含私密行程内容。
 
 近期合并：
 - PR #3 上线 2027 首页，#4 更新本文件，#5 换成沉浸式深色界面。
@@ -58,8 +59,11 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 - PR #15 2/4 改坐 EK412（悉尼 09:00 → 基督城 14:15，托运 30kg），基督城住 HOTEL GIVE（12 Hereford Street，植物园旁），下午植物园、雅芳河、Riverside Market、Bridge of Remembrance、Cathedral Square；2/5 打车回机场 10:00 取车。
 - PR #17 三笔尾款（Fernhill 1/5、Wānaka 1/26、Te Anau 1/28）用付订金时留的卡自动扣，清单去掉付款项，住宿信息写明扣款日；账本仍记待付，扣款后再改已付。清单 22 项。
 - PR #18 2/7 High Country Salmon 改成轻松美食点（看养殖池、喂鱼、刺身和热食对比、可买一块带回），晚上在住处自己煎三文鱼。
+- PR #20 新增 `npm run nz2027:md`（`scripts/nz2027/export-markdown.mjs`），导出行程文字版，开头带最近 5 条更新。
+- PR #21 2/3 悉尼最后一晚改去 Margaret（Double Bay，18:00），取消 Manly 渡轮；清单加“11 月中旬订 Margaret”（截止 2026-11-15）。清单 23 项。
+- PR #22 时间线步骤加 `choice` / `miss` 两列（Blocks 表），全程 29 个选项：2/2、2/6、2/7、2/9、2/10、2/16 的二选一，2/4–2/14 的“可加”，2/6、2/11 的雨天备选。
 
-Node 24 下 361 个单测（含 8 个数据库测试，在 PR #14 上全部通过；PR #15 未改 SQL，跑 353 个、跳过数据库测试），lint、tsc、build 通过，34 个本地 e2e 全部通过。线上冒烟之前的偶发失败是本机代理造成的，去掉代理变量后一次通过（见上面“运行版本与检查”）。
+Node 24 下 362 个单测（含 8 个数据库测试，在 PR #22 上全部通过），lint、tsc、build 通过，35 个本地 e2e 全部通过。线上冒烟之前的偶发失败是本机代理造成的，去掉代理变量后一次通过（见上面“运行版本与检查”）。
 
 生产账本 `nz2027_expenses` 共 16 条，有效 14 条：
 - 2026-10-25 补记南航往返 ¥16,800、NZ224+JQ296 ¥3,153、租车 ¥3,636（均已付），悉尼 Great Southern 改为三晚 ¥2,027.36 待付；备份在 `.backups/20261025-before-booking-ledger/`。
