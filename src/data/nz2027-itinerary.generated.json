@@ -345,9 +345,9 @@
           "place": "Coogee → Bronte → Tamarama → Bondi",
           "activity": "从Coogee往北走海岸步道到Bondi，约6公里，含拍照和休息按2–2.5小时；Gordon's Bay、Bronte、Tamarama都可以停。",
           "highlight": "悬崖海岸线",
-          "tip": "累了就在Bronte坐车去Bondi。",
-          "choice": "",
-          "miss": "",
+          "tip": "",
+          "choice": "上午 A · 全程",
+          "miss": "下午下水的体力会少一些。",
           "resources": [
             {
               "id": "coogee-beach-map",
@@ -366,6 +366,37 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps步行"
+            }
+          ]
+        },
+        {
+          "dayId": "d2",
+          "sortOrder": 22,
+          "period": "10:00–11:30",
+          "place": "Coogee → Bronte，再坐车去 Bondi",
+          "activity": "从Coogee走到Bronte，约1–1.5小时，在Bronte坐巴士或打车去Bondi。",
+          "highlight": "半程",
+          "tip": "",
+          "choice": "上午 B · 半程",
+          "miss": "Tamarama 和 Bondi 南端那段悬崖海岸。",
+          "resources": [
+            {
+              "id": "coogee-beach-map",
+              "title": "Coogee Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Coogee+Beach%2C+NSW%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "bronte-beach-map",
+              "title": "Bronte Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Bronte+Beach%2C+NSW%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
             }
           ]
         },
@@ -929,9 +960,9 @@
           "sortOrder": 60,
           "period": "16:00–17:30",
           "place": "Christchurch Botanic Gardens",
-          "activity": "植物园就在酒店旁边。温室约 16:00 关门，先看温室再逛园子。想坐雅芳河撑篙船，17:00 前到园边的 Antigua Boat Sheds，约 30 分钟，最好先订。",
+          "activity": "植物园就在酒店旁边。温室约 16:00 关门，先看温室再逛园子。",
           "highlight": "植物园",
-          "tip": "温室和撑篙船时间以当天为准。",
+          "tip": "温室开放时间以当天为准。",
           "choice": "",
           "miss": "",
           "resources": [
@@ -943,7 +974,20 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            },
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 65,
+          "period": "17:00 前",
+          "place": "Antigua Boat Sheds · 雅芳河撑篙船",
+          "activity": "在植物园边上的 Antigua Boat Sheds 坐撑篙船，约 30 分钟，最好先订。",
+          "highlight": "撑篙船",
+          "tip": "",
+          "choice": "可加 · 撑篙船",
+          "miss": "植物园里慢慢逛的时间；要先订。",
+          "resources": [
             {
               "id": "punting-official",
               "title": "雅芳河撑篙船（Antigua Boat Sheds）",
@@ -1281,6 +1325,28 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "官网"
+            }
+          ]
+        },
+        {
+          "dayId": "d5",
+          "sortOrder": 35,
+          "period": "14:30–15:30",
+          "place": "Mount John 山顶",
+          "activity": "开车上 Mount John 俯瞰 Tekapo 湖和 Mackenzie 盆地，山顶有 Astro Café。要去就先上山，再去湖边。",
+          "highlight": "山顶看湖",
+          "tip": "每辆车 NZ$14 道路费，门口付；上山路开到 16:00，咖啡馆 15:00 关，以当天为准。",
+          "choice": "可加 · Mount John",
+          "miss": "Tekapo 湖边慢走的时间，到 Twizel 晚约 1 小时。",
+          "resources": [
+            {
+              "id": "mt-john-official",
+              "title": "Mount John · Astro Café（Dark Sky Project）",
+              "type": "official",
+              "url": "https://www.darkskyproject.co.nz/eat/astro-cafe/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Dark Sky Project"
             }
           ]
         },
@@ -5745,6 +5811,15 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
+    },
+    {
+      "id": "mt-john-official",
+      "title": "Mount John · Astro Café（Dark Sky Project）",
+      "type": "official",
+      "url": "https://www.darkskyproject.co.nz/eat/astro-cafe/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Dark Sky Project"
     },
     {
       "id": "margaret-official",
