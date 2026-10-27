@@ -62,7 +62,7 @@ describe("2027 two-person itinerary data", () => {
     assert.deepEqual(
       itinerary.days.filter((day) => day.drive).map((day) => [day.date.slice(5), day.drive.id, day.drive.legs.length]),
       [
-        ["02-05", "nav02", 5], ["02-06", "nav03", 4], ["02-07", "nav04", 5],
+        ["02-05", "nav02", 5], ["02-06", "nav03", 5], ["02-07", "nav04", 5],
         ["02-08", "nav05", 4], ["02-09", "nav06", 3], ["02-10", "nav07", 5], ["02-12", "nav08", 5],
         ["02-13", "nav09", 5], ["02-14", "nav10", 3],
       ],
@@ -97,6 +97,16 @@ describe("2027 two-person itinerary data", () => {
     for (const phrase of ["待购", "（补订）", "换房"]) assert.ok(!all.includes(phrase), phrase);
   });
 
+  it("keeps every 2/6 option with what each one gives up", () => {
+    const choices = dayById("d6").blocks.filter((block) => block.choice);
+    assert.deepEqual(choices.map((block) => block.choice), ["上午 A · 全程", "上午 B · 一小段", "下午 C · 塔斯曼冰川", "下午 D · 只停观景点", "雨天备选"]);
+    assert.ok(choices.every((block) => block.miss.trim()), "each option says what it misses");
+    assert.ok(itinerary.days.flatMap((day) => day.blocks).every((block) => typeof block.choice === "string" && typeof block.miss === "string"));
+    const allChoices = itinerary.days.flatMap((day) => day.blocks.filter((block) => block.choice));
+    assert.ok(allChoices.length >= 25, "options across the trip");
+    assert.ok(allChoices.every((block) => block.miss.trim()), "every option says what it misses");
+  });
+
   it("uses the late February evenings for lakeside walks", () => {
     const has = (id, pattern) => dayById(id).blocks.some((block) => pattern.test(`${block.place} ${block.activity}`));
     assert.ok(has("d5", /Lake Ruataniwha.*日落/));
@@ -118,8 +128,8 @@ describe("2027 two-person itinerary data", () => {
     assert.ok(has("d14", /Wynyard Quarter/));
     assert.ok(!has("d15", /Mt Eden/));
     assert.ok(dayById("d2").blocks[1].place.startsWith("Coogee"));
-    assert.match(dayById("d12").blocks.find((block) => /Kelvin/.test(block.place)).period, /晚了就跳过/);
-    assert.match(dayById("d13").blocks.find((block) => block.place === "Moke Lake").period, /可选/);
+    assert.equal(dayById("d12").blocks.find((block) => /Kelvin/.test(block.place)).choice, "可加 · Kelvin 半岛");
+    assert.equal(dayById("d13").blocks.find((block) => block.place === "Moke Lake").choice, "可加 · Moke Lake");
     const ids = itinerary.todos.map((todo) => todo.id);
     for (const id of ["tour-0215-pickup", "dinner-valentine"]) assert.ok(ids.includes(id), id);
     assert.match(JSON.stringify(dayById("d13").notes), /Glenorchy–Paradise Road/);

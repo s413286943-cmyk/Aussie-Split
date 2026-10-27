@@ -135,6 +135,8 @@
           "activity": "落地后入境、过检疫、取行李，打车或 Uber 到酒店寄存行李。",
           "highlight": "夜航落地",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "haymarket-map",
@@ -164,6 +166,8 @@
           "activity": "附近吃早餐，找家咖啡馆坐坐，别安排硬行程；困了就回酒店大堂休息。",
           "highlight": "慢慢醒过来",
           "tip": "能否提前入住以酒店当天答复为准。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "haymarket-map",
@@ -184,6 +188,8 @@
           "activity": "入住、洗澡、补觉；体力允许时傍晚逛 Chinatown、Haymarket。",
           "highlight": "住宿周边轻活动",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "haymarket-map",
@@ -204,6 +210,8 @@
           "activity": "附近早点吃晚饭。",
           "highlight": "第一晚以方便为主",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -214,6 +222,8 @@
           "activity": "经Darling Harbour走到Barangaroo Reserve，约25分钟；海角朝西，20:00左右看港湾日落，之后打车或坐轻轨回酒店。",
           "highlight": "港湾日落",
           "tip": "早上才落地，累了就在酒店附近散步。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "barangaroo-map",
@@ -234,6 +244,8 @@
           "activity": "早餐：Haymarket咖啡馆；午餐：酒店附近简餐；晚餐：Haymarket或Chinatown",
           "highlight": "第一晚以方便为主",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -312,6 +324,8 @@
           "activity": "Haymarket吃早餐；坐巴士去Coogee Beach，约40分钟，或打车约20分钟。",
           "highlight": "出发去海边",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "bondi-transit-route",
@@ -331,7 +345,9 @@
           "place": "Coogee → Bronte → Tamarama → Bondi",
           "activity": "从Coogee往北走海岸步道到Bondi，约6公里，含拍照和休息按2–2.5小时；Gordon's Bay、Bronte、Tamarama都可以停。",
           "highlight": "悬崖海岸线",
-          "tip": "累了就在Bronte坐车去Bondi。",
+          "tip": "",
+          "choice": "上午 A · 全程",
+          "miss": "下午下水的体力会少一些。",
           "resources": [
             {
               "id": "coogee-beach-map",
@@ -355,12 +371,45 @@
         },
         {
           "dayId": "d2",
+          "sortOrder": 22,
+          "period": "10:00–11:30",
+          "place": "Coogee → Bronte，再坐车去 Bondi",
+          "activity": "从Coogee走到Bronte，约1–1.5小时，在Bronte坐巴士或打车去Bondi。",
+          "highlight": "半程",
+          "tip": "",
+          "choice": "上午 B · 半程",
+          "miss": "Tamarama 和 Bondi 南端那段悬崖海岸。",
+          "resources": [
+            {
+              "id": "coogee-beach-map",
+              "title": "Coogee Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Coogee+Beach%2C+NSW%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            },
+            {
+              "id": "bronte-beach-map",
+              "title": "Bronte Beach",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Bronte+Beach%2C+NSW%2C+Australia",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d2",
           "sortOrder": 30,
           "period": "12:30–14:00",
           "place": "Bondi Beach",
           "activity": "在Bondi吃午饭，Icebergs一带或Campbell Parade。",
           "highlight": "海边午餐",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "bondi-beach-map",
@@ -381,6 +430,8 @@
           "activity": "海滩晒太阳、下水（只在红黄旗之间），或沿Campbell Parade喝咖啡。不用再走回头路。",
           "highlight": "Bondi海滩时间",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "bondi-beach-map",
@@ -401,6 +452,8 @@
           "activity": "坐巴士到Bondi Junction换火车回Central，或直接打车。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -411,6 +464,8 @@
           "activity": "回酒店冲澡、换衣服。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "great-southern-map",
@@ -431,6 +486,8 @@
           "activity": "坐火车到St James，穿过The Domain走到Mrs Macquarie's Chair，约20分钟；20:00左右看日落，歌剧院和海港大桥在同一个画面里。",
           "highlight": "歌剧院日落",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "mrs-macquarie-map",
@@ -451,6 +508,8 @@
           "activity": "沿海边走到Circular Quay或The Rocks吃晚饭，坐火车回Central。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -461,6 +520,8 @@
           "activity": "早餐：住宿附近咖啡店；午餐：Bondi海边；晚餐：Circular Quay或The Rocks",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -539,6 +600,8 @@
           "activity": "White Rabbit Gallery，30 Balfour Street。按当期展览参观约1.5–2小时。",
           "highlight": "当代艺术",
           "tip": "周三至周日10:00–17:00开放。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "white-rabbit-map",
@@ -568,6 +631,8 @@
           "activity": "步行去Kensington Street / Spice Alley午餐。",
           "highlight": "餐饮巷",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "spice-alley-official",
@@ -588,6 +653,8 @@
           "activity": "沿King Street走走停停，看独立书店、古着、小店和街头艺术，再拐进Enmore Road喝咖啡；有购物需求就在今天完成。",
           "highlight": "书店、古着、街头艺术",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "king-street-official",
@@ -617,6 +684,8 @@
           "activity": "回酒店冲澡、换衣服，顺手把行李收好。",
           "highlight": "收行李",
           "tip": "明早 05:15 起床，今晚回来就直接睡。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "great-southern-map",
@@ -637,6 +706,8 @@
           "activity": "打车约 20 分钟到 Double Bay；也可以坐火车到 Edgecliff 再走 10 分钟。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "margaret-map",
@@ -657,6 +728,8 @@
           "activity": "悉尼最后一晚，在 Margaret 好好吃一顿。订 18:00 的位子，吃完不拖太晚。",
           "highlight": "最后一晚的大餐",
           "tip": "要提前订位，11 月中旬去订。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "margaret-official",
@@ -686,6 +759,8 @@
           "activity": "饭后走几分钟到 Steyne Park 海边，看 20:00 左右的日落。",
           "highlight": "海边日落",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "margaret-map",
@@ -706,6 +781,8 @@
           "activity": "打车回酒店，早点睡；明早 06:00 打车去机场。",
           "highlight": "早点睡",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "great-southern-map",
@@ -726,6 +803,8 @@
           "activity": "早餐：咖啡＋简单早餐；午餐：Spice Alley；晚餐：Margaret（Double Bay，要订）",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -804,6 +883,8 @@
           "activity": "起床、退房，打车或 Uber 去悉尼机场 T1，约 20–25 分钟。",
           "highlight": "早起出发",
           "tip": "前一晚收好行李。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "syd-t1-map",
@@ -824,6 +905,8 @@
           "activity": "值机、托运、出境，在机场吃早餐。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -834,6 +917,8 @@
           "activity": "飞基督城。",
           "highlight": "航班",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -844,6 +929,8 @@
           "activity": "入境、过检疫、取行李。白天落地，排队可能比较长。",
           "highlight": "入境",
           "tip": "徒步鞋提前洗干净。",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -854,6 +941,8 @@
           "activity": "打车或 Uber 到酒店，15:00 后入住，放下行李。",
           "highlight": "入住",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "hotel-give-map",
@@ -871,9 +960,11 @@
           "sortOrder": 60,
           "period": "16:00–17:30",
           "place": "Christchurch Botanic Gardens",
-          "activity": "植物园就在酒店旁边。温室约 16:00 关门，先看温室再逛园子。想坐雅芳河撑篙船，17:00 前到园边的 Antigua Boat Sheds，约 30 分钟，最好先订。",
+          "activity": "植物园就在酒店旁边。温室约 16:00 关门，先看温室再逛园子。",
           "highlight": "植物园",
-          "tip": "温室和撑篙船时间以当天为准。",
+          "tip": "温室开放时间以当天为准。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "chc-botanic-map",
@@ -883,7 +974,20 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "Google Maps"
-            },
+            }
+          ]
+        },
+        {
+          "dayId": "d4",
+          "sortOrder": 65,
+          "period": "17:00 前",
+          "place": "Antigua Boat Sheds · 雅芳河撑篙船",
+          "activity": "在植物园边上的 Antigua Boat Sheds 坐撑篙船，约 30 分钟，最好先订。",
+          "highlight": "撑篙船",
+          "tip": "",
+          "choice": "可加 · 撑篙船",
+          "miss": "植物园里慢慢逛的时间；要先订。",
+          "resources": [
             {
               "id": "punting-official",
               "title": "雅芳河撑篙船（Antigua Boat Sheds）",
@@ -903,6 +1007,8 @@
           "activity": "沿雅芳河往东走到 Riverside 一带。",
           "highlight": "河边散步",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "avon-walk-route",
@@ -923,6 +1029,8 @@
           "activity": "在 Riverside Market 吃晚饭。周四开到 21:00，各家店关门时间不一样，别拖太晚。",
           "highlight": "晚饭",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "riverside-market-map",
@@ -943,6 +1051,8 @@
           "activity": "走两分钟到 Bridge of Remembrance；天气好再走 5–10 分钟去 Cathedral Square 看看。",
           "highlight": "城里转转",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "bridge-remembrance-map",
@@ -972,6 +1082,8 @@
           "activity": "沿雅芳河走回酒店，路上看 20:52 的日落；22:00 前回酒店休息。",
           "highlight": "河边日落",
           "tip": "明早 09:20 打车去机场取车。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "avon-walk-route",
@@ -1001,6 +1113,8 @@
           "activity": "早餐：悉尼机场；午餐：飞机上；晚餐：Riverside Market",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -1147,6 +1261,8 @@
           "activity": "酒店附近吃早餐、退房，09:20 打车去机场（约 20–25 分钟），10:00 取车，绕车检查一圈、拍照留底。",
           "highlight": "取车",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "chc-hotel-airport-route",
@@ -1176,6 +1292,8 @@
           "activity": "沿 SH1 南下；在 Ashburton 或 Geraldine 超市买齐两天的补给，Geraldine 短休息。",
           "highlight": "补给",
           "tip": "2/6 不少商店不开。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "nav02-a-route",
@@ -1196,6 +1314,8 @@
           "activity": "Fairlie 买派或简餐当午饭。",
           "highlight": "Fairlie派",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "fairlie-bakehouse-official",
@@ -1210,12 +1330,36 @@
         },
         {
           "dayId": "d5",
+          "sortOrder": 35,
+          "period": "14:30–15:30",
+          "place": "Mount John 山顶",
+          "activity": "开车上 Mount John 俯瞰 Tekapo 湖和 Mackenzie 盆地，山顶有 Astro Café。要去就先上山，再去湖边。",
+          "highlight": "山顶看湖",
+          "tip": "每辆车 NZ$14 道路费，门口付；上山路开到 16:00，咖啡馆 15:00 关，以当天为准。",
+          "choice": "可加 · Mount John",
+          "miss": "Tekapo 湖边慢走的时间，到 Twizel 晚约 1 小时。",
+          "resources": [
+            {
+              "id": "mt-john-official",
+              "title": "Mount John · Astro Café（Dark Sky Project）",
+              "type": "official",
+              "url": "https://www.darkskyproject.co.nz/eat/astro-cafe/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Dark Sky Project"
+            }
+          ]
+        },
+        {
+          "dayId": "d5",
           "sortOrder": 40,
           "period": "下午",
           "place": "Lake Tekapo / Lake Pukaki",
           "activity": "Tekapo湖畔、好牧羊人教堂外观；随后经Pukaki南岸观景停靠。",
           "highlight": "两座湖",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "nav02-a-route",
@@ -1245,6 +1389,8 @@
           "activity": "抵Twizel，办理入住，附近晚餐。",
           "highlight": "连住三晚",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "twizel-holiday-park-map",
@@ -1265,6 +1411,8 @@
           "activity": "晚饭后开 5–10 分钟到湖边散步，看 Ben Ohau 山脉后面的日落（约 21:00）。",
           "highlight": "湖边日落",
           "tip": "累了就跳过，2/7 上午还会来。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "ruataniwha-map",
@@ -1285,6 +1433,8 @@
           "activity": "早餐：酒店附近；午餐：Fairlie Bakehouse；晚餐：Twizel镇上",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -1298,14 +1448,14 @@
       "base": "Twizel",
       "lat": -43.7186,
       "lon": 170.0952,
-      "title": "Aoraki / Mount Cook完整一天",
-      "focus": "把主要体力留给Hooker Valley。",
+      "title": "Aoraki / Mount Cook：Hooker 和塔斯曼任选",
+      "focus": "上午 Hooker 全程或一小段，下午塔斯曼冰川或只停观景点，当天按天气和体力搭配。",
       "lodging": "Twizel Holiday Park",
       "lodgingStatus": "已订",
       "climateNote": "Aoraki山区约5–18°C，风大，天气变化快，可能下雨。",
       "clothingNote": "防风防水外套、保暖中层、防滑徒步鞋；帽子手套和足量饮水。",
       "coverImageUrl": "/nz2027/d06.jpg",
-      "coverImageAlt": "D06 Aoraki / Mount Cook完整一天",
+      "coverImageAlt": "D06 Aoraki / Mount Cook：Hooker 和塔斯曼任选",
       "transport": "自驾往返Mt Cook · 单程约1小时",
       "leaveBy": "07:15–07:30出发（长周末停车场早满）",
       "notes": [
@@ -1320,6 +1470,10 @@
         {
           "label": "天气备选",
           "text": "2/6 与 2/7 可互换。下雨或步道关闭就改 Tasman Glacier View + Blue Lakes（Tasman 停车场，往返约 1 小时），再加 Kea Point。"
+        },
+        {
+          "label": "怎么选",
+          "text": "下面的上午 A/B、下午 C/D 都是选项，不用提前删。常见搭配：A+D（主看 Hooker Lake）或 B+C（两边都看一点）。每个选项都写了“会错过什么”。"
         },
         {
           "label": "长周末",
@@ -1357,7 +1511,7 @@
         "id": "nav03",
         "dayId": "d6",
         "title": "导航03 · Twizel ↔ Mt Cook",
-        "duration": "07:15–07:30出发（长周末提前）；单程约1小时，观景停车另加；主要体力留给4–5小时徒步窗口。",
+        "duration": "07:15–07:30出发（长周末提前）；单程约1小时。上午 Hooker 全程 4–5 小时或一小段 1–2 小时，下午可加塔斯曼（开车约 20 分钟）或只停 Peter's Lookout。",
         "sequence": "Twizel → SH8北行 → SH80沿Pukaki西岸 → Hooker Valley Road → White Horse Hill Car Park；返程停Peter’s Lookout",
         "notes": "White Horse Hill现行NZ$2.50/半小时、NZ$25/天封顶，刷卡支付；完整徒步暂留NZ$20–25。短线备选：同一停车区域走Kea Point约1小时。Tasman Valley是另一停车场，从White Horse Hill开车约20–30分钟；只有体力和时间充足才加。大风雨不适合进山时与2/7交换。",
         "legs": [
@@ -1371,7 +1525,13 @@
             "sortOrder": 20,
             "segment": "停车场 → Hooker Valley → 停车场",
             "driveTime": "步行，不是开车",
-            "stopNote": "全程10km，官方约3小时；含拍照、路餐与休息留4–5小时。"
+            "stopNote": "全程 10km 官方约 3 小时，含拍照休息留 4–5 小时；只走到第一座吊桥就 1–2 小时。"
+          },
+          {
+            "sortOrder": 25,
+            "segment": "White Horse Hill → Tasman Valley 停车场（选 C 时）",
+            "driveTime": "约20分钟",
+            "stopNote": "从村口拐进 Tasman Valley Road 开到底；夏天停车场很满。"
           },
           {
             "sortOrder": 30,
@@ -1452,6 +1612,8 @@
           "activity": "Twizel出发，沿SH80进山，尽早到White Horse Hill停车场。",
           "highlight": "长周末停车场早满，提前出发",
           "tip": "长周末停车场上午很早就满。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "white-horse-hill-route",
@@ -1467,17 +1629,140 @@
         {
           "dayId": "d6",
           "sortOrder": 20,
-          "period": "09:15–14:00左右",
-          "place": "Hooker Valley Track",
-          "activity": "Hooker Valley徒步到Hooker Lake，含拍照、路餐和休息预留4–5小时。",
-          "highlight": "全天主角",
-          "tip": "往返约10km、3小时；步道关闭就改Tasman Glacier View + Blue Lakes。",
+          "period": "09:15–14:00",
+          "place": "Hooker Valley Track · 全程",
+          "activity": "走到 Hooker Lake 再原路回，含拍照、路餐和休息 4–5 小时：三座吊桥、冰川湖 Hooker Lake，天气好时正对 Aoraki 雪山。",
+          "highlight": "全程",
+          "tip": "往返约 10km，官方约 3 小时；第一座吊桥一次限 20 人，可能排队。带点零食，午饭回村里吃。",
+          "choice": "上午 A · 全程",
+          "miss": "下午多半没力气再爬塔斯曼的 300 多级台阶，通常只停 Peter's Lookout。",
           "resources": [
             {
               "id": "doc-hooker-official",
               "title": "DOC Hooker Valley步道",
               "type": "official",
               "url": "https://www.doc.govt.nz/hooker-valley-track",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "DOC"
+            }
+          ]
+        },
+        {
+          "dayId": "d6",
+          "sortOrder": 25,
+          "period": "09:15–11:15",
+          "place": "Hooker Valley Track · 一小段",
+          "activity": "走到第一座吊桥附近看看山谷就原路回，1–2 小时，省时间也省体力。",
+          "highlight": "轻松版",
+          "tip": "",
+          "choice": "上午 B · 一小段",
+          "miss": "Hooker Lake、第二和第三座吊桥，还有湖边正对 Aoraki 的那个角度。",
+          "resources": [
+            {
+              "id": "doc-hooker-official",
+              "title": "DOC Hooker Valley步道",
+              "type": "official",
+              "url": "https://www.doc.govt.nz/hooker-valley-track",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "DOC"
+            }
+          ]
+        },
+        {
+          "dayId": "d6",
+          "sortOrder": 30,
+          "period": "中午",
+          "place": "Mount Cook Village",
+          "activity": "两种走法都回村里吃饭、休息：村里的咖啡馆或 The Hermitage 酒店。边吃边看天气，再定下午。",
+          "highlight": "午饭休息",
+          "tip": "",
+          "choice": "",
+          "miss": "",
+          "resources": []
+        },
+        {
+          "dayId": "d6",
+          "sortOrder": 40,
+          "period": "下午 · 约 1.5–2 小时",
+          "place": "Tasman Glacier View + Blue Lakes",
+          "activity": "开约 20 分钟到 Tasman Valley 停车场，爬 300 多级台阶上冰碛墙观景点，往返 45 分钟–1 小时，看冰川湖和湖上的浮冰，路过 Blue Lakes。上午只走一小段的话会很从容。",
+          "highlight": "冰川湖和浮冰",
+          "tip": "台阶陡；停车场夏天很满；冰川湖边和冰碛墙有危险，不要下到湖边。",
+          "choice": "下午 C · 塔斯曼冰川",
+          "miss": "回 Twizel 晚 1 小时左右，下午几乎没有休息。",
+          "resources": [
+            {
+              "id": "tasman-route",
+              "title": "可选Tasman停车场",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=White+Horse+Hill+Car+Park%2C+Hooker+Valley+Road%2C+New+Zealand&destination=Tasman+Valley+Car+Park%2C+New+Zealand&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "导航03"
+            },
+            {
+              "id": "tasman-valley-official",
+              "title": "Tasman Glacier View步道",
+              "type": "official",
+              "url": "https://www.doc.govt.nz/parks-and-recreation/places-to-go/canterbury/places/aoraki-mount-cook-national-park/things-to-do/tracks/tasman-glacier-view-track/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "DOC"
+            }
+          ]
+        },
+        {
+          "dayId": "d6",
+          "sortOrder": 40,
+          "period": "16:30–18:00左右",
+          "place": "Twizel",
+          "activity": "回Twizel吃晚餐，晚上早点休息，不加项目。",
+          "highlight": "",
+          "tip": "",
+          "choice": "",
+          "miss": "",
+          "resources": []
+        },
+        {
+          "dayId": "d6",
+          "sortOrder": 45,
+          "period": "下午 · 约 15 分钟",
+          "place": "Peter's Lookout",
+          "activity": "回程在 Peter's Lookout 停 15 分钟看 Pukaki 湖和身后的雪山，然后回 Twizel 休息。上午走了全程就选这个。",
+          "highlight": "Pukaki 回望",
+          "tip": "",
+          "choice": "下午 D · 只停观景点",
+          "miss": "塔斯曼冰川湖和湖上的浮冰。",
+          "resources": [
+            {
+              "id": "peters-lookout-route",
+              "title": "返程经Peter’s Lookout",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=White+Horse+Hill+Car+Park%2C+Hooker+Valley+Road%2C+New+Zealand&destination=Twizel+Holiday+Park%2C+122+Mackenzie+Drive%2C+Twizel%2C+New+Zealand&travelmode=driving&waypoints=Peter%27s+Lookout%2C+Lake+Pukaki%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "导航03"
+            }
+          ]
+        },
+        {
+          "dayId": "d6",
+          "sortOrder": 48,
+          "period": "下雨或步道关闭",
+          "place": "Kea Point + 塔斯曼",
+          "activity": "Hooker 关闭或大雨：改走 Kea Point（看 Mueller 冰川湖、Mt Sefton 和 Aoraki，按现场标识约 1–2 小时往返），下午再看雨势决定去不去塔斯曼。也可以和 2/7 对调。",
+          "highlight": "雨天备选",
+          "tip": "",
+          "choice": "雨天备选",
+          "miss": "Hooker Valley 的吊桥和 Hooker Lake。",
+          "resources": [
+            {
+              "id": "kea-point-official",
+              "title": "Kea Point步道",
+              "type": "official",
+              "url": "https://www.doc.govt.nz/parks-and-recreation/places-to-go/canterbury/places/aoraki-mount-cook-national-park/things-to-do/tracks/kea-point-track/",
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "DOC"
@@ -1495,42 +1780,14 @@
         },
         {
           "dayId": "d6",
-          "sortOrder": 30,
-          "period": "下午",
-          "place": "Mount Cook Village / Peter’s Lookout",
-          "activity": "村内咖啡休息；返程在Peter’s Lookout短停看Pukaki。",
-          "highlight": "Pukaki回望",
-          "tip": "",
-          "resources": [
-            {
-              "id": "peters-lookout-route",
-              "title": "返程经Peter’s Lookout",
-              "type": "map",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=White+Horse+Hill+Car+Park%2C+Hooker+Valley+Road%2C+New+Zealand&destination=Twizel+Holiday+Park%2C+122+Mackenzie+Drive%2C+Twizel%2C+New+Zealand&travelmode=driving&waypoints=Peter%27s+Lookout%2C+Lake+Pukaki%2C+New+Zealand",
-              "imageUrl": "",
-              "imageAlt": "",
-              "sourceNote": "导航03"
-            }
-          ]
-        },
-        {
-          "dayId": "d6",
-          "sortOrder": 40,
-          "period": "16:30–18:00左右",
-          "place": "Twizel",
-          "activity": "回Twizel吃晚餐，晚上早点休息，不加项目。",
-          "highlight": "",
-          "tip": "",
-          "resources": []
-        },
-        {
-          "dayId": "d6",
           "sortOrder": 50,
           "period": "23:00后（可选）",
           "place": "住处门口",
           "activity": "新月前后，23:00左右天完全黑下来，在住处门口抬头就能看到银河，不用开车。起得来就看。",
           "highlight": "银河",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -1538,9 +1795,11 @@
           "sortOrder": 90,
           "period": "饮食",
           "place": "随身路餐 / Twizel",
-          "activity": "早餐：出发前吃足；午餐：随身路餐；晚餐：Twizel",
+          "activity": "早餐：出发前吃足；午餐：Mount Cook Village；晚餐：Twizel",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -1674,6 +1933,8 @@
           "activity": "睡懒觉、慢早餐；2/5晚上没去Lake Ruataniwha的话，上午去湖边轻走。",
           "highlight": "恢复日",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "ruataniwha-map",
@@ -1694,6 +1955,8 @@
           "activity": "轻松的美食点：先看看养殖池、喂喂鱼，再在店里点一份刺身和一份热食，对比生吃和熟吃。喜欢的话买一块适合煎的三文鱼带回 Twizel，晚上自己做。",
           "highlight": "三文鱼两种吃法",
           "tip": "鱼食和菜单以当天为准；买生鱼请店里帮忙冷藏包好，回住处马上放冰箱。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "logans-official",
@@ -1714,6 +1977,8 @@
           "activity": "回住宿休息、洗衣或整理行李；三文鱼先放冰箱。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -1724,6 +1989,8 @@
           "activity": "用房间厨房煎中午买的三文鱼（房间没灶台就用营地公共厨房），配点沙拉或面包；没买就去镇上吃。早点吃完，20:15 出发去 Pukaki。",
           "highlight": "自己煎三文鱼",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "twizel-holiday-park-map",
@@ -1744,6 +2011,8 @@
           "activity": "开15–20分钟到Pukaki游客中心一带湖边；20:30–21:15看日落，Aoraki和对岸雪山会被染成粉橙色。",
           "highlight": "日照金山",
           "tip": "风大时站在车边看，带好外套。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "pukaki-visitor-route",
@@ -1759,11 +2028,13 @@
         {
           "dayId": "d7",
           "sortOrder": 50,
-          "period": "22:00后",
-          "place": "Twizel观星",
-          "activity": "回Twizel参加观星；具体集合点、语言和时间以确认单为准。",
+          "period": "22:30后",
+          "place": "Twizel观星团",
+          "activity": "参加 Twizel 当地观星团，有人讲解南半球星空、带望远镜；具体集合点、语言和时间以确认单为准。",
           "highlight": "星空",
-          "tip": "23:00左右才完全天黑，订22:00以后、最好22:30以后的场次。",
+          "tip": "23:00左右才完全天黑，订22:30以后的场次。",
+          "choice": "晚上 A · 观星团",
+          "miss": "早睡；团要先订，另外收费。",
           "resources": [
             {
               "id": "silver-river-official",
@@ -1778,12 +2049,26 @@
         },
         {
           "dayId": "d7",
+          "sortOrder": 55,
+          "period": "23:00后",
+          "place": "住处门口",
+          "activity": "不参加团就自己看：23:00 左右天完全黑，在住处门口抬头就能看到银河，不用开车。",
+          "highlight": "自己看银河",
+          "tip": "",
+          "choice": "晚上 B · 自己看",
+          "miss": "讲解和望远镜，也没人帮你认南半球的星座。",
+          "resources": []
+        },
+        {
+          "dayId": "d7",
           "sortOrder": 90,
           "period": "饮食",
           "place": "Twizel",
           "activity": "早餐：镇上或住宿；午餐：High Country Salmon 刺身＋热食；晚餐：住处自己煎三文鱼",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -1933,7 +2218,31 @@
           "activity": "Twizel出发，Omarama短休息。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
+        },
+        {
+          "dayId": "d8",
+          "sortOrder": 15,
+          "period": "上午 · 约 1–1.5 小时",
+          "place": "Omarama Clay Cliffs",
+          "activity": "Omarama 镇外看风蚀黏土尖塔：Quailburn Road 转 Henburn Road，约 3km 碎石路到私人农场大门，门口投币箱交进场费；停车后走 10–15 分钟到峡谷口，进去转转留 1 小时。",
+          "highlight": "黏土尖塔",
+          "tip": "带现金；过了大门的路坑洼、下雨会烂泥，路况不好就停在大门附近走进去，别硬开。手机信号弱。",
+          "choice": "可加 · Clay Cliffs",
+          "miss": "到 Wānaka 晚约 1 小时。",
+          "resources": [
+            {
+              "id": "clay-cliffs-official",
+              "title": "Omarama Clay Cliffs",
+              "type": "official",
+              "url": "https://www.waitakinz.com/explore/clay-cliffs",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Waitaki NZ"
+            }
+          ]
         },
         {
           "dayId": "d8",
@@ -1943,6 +2252,8 @@
           "activity": "Lindis Pass正规观景停车场停15–20分钟。",
           "highlight": "山口公路",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "lindis-pass-route",
@@ -1972,6 +2283,8 @@
           "activity": "经Tarras、Luggate到Wānaka，湖边午餐或咖啡。",
           "highlight": "午后湖岸",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -1982,6 +2295,8 @@
           "activity": "入住Hikuwai Haven 1，放下行李歇一会儿。",
           "highlight": "入住两晚",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "hikuwai-map",
@@ -2002,16 +2317,20 @@
           "activity": "早点吃晚饭；长周末餐厅人多，早去好排队。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
           "dayId": "d8",
           "sortOrder": 50,
-          "period": "18:45–21:15（天气好再去）",
+          "period": "18:45–21:15",
           "place": "Diamond Lake / Lake Wānaka Lookout",
-          "activity": "天气好、有精神才去：18:45出发，开约 20 分钟到 Diamond Lake 停车场，先到 Diamond Lake 湖边，再上 Lake Wānaka Lookout 俯瞰整个湖，往返约 2 小时，台阶多。只想轻松走就绕 Diamond Lake 一圈，约 45 分钟。累了就在 Wānaka 湖边散步看日落。",
+          "activity": "天气好、有精神才去：18:45出发，开约 20 分钟到 Diamond Lake 停车场，先到 Diamond Lake 湖边，再上 Lake Wānaka Lookout 俯瞰整个湖，往返约 2 小时，台阶多。只想轻松走就绕 Diamond Lake 一圈，约 45 分钟。不去就在 Wānaka 湖边散步看日落。",
           "highlight": "傍晚俯瞰 Wānaka 湖",
-          "tip": "去了的话，明早不再爬 Mount Iron；21:15前回到停车场。",
+          "tip": "20:00–20:30在观景台看斜阳照湖；21:15前回到停车场，趁天没黑开回住处。",
+          "choice": "可加 · Diamond Lake",
+          "miss": "早点休息；去了的话 2/9 上午走湖边平路，不再爬 Mount Iron。",
           "resources": [
             {
               "id": "diamond-lake-map",
@@ -2041,6 +2360,8 @@
           "activity": "早餐：Twizel；午餐：途中或Wānaka；晚餐：Wānaka镇上",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -2172,10 +2493,12 @@
           "dayId": "d9",
           "sortOrder": 10,
           "period": "09:00–11:00",
-          "place": "Mount Iron / 湖边平路",
-          "activity": "2/8 没去 Diamond Lake：爬 Mount Iron，按 1.5–2 小时准备，有上下坡。去过了：从镇上沿湖走到 Waterfall Creek，平路 60–90 分钟。",
-          "highlight": "上午走走",
+          "place": "Mount Iron",
+          "activity": "爬 Mount Iron，按 1.5–2 小时准备，有上下坡，山顶看 Wānaka 镇和湖。2/8 没去 Diamond Lake 就选这个。",
+          "highlight": "山顶看湖",
           "tip": "",
+          "choice": "上午 A · Mount Iron",
+          "miss": "上午沿湖慢走的时间。",
           "resources": [
             {
               "id": "mount-iron-official",
@@ -2194,7 +2517,20 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "导航06"
-            },
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 12,
+          "period": "09:30–11:00",
+          "place": "Wānaka 湖边 → Waterfall Creek",
+          "activity": "从镇上沿湖走到 Waterfall Creek，平路 60–90 分钟。2/8 去过 Diamond Lake 就选这个，腿歇一歇。",
+          "highlight": "湖边平路",
+          "tip": "",
+          "choice": "上午 B · 湖边平路",
+          "miss": "Mount Iron 山顶俯瞰 Wānaka 的视角。",
+          "resources": [
             {
               "id": "wanaka-lakefront-route",
               "title": "去湖滨",
@@ -2214,6 +2550,8 @@
           "activity": "湖边吃午饭、散步，之后咖啡和休息。",
           "highlight": "湖边午餐",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "wanaka-lakefront-route",
@@ -2230,10 +2568,24 @@
           "dayId": "d9",
           "sortOrder": 30,
           "period": "下午",
-          "place": "湖边 / Cinema Paradiso",
-          "activity": "沿湖走走；喜欢电影时查看Cinema Paradiso实际片单。",
-          "highlight": "可选电影",
+          "place": "Wānaka 湖边",
+          "activity": "沿湖走走、喝咖啡、休息。",
+          "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
+          "resources": []
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 32,
+          "period": "下午 · 约 2 小时",
+          "place": "Cinema Paradiso",
+          "activity": "看一场电影，片单看当周场次。",
+          "highlight": "老电影院",
+          "tip": "",
+          "choice": "可加 · 电影",
+          "miss": "下午两小时的湖边时间。",
           "resources": [
             {
               "id": "paradiso-official",
@@ -2249,11 +2601,13 @@
         {
           "dayId": "d9",
           "sortOrder": 35,
-          "period": "下午（可选）",
+          "period": "下午 · 45–60 分钟",
           "place": "Rippon品酒",
-          "activity": "可选：Rippon湖景酒庄品酒，约45–60分钟，需提前预约场次；驾驶者不饮酒。",
-          "highlight": "补选项",
+          "activity": "Rippon湖景酒庄品酒，需提前预约场次；开车的人不喝。",
+          "highlight": "湖景酒庄",
           "tip": "订不到场次就跳过，不影响晚餐。",
+          "choice": "可加 · Rippon 品酒",
+          "miss": "45–60 分钟的湖边时间；要先订。",
           "resources": [
             {
               "id": "rippon-official",
@@ -2283,6 +2637,8 @@
           "activity": "Kika分享式晚餐，待预约。",
           "highlight": "认真吃一顿",
           "tip": "Kika待预约。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "kika-official",
@@ -2312,6 +2668,8 @@
           "activity": "饭后走约10分钟到Roys Bay湖岸，看That Wānaka Tree后面的日落；之后打车回住宿。",
           "highlight": "湖里那棵树的日落",
           "tip": "只在岸边看，不攀爬、不下水靠近；拍照的人多。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "wanaka-tree-map",
@@ -2332,6 +2690,8 @@
           "activity": "早餐：出发前；午餐：湖畔简餐；晚餐：Kika",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -2480,9 +2840,11 @@
           "sortOrder": 10,
           "period": "09:00左右",
           "place": "Wānaka → Cardrona → Crown Range",
-          "activity": "退房出发，沿Cardrona Valley Road经Cardrona小镇翻Crown Range；山顶观景点短停。",
+          "activity": "退房出发，沿Cardrona Valley Road经Cardrona小镇翻Crown Range；山顶观景点短停，下山到 Arrow Junction。",
           "highlight": "最长转场日",
           "tip": "下山一侧连续急弯，低速档慢下。",
+          "choice": "路线 A · 翻 Crown Range",
+          "miss": "风景上不错过什么，但下山急弯多，开车更累。",
           "resources": [
             {
               "id": "crown-range-route",
@@ -2497,12 +2859,58 @@
         },
         {
           "dayId": "d10",
+          "sortOrder": 12,
+          "period": "09:00左右",
+          "place": "Wānaka → Cromwell → Kawarau 峡谷",
+          "activity": "起雾、大风或下雨就走这条：经 Cromwell 和 Kawarau 峡谷到 Arrow Junction，多约 50 公里、20–30 分钟，照样去 Arrowtown。",
+          "highlight": "坏天气改道",
+          "tip": "",
+          "choice": "路线 B · 经 Cromwell",
+          "miss": "Crown Range 山顶观景和 Cardrona 小镇。",
+          "resources": [
+            {
+              "id": "nav07-leg1-route",
+              "title": "备选：经Cromwell到Frankton",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Frankton%2C+Queenstown%2C+New+Zealand&travelmode=driving&waypoints=Cromwell+Heritage+Precinct%2C+Cromwell%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "导航07"
+            }
+          ]
+        },
+        {
+          "dayId": "d10",
+          "sortOrder": 15,
+          "period": "上午 · 约 15 分钟",
+          "place": "Kawarau Bridge 蹦极点",
+          "activity": "老吊桥上看人蹦极，免费停车、免费看，有咖啡和洗手间。走 A 线从 Arrow Junction 往东多开约 5 分钟；走 B 线会直接路过。",
+          "highlight": "看蹦极",
+          "tip": "营业约 9:30–16:00，以当天为准。",
+          "choice": "可加 · 看蹦极",
+          "miss": "到 Te Anau 晚 20–30 分钟。",
+          "resources": [
+            {
+              "id": "kawarau-bungy-official",
+              "title": "Kawarau Bridge 蹦极中心",
+              "type": "official",
+              "url": "https://www.bungy.co.nz/queenstown/kawarau-bungy-centre/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "AJ Hackett"
+            }
+          ]
+        },
+        {
+          "dayId": "d10",
           "sortOrder": 20,
           "period": "上午后段至中午",
           "place": "Arrowtown",
           "activity": "Arrowtown老街散步、午餐或咖啡，约60–90分钟；之后到Frankton加油。",
           "highlight": "淘金小镇午餐",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "arrowtown-map",
@@ -2523,6 +2931,8 @@
           "activity": "经Kingston、Five Rivers、Mossburn到Te Anau；Kingston湖边短停，分段休息。",
           "highlight": "分段休息",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "nav07-leg2-route",
@@ -2543,6 +2953,8 @@
           "activity": "入住，购买翌日路餐、看一眼明早RealNZ的集合点。",
           "highlight": "为Milford准备",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "te-anau-ensuite-map",
@@ -2572,6 +2984,8 @@
           "activity": "早点吃晚饭。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -2582,6 +2996,8 @@
           "activity": "沿Lakefront Drive散步，湖岸朝西，看21:09的日落落在湖上；离住处几分钟，看完回去早点睡。",
           "highlight": "湖上日落",
           "tip": "明早09:15去Milford报到。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "realnz-walk-route",
@@ -2602,6 +3018,8 @@
           "activity": "早餐：Wānaka；午餐：Arrowtown；晚餐：17:30在Te Anau镇上",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -2632,7 +3050,7 @@
         },
         {
           "label": "天气",
-          "text": "暴雨、落石时Milford Road（SH94）会临时封路，RealNZ可能取消或改期。前一晚和当天早上看RealNZ通知；若取消，当天改为Te Anau湖边步道和休息，不临时补订其他项目。"
+          "text": "暴雨、落石时Milford Road（SH94）会临时封路，RealNZ可能取消或改期。前一晚和当天早上看RealNZ通知；若取消，按时间线里的“雨天备选”在 Te Anau 走走，不临时补订其他项目。"
         },
         {
           "label": "沙蝇",
@@ -2680,6 +3098,8 @@
           "activity": "早餐，带好防水外套、保暖层、防滑鞋、路餐和饮水。",
           "highlight": "装备检查",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -2690,6 +3110,8 @@
           "activity": "RealNZ Visitor Centre前台，85 Lakefront Drive, Te Anau。",
           "highlight": "已订集合",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "realnz-map",
@@ -2719,6 +3141,8 @@
           "activity": "已订蒂阿瑙往返大巴＋Milford特色游船，2成人。以运营商安排的沿途停靠为准。",
           "highlight": "峡湾",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "realnz-booking",
@@ -2733,12 +3157,45 @@
         },
         {
           "dayId": "d11",
+          "sortOrder": 35,
+          "period": "Milford 取消时",
+          "place": "Te Anau 湖边 · 鸟类保护区 · Kepler 湖边段",
+          "activity": "沿湖往南走到 Punanga Manu o Te Anau 鸟类保护区（日出到日落开放，免费，欢迎捐款），再到 Kepler Track 停车场，走一段湖边林间步道到 Dock Bay，往返约 1 小时。",
+          "highlight": "雨天备选",
+          "tip": "DOC 讲解团每天 10:30，每人约 NZ$10，在 DOC 游客中心买票，以当天为准。",
+          "choice": "雨天备选",
+          "miss": "Milford 峡湾和整条 Milford Road。",
+          "resources": [
+            {
+              "id": "teanau-bird-sanctuary-official",
+              "title": "Punanga Manu o Te Anau 鸟类保护区",
+              "type": "official",
+              "url": "https://www.fiordland.org.nz/see-and-do/activities/show/punanga-manu-o-te-anau-bird-sanctuary/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Fiordland NZ"
+            },
+            {
+              "id": "kepler-dock-bay-official",
+              "title": "DOC：游客中心到 Kepler Track 停车场",
+              "type": "official",
+              "url": "https://doc.govt.nz/parks-and-recreation/places-to-go/fiordland/places/fiordland-national-park/things-to-do/tracks/visitor-centre-to-kepler-track-carpark-walk",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "DOC"
+            }
+          ]
+        },
+        {
+          "dayId": "d11",
           "sortOrder": 40,
           "period": "18:30左右",
           "place": "Te Anau",
           "activity": "回镇上吃晚餐，可预约The Redcliff。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "redcliff-official",
@@ -2759,6 +3216,8 @@
           "activity": "饭后沿湖边走走，看湖上日落，然后回住宿。",
           "highlight": "饭后散步",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "realnz-walk-route",
@@ -2779,6 +3238,8 @@
           "activity": "早餐：住宿/镇上；午餐：自备路餐，船上饮品小吃可刷卡购买；晚餐：The Redcliff",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -2926,6 +3387,8 @@
           "activity": "Te Anau退房出发；最迟10:00前退房。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "nav08-route",
@@ -2946,6 +3409,8 @@
           "activity": "经Kingston到皇后镇附近，在Frankton一带吃午饭，不进市中心。",
           "highlight": "午餐",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "frankton-map",
@@ -2961,11 +3426,13 @@
         {
           "dayId": "d12",
           "sortOrder": 30,
-          "period": "13:15–14:30（晚了就跳过）",
+          "period": "13:15–14:30",
           "place": "Kelvin Peninsula Sculpture Trail",
           "activity": "Kelvin Heights湖畔雕塑环线，绕高尔夫球场约3.5km、1小时，平路好走，对岸是Walter Peak和皇后镇。",
           "highlight": "湖畔雕塑步道",
-          "tip": "午饭晚了或累了就跳过，直接去Fernhill，优先保证16:30的缆车；起点在Peninsula Road和Grove Lane路口。",
+          "tip": "起点在Peninsula Road和Grove Lane路口；午饭晚了就跳过，直接去 Fernhill。",
+          "choice": "可加 · Kelvin 半岛",
+          "miss": "午饭后歇一会儿的时间；14:30 前要走完，才赶得上 16:30 的缆车。",
           "resources": [
             {
               "id": "kelvin-trail-map",
@@ -2995,6 +3462,8 @@
           "activity": "开约20分钟到Fernhill，15:00入住，放下行李；车留在住处，15:50出发去缆车站。",
           "highlight": "入住Fernhill",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "fernhill-map",
@@ -3015,6 +3484,8 @@
           "activity": "已订：Skyline缆车＋Luge滑道3圈，两人。坐缆车上Bob’s Peak看湖和Remarkables山脉，再滑3圈Luge。16:15前到Brecon Street缆车站：从Fernhill打车约5分钟，或步行下坡约20分钟。",
           "highlight": "缆车＋Luge",
           "tip": "大风时可能停运，按Skyline通知改期；下山后走约10分钟到Blue Kanu。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "skyline-booking",
@@ -3053,6 +3524,8 @@
           "activity": "下山走到Blue Kanu吃晚饭。缆车停运就先去Queenstown Gardens湖边轻走。",
           "highlight": "晚餐",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "blue-kanu-official",
@@ -3073,6 +3546,8 @@
           "activity": "饭后走几分钟到Earnslaw Park一带湖边，看Wakatipu湖上的日落；之后打车回Fernhill。",
           "highlight": "湖边日落",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "earnslaw-park-map",
@@ -3093,6 +3568,8 @@
           "activity": "早餐：Te Anau；午餐：Frankton；晚餐：Blue Kanu",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -3266,6 +3743,8 @@
           "activity": "Fernhill出发，沿Queenstown–Glenorchy Road向西。",
           "highlight": "湖边公路",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "nav09-out-route",
@@ -3286,6 +3765,8 @@
           "activity": "Bennetts Bluff正规停车场停靠；到Glenorchy后看码头和红船屋。",
           "highlight": "红船屋",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "bennetts-bluff-official",
@@ -3306,6 +3787,8 @@
           "activity": "Glenorchy Lagoon Walkway，按1–2小时走；随后小镇午餐。",
           "highlight": "湿地步道",
           "tip": "官方路线3.2km，雨后注意积水提示。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "glenorchy-lagoon-official",
@@ -3335,6 +3818,8 @@
           "activity": "沿原路返回，选择一个合适的正规观景点短停。16:00–17:00左右回Queenstown。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "nav09-back-route",
@@ -3349,12 +3834,36 @@
         },
         {
           "dayId": "d13",
+          "sortOrder": 45,
+          "period": "下午 · 约 30 分钟–1.5 小时",
+          "place": "Bob's Cove",
+          "activity": "回程在 Glenorchy 路边的 Bob's Cove 停车场停下，林间小路走到碧绿色的湖湾，约 20 分钟单程；加走到 Picnic Point 的环线就留 1.5 小时。",
+          "highlight": "碧绿湖湾",
+          "tip": "离皇后镇约 14km；夏天停车场很满，不要停路边或倒车上路。",
+          "choice": "可加 · Bob's Cove",
+          "miss": "回城晚半小时到一小时，傍晚的 Moke Lake 可能就不去了。",
+          "resources": [
+            {
+              "id": "bobs-cove-official",
+              "title": "Bob's Cove Track & Nature Walk",
+              "type": "official",
+              "url": "https://www.queenstownnz.co.nz/listing/bobs-cove-track-%26-nature-walk/9103/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Queenstown NZ"
+            }
+          ]
+        },
+        {
+          "dayId": "d13",
           "sortOrder": 50,
-          "period": "18:00–19:30（可选）",
+          "period": "18:00–19:30",
           "place": "Moke Lake",
           "activity": "有精神才去：从Glenorchy路岔进Moke Lake Road，约30分钟到湖边，在营地一侧湖边停30–45分钟看倒影，傍晚无风时最好。还想走再绕湖一圈（约6km、2–2.5小时，20:30前回到车上）。",
           "highlight": "傍晚湖面倒影",
           "tip": "累了或下雨就不去；21:00日落前回到铺装路。",
+          "choice": "可加 · Moke Lake",
+          "miss": "早点休息；来回要开约 8km 碎石路。",
           "resources": [
             {
               "id": "moke-lake-map",
@@ -3384,6 +3893,8 @@
           "activity": "回市中心吃Fergburger。可以先打电话点单，到店直接付款取餐，不用排外面的长队；隔壁Fergbaker的派也可以带一个。之后整理行李，准备次日加油还车。",
           "highlight": "皇后镇招牌汉堡",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "fergburger-map",
@@ -3422,6 +3933,8 @@
           "activity": "早餐：Queenstown/住宿；午餐：Glenorchy镇上；晚餐：Fergburger",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -3556,6 +4069,8 @@
           "activity": "退房出发，Frankton 加油，10:00 机场还车。",
           "highlight": "南岛收车",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "nav10-route",
@@ -3576,6 +4091,8 @@
           "activity": "还车后时间宽裕：机场旁 Remarkables Park 吃早午饭，12:30 前回机场办托运。",
           "highlight": "等飞机",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "zqn-map",
@@ -3596,6 +4113,8 @@
           "activity": "飞奥克兰。",
           "highlight": "航班",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -3606,6 +4125,8 @@
           "activity": "取行李，打车或 Uber 进城（约 40–60 分钟），入住 2/14–16 连续两晚。",
           "highlight": "连住两晚",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "akl-intl-map",
@@ -3626,6 +4147,8 @@
           "activity": "情人节晚饭，在Viaduct Harbour一带，要提前订。",
           "highlight": "情人节晚餐",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "viaduct-map",
@@ -3641,11 +4164,13 @@
         {
           "dayId": "d14",
           "sortOrder": 60,
-          "period": "19:30–20:30（可选）",
+          "period": "19:30–20:30",
           "place": "Viaduct Harbour / Wynyard Quarter",
-          "activity": "饭后在Viaduct海边走走就回酒店早睡；有精神再走10分钟到Wynyard Quarter / Silo Park，看20:19的日落。",
-          "highlight": "海边散步",
+          "activity": "饭后在Viaduct海边走走；有精神再走10分钟到Wynyard Quarter / Silo Park，看20:19的日落。",
+          "highlight": "海边日落",
           "tip": "明早06:00出发，早点睡。",
+          "choice": "可加 · Wynyard 日落",
+          "miss": "早睡一小时，明早 06:00 就要出发。",
           "resources": [
             {
               "id": "wynyard-map",
@@ -3666,6 +4191,8 @@
           "activity": "早餐：Fernhill；午餐：皇后镇机场附近；晚餐：Viaduct Harbour情人节晚餐",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -3744,6 +4271,8 @@
           "activity": "按确认单的时间和地点上车，早餐在车上吃。",
           "highlight": "早起出发",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "waitomo-hobbiton-booking",
@@ -3764,6 +4293,8 @@
           "activity": "萤火虫洞导览约1小时：先走溶洞，最后坐小船在黑暗里看满洞顶的萤火虫。",
           "highlight": "萤火虫洞",
           "tip": "洞里凉、不能拍照；讲解是英文。",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "waitomo-map",
@@ -3784,6 +4315,8 @@
           "activity": "霍比屯片场导览：44个霍比特人洞、磨坊、双拱桥、派对树，在Green Dragon Inn喝一杯，Bag End门口拍照。",
           "highlight": "霍比屯",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "shire-rest-map",
@@ -3804,6 +4337,8 @@
           "activity": "回到市区，回酒店歇一会儿。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -3814,6 +4349,8 @@
           "activity": "酒店附近吃晚饭，之后回酒店休息，不再出门。",
           "highlight": "休息",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -3824,6 +4361,8 @@
           "activity": "早餐：带上车；午餐：途中或Hobbiton（以确认单为准）；晚餐：Auckland市中心",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -3898,6 +4437,8 @@
           "activity": "退房并寄存行李。",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -3908,6 +4449,8 @@
           "activity": "Auckland Art Gallery Toi o Tāmaki，按1.5–2小时安排。",
           "highlight": "美术馆",
           "tip": "",
+          "choice": "上午 A · 美术馆",
+          "miss": "Mt Eden 山顶看整座城。",
           "resources": [
             {
               "id": "art-gallery-map",
@@ -3931,12 +4474,36 @@
         },
         {
           "dayId": "d16",
+          "sortOrder": 22,
+          "period": "10:00–12:00",
+          "place": "Mt Eden · Maungawhau",
+          "activity": "打车约 15 分钟到山脚，走 15–20 分钟上山顶，看火山口和奥克兰全景，按 1.5 小时安排，再打车回 Britomart 吃午饭。",
+          "highlight": "火山口全景",
+          "tip": "山顶不能开车上去。",
+          "choice": "上午 B · Mt Eden",
+          "miss": "美术馆。",
+          "resources": [
+            {
+              "id": "mt-eden-map",
+              "title": "Mt Eden · Maungawhau",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Maungawhau+Mount+Eden+Summit%2C+Auckland%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d16",
           "sortOrder": 30,
           "period": "12:30–14:00",
           "place": "Britomart · Amano",
           "activity": "Britomart午餐，首选Amano，待预约。",
           "highlight": "完整午餐",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "amano-map",
@@ -3961,12 +4528,36 @@
         {
           "dayId": "d16",
           "sortOrder": 40,
-          "period": "下午",
+          "period": "14:00–17:30",
           "place": "Britomart",
-          "activity": "GIAPO甜点或咖啡、短距离购物；按航班倒推结束城市活动。",
+          "activity": "GIAPO甜点或咖啡、短距离购物，就在住处附近；17:30 前回酒店取行李。",
           "highlight": "",
           "tip": "",
+          "choice": "下午 C · Britomart",
+          "miss": "从海上回看奥克兰天际线。",
           "resources": []
+        },
+        {
+          "dayId": "d16",
+          "sortOrder": 45,
+          "period": "14:00–17:00",
+          "place": "Devonport",
+          "activity": "从 Downtown 码头坐渡轮约 12–15 分钟到 Devonport，走上 Mt Victoria（Takarunga）回看市中心和海港，镇上喝杯咖啡再坐船回来，约 2–3 小时。",
+          "highlight": "渡轮和海港天际线",
+          "tip": "渡轮班次约每半小时，周末更少，以当天为准；刷 AT HOP 卡或银行卡感应支付。17:30 前回到酒店。",
+          "choice": "下午 D · Devonport 渡轮",
+          "miss": "逛街和慢慢吃甜点的时间。",
+          "resources": [
+            {
+              "id": "devonport-ferry-map",
+              "title": "Downtown Ferry Terminal → Devonport",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Downtown+Ferry+Terminal%2C+Auckland%2C+New+Zealand&destination=Devonport+Wharf%2C+Auckland%2C+New+Zealand&travelmode=transit",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
         },
         {
           "dayId": "d16",
@@ -3976,6 +4567,8 @@
           "activity": "取行李去机场，19:25 前到，办理 CZ306 值机和出境。",
           "highlight": "夜航回国",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "akl-intl-map",
@@ -4005,6 +4598,8 @@
           "activity": "早餐：市区；午餐：Amano；晚餐：按起飞时刻在市区或机场安排",
           "highlight": "",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -4075,6 +4670,8 @@
           "activity": "入境、按国际转国内流程转机，候机时吃早餐。",
           "highlight": "转机",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         },
         {
@@ -4085,6 +4682,8 @@
           "activity": "飞回杭州，取行李回家。",
           "highlight": "到家",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": [
             {
               "id": "hgh-airport-map",
@@ -4105,6 +4704,8 @@
           "activity": "早餐：广州机场；午餐：回家简餐；晚餐：在家休息",
           "highlight": "按航班实际到达时间",
           "tip": "",
+          "choice": "",
+          "miss": "",
           "resources": []
         }
       ]
@@ -5410,6 +6011,78 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"
+    },
+    {
+      "id": "clay-cliffs-official",
+      "title": "Omarama Clay Cliffs",
+      "type": "official",
+      "url": "https://www.waitakinz.com/explore/clay-cliffs",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Waitaki NZ"
+    },
+    {
+      "id": "kawarau-bungy-official",
+      "title": "Kawarau Bridge 蹦极中心",
+      "type": "official",
+      "url": "https://www.bungy.co.nz/queenstown/kawarau-bungy-centre/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "AJ Hackett"
+    },
+    {
+      "id": "teanau-bird-sanctuary-official",
+      "title": "Punanga Manu o Te Anau 鸟类保护区",
+      "type": "official",
+      "url": "https://www.fiordland.org.nz/see-and-do/activities/show/punanga-manu-o-te-anau-bird-sanctuary/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Fiordland NZ"
+    },
+    {
+      "id": "kepler-dock-bay-official",
+      "title": "DOC：游客中心到 Kepler Track 停车场",
+      "type": "official",
+      "url": "https://doc.govt.nz/parks-and-recreation/places-to-go/fiordland/places/fiordland-national-park/things-to-do/tracks/visitor-centre-to-kepler-track-carpark-walk",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "DOC"
+    },
+    {
+      "id": "bobs-cove-official",
+      "title": "Bob's Cove Track & Nature Walk",
+      "type": "official",
+      "url": "https://www.queenstownnz.co.nz/listing/bobs-cove-track-%26-nature-walk/9103/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Queenstown NZ"
+    },
+    {
+      "id": "mt-eden-map",
+      "title": "Mt Eden · Maungawhau",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Maungawhau+Mount+Eden+Summit%2C+Auckland%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "devonport-ferry-map",
+      "title": "Downtown Ferry Terminal → Devonport",
+      "type": "map",
+      "url": "https://www.google.com/maps/dir/?api=1&origin=Downtown+Ferry+Terminal%2C+Auckland%2C+New+Zealand&destination=Devonport+Wharf%2C+Auckland%2C+New+Zealand&travelmode=transit",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "mt-john-official",
+      "title": "Mount John · Astro Café（Dark Sky Project）",
+      "type": "official",
+      "url": "https://www.darkskyproject.co.nz/eat/astro-cafe/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Dark Sky Project"
     },
     {
       "id": "margaret-official",

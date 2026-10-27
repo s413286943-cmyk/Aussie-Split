@@ -120,6 +120,16 @@ test("the updates tab still shows itinerary notes when the change log is unreach
   await expect(page.locator(".nz-update.is-release").first()).toBeVisible();
 });
 
+test("a day with alternatives shows every option and what each one misses", async ({ page }) => {
+  await page.clock.setFixedTime(beforeTrip);
+  await page.goto("/");
+  await page.locator("#nz-d6 .nz-day-head").click();
+  const body = page.locator("#nz-d6 .nz-day-body");
+  await expect(body.locator(".nz-choice")).toHaveText(["上午 A · 全程", "上午 B · 一小段", "下午 C · 塔斯曼冰川", "下午 D · 只停观景点", "雨天备选"]);
+  await expect(body.locator(".nz-miss")).toHaveCount(5);
+  await expect(body.locator(".nz-miss").first()).toContainText("选这个会错过：");
+});
+
 test("ticks made on the other phone show up here", async ({ page, mockApi }) => {
   mockApi.nz2027Checklist = [{ id: "nztd", done: true, updatedAt: "2026-11-02T00:00:00.000Z" }];
   await page.clock.setFixedTime(beforeTrip);

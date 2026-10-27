@@ -200,11 +200,13 @@ function DayCard({ day, current, records }) {
           <h3 className="nz-sub">时间线</h3>
           <ol className="nz-timeline" aria-label={`${day.label} 时间线`}>
             {timeline.map((block) => (
-              <li key={block.sortOrder}>
+              <li key={block.sortOrder} className={block.choice ? "is-choice" : undefined}>
                 <time>{block.period}</time>
+                {block.choice && <span className="nz-choice">{block.choice}</span>}
                 <strong>{block.place}</strong>
                 <p>{block.activity}</p>
                 {block.tip && <small>{block.tip}</small>}
+                {block.miss && <small className="nz-miss">选这个会错过：{block.miss}</small>}
                 <Links resources={block.resources} />
               </li>
             ))}
