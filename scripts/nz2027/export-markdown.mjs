@@ -59,8 +59,9 @@ for (const stage of j.stages) {
     if (blocks.length) {
       out.push("| 时间 | 地点 | 安排 |", "|---|---|---|");
       for (const b of blocks) {
-        const extra = [b.highlight && `**${b.highlight}**`, b.tip && `提示：${b.tip}`].filter(Boolean).join("；");
-        out.push(`| ${cell(b.period)} | ${cell(b.place)} | ${cell(b.activity)}${extra ? `<br>${cell(extra)}` : ""} |`);
+        const extra = [b.highlight && `**${b.highlight}**`, b.tip && `提示：${b.tip}`, b.miss && `选这个会错过：${b.miss}`].filter(Boolean).join("；");
+        const period = b.choice ? `${b.period}<br>**${b.choice}**` : b.period;
+        out.push(`| ${cell(period)} | ${cell(b.place)} | ${cell(b.activity)}${extra ? `<br>${cell(extra)}` : ""} |`);
       }
       out.push("");
     }

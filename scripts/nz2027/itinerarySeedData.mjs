@@ -94,7 +94,7 @@ export const days = [
   }),
   day({
     id: "d6", label: "D06", date: "2027-02-06", weekday: "周六", city: "Twizel ↔ Aoraki / Mount Cook", base: "Twizel",
-    lat: -43.7186, lon: 170.0952, title: "Aoraki / Mount Cook完整一天", focus: "把主要体力留给Hooker Valley。",
+    lat: -43.7186, lon: 170.0952, title: "Aoraki / Mount Cook：Hooker 和塔斯曼任选", focus: "上午 Hooker 全程或一小段，下午塔斯曼冰川或只停观景点，当天按天气和体力搭配。",
     lodging: "Twizel Holiday Park", lodgingStatus: "已订", lodgingResource: "twizel-holiday-park-map",
     climate: "Aoraki山区约5–18°C，风大，天气变化快，可能下雨。", clothing: "防风防水外套、保暖中层、防滑徒步鞋；帽子手套和足量饮水。",
     transport: "自驾往返Mt Cook · 单程约1小时", leaveBy: "07:15–07:30出发（长周末停车场早满）", primary: "white-horse-hill-route", ticket: "no-fixed-ticket",
@@ -103,6 +103,7 @@ export const days = [
       "住宿｜Twizel Holiday Park，第二晚。",
       "步道｜Hooker 新吊桥 2026 年 7 月已开通，步道通到 Hooker Lake，单程约 5km、90 分钟。第一座吊桥一次限 20 人，长周末可能排队。出发前一周看 DOC 提醒。",
       "天气备选｜2/6 与 2/7 可互换。下雨或步道关闭就改 Tasman Glacier View + Blue Lakes（Tasman 停车场，往返约 1 小时），再加 Kea Point。",
+      "怎么选｜下面的上午 A/B、下午 C/D 都是选项，不用提前删。常见搭配：A+D（主看 Hooker Lake）或 B+C（两边都看一点）。每个选项都写了“会错过什么”。",
       "长周末｜今天是Waitangi Day（周六），White Horse Hill停车场可能很早停满，建议07:15–07:30出发；餐厅可能收公众假期附加费。",
     ],
   }),
@@ -299,11 +300,15 @@ export const blocks = [
   block("d5", 90, "饮食", "Fairlie / Twizel", "早餐：酒店附近；午餐：Fairlie Bakehouse；晚餐：Twizel镇上", "", ""),
   // D06
   block("d6", 10, "07:15–07:30", "Twizel → White Horse Hill", "Twizel出发，沿SH80进山，尽早到White Horse Hill停车场。", "长周末停车场早满，提前出发", "长周末停车场上午很早就满。", "white-horse-hill-route"),
-  block("d6", 20, "09:15–14:00左右", "Hooker Valley Track", "Hooker Valley徒步到Hooker Lake，含拍照、路餐和休息预留4–5小时。", "全天主角", "往返约10km、3小时；步道关闭就改Tasman Glacier View + Blue Lakes。", "doc-hooker-official,tasman-valley-official"),
-  block("d6", 30, "下午", "Mount Cook Village / Peter’s Lookout", "村内咖啡休息；返程在Peter’s Lookout短停看Pukaki。", "Pukaki回望", "", "peters-lookout-route"),
+  block("d6", 20, "09:15–14:00", "Hooker Valley Track · 全程", "走到 Hooker Lake 再原路回，含拍照、路餐和休息 4–5 小时：三座吊桥、冰川湖 Hooker Lake，天气好时正对 Aoraki 雪山。", "全程", "往返约 10km，官方约 3 小时；第一座吊桥一次限 20 人，可能排队。带点零食，午饭回村里吃。", "doc-hooker-official", { choice: "上午 A · 全程", miss: "下午多半没力气再爬塔斯曼的 300 多级台阶，通常只停 Peter's Lookout。" }),
+  block("d6", 25, "09:15–11:15", "Hooker Valley Track · 一小段", "走到第一座吊桥附近看看山谷就原路回，1–2 小时，省时间也省体力。", "轻松版", "", "doc-hooker-official", { choice: "上午 B · 一小段", miss: "Hooker Lake、第二和第三座吊桥，还有湖边正对 Aoraki 的那个角度。" }),
+  block("d6", 30, "中午", "Mount Cook Village", "两种走法都回村里吃饭、休息：村里的咖啡馆或 The Hermitage 酒店。边吃边看天气，再定下午。", "午饭休息", ""),
+  block("d6", 40, "下午 · 约 1.5–2 小时", "Tasman Glacier View + Blue Lakes", "开约 20 分钟到 Tasman Valley 停车场，爬 300 多级台阶上冰碛墙观景点，往返 45 分钟–1 小时，看冰川湖和湖上的浮冰，路过 Blue Lakes。上午只走一小段的话会很从容。", "冰川湖和浮冰", "台阶陡；停车场夏天很满；冰川湖边和冰碛墙有危险，不要下到湖边。", "tasman-route,tasman-valley-official", { choice: "下午 C · 塔斯曼冰川", miss: "回 Twizel 晚 1 小时左右，下午几乎没有休息。" }),
+  block("d6", 45, "下午 · 约 15 分钟", "Peter's Lookout", "回程在 Peter's Lookout 停 15 分钟看 Pukaki 湖和身后的雪山，然后回 Twizel 休息。上午走了全程就选这个。", "Pukaki 回望", "", "peters-lookout-route", { choice: "下午 D · 只停观景点", miss: "塔斯曼冰川湖和湖上的浮冰。" }),
+  block("d6", 48, "下雨或步道关闭", "Kea Point + 塔斯曼", "Hooker 关闭或大雨：改走 Kea Point（看 Mueller 冰川湖、Mt Sefton 和 Aoraki，按现场标识约 1–2 小时往返），下午再看雨势决定去不去塔斯曼。也可以和 2/7 对调。", "雨天备选", "", "kea-point-official,tasman-valley-official", { choice: "雨天备选", miss: "Hooker Valley 的吊桥和 Hooker Lake。" }),
   block("d6", 40, "16:30–18:00左右", "Twizel", "回Twizel吃晚餐，晚上早点休息，不加项目。", "", ""),
   block("d6", 50, "23:00后（可选）", "住处门口", "新月前后，23:00左右天完全黑下来，在住处门口抬头就能看到银河，不用开车。起得来就看。", "银河", "", ""),
-  block("d6", 90, "饮食", "随身路餐 / Twizel", "早餐：出发前吃足；午餐：随身路餐；晚餐：Twizel", "", ""),
+  block("d6", 90, "饮食", "随身路餐 / Twizel", "早餐：出发前吃足；午餐：Mount Cook Village；晚餐：Twizel", "", ""),
   // D07
   block("d7", 10, "上午", "住宿 / Lake Ruataniwha", "睡懒觉、慢早餐；2/5晚上没去Lake Ruataniwha的话，上午去湖边轻走。", "恢复日", "", "ruataniwha-map"),
   block("d7", 20, "12:00–13:30", "High Country Salmon", "轻松的美食点：先看看养殖池、喂喂鱼，再在店里点一份刺身和一份热食，对比生吃和熟吃。喜欢的话买一块适合煎的三文鱼带回 Twizel，晚上自己做。", "三文鱼两种吃法", "鱼食和菜单以当天为准；买生鱼请店里帮忙冷藏包好，回住处马上放冰箱。", "logans-official"),
@@ -393,7 +398,7 @@ export const drives = [
     "Christchurch Airport → SH1南行 / Ashburton → SH79 / Geraldine → Fairlie → SH8 / Tekapo → Pukaki南岸 → Twizel",
     "Geraldine和Fairlie各短停即可，优先保留Tekapo、Pukaki的湖边时间。Tekapo、Fairlie和Twizel公共车位有P10/P30/P60/P120等限制，免费不代表不限时；现场牌为准。",
     "nav02-a-route,nav02-b-route,mackenzie-parking-official"),
-  drive("nav03", "d6", "导航03 · Twizel ↔ Mt Cook", "07:15–07:30出发（长周末提前）；单程约1小时，观景停车另加；主要体力留给4–5小时徒步窗口。",
+  drive("nav03", "d6", "导航03 · Twizel ↔ Mt Cook", "07:15–07:30出发（长周末提前）；单程约1小时。上午 Hooker 全程 4–5 小时或一小段 1–2 小时，下午可加塔斯曼（开车约 20 分钟）或只停 Peter's Lookout。",
     "Twizel → SH8北行 → SH80沿Pukaki西岸 → Hooker Valley Road → White Horse Hill Car Park；返程停Peter’s Lookout",
     "White Horse Hill现行NZ$2.50/半小时、NZ$25/天封顶，刷卡支付；完整徒步暂留NZ$20–25。短线备选：同一停车区域走Kea Point约1小时。Tasman Valley是另一停车场，从White Horse Hill开车约20–30分钟；只有体力和时间充足才加。大风雨不适合进山时与2/7交换。",
     "white-horse-hill-route,peters-lookout-route,tasman-route,doc-parking-official,kea-point-official,tasman-valley-official"),
@@ -434,7 +439,8 @@ export const driveLegs = [
   leg("nav02", 40, "Tekapo → Pukaki Visitor Centre", "约40–50分钟", "南岸看湖20–30分钟；此处与SH80上的Peter’s Lookout不同。"),
   leg("nav02", 50, "Pukaki → Twizel Holiday Park", "约15–20分钟", "终点122 Mackenzie Drive；预计下午抵达，按原订单完成入住。"),
   leg("nav03", 10, "Twizel → White Horse Hill Car Park", "约50–70分钟", "不要只导航Mount Cook Village；Hooker Valley起点在White Horse Hill。"),
-  leg("nav03", 20, "停车场 → Hooker Valley → 停车场", "步行，不是开车", "全程10km，官方约3小时；含拍照、路餐与休息留4–5小时。"),
+  leg("nav03", 20, "停车场 → Hooker Valley → 停车场", "步行，不是开车", "全程 10km 官方约 3 小时，含拍照休息留 4–5 小时；只走到第一座吊桥就 1–2 小时。"),
+  leg("nav03", 25, "White Horse Hill → Tasman Valley 停车场（选 C 时）", "约20分钟", "从村口拐进 Tasman Valley Road 开到底；夏天停车场很满。"),
   leg("nav03", 30, "White Horse Hill → Peter’s Lookout", "约35–45分钟", "正规停车场短停15–20分钟；视能见度决定是否停。"),
   leg("nav03", 40, "Peter’s Lookout → Twizel", "约25–35分钟", "回住宿吃饭休息。"),
   leg("nav04", 10, "住宿 → Lake Ruataniwha Reserve", "约10–15分钟", "找标识的湖边公共车位，散步30–60分钟。"),
@@ -679,8 +685,9 @@ function day(values) {
   };
 }
 
-function block(day_id, sort_order, period, place, activity, highlight, tip, resource_ids = "") {
-  return { day_id, sort_order, period, place, activity, highlight, tip, resource_ids };
+// choice: option label when a time slot has alternatives (e.g. "A · 全程")；miss: what you give up by picking it.
+function block(day_id, sort_order, period, place, activity, highlight, tip, resource_ids = "", { choice = "", miss = "" } = {}) {
+  return { day_id, sort_order, period, place, activity, highlight, tip, resource_ids, choice, miss };
 }
 
 function drive(drive_id, day_id, title, duration, sequence, notes, resource_ids) {

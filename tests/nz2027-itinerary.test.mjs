@@ -62,7 +62,7 @@ describe("2027 two-person itinerary data", () => {
     assert.deepEqual(
       itinerary.days.filter((day) => day.drive).map((day) => [day.date.slice(5), day.drive.id, day.drive.legs.length]),
       [
-        ["02-05", "nav02", 5], ["02-06", "nav03", 4], ["02-07", "nav04", 5],
+        ["02-05", "nav02", 5], ["02-06", "nav03", 5], ["02-07", "nav04", 5],
         ["02-08", "nav05", 4], ["02-09", "nav06", 3], ["02-10", "nav07", 5], ["02-12", "nav08", 5],
         ["02-13", "nav09", 5], ["02-14", "nav10", 3],
       ],
@@ -95,6 +95,13 @@ describe("2027 two-person itinerary data", () => {
     assert.deepEqual(sydney.map((lodging) => [lodging.checkIn, lodging.checkOut]), [["2027-02-01", "2027-02-04"]]);
     const all = JSON.stringify(itinerary);
     for (const phrase of ["待购", "（补订）", "换房"]) assert.ok(!all.includes(phrase), phrase);
+  });
+
+  it("keeps every 2/6 option with what each one gives up", () => {
+    const choices = dayById("d6").blocks.filter((block) => block.choice);
+    assert.deepEqual(choices.map((block) => block.choice), ["上午 A · 全程", "上午 B · 一小段", "下午 C · 塔斯曼冰川", "下午 D · 只停观景点", "雨天备选"]);
+    assert.ok(choices.every((block) => block.miss.trim()), "each option says what it misses");
+    assert.ok(itinerary.days.flatMap((day) => day.blocks).every((block) => typeof block.choice === "string" && typeof block.miss === "string"));
   });
 
   it("uses the late February evenings for lakeside walks", () => {

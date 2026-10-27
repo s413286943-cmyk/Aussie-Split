@@ -1518,3 +1518,24 @@ body:has(.nz) {
   background: rgba(240, 179, 90, 0.16);
   color: var(--nz-amber);
 }
+
+/* 同一时段的备选项 */
+.nz-timeline li.is-choice::before {
+  box-shadow: inset 0 0 0 2px var(--nz-amber);
+}
+
+.nz-choice {
+  display: inline-block;
+  margin: 4px 0 2px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(240, 179, 90, 0.16);
+  color: var(--nz-amber);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.nz-timeline small.nz-miss {
+  margin-top: 4px;
+  color: var(--nz-red);
+}
