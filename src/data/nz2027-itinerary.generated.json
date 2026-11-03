@@ -2415,12 +2415,12 @@
       },
       "ticketResource": {
         "id": "kika-note",
-        "title": "Kika晚餐（待预约）",
+        "title": "Kika晚餐（已订）",
         "type": "note",
         "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "约18:00"
+        "sourceNote": "约18:00，以确认邮件为准"
       },
       "drive": {
         "id": "nav06",
@@ -2634,9 +2634,9 @@
           "sortOrder": 40,
           "period": "18:00左右",
           "place": "Kika",
-          "activity": "Kika分享式晚餐，待预约。",
+          "activity": "Kika分享式晚餐，已订，两人。",
           "highlight": "认真吃一顿",
-          "tip": "Kika待预约。",
+          "tip": "到店时间以确认邮件为准。",
           "choice": "",
           "miss": "",
           "resources": [
@@ -2647,7 +2647,7 @@
               "url": "https://kika.nz/",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "待预约"
+              "sourceNote": "已订"
             },
             {
               "id": "kika-route",
@@ -2687,7 +2687,7 @@
           "sortOrder": 90,
           "period": "饮食",
           "place": "湖畔 / Kika",
-          "activity": "早餐：出发前；午餐：湖畔简餐；晚餐：Kika",
+          "activity": "早餐：出发前；午餐：湖畔简餐；晚餐：Kika（已订）",
           "highlight": "",
           "tip": "",
           "choice": "",
@@ -3190,10 +3190,10 @@
           "dayId": "d11",
           "sortOrder": 40,
           "period": "18:30左右",
-          "place": "Te Anau",
-          "activity": "回镇上吃晚餐，可预约The Redcliff。",
-          "highlight": "",
-          "tip": "",
+          "place": "The Redcliff",
+          "activity": "回镇上在 The Redcliff 吃晚饭，已订，两人。",
+          "highlight": "晚饭",
+          "tip": "到店时间以确认邮件为准。",
           "choice": "",
           "miss": "",
           "resources": [
@@ -3204,7 +3204,7 @@
               "url": "https://theredcliff.co.nz/",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "待预约"
+              "sourceNote": "已订"
             }
           ]
         },
@@ -3235,7 +3235,7 @@
           "sortOrder": 90,
           "period": "饮食",
           "place": "路餐 / The Redcliff",
-          "activity": "早餐：住宿/镇上；午餐：自备路餐，船上饮品小吃可刷卡购买；晚餐：The Redcliff",
+          "activity": "早餐：住宿/镇上；午餐：自备路餐，船上饮品小吃可刷卡购买；晚餐：The Redcliff（已订）",
           "highlight": "",
           "tip": "",
           "choice": "",
@@ -3521,9 +3521,9 @@
           "sortOrder": 50,
           "period": "19:00–20:30",
           "place": "Blue Kanu",
-          "activity": "下山走到Blue Kanu吃晚饭。缆车停运就先去Queenstown Gardens湖边轻走。",
+          "activity": "下山走到Blue Kanu吃晚饭，已订，两人。缆车停运就先去Queenstown Gardens湖边轻走。",
           "highlight": "晚餐",
-          "tip": "",
+          "tip": "到店时间以确认邮件为准。",
           "choice": "",
           "miss": "",
           "resources": [
@@ -3534,7 +3534,7 @@
               "url": "https://www.queenstownnz.co.nz/listing/blue-kanu-restaurant/1436/",
               "imageUrl": "",
               "imageAlt": "",
-              "sourceNote": "待预约"
+              "sourceNote": "已订"
             }
           ]
         },
@@ -3565,7 +3565,7 @@
           "sortOrder": 90,
           "period": "饮食",
           "place": "Frankton / Blue Kanu",
-          "activity": "早餐：Te Anau；午餐：Frankton；晚餐：Blue Kanu",
+          "activity": "早餐：Te Anau；午餐：Frankton；晚餐：Blue Kanu（已订）",
           "highlight": "",
           "tip": "",
           "choice": "",
@@ -4420,12 +4420,12 @@
       },
       "ticketResource": {
         "id": "amano-note",
-        "title": "Amano午餐（待预约）",
+        "title": "Amano午餐（已订）",
         "type": "note",
         "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "12:30–14:00"
+        "sourceNote": "12:00–14:00"
       },
       "drive": null,
       "blocks": [
@@ -4444,9 +4444,9 @@
         {
           "dayId": "d16",
           "sortOrder": 20,
-          "period": "10:00–12:00",
+          "period": "10:00–11:45",
           "place": "Auckland Art Gallery",
-          "activity": "Auckland Art Gallery Toi o Tāmaki，按1.5–2小时安排。",
+          "activity": "Auckland Art Gallery Toi o Tāmaki，按1.5小时安排，走 10 分钟到 Amano。",
           "highlight": "美术馆",
           "tip": "",
           "choice": "上午 A · 美术馆",
@@ -4475,9 +4475,9 @@
         {
           "dayId": "d16",
           "sortOrder": 22,
-          "period": "10:00–12:00",
+          "period": "09:30–11:45",
           "place": "Mt Eden · Maungawhau",
-          "activity": "打车约 15 分钟到山脚，走 15–20 分钟上山顶，看火山口和奥克兰全景，按 1.5 小时安排，再打车回 Britomart 吃午饭。",
+          "activity": "打车约 15 分钟到山脚，走 15–20 分钟上山顶，看火山口和奥克兰全景，按 1.5 小时安排，11:30 打车回 Britomart，12:00 吃 Amano。",
           "highlight": "火山口全景",
           "tip": "山顶不能开车上去。",
           "choice": "上午 B · Mt Eden",
@@ -4497,9 +4497,9 @@
         {
           "dayId": "d16",
           "sortOrder": 30,
-          "period": "12:30–14:00",
+          "period": "12:00–14:00",
           "place": "Britomart · Amano",
-          "activity": "Britomart午餐，首选Amano，待预约。",
+          "activity": "Amano 午饭，已订，两人，66–68 Tyler Street。",
           "highlight": "完整午餐",
           "tip": "",
           "choice": "",
@@ -4595,7 +4595,7 @@
           "sortOrder": 90,
           "period": "饮食",
           "place": "市区 / Amano",
-          "activity": "早餐：市区；午餐：Amano；晚餐：按起飞时刻在市区或机场安排",
+          "activity": "早餐：市区；午餐：Amano 12:00（已订）；晚餐：按起飞时刻在市区或机场安排",
           "highlight": "",
           "tip": "",
           "choice": "",
@@ -4951,7 +4951,7 @@
       "dueDate": "",
       "dueLabel": "提前预约",
       "title": "订 Kika（2/9 晚餐，Wānaka）",
-      "detail": "约 18:00，两人。"
+      "detail": "已订，两人。"
     },
     {
       "id": "dinner-redcliff",
@@ -4960,7 +4960,7 @@
       "dueDate": "",
       "dueLabel": "提前预约",
       "title": "订 The Redcliff（2/11 晚餐，Te Anau）",
-      "detail": "Milford 回来约 18:30。"
+      "detail": "已订，两人；Milford 回来约 18:30。"
     },
     {
       "id": "dinner-bluekanu",
@@ -4969,7 +4969,7 @@
       "dueDate": "",
       "dueLabel": "提前预约",
       "title": "订 Blue Kanu（2/12 晚餐，皇后镇）",
-      "detail": "缆车 18:30 下来，约 19:00。"
+      "detail": "已订，两人；缆车 18:30 下来，约 19:00。"
     },
     {
       "id": "lunch-amano",
@@ -4978,7 +4978,7 @@
       "dueDate": "",
       "dueLabel": "提前预约",
       "title": "订 Amano（2/16 午餐，奥克兰）",
-      "detail": "12:30–14:00。"
+      "detail": "已订 12:00–14:00，两人。"
     },
     {
       "id": "rippon",
@@ -5294,21 +5294,21 @@
     },
     {
       "id": "kika-note",
-      "title": "Kika晚餐（待预约）",
+      "title": "Kika晚餐（已订）",
       "type": "note",
       "url": "",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "约18:00"
+      "sourceNote": "约18:00，以确认邮件为准"
     },
     {
       "id": "amano-note",
-      "title": "Amano午餐（待预约）",
+      "title": "Amano午餐（已订）",
       "type": "note",
       "url": "",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "12:30–14:00"
+      "sourceNote": "12:00–14:00"
     },
     {
       "id": "realnz-booking",
@@ -5524,7 +5524,7 @@
       "url": "https://kika.nz/",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "待预约"
+      "sourceNote": "已订"
     },
     {
       "id": "paradiso-official",
@@ -5569,7 +5569,7 @@
       "url": "https://theredcliff.co.nz/",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "待预约"
+      "sourceNote": "已订"
     },
     {
       "id": "blue-kanu-official",
@@ -5578,7 +5578,7 @@
       "url": "https://www.queenstownnz.co.nz/listing/blue-kanu-restaurant/1436/",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "待预约"
+      "sourceNote": "已订"
     },
     {
       "id": "boundary-street-map",
