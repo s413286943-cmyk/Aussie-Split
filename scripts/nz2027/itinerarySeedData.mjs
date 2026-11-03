@@ -337,7 +337,7 @@ export const blocks = [
   block("d9", 30, "下午", "Wānaka 湖边", "沿湖走走、喝咖啡、休息。", "", ""),
   block("d9", 32, "下午 · 约 2 小时", "Cinema Paradiso", "看一场电影，片单看当周场次。", "老电影院", "", "paradiso-official", { choice: "可加 · 电影", miss: "下午两小时的湖边时间。" }),
   block("d9", 35, "下午 · 45–60 分钟", "Rippon品酒", "Rippon湖景酒庄品酒，需提前预约场次；开车的人不喝。", "湖景酒庄", "订不到场次就跳过，不影响晚餐。", "rippon-official,rippon-map", { choice: "可加 · Rippon 品酒", miss: "45–60 分钟的湖边时间；要先订。" }),
-  block("d9", 40, "18:00–20:00", "Kika", "Kika 分享式晚餐，已订，两人，2 Dunmore Street。", "认真吃一顿", "订位号 51115222；订位时付了 NZ$50 订位保证金（每人 NZ$25）；桌子保留 15 分钟，晚到先打电话 03 443 6536。", "kika-official,kika-route"),
+  block("d9", 40, "18:00–20:00", "Kika", "Kika 分享式晚餐，已订，两人，2 Dunmore Street。", "认真吃一顿", "订位号 51115222；订位时付了 NZ$50 保证金（每人 NZ$25），之后会退回，不记账；桌子保留 15 分钟，晚到先打电话 03 443 6536。", "kika-official,kika-route"),
   block("d9", 50, "20:15–21:10", "Roys Bay · That Wānaka Tree", "饭后走约10分钟到Roys Bay湖岸，看That Wānaka Tree后面的日落；之后打车回住宿。", "湖里那棵树的日落", "只在岸边看，不攀爬、不下水靠近；拍照的人多。", "wanaka-tree-map"),
   block("d9", 90, "饮食", "湖畔 / Kika", "早餐：出发前；午餐：湖畔简餐；晚餐：Kika（已订）", "", ""),
   // D10
@@ -511,7 +511,7 @@ export const todos = [
   todo("stargazing", 100, "book", "", "可选", "订 2/7 Twizel 观星", "2/6 前后是新月，星空最好；23:00左右才完全天黑，订22:30以后的场次。长周末场次紧，确认集合点、语言和天气改期规则。"),
   todo("dinner-margaret", 104, "book", "2026-11-15", "11 月中旬", "订 Margaret（2/3 悉尼最后一晚，Double Bay）", "周三晚 18:00 两人。官网点 Book Now 在线订，或打电话 +61 2 9068 8888；订不到就留候补，或者问问吧台和户外散座。"),
   todo("dinner-valentine", 105, "book", "", "提前预约", "订 2/14 情人节晚餐（奥克兰 Viaduct Harbour）", "约 18:00，两人；情人节餐厅最难订，越早越好。饭后走去 Wynyard Quarter 看日落。"),
-  todo("dinner-kika", 110, "book", "", "提前预约", "订 Kika（2/9 晚餐，Wānaka）", "已订 18:00–20:00，两人，订位号 51115222；付了 NZ$50 订位保证金。"),
+  todo("dinner-kika", 110, "book", "", "提前预约", "订 Kika（2/9 晚餐，Wānaka）", "已订 18:00–20:00，两人，订位号 51115222；付了 NZ$50 保证金，之后会退回。"),
   todo("dinner-redcliff", 120, "book", "", "提前预约", "订 The Redcliff（2/11 晚餐，Te Anau）", "已订 18:45–20:45，两人，订位号 51350801。"),
   todo("dinner-bluekanu", 130, "book", "", "提前预约", "订 Blue Kanu（2/12 晚餐，皇后镇）", "已订 19:15，两人，订位号 51689789。"),
   todo("lunch-amano", 140, "book", "", "提前预约", "订 Amano（2/16 午餐，奥克兰）", "已订 12:00–14:00，两人，订位号 6S3X8H48MF4W。"),
