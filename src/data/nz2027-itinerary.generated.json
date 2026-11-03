@@ -2384,7 +2384,7 @@
       "coverImageUrl": "/nz2027/d09.jpg",
       "coverImageAlt": "D09 Wānaka慢慢过一天",
       "transport": "市内短途自驾 · 合计30–60分钟",
-      "leaveBy": "09:00出门；Kika约18:00",
+      "leaveBy": "09:00出门；Kika 18:00",
       "notes": [
         {
           "label": "住宿",
@@ -2420,7 +2420,7 @@
         "url": "",
         "imageUrl": "",
         "imageAlt": "",
-        "sourceNote": "约18:00，以确认邮件为准"
+        "sourceNote": "18:00–20:00"
       },
       "drive": {
         "id": "nav06",
@@ -2632,11 +2632,11 @@
         {
           "dayId": "d9",
           "sortOrder": 40,
-          "period": "18:00左右",
+          "period": "18:00–20:00",
           "place": "Kika",
-          "activity": "Kika分享式晚餐，已订，两人。",
+          "activity": "Kika 分享式晚餐，已订，两人，2 Dunmore Street。",
           "highlight": "认真吃一顿",
-          "tip": "到店时间以确认邮件为准。",
+          "tip": "订位号 51115222；订位时付了 NZ$50 订位保证金（每人 NZ$25）；桌子保留 15 分钟，晚到先打电话 03 443 6536。",
           "choice": "",
           "miss": "",
           "resources": [
@@ -3189,11 +3189,11 @@
         {
           "dayId": "d11",
           "sortOrder": 40,
-          "period": "18:30左右",
+          "period": "18:45–20:45",
           "place": "The Redcliff",
-          "activity": "回镇上在 The Redcliff 吃晚饭，已订，两人。",
+          "activity": "回镇上在 The Redcliff 吃晚饭，已订，两人，12 Mokonui Street。Milford 约 17:00 回来，先回住处歇一下。",
           "highlight": "晚饭",
-          "tip": "到店时间以确认邮件为准。",
+          "tip": "订位号 51350801；桌子保留 15 分钟，晚到先打电话 03 249 7431。",
           "choice": "",
           "miss": "",
           "resources": [
@@ -3211,9 +3211,9 @@
         {
           "dayId": "d11",
           "sortOrder": 50,
-          "period": "20:45–21:15",
+          "period": "20:50–21:15",
           "place": "Te Anau Lakefront",
-          "activity": "饭后沿湖边走走，看湖上日落，然后回住宿。",
+          "activity": "饭后沿湖边走走，看 21:07 左右的湖上日落，然后回住宿。",
           "highlight": "饭后散步",
           "tip": "",
           "choice": "",
@@ -3519,11 +3519,11 @@
         {
           "dayId": "d12",
           "sortOrder": 50,
-          "period": "19:00–20:30",
+          "period": "19:15–20:45",
           "place": "Blue Kanu",
-          "activity": "下山走到Blue Kanu吃晚饭，已订，两人。缆车停运就先去Queenstown Gardens湖边轻走。",
+          "activity": "缆车 18:30 下来，走到 16 Church Street 的 Blue Kanu 吃晚饭，已订，两人。缆车停运就先去Queenstown Gardens湖边轻走。",
           "highlight": "晚餐",
-          "tip": "到店时间以确认邮件为准。",
+          "tip": "订位号 51689789；两人用餐时长 1.5 小时，桌子保留 15 分钟，晚到先打电话 03 442 6060。",
           "choice": "",
           "miss": "",
           "resources": [
@@ -3541,9 +3541,9 @@
         {
           "dayId": "d12",
           "sortOrder": 60,
-          "period": "20:40–21:10",
+          "period": "20:45–21:10",
           "place": "Earnslaw Park / 湖边",
-          "activity": "饭后走几分钟到Earnslaw Park一带湖边，看Wakatipu湖上的日落；之后打车回Fernhill。",
+          "activity": "饭后走几分钟到Earnslaw Park一带湖边，赶 21:01 左右的日落尾巴；之后打车回Fernhill。",
           "highlight": "湖边日落",
           "tip": "",
           "choice": "",
@@ -4499,9 +4499,9 @@
           "sortOrder": 30,
           "period": "12:00–14:00",
           "place": "Britomart · Amano",
-          "activity": "Amano 午饭，已订，两人，66–68 Tyler Street。",
+          "activity": "Amano 午饭，已订，两人，68 Tyler Street。",
           "highlight": "完整午餐",
-          "tip": "",
+          "tip": "订位号 6S3X8H48MF4W；改期或取消用确认邮件里的链接。",
           "choice": "",
           "miss": "",
           "resources": [
@@ -4951,7 +4951,7 @@
       "dueDate": "",
       "dueLabel": "提前预约",
       "title": "订 Kika（2/9 晚餐，Wānaka）",
-      "detail": "已订，两人。"
+      "detail": "已订 18:00–20:00，两人，订位号 51115222；付了 NZ$50 订位保证金。"
     },
     {
       "id": "dinner-redcliff",
@@ -4960,7 +4960,7 @@
       "dueDate": "",
       "dueLabel": "提前预约",
       "title": "订 The Redcliff（2/11 晚餐，Te Anau）",
-      "detail": "已订，两人；Milford 回来约 18:30。"
+      "detail": "已订 18:45–20:45，两人，订位号 51350801。"
     },
     {
       "id": "dinner-bluekanu",
@@ -4969,7 +4969,7 @@
       "dueDate": "",
       "dueLabel": "提前预约",
       "title": "订 Blue Kanu（2/12 晚餐，皇后镇）",
-      "detail": "已订，两人；缆车 18:30 下来，约 19:00。"
+      "detail": "已订 19:15，两人，订位号 51689789。"
     },
     {
       "id": "lunch-amano",
@@ -4978,7 +4978,7 @@
       "dueDate": "",
       "dueLabel": "提前预约",
       "title": "订 Amano（2/16 午餐，奥克兰）",
-      "detail": "已订 12:00–14:00，两人。"
+      "detail": "已订 12:00–14:00，两人，订位号 6S3X8H48MF4W。"
     },
     {
       "id": "rippon",
@@ -5299,7 +5299,7 @@
       "url": "",
       "imageUrl": "",
       "imageAlt": "",
-      "sourceNote": "约18:00，以确认邮件为准"
+      "sourceNote": "18:00–20:00"
     },
     {
       "id": "amano-note",
