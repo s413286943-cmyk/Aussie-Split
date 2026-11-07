@@ -1154,6 +1154,10 @@
         {
           "label": "长周末",
           "text": "2/6 Waitangi Day当天部分商店限制营业，今天在Ashburton或Geraldine超市把2/6的早餐、路餐和饮水买齐。"
+        },
+        {
+          "label": "路线",
+          "text": "A 走 SH1 经 Ashburton（快，补给方便），B 走内陆经 Rakaia 峡谷（多 30–60 分钟，看峡谷河谷），在 Geraldine 汇合。"
         }
       ],
       "lodgingResource": {
@@ -1195,7 +1199,13 @@
             "sortOrder": 10,
             "segment": "基督城机场 → Ashburton → Geraldine",
             "driveTime": "约1小时50分–2小时",
-            "stopNote": "Ashburton 或 Geraldine 进超市买补给；Geraldine 短休息15–20分钟。"
+            "stopNote": "路线 A：Ashburton 或 Geraldine 进超市买补给；Geraldine 短休息15–20分钟。"
+          },
+          {
+            "sortOrder": 15,
+            "segment": "（选路线 B）基督城机场 → Rakaia 峡谷 → Methven → Geraldine",
+            "driveTime": "约2–2.5小时（不含停留）",
+            "stopNote": "SH73 转 SH77 到 Rakaia 峡谷观景台，再走 SH72 经 Methven、Mayfield 到 Geraldine，在 Geraldine 买补给。"
           },
           {
             "sortOrder": 20,
@@ -1292,8 +1302,8 @@
           "activity": "沿 SH1 南下；在 Ashburton 或 Geraldine 超市买齐两天的补给，Geraldine 短休息。",
           "highlight": "补给",
           "tip": "2/6 不少商店不开。",
-          "choice": "",
-          "miss": "",
+          "choice": "路线 A · SH1 经 Ashburton",
+          "miss": "Rakaia 峡谷的蓝绿色河谷。",
           "resources": [
             {
               "id": "nav02-a-route",
@@ -1303,6 +1313,28 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "导航02"
+            }
+          ]
+        },
+        {
+          "dayId": "d5",
+          "sortOrder": 22,
+          "period": "10:45–13:30",
+          "place": "Rakaia Gorge → Methven → Geraldine",
+          "activity": "走内陆风景线：机场经 Darfield 开约 1 小时到 Rakaia 峡谷，过桥后几公里的观景台停 15–20 分钟，看冰川融水冲出的蓝绿色河谷；再经 Methven、Mayfield 走 SH72 约 1 小时到 Geraldine，在 Geraldine 超市买补给。",
+          "highlight": "峡谷河谷",
+          "tip": "比 SH1 多开 30–60 分钟；观景台有铺装停车区，不用走 10km 的 Rakaia Gorge Walkway。",
+          "choice": "路线 B · 经 Rakaia 峡谷",
+          "miss": "Ashburton 的大超市（补给改在 Geraldine）；到 Twizel 晚约半小时到一小时。",
+          "resources": [
+            {
+              "id": "rakaia-gorge-map",
+              "title": "Rakaia Gorge 观景台",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Rakaia+Gorge+Lookout%2C+Canterbury%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
             }
           ]
         },
@@ -2602,6 +2634,28 @@
               "imageUrl": "",
               "imageAlt": "",
               "sourceNote": "DOC"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
+          "sortOrder": 15,
+          "period": "09:00–11:00",
+          "place": "Roys Bay 皮划艇",
+          "activity": "在镇上湖边的租船点租一条双人皮划艇，在 Roys Bay 里划 1–2 小时，从水面看湖和山。上午风小，最好早点去。",
+          "highlight": "湖上划船",
+          "tip": "只能在 Roys Bay 范围内划；双人艇约 NZ$50–70 起，以当天为准；起风就别去。",
+          "choice": "上午 D · 皮划艇",
+          "miss": "Mount Iron、湖边步道或 Blue Pools。",
+          "resources": [
+            {
+              "id": "wanaka-lakefront-route",
+              "title": "去湖滨",
+              "type": "map",
+              "url": "https://www.google.com/maps/dir/?api=1&origin=Mount+Iron+Track+Car+Park%2C+Wanaka%2C+New+Zealand&destination=Wanaka+Lakefront%2C+Ardmore+Street%2C+Wanaka%2C+New+Zealand&travelmode=driving",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "导航06"
             }
           ]
         },
@@ -6499,6 +6553,15 @@
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "DOC"
+    },
+    {
+      "id": "rakaia-gorge-map",
+      "title": "Rakaia Gorge 观景台",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Rakaia+Gorge+Lookout%2C+Canterbury%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
     },
     {
       "id": "mt-john-official",
