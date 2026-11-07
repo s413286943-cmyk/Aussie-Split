@@ -2705,6 +2705,37 @@
         },
         {
           "dayId": "d9",
+          "sortOrder": 25,
+          "period": "11:30–13:00",
+          "place": "Hook · 自己钓三文鱼",
+          "activity": "开约 10 分钟到 Albert Town 的 Hook（49 Monteith Road），租竿在池子里自己钓帝王鲑，钓上来的鱼店里做成刺身、烟熏或热菜，当午饭吃，留约 1 小时钓鱼。",
+          "highlight": "钓了就吃",
+          "tip": "周一不开，周二到周日 11:00–19:00，最后租竿 16:30；按鱼的重量收费，以现场为准。晚上 18:00 还有 Kika，别吃太饱。",
+          "choice": "可加 · Hook 钓三文鱼",
+          "miss": "湖边的午饭；和 2/7 的三文鱼农场有点像。",
+          "resources": [
+            {
+              "id": "hook-official",
+              "title": "Hook Wānaka",
+              "type": "official",
+              "url": "https://hookwanaka.nz/",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "官网"
+            },
+            {
+              "id": "hook-map",
+              "title": "Hook Wānaka, 49 Monteith Road",
+              "type": "map",
+              "url": "https://www.google.com/maps/search/?api=1&query=Hook+Wanaka%2C+49+Monteith+Road%2C+Albert+Town%2C+New+Zealand",
+              "imageUrl": "",
+              "imageAlt": "",
+              "sourceNote": "Google Maps"
+            }
+          ]
+        },
+        {
+          "dayId": "d9",
           "sortOrder": 30,
           "period": "下午",
           "place": "Wānaka 湖边",
@@ -5408,6 +5439,35 @@
     },
     {
       "dayId": "d9",
+      "meal": "lunch",
+      "place": "Hook · 自己钓三文鱼（可选）",
+      "time": "11:30–13:00",
+      "status": "不用订",
+      "bookingRef": "",
+      "note": "钓上来的鱼做成刺身或热菜；周一不开，最后租竿 16:30。",
+      "resources": [
+        {
+          "id": "hook-official",
+          "title": "Hook Wānaka",
+          "type": "official",
+          "url": "https://hookwanaka.nz/",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "官网"
+        },
+        {
+          "id": "hook-map",
+          "title": "Hook Wānaka, 49 Monteith Road",
+          "type": "map",
+          "url": "https://www.google.com/maps/search/?api=1&query=Hook+Wanaka%2C+49+Monteith+Road%2C+Albert+Town%2C+New+Zealand",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "Google Maps"
+        }
+      ]
+    },
+    {
+      "dayId": "d9",
       "meal": "dinner",
       "place": "Kika",
       "time": "18:00–20:00",
@@ -6559,6 +6619,24 @@
       "title": "Rakaia Gorge 观景台",
       "type": "map",
       "url": "https://www.google.com/maps/search/?api=1&query=Rakaia+Gorge+Lookout%2C+Canterbury%2C+New+Zealand",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "Google Maps"
+    },
+    {
+      "id": "hook-official",
+      "title": "Hook Wānaka",
+      "type": "official",
+      "url": "https://hookwanaka.nz/",
+      "imageUrl": "",
+      "imageAlt": "",
+      "sourceNote": "官网"
+    },
+    {
+      "id": "hook-map",
+      "title": "Hook Wānaka, 49 Monteith Road",
+      "type": "map",
+      "url": "https://www.google.com/maps/search/?api=1&query=Hook+Wanaka%2C+49+Monteith+Road%2C+Albert+Town%2C+New+Zealand",
       "imageUrl": "",
       "imageAlt": "",
       "sourceNote": "Google Maps"

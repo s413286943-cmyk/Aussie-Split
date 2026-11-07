@@ -112,7 +112,7 @@ describe("2027 two-person itinerary data", () => {
     assert.ok(labels("d8").includes("绕路 A · Cromwell + Bannockburn") && labels("d8").includes("绕路 B · Clay Cliffs"));
     for (const label of ["上午 C · Blue Pools", "可加 · Outlet 河边步道", "可加 · Lake Hāwea"]) assert.ok(labels("d9").includes(label), label);
     assert.ok(labels("d10").includes("可加 · 华人淘金者遗址"));
-    assert.ok(labels("d5").includes("路线 B · 经 Rakaia 峡谷") && labels("d9").includes("上午 D · 皮划艇"));
+    assert.ok(labels("d5").includes("路线 B · 经 Rakaia 峡谷") && labels("d9").includes("上午 D · 皮划艇") && labels("d9").includes("可加 · Hook 钓三文鱼"));
   });
 
   it("uses the late February evenings for lakeside walks", () => {
