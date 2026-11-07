@@ -66,7 +66,6 @@ function Hero({ itinerary, day, phase, today }) {
         ? <Image className="nz-hero-photo" src={image} alt={day.coverImageAlt} fill priority sizes="(max-width: 640px) 100vw, 640px" />
         : <div className="nz-hero-photo nz-photo-fallback" aria-hidden="true" />}
       <div className="nz-hero-bar">
-        <span>澳新 2027</span>
         <span>{badge}</span>
       </div>
       <div className="nz-hero-copy">

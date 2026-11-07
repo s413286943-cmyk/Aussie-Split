@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import UnlockGate from "@/components/UnlockGate";
 import Nz2027Checklist from "@/components/nz2027/Nz2027Checklist";
+import Nz2027Dining from "@/components/nz2027/Nz2027Dining";
 import Nz2027Ledger from "@/components/nz2027/Nz2027Ledger";
 import Nz2027Schedule from "@/components/nz2027/Nz2027Schedule";
 import Nz2027Updates from "@/components/nz2027/Nz2027Updates";
@@ -12,9 +13,11 @@ import {
   fetchNz2027Checklist,
   fetchNz2027Expenses,
   fetchNz2027Itinerary,
+  fetchNz2027Meals,
   fetchNz2027Updates,
   pushNz2027Checklist,
   pushNz2027Expenses,
+  pushNz2027Meals,
 } from "@/lib/apiClient";
 import {
   applyChecklistSnapshot,
@@ -35,6 +38,7 @@ import {
   saveState,
   upsertLocal,
 } from "@/lib/nz2027/store";
+import { applyMealSnapshot, emptyMeals, loadMeals, pendingMealNotes, saveMeals, setMealNote } from "@/lib/nz2027/meals";
 import {
   UPDATES_CACHE_KEY,
   UPDATES_SEEN_KEY,
@@ -53,6 +57,12 @@ const tabs = [
   { id: "updates", href: "/nz2027/updates", label: "更新" },
 ];
 
+// Small switch inside the 日程 tab; the bottom tab bar stays the same.
+const scheduleParts = [
+  { id: "schedule", href: "/", label: "每日行程" },
+  { id: "dining", href: "/nz2027/dining", label: "吃什么" },
+];
+
 export default function Nz2027App({ view }) {
   return (
     <UnlockGate title="澳新 2027" intro="输入访问码，打开我们的澳新行程。">
@@ -65,12 +75,20 @@ function Nz2027Content({ view }) {
   const itinerary = useItinerary();
   const ledger = useLedger();
   const checklist = useChecklist();
+  const meals = useMeals();
   const updates = useUpdates(view, ledger.syncedAt, checklist.syncedAt);
   const openCount = itinerary.data ? itinerary.data.todos.filter((todo) => !checklist.isDone(todo.id)).length : 0;
 
   return (
     <div className={`nz nz-view-${view}`}>
-      {view !== "schedule" && (
+      {(view === "schedule" || view === "dining") && (
+        <nav className="nz-subtabs" aria-label="日程分区">
+          {scheduleParts.map((part) => (
+            <Link key={part.id} href={part.href} className={part.id === view ? "is-active" : ""} aria-current={part.id === view ? "page" : undefined}>{part.label}</Link>
+          ))}
+        </nav>
+      )}
+      {view !== "schedule" && view !== "dining" && (
         <header className="nz-top">
           <Link href="/" className="nz-mark" aria-label="澳新 2027 日程">澳新 2027</Link>
           <span>2月1日 – 17日 · 悉尼 + 新西兰</span>
@@ -78,7 +96,7 @@ function Nz2027Content({ view }) {
       )}
       <nav className="nz-tabs" aria-label="主导航">
         {tabs.map((tab) => (
-          <Link key={tab.id} href={tab.href} className={tab.id === view ? "is-active" : ""} aria-current={tab.id === view ? "page" : undefined}>
+          <Link key={tab.id} href={tab.href} className={tab.id === view || (tab.id === "schedule" && view === "dining") ? "is-active" : ""} aria-current={tab.id === view ? "page" : undefined}>
             {tab.label}
             {tab.id === "checklist" && openCount > 0 && <span className="nz-tab-count" aria-label={`还有 ${openCount} 件`}>{openCount}</span>}
             {tab.id === "updates" && view !== "updates" && updates.unseen > 0 && <span className="nz-tab-count" aria-label={`${updates.unseen} 条新改动`}>{updates.unseen}</span>}
@@ -91,6 +109,8 @@ function Nz2027Content({ view }) {
           <Nz2027Updates updates={updates} todos={itinerary.data?.todos || []} />
         ) : !itinerary.data && view !== "ledger" ? (
           <LoadState state={itinerary.state} />
+        ) : view === "dining" ? (
+          <Nz2027Dining itinerary={itinerary.data} records={ledger.records} meals={meals} />
         ) : view === "schedule" ? (
           <Nz2027Schedule itinerary={itinerary.data} records={ledger.records} checklist={checklist} />
         ) : view === "checklist" ? (
@@ -299,6 +319,26 @@ function useChecklist() {
     toggle: useCallback((id, done) => update((current) => setCheck(current, id, done)), [update]),
     syncLabel: syncText(synced.loaded, synced.status, state.pendingIds.length, "项"),
     syncedAt: synced.syncedAt,
+  };
+}
+
+const mealSync = {
+  initial: emptyMeals,
+  load: loadMeals,
+  save: saveMeals,
+  pending: pendingMealNotes,
+  push: pushNz2027Meals,
+  fetchAll: fetchNz2027Meals,
+  merge: (state, sent, response) => applyMealSnapshot(state, { sent, notes: response.notes }),
+};
+
+function useMeals() {
+  const synced = useSyncedState(mealSync);
+  const { update, state } = synced;
+  return {
+    notes: state.notes,
+    save: useCallback((id, value) => update((current) => setMealNote(current, id, value)), [update]),
+    syncLabel: syncText(synced.loaded, synced.status, state.pendingIds.length, "条"),
   };
 }
 

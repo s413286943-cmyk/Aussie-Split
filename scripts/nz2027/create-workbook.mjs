@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { advice, blocks, days, driveLegs, drives, lodgings, resources, stages, todos, trip } from "./itinerarySeedData.mjs";
+import { advice, blocks, days, dining, driveLegs, drives, lodgings, resources, stages, todos, trip } from "./itinerarySeedData.mjs";
 import { runPython } from "../pythonRunner.mjs";
 
 const workbookPath = path.join("content", "nz2027-itinerary.xlsx");
@@ -25,6 +25,7 @@ fs.writeFileSync(tempPath, JSON.stringify({
   Lodgings: lodgings,
   Todos: todos,
   Advice: advice,
+  Dining: dining,
   Resources: resources,
 }));
 runPython(["scripts/itinerary_excel.py", "write_all", tempPath, workbookPath]);

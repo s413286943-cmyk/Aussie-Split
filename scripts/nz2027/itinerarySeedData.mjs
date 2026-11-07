@@ -90,6 +90,7 @@ export const days = [
       "住宿｜Twizel Holiday Park，122 Mackenzie Drive；One Bedroom Unit，连住3晚。",
       "驾驶安排｜纯驾驶约4–4.5小时，连停靠按6–7小时，约17:00–18:00到Twizel。",
       "长周末｜2/6 Waitangi Day当天部分商店限制营业，今天在Ashburton或Geraldine超市把2/6的早餐、路餐和饮水买齐。",
+      "路线｜A 走 SH1 经 Ashburton（快，补给方便），B 走内陆经 Rakaia 峡谷（多 30–60 分钟，看峡谷河谷），在 Geraldine 汇合。",
     ],
   }),
   day({
@@ -296,7 +297,8 @@ export const blocks = [
   block("d4", 90, "饮食", "悉尼机场 / 飞机上 / Riverside Market", "早餐：悉尼机场；午餐：飞机上；晚餐：Riverside Market", "", ""),
   // D05
   block("d5", 10, "08:30–10:00", "HOTEL GIVE → Christchurch Airport", "酒店附近吃早餐、退房，09:20 打车去机场（约 20–25 分钟），10:00 取车，绕车检查一圈、拍照留底。", "取车", "", "chc-hotel-airport-route,rental-car-booking"),
-  block("d5", 20, "10:45–13:00", "Ashburton → Geraldine", "沿 SH1 南下；在 Ashburton 或 Geraldine 超市买齐两天的补给，Geraldine 短休息。", "补给", "2/6 不少商店不开。", "nav02-a-route"),
+  block("d5", 20, "10:45–13:00", "Ashburton → Geraldine", "沿 SH1 南下；在 Ashburton 或 Geraldine 超市买齐两天的补给，Geraldine 短休息。", "补给", "2/6 不少商店不开。", "nav02-a-route", { choice: "路线 A · SH1 经 Ashburton", miss: "Rakaia 峡谷的蓝绿色河谷。" }),
+  block("d5", 22, "10:45–13:30", "Rakaia Gorge → Methven → Geraldine", "走内陆风景线：机场经 Darfield 开约 1 小时到 Rakaia 峡谷，过桥后几公里的观景台停 15–20 分钟，看冰川融水冲出的蓝绿色河谷；再经 Methven、Mayfield 走 SH72 约 1 小时到 Geraldine，在 Geraldine 超市买补给。", "峡谷河谷", "比 SH1 多开 30–60 分钟；观景台有铺装停车区，不用走 10km 的 Rakaia Gorge Walkway。", "rakaia-gorge-map", { choice: "路线 B · 经 Rakaia 峡谷", miss: "Ashburton 的大超市（补给改在 Geraldine）；到 Twizel 晚约半小时到一小时。" }),
   block("d5", 30, "13:30前后", "Fairlie", "Fairlie 买派或简餐当午饭。", "Fairlie派", "", "fairlie-bakehouse-official"),
   block("d5", 35, "14:30–15:30", "Mount John 山顶", "开车上 Mount John 俯瞰 Tekapo 湖和 Mackenzie 盆地，山顶有 Astro Café。要去就先上山，再去湖边。", "山顶看湖", "每辆车 NZ$14 道路费，门口付；上山路开到 16:00，咖啡馆 15:00 关，以当天为准。", "mt-john-official", { choice: "可加 · Mount John", miss: "Tekapo 湖边慢走的时间，到 Twizel 晚约 1 小时。" }),
   block("d5", 40, "下午", "Lake Tekapo / Lake Pukaki", "Tekapo湖畔、好牧羊人教堂外观；随后经Pukaki南岸观景停靠。", "两座湖", "", "nav02-a-route,nav02-b-route"),
@@ -338,7 +340,9 @@ export const blocks = [
   block("d9", 12, "09:30–11:00", "Wānaka 湖边 → Waterfall Creek", "从镇上沿湖走到 Waterfall Creek，平路 60–90 分钟。2/8 去过 Diamond Lake 就选这个，腿歇一歇。", "湖边平路", "", "wanaka-lakefront-route", { choice: "上午 B · 湖边平路", miss: "Mount Iron 山顶俯瞰 Wānaka 的视角。" }),
   block("d9", 20, "中午", "Wānaka湖边", "湖边吃午饭、散步，之后咖啡和休息。", "湖边午餐", "", "wanaka-lakefront-route"),
   block("d9", 14, "08:00–12:30", "Blue Pools（Makarora）", "沿 SH6 经 Lake Hāwea 和 The Neck 往北，过 Makarora 再开约 12km，单程约 1 小时。步道往返 3km、约 1 小时，过吊桥看冰川融水的蓝色水潭，中午回 Wānaka。", "冰川蓝水潭", "沙蝇多，下车先喷驱蚊液；DOC 不鼓励在主潭游泳；出发前看 DOC 提醒；沿路加油和吃饭的地方少，带水和零食。", "blue-pools-official", { choice: "上午 C · Blue Pools", miss: "上午在 Wānaka 慢慢过；来回要开 2 个多小时。" }),
+  block("d9", 15, "09:00–11:00", "Roys Bay 皮划艇", "在镇上湖边的租船点租一条双人皮划艇，在 Roys Bay 里划 1–2 小时，从水面看湖和山。上午风小，最好早点去。", "湖上划船", "只能在 Roys Bay 范围内划；双人艇约 NZ$50–70 起，以当天为准；起风就别去。", "wanaka-lakefront-route", { choice: "上午 D · 皮划艇", miss: "Mount Iron、湖边步道或 Blue Pools。" }),
   block("d9", 16, "早上或傍晚 · 30–60 分钟", "Outlet → Clutha 河边", "住处旁边就是 Wānaka 湖的出水口，沿 Clutha 河往 Albert Town 走一段就回；全程到 Albert Town 单程约 3km、1 小时。", "碧蓝河水", "", "outlet-track-official", { choice: "可加 · Outlet 河边步道", miss: "别的安排的时间。" }),
+  block("d9", 25, "11:30–13:00", "Hook · 自己钓三文鱼", "开约 10 分钟到 Albert Town 的 Hook（49 Monteith Road），租竿在池子里自己钓帝王鲑，钓上来的鱼店里做成刺身、烟熏或热菜，当午饭吃，留约 1 小时钓鱼。", "钓了就吃", "周一不开，周二到周日 11:00–19:00，最后租竿 16:30；按鱼的重量收费，以现场为准。晚上 18:00 还有 Kika，别吃太饱。", "hook-official,hook-map", { choice: "可加 · Hook 钓三文鱼", miss: "湖边的午饭；和 2/7 的三文鱼农场有点像。" }),
   block("d9", 30, "下午", "Wānaka 湖边", "沿湖走走、喝咖啡、休息。", "", ""),
   block("d9", 31, "下午 · 30–60 分钟", "Lake Hāwea / The Neck", "开约 20 分钟到 Lake Hāwea 湖边散步，再往前到 The Neck 观景点看 Hāwea 和 Wānaka 两个湖之间的山口。", "另一个湖", "上午选了 C 的话，路上已经经过，不用再去。", "lake-hawea-map", { choice: "可加 · Lake Hāwea", miss: "下午在湖边或看电影的时间。" }),
   block("d9", 32, "下午 · 约 2 小时", "Cinema Paradiso", "看一场电影，片单看当周场次。", "老电影院", "", "paradiso-official", { choice: "可加 · 电影", miss: "下午两小时的湖边时间。" }),
@@ -453,7 +457,8 @@ export const drives = [
 ];
 
 export const driveLegs = [
-  leg("nav02", 10, "基督城机场 → Ashburton → Geraldine", "约1小时50分–2小时", "Ashburton 或 Geraldine 进超市买补给；Geraldine 短休息15–20分钟。"),
+  leg("nav02", 10, "基督城机场 → Ashburton → Geraldine", "约1小时50分–2小时", "路线 A：Ashburton 或 Geraldine 进超市买补给；Geraldine 短休息15–20分钟。"),
+  leg("nav02", 15, "（选路线 B）基督城机场 → Rakaia 峡谷 → Methven → Geraldine", "约2–2.5小时（不含停留）", "SH73 转 SH77 到 Rakaia 峡谷观景台，再走 SH72 经 Methven、Mayfield 到 Geraldine，在 Geraldine 买补给。"),
   leg("nav02", 20, "Geraldine → Fairlie Bakehouse", "约40–50分钟", "派/简餐30–45分钟；停车看限时标识。"),
   leg("nav02", 30, "Fairlie → Tekapo / Pioneer Drive", "约35–45分钟", "教堂外观与湖边留60–90分钟，停正规公共车位后步行。"),
   leg("nav02", 40, "Tekapo → Pukaki Visitor Centre", "约40–50分钟", "南岸看湖20–30分钟；此处与SH80上的Peter’s Lookout不同。"),
@@ -532,6 +537,21 @@ export const todos = [
   todo("cancel-hikuwai", 260, "deadline", "2027-02-03", "2/3 16:00", "Wānaka Hikuwai 免费取消截止", "之后取消只退一部分。"),
   todo("cancel-teanau", 270, "deadline", "2027-02-05", "2/5 15:00", "Te Anau 免费取消截止", "之后取消只退一部分。"),
   todo("supplies-0205", 280, "prep", "2027-02-05", "2/5", "买齐长周末补给", "2/6 Waitangi Day 不少商店不开，取车后在 Ashburton 或 Geraldine 超市把 2/6 的早餐、路餐和水买好。"),
+];
+
+// 吃什么：重点的一餐（订了的、要订的、值得专门去的）。其余早午晚按每天“饮食”那一行。
+export const dining = [
+  diningRow("d3", "dinner", "Margaret（Double Bay）", "18:00", "待订", "", "悉尼最后一晚；11 月中旬订，官网 Book Now 或电话 +61 2 9068 8888。", "margaret-official,margaret-map"),
+  diningRow("d4", "dinner", "Riverside Market", "18:00–19:30", "不用订", "", "周四开到 21:00，各家店关门时间不一样。", "riverside-market-map"),
+  diningRow("d5", "lunch", "Fairlie Bakehouse", "13:30 前后", "不用订", "", "买派当午饭。", "fairlie-bakehouse-official"),
+  diningRow("d7", "lunch", "High Country Salmon", "12:00–13:30", "不用订", "", "刺身和热食各点一份对比；喜欢就买一块晚上自己煎。", "logans-official"),
+  diningRow("d9", "lunch", "Hook · 自己钓三文鱼（可选）", "11:30–13:00", "不用订", "", "钓上来的鱼做成刺身或热菜；周一不开，最后租竿 16:30。", "hook-official,hook-map"),
+  diningRow("d9", "dinner", "Kika", "18:00–20:00", "已订", "51115222", "订位时付了 NZ$50 保证金，之后会退回；桌子保留 15 分钟。", "kika-official,kika-route"),
+  diningRow("d11", "dinner", "The Redcliff", "18:45–20:45", "已订", "51350801", "桌子保留 15 分钟，晚到先打电话 03 249 7431。", "redcliff-official"),
+  diningRow("d12", "dinner", "Blue Kanu", "19:15", "已订", "51689789", "两人用餐时长 1.5 小时；桌子保留 15 分钟。", "blue-kanu-official"),
+  diningRow("d13", "dinner", "Fergburger", "约 21:00", "不用订", "", "可以先打电话点单，到店付款取餐。", "fergburger-map,fergburger-official"),
+  diningRow("d14", "dinner", "情人节晚餐（Viaduct Harbour）", "18:00", "待订", "", "情人节最难订，越早越好。", "viaduct-map"),
+  diningRow("d16", "lunch", "Amano", "12:00–14:00", "已订", "6S3X8H48MF4W", "改期或取消用确认邮件里的链接。", "amano-map,amano-official"),
 ];
 
 export const advice = [
@@ -664,6 +684,9 @@ export const resources = [
   resource("outlet-track-official", "Upper Clutha River Track · Outlet", "official", "https://www.doc.govt.nz/parks-and-recreation/places-to-go/otago/places/wanaka-area/things-to-do/upper-clutha-river-track", "DOC"),
   resource("lake-hawea-map", "Lake Hāwea", "map", gmSearch("Lake+Hawea+Foreshore%2C+Lake+Hawea%2C+New+Zealand"), "Google Maps"),
   resource("arrowtown-chinese-official", "Arrowtown Chinese Settlement", "official", "https://www.doc.govt.nz/parks-and-recreation/places-to-go/otago/places/arrowtown-area/things-to-do/arrowtown-chinese-settlement/", "DOC"),
+  resource("rakaia-gorge-map", "Rakaia Gorge 观景台", "map", gmSearch("Rakaia+Gorge+Lookout%2C+Canterbury%2C+New+Zealand"), "Google Maps"),
+  resource("hook-official", "Hook Wānaka", "official", "https://hookwanaka.nz/", "官网"),
+  resource("hook-map", "Hook Wānaka, 49 Monteith Road", "map", gmSearch("Hook+Wanaka%2C+49+Monteith+Road%2C+Albert+Town%2C+New+Zealand"), "Google Maps"),
   resource("mt-john-official", "Mount John · Astro Café（Dark Sky Project）", "official", "https://www.darkskyproject.co.nz/eat/astro-cafe/", "Dark Sky Project"),
   resource("margaret-official", "Margaret（Neil Perry）", "restaurant", "https://themargaretfamily.com/venue/margaret/", "待预约"),
   resource("margaret-map", "Margaret, 30–36 Bay Street, Double Bay", "map", gmSearch("Margaret%2C+30+Bay+Street%2C+Double+Bay+NSW+2028%2C+Australia"), "Google Maps"),
@@ -721,6 +744,10 @@ function day(values) {
 }
 
 // choice: option label when a time slot has alternatives (e.g. "A · 全程")；miss: what you give up by picking it.
+function diningRow(day_id, meal, place, time, status, booking_ref, note, resource_ids = "") {
+  return { day_id, meal, place, time, status, booking_ref, note, resource_ids };
+}
+
 function block(day_id, sort_order, period, place, activity, highlight, tip, resource_ids = "", { choice = "", miss = "" } = {}) {
   return { day_id, sort_order, period, place, activity, highlight, tip, resource_ids, choice, miss };
 }

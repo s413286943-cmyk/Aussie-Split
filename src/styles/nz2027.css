@@ -51,7 +51,8 @@ body:has(.nz) {
 
 .nz-view-checklist .nz-main,
 .nz-view-ledger .nz-main,
-.nz-view-updates .nz-main {
+.nz-view-updates .nz-main,
+.nz-view-dining .nz-main {
   padding: 8px 16px 120px;
 }
 
@@ -159,7 +160,7 @@ body:has(.nz) {
   right: 16px;
   z-index: 2;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 8px;
 }
 
@@ -1538,4 +1539,282 @@ body:has(.nz) {
 .nz-timeline small.nz-miss {
   margin-top: 4px;
   color: var(--nz-red);
+}
+
+/* 日程里的小切换：每日行程 / 吃什么 */
+.nz-view-schedule {
+  position: relative;
+}
+
+.nz-subtabs {
+  z-index: 3;
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(13, 23, 25, 0.45);
+  backdrop-filter: blur(10px);
+}
+
+.nz-view-schedule .nz-subtabs {
+  position: absolute;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  left: 16px;
+}
+
+.nz-view-dining .nz-subtabs {
+  display: flex;
+  width: fit-content;
+  margin: calc(16px + env(safe-area-inset-top, 0px)) auto 0;
+  background: var(--nz-surface);
+}
+
+.nz-subtabs a {
+  padding: 6px 14px;
+  border-radius: 999px;
+  color: var(--nz-soft);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.nz-subtabs a.is-active {
+  background: var(--nz-text);
+  color: var(--nz-bg);
+}
+
+/* 吃什么 */
+.nz-dining-sync {
+  margin-top: 6px !important;
+  color: var(--nz-faint) !important;
+  font-size: 12px !important;
+}
+
+.nz-dining-jump {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--nz-mint);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.nz-dining-todo {
+  margin: 14px 4px 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(240, 179, 90, 0.35);
+  border-radius: 14px;
+  background: rgba(240, 179, 90, 0.08);
+}
+
+.nz-dining-todo h2 {
+  margin: 0 0 6px;
+  color: var(--nz-amber);
+  font-size: 13px;
+}
+
+.nz-dining-todo ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.nz-dining-days {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nz-dining-day {
+  padding: 14px;
+  border: 1px solid var(--nz-line);
+  border-radius: 18px;
+  background: var(--nz-surface);
+  scroll-margin-top: 16px;
+}
+
+.nz-dining-day.is-today {
+  border-color: var(--nz-mint-strong);
+}
+
+.nz-dining-day > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: var(--nz-soft);
+  font-size: 12px;
+}
+
+.nz-dining-day > header strong {
+  color: var(--nz-text);
+  font-size: 15px;
+}
+
+.nz-meals {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nz-meal {
+  padding-top: 10px;
+  border-top: 1px solid var(--nz-line);
+}
+
+.nz-meal-head {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.nz-meal-label {
+  color: var(--nz-faint);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.nz-meal-head p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.nz-meal-booking {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: center;
+  margin: 6px 0 0 48px;
+  color: var(--nz-soft);
+  font-size: 12px;
+}
+
+.nz-meal-booking small {
+  flex-basis: 100%;
+  color: var(--nz-faint);
+}
+
+.nz-meal-status {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--nz-surface-2);
+  font-weight: 700;
+}
+
+.nz-meal-status.is-booked {
+  background: rgba(159, 224, 207, 0.16);
+  color: var(--nz-mint);
+}
+
+.nz-meal-status.is-todo {
+  background: rgba(240, 179, 90, 0.16);
+  color: var(--nz-amber);
+}
+
+.nz-meal-links {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.nz-meal-links a {
+  color: var(--nz-mint);
+}
+
+.nz-meal-plan {
+  display: block;
+  margin: 4px 0 0 48px;
+  color: var(--nz-faint);
+  font-size: 12px;
+}
+
+.nz-meal-note,
+.nz-meal-form {
+  margin: 8px 0 0 48px;
+}
+
+.nz-meal-note p {
+  margin: 0 0 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.nz-meal-note button,
+.nz-meal-actions button {
+  padding: 4px 12px;
+  border: 1px solid var(--nz-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--nz-soft);
+  font-size: 12px;
+}
+
+.nz-stars,
+.nz-meal-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.nz-stars button {
+  padding: 0 2px;
+  border: 0;
+  background: transparent;
+  color: var(--nz-faint);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.nz-stars button.is-on,
+.nz-stars-read {
+  color: var(--nz-amber);
+}
+
+.nz-stars-read {
+  margin-right: 6px;
+  letter-spacing: 1px;
+}
+
+.nz-stars-read span {
+  color: var(--nz-line);
+}
+
+.nz-meal-form textarea {
+  width: 100%;
+  margin: 6px 0;
+  padding: 8px 10px;
+  border: 1px solid var(--nz-line);
+  border-radius: 10px;
+  background: var(--nz-bg);
+  color: var(--nz-text);
+  font: inherit;
+  font-size: 14px;
+}
+
+.nz-meal-actions button[type="submit"] {
+  border-color: var(--nz-mint-strong);
+  color: var(--nz-mint);
+}
+
+.nz-dining-spend {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--nz-line);
+  color: var(--nz-soft);
+  font-size: 12px;
+}
+
+.nz-dining-spend a {
+  color: var(--nz-mint);
+  white-space: nowrap;
 }

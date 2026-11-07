@@ -2,11 +2,12 @@
 
 2026-10-25 起，打开网站首页就是澳新 2027；澳洲 2026 的行程和分账账本收在首页底部“已结束的旅行”里，页面、数据和行为都没变（`/itinerary`、`/ledger` 等原地址照旧可用）。
 
-2027 有四个页面，底部用“日程 / 清单 / 记账 / 更新”切换：
+2027 有四个主页面，底部用“日程 / 清单 / 记账 / 更新”切换；“日程”里还有一个小切换“每日行程 / 吃什么”：
 
 - `/`：日程。今天（出发前是第一天）放在最上面，下面是还没办的事、每晚住哪儿、按阶段排列的 17 天、出行提示、住宿和免费取消时间。`/nz2027` 会跳到这里。
 - `/nz2027/checklist`：出发前清单。逐项打勾划掉，两部手机同步。
 - `/nz2027/ledger`：两人记账。不分摊，按原币种（NZD / CNY / AUD）分别累计已付和待付，按城市、按天汇总，可导出表格。
+- `/nz2027/dining`：吃什么（日程里的小切换，不占底部 tab）。每天早午晚的安排取自当天“饮食”那一行，订了的、要订的、值得专门去的一餐在行程数据的 `dining` 里（餐厅、时间、状态、订位号）；还显示当天记账里餐饮和超市的花费。每一餐可以写一句吃后笔记、打 1–5 星，两部手机同步。
 - `/nz2027/updates`：更新。最近的改动按时间倒序、按天分组：两部手机上记账（新增 / 修改 / 删除 / 恢复）和勾清单，加上行程调整说明。上次打开之后有新改动时，tab 上显示数字。
 
 每日主题图：把图片按 `d01.jpg` … `d17.jpg`（封面 `cover.jpg`）放进 `public/nz2027/`，运行 `npm run nz2027:import` 即可；prompt 见 `docs/nz2027-day-image-prompts.md`。
@@ -18,12 +19,16 @@
 | 行程源文件 | `content/aussie-itinerary.xlsx` → `src/data/itinerary.generated.json` | `content/nz2027-itinerary.xlsx` → `src/data/nz2027-itinerary.generated.json` |
 | 行程接口 | `/api/itinerary` | `/api/nz2027/itinerary` |
 | 账本接口 | `/api/sync`、`/api/activity` | `/api/nz2027/expenses`、`/api/nz2027/checklist`、`/api/nz2027/updates`（只读） |
-| 数据库 | `expenses`、`expense_activity` 等 | 新表 `nz2027_expenses`、`nz2027_checklist`、`nz2027_activity` + 函数 `nz2027_upsert_expense`、`nz2027_set_check` 和两个记录触发器 |
-| 浏览器本机存储 | IndexedDB `aussie-chill-v2` | localStorage `nz2027-ledger-v1`、`nz2027-checklist-v1`、`nz2027-itinerary-v1`、`nz2027-updates-v1`、`nz2027-updates-seen` |
+| 数据库 | `expenses`、`expense_activity` 等 | 新表 `nz2027_expenses`、`nz2027_checklist`、`nz2027_activity`、`nz2027_meal_notes` + 函数 `nz2027_upsert_expense`、`nz2027_set_check` 和两个记录触发器 |
+| 浏览器本机存储 | IndexedDB `aussie-chill-v2` | localStorage `nz2027-ledger-v1`、`nz2027-checklist-v1`、`nz2027-itinerary-v1`、`nz2027-updates-v1`、`nz2027-updates-seen`、`nz2027-meals-v1` |
 
 两个 tab 共用同一个访问码和登录会话。
 
 行程更新：改 `scripts/nz2027/itinerarySeedData.mjs` 后运行 `npm run nz2027:seed -- --force` 和 `npm run nz2027:import`；或直接改 Excel 后只运行 `npm run nz2027:import`。**每次行程调整上线，在 `content/nz2027-updates.json` 最上面加一条说明**（`id`、`at`、`title`、`items`，旅行者口吻），它会出现在“更新”页。记账和清单的改动不用手写，数据库触发器自动记录，直接在生产库写入的也会记上。
+
+## 吃后笔记迁移（2026-11-07 已在生产执行，版本 20261107062425）
+
+`supabase/migrations/20261107090000_create_nz2027_meal_notes.sql`，只新增：表 `public.nz2027_meal_notes`（id 形如 `d9-dinner`，笔记 ≤500 字，1–5 星，RLS 开启，service_role 只有 select/insert/update）和函数 `nz2027_set_meal_note(jsonb)`（后写覆盖先写，拒绝未来时间）。执行前做了只读快照（`.backups/20261107T062345Z-before-nz2027-meal-notes/`），执行后核对权限和 RLS，账本、清单、更新记录和 2026 表的指纹与快照一致。笔记不进“更新”页的记录。网页先上线时，笔记先存在手机上，执行迁移后自动同步。回退：`supabase/rollback/drop_nz2027_meal_notes.sql`（会删掉笔记）。
 
 ## 更新记录迁移（2026-10-26 已在生产执行，版本 20261026114024）
 

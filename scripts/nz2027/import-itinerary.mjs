@@ -56,11 +56,14 @@ const requiredColumns = {
   Lodgings: ["sort_order", "check_in", "check_out", "name", "room", "detail", "resource_id", "status", "free_cancel_until", "after_deadline"],
   Todos: ["todo_id", "sort_order", "kind", "due_date", "due_label", "title", "detail"],
   Advice: ["sort_order", "title", "verdict", "day_ids", "detail", "action", "resource_ids"],
+  Dining: ["day_id", "meal", "place", "time", "status", "booking_ref", "note", "resource_ids"],
   Resources: ["resource_id", "title", "type", "url", "image_url", "image_alt", "source_note"],
 };
 const resourceTypes = new Set(["map", "official", "booking", "restaurant", "photo", "note"]);
 const lodgingStatuses = new Set(["已订", "待订", "无需住宿"]);
 const todoKinds = new Set(["book", "pay", "deadline", "prep"]);
+const diningMeals = new Set(["breakfast", "lunch", "dinner"]);
+const diningStatuses = new Set(["已订", "待订", "不用订"]);
 
 export function readWorkbook(sourcePath = workbookPath) {
   const workbook = JSON.parse(runPython(["scripts/itinerary_excel.py", "read_all", sourcePath]));
@@ -198,6 +201,17 @@ export function buildItinerary(sheets) {
     resources: linkResources(list(row.resource_ids), `advice ${row.sort_order}`),
   })).sort(bySortOrder);
 
+  const dining = sheets.Dining.map((row) => ({
+    dayId: text(row.day_id),
+    meal: text(row.meal),
+    place: text(row.place),
+    time: text(row.time),
+    status: text(row.status),
+    bookingRef: text(row.booking_ref),
+    note: text(row.note),
+    resources: linkResources(list(row.resource_ids), `dining ${text(row.day_id)} ${text(row.meal)}`),
+  }));
+
   const itinerary = {
     trip: {
       title: tripRows.title,
@@ -218,6 +232,7 @@ export function buildItinerary(sheets) {
     lodgings,
     todos,
     advice,
+    dining,
     resources,
   };
 
@@ -286,6 +301,13 @@ function validateItinerary(itinerary) {
     if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(todo.id)) throw new Error(`Invalid todo id ${todo.id}`);
     if (seenTodos.has(todo.id)) throw new Error(`Duplicate todo id ${todo.id}`);
     seenTodos.add(todo.id);
+  }
+  const seenDining = new Set();
+  for (const meal of itinerary.dining) {
+    const key = `${meal.dayId}-${meal.meal}`;
+    if (!dayIds.has(meal.dayId) || !diningMeals.has(meal.meal) || !meal.place || !diningStatuses.has(meal.status)) throw new Error(`Invalid dining ${key}`);
+    if (seenDining.has(key)) throw new Error(`Duplicate dining ${key}`);
+    seenDining.add(key);
   }
   for (const item of advice) {
     if (!item.title || !item.verdict || !item.detail) throw new Error(`Invalid advice ${item.title}`);
