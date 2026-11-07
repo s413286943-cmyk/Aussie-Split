@@ -26,9 +26,9 @@
 
 行程更新：改 `scripts/nz2027/itinerarySeedData.mjs` 后运行 `npm run nz2027:seed -- --force` 和 `npm run nz2027:import`；或直接改 Excel 后只运行 `npm run nz2027:import`。**每次行程调整上线，在 `content/nz2027-updates.json` 最上面加一条说明**（`id`、`at`、`title`、`items`，旅行者口吻），它会出现在“更新”页。记账和清单的改动不用手写，数据库触发器自动记录，直接在生产库写入的也会记上。
 
-## 吃后笔记迁移（待在生产执行）
+## 吃后笔记迁移（2026-11-07 已在生产执行，版本 20261107062425）
 
-`supabase/migrations/20261107090000_create_nz2027_meal_notes.sql`，只新增：表 `public.nz2027_meal_notes`（id 形如 `d9-dinner`，笔记 ≤500 字，1–5 星，RLS 开启，service_role 只有 select/insert/update）和函数 `nz2027_set_meal_note(jsonb)`（后写覆盖先写，拒绝未来时间）。笔记不进“更新”页的记录。网页先上线时，笔记先存在手机上，执行迁移后自动同步。回退：`supabase/rollback/drop_nz2027_meal_notes.sql`（会删掉笔记）。
+`supabase/migrations/20261107090000_create_nz2027_meal_notes.sql`，只新增：表 `public.nz2027_meal_notes`（id 形如 `d9-dinner`，笔记 ≤500 字，1–5 星，RLS 开启，service_role 只有 select/insert/update）和函数 `nz2027_set_meal_note(jsonb)`（后写覆盖先写，拒绝未来时间）。执行前做了只读快照（`.backups/20261107T062345Z-before-nz2027-meal-notes/`），执行后核对权限和 RLS，账本、清单、更新记录和 2026 表的指纹与快照一致。笔记不进“更新”页的记录。网页先上线时，笔记先存在手机上，执行迁移后自动同步。回退：`supabase/rollback/drop_nz2027_meal_notes.sql`（会删掉笔记）。
 
 ## 更新记录迁移（2026-10-26 已在生产执行，版本 20261026114024）
 
