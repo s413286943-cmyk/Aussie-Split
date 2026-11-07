@@ -17,6 +17,7 @@ export class MockApi {
     this.nz2027Expenses = structuredClone(options.nz2027Expenses || defaultNz2027Expenses());
     this.nz2027Available = options.nz2027Available ?? true;
     this.nz2027Checklist = structuredClone(options.nz2027Checklist || []);
+    this.nz2027Meals = structuredClone(options.nz2027Meals || []);
     // Mirrors the database triggers that log every applied 2027 change.
     this.nz2027Activity = structuredClone(options.nz2027Activity || []);
     this.nz2027ActivityAvailable = options.nz2027ActivityAvailable ?? true;
@@ -61,6 +62,7 @@ export class MockApi {
     if (url.pathname === "/api/nz2027/itinerary") return json(route, { itinerary: structuredClone(nz2027Itinerary) });
     if (url.pathname === "/api/nz2027/expenses") return this.#handleNz2027(route);
     if (url.pathname === "/api/nz2027/checklist") return this.#handleNz2027Checklist(route);
+    if (url.pathname === "/api/nz2027/meals") return this.#handleNz2027Meals(route);
     if (url.pathname === "/api/nz2027/updates") {
       return json(route, {
         releases: structuredClone(nz2027Releases),
@@ -105,6 +107,25 @@ export class MockApi {
       results.push({ opId: operation.opId, status: "applied" });
     }
     return json(route, { results, ...this.snapshot() });
+  }
+
+  async #handleNz2027Meals(route) {
+    if (!this.nz2027Available) return json(route, { error: "service_unavailable" }, 502);
+    if (route.request().method() === "POST") {
+      const payload = readJsonBody(route.request());
+      const results = [];
+      for (const note of payload.notes || []) {
+        const existing = this.nz2027Meals.find((entry) => entry.id === note.id);
+        if (existing && existing.updatedAt >= note.updatedAt) {
+          results.push({ id: note.id, status: "stale" });
+          continue;
+        }
+        this.nz2027Meals = [structuredClone(note), ...this.nz2027Meals.filter((entry) => entry.id !== note.id)];
+        results.push({ id: note.id, status: "applied" });
+      }
+      return json(route, { results, notes: structuredClone(this.nz2027Meals) });
+    }
+    return json(route, { notes: structuredClone(this.nz2027Meals) });
   }
 
   async #handleNz2027Checklist(route) {

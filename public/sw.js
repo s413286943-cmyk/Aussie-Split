@@ -18,6 +18,7 @@ const PRECACHE_URLS = [
   "/nz2027/checklist",
   "/nz2027/ledger",
   "/nz2027/updates",
+  "/nz2027/dining",
   "/manifest.webmanifest",
 ];
 

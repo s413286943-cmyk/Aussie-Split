@@ -534,6 +534,20 @@ export const todos = [
   todo("supplies-0205", 280, "prep", "2027-02-05", "2/5", "买齐长周末补给", "2/6 Waitangi Day 不少商店不开，取车后在 Ashburton 或 Geraldine 超市把 2/6 的早餐、路餐和水买好。"),
 ];
 
+// 吃什么：重点的一餐（订了的、要订的、值得专门去的）。其余早午晚按每天“饮食”那一行。
+export const dining = [
+  diningRow("d3", "dinner", "Margaret（Double Bay）", "18:00", "待订", "", "悉尼最后一晚；11 月中旬订，官网 Book Now 或电话 +61 2 9068 8888。", "margaret-official,margaret-map"),
+  diningRow("d4", "dinner", "Riverside Market", "18:00–19:30", "不用订", "", "周四开到 21:00，各家店关门时间不一样。", "riverside-market-map"),
+  diningRow("d5", "lunch", "Fairlie Bakehouse", "13:30 前后", "不用订", "", "买派当午饭。", "fairlie-bakehouse-official"),
+  diningRow("d7", "lunch", "High Country Salmon", "12:00–13:30", "不用订", "", "刺身和热食各点一份对比；喜欢就买一块晚上自己煎。", "logans-official"),
+  diningRow("d9", "dinner", "Kika", "18:00–20:00", "已订", "51115222", "订位时付了 NZ$50 保证金，之后会退回；桌子保留 15 分钟。", "kika-official,kika-route"),
+  diningRow("d11", "dinner", "The Redcliff", "18:45–20:45", "已订", "51350801", "桌子保留 15 分钟，晚到先打电话 03 249 7431。", "redcliff-official"),
+  diningRow("d12", "dinner", "Blue Kanu", "19:15", "已订", "51689789", "两人用餐时长 1.5 小时；桌子保留 15 分钟。", "blue-kanu-official"),
+  diningRow("d13", "dinner", "Fergburger", "约 21:00", "不用订", "", "可以先打电话点单，到店付款取餐。", "fergburger-map,fergburger-official"),
+  diningRow("d14", "dinner", "情人节晚餐（Viaduct Harbour）", "18:00", "待订", "", "情人节最难订，越早越好。", "viaduct-map"),
+  diningRow("d16", "lunch", "Amano", "12:00–14:00", "已订", "6S3X8H48MF4W", "改期或取消用确认邮件里的链接。", "amano-map,amano-official"),
+];
+
 export const advice = [
   advice_(10, "天气不好就别翻 Crown Range", "2/10", "d10",
     "Crown Range 是新西兰最高的铺装公路之一，皇后镇一侧连续急弯。起雾、大风或下雨时，改走 Cromwell 和 Kawarau 峡谷，多约 50 公里、20–30 分钟，从 Frankton 起路线一样。",
@@ -721,6 +735,10 @@ function day(values) {
 }
 
 // choice: option label when a time slot has alternatives (e.g. "A · 全程")；miss: what you give up by picking it.
+function diningRow(day_id, meal, place, time, status, booking_ref, note, resource_ids = "") {
+  return { day_id, meal, place, time, status, booking_ref, note, resource_ids };
+}
+
 function block(day_id, sort_order, period, place, activity, highlight, tip, resource_ids = "", { choice = "", miss = "" } = {}) {
   return { day_id, sort_order, period, place, activity, highlight, tip, resource_ids, choice, miss };
 }

@@ -58,6 +58,19 @@ export function fetchNz2027Checklist() {
   return requestJson("/api/nz2027/checklist");
 }
 
+export function fetchNz2027Meals() {
+  return requestJson("/api/nz2027/meals");
+}
+
+export async function pushNz2027Meals(notes) {
+  const response = await requestJson("/api/nz2027/meals", {
+    method: "POST",
+    body: JSON.stringify({ notes }),
+  });
+  if (!Array.isArray(response.notes)) throw new ApiClientError(response.status);
+  return response;
+}
+
 export function fetchNz2027Updates() {
   return requestJson("/api/nz2027/updates");
 }

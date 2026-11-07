@@ -27,7 +27,7 @@ test("the home page opens the 2027 trip and tucks the finished trip away", async
 
 test("copy reads from the travellers' side, not the builders'", async ({ page }) => {
   await page.clock.setFixedTime(beforeTrip);
-  for (const path of ["/", "/nz2027/checklist", "/nz2027/ledger", "/nz2027/updates"]) {
+  for (const path of ["/", "/nz2027/checklist", "/nz2027/ledger", "/nz2027/updates", "/nz2027/dining"]) {
     await page.goto(path);
     await expect(page.locator(".nz-main")).toBeVisible();
     const text = await page.locator(".nz").innerText();
@@ -130,6 +130,32 @@ test("a day with alternatives shows every option and what each one misses", asyn
   await expect(body.locator(".nz-miss").first()).toContainText("选这个会错过：");
 });
 
+test("吃什么 lists every day's meals with bookings, and notes sync between phones", async ({ page, mockApi }) => {
+  mockApi.nz2027Meals = [{ id: "d11-dinner", note: "鹿肉很嫩", rating: 4, updatedAt: "2026-11-02T00:00:00.000Z" }];
+  await page.clock.setFixedTime(beforeTrip);
+  await page.goto("/");
+  await page.getByRole("navigation", { name: "日程分区" }).getByRole("link", { name: "吃什么" }).click();
+  await expect(page).toHaveURL(/\/nz2027\/dining$/);
+  await expect(page.getByRole("heading", { name: "吃什么", level: 1 })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link", { name: "日程" })).toHaveClass(/is-active/);
+
+  const kika = page.locator("#nz-dining-d9 .nz-meal").filter({ hasText: "晚餐" });
+  await expect(kika).toContainText("Kika");
+  await expect(kika).toContainText("已订");
+  await expect(kika).toContainText("订位号 51115222");
+  await expect(page.locator(".nz-dining-todo")).toContainText("Margaret");
+  await expect(page.locator("#nz-dining-d11 .nz-meal").filter({ hasText: "晚餐" })).toContainText("鹿肉很嫩");
+
+  const lunch = page.locator("#nz-dining-d7 .nz-meal").filter({ hasText: "午餐" });
+  await lunch.getByRole("button", { name: "写笔记" }).click();
+  await lunch.getByRole("radio", { name: "5 星" }).click();
+  await lunch.getByLabel("吃了什么").fill("刺身比热食好吃");
+  await lunch.getByRole("button", { name: "保存" }).click();
+  await expect(lunch).toContainText("刺身比热食好吃");
+  await expect.poll(() => mockApi.nz2027Meals.find((note) => note.id === "d7-lunch")?.rating).toBe(5);
+  expect(await documentOverflowsHorizontally(page)).toBe(false);
+});
+
 test("ticks made on the other phone show up here", async ({ page, mockApi }) => {
   mockApi.nz2027Checklist = [{ id: "nztd", done: true, updatedAt: "2026-11-02T00:00:00.000Z" }];
   await page.clock.setFixedTime(beforeTrip);
@@ -196,7 +222,7 @@ test("records saved without signal stay on the phone and sync later", async ({ p
 test("phone layout keeps the tab bar at the bottom and nothing overflows", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.clock.setFixedTime(duringTrip);
-  for (const path of ["/", "/nz2027/checklist", "/nz2027/ledger", "/nz2027/updates"]) {
+  for (const path of ["/", "/nz2027/checklist", "/nz2027/ledger", "/nz2027/updates", "/nz2027/dining"]) {
     await page.goto(path);
     await expect(page.locator(".nz-main")).toBeVisible();
     const tabs = await page.getByRole("navigation", { name: "主导航" }).boundingBox();

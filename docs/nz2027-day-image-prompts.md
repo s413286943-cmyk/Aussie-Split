@@ -2,6 +2,8 @@
 
 风格和 2026 澳洲行程的配图一致：写实、电影感的风景照，横版 16:9，没有人物特写、没有文字和 logo。
 
+2026-11-07 起 D04、D15 按新行程换了图，由 Claude 用 openai-image-gen 生成后裁成 1672×941。
+
 ## 怎么用
 
 1. 每条 prompt 末尾都已经带上统一风格句，直接整段复制到 gpt-image-2.5。
@@ -37,9 +39,9 @@ The Bondi to Coogee coastal walk in Sydney on a bright summer morning, sandstone
 A leafy inner-Sydney street in Newtown in late-afternoon summer light, Victorian terrace shopfronts, a large colourful street-art mural on a brick wall, independent bookshop window, jacaranda leaves overhead. Photorealistic cinematic travel photograph, 16:9 landscape, natural golden-hour light, rich but true-to-life colours, shallow atmospheric haze, wide-angle composition with clear foreground, middle ground and background, no people in focus, no text, no logos, no watermarks.
 ```
 
-### D04 · 2/4 飞基督城 `d04.jpg`
+### D04 · 2/4 下午到基督城，植物园和雅芳河 `d04.jpg`
 ```
-View from an airplane window descending over the Canterbury Plains toward Christchurch, New Zealand, patchwork green and gold farmland, braided river channels, the Southern Alps faint on the horizon, wingtip in the corner of the frame. Photorealistic cinematic travel photograph, 16:9 landscape, natural golden-hour light, rich but true-to-life colours, shallow atmospheric haze, wide-angle composition with clear foreground, middle ground and background, no people in focus, no text, no logos, no watermarks.
+The Avon River (Ōtākaro) winding gently through the edge of the Christchurch Botanic Gardens in New Zealand on a summer afternoon, weeping willows trailing into clear green water, a traditional flat-bottomed wooden punt with an empty seat moored by the grassy bank, old English oaks and flower beds behind, dappled late-afternoon sunlight. Photorealistic cinematic travel photograph, 16:9 landscape, natural golden-hour light, rich but true-to-life colours, shallow atmospheric haze, wide-angle composition with clear foreground, middle ground and background, no people in focus, no text, no logos, no watermarks.
 ```
 
 ### D05 · 2/5 Tekapo 与 Pukaki `d05.jpg`
@@ -92,9 +94,9 @@ The red wooden boatshed on the jetty at Glenorchy, New Zealand, at the head of L
 Auckland's Viaduct Harbour and waterfront at dusk on a summer evening, sailboat masts and moored yachts, the Sky Tower lit against a lavender sky, warm restaurant lights reflecting in the marina water. Photorealistic cinematic travel photograph, 16:9 landscape, natural blue-hour light, rich but true-to-life colours, shallow atmospheric haze, wide-angle composition with clear foreground, middle ground and background, no people in focus, no text, no logos, no watermarks.
 ```
 
-### D15 · 2/15 Hobbiton `d15.jpg`
+### D15 · 2/15 Waitomo 萤火虫洞 + Hobbiton `d15.jpg`
 ```
-Lush green rolling hills of the Waikato farmland in New Zealand with small round hobbit-hole doors built into grassy hillsides, colourful gardens, a picket fence and a winding path, a large oak tree above a mill pond, warm afternoon summer light. Photorealistic cinematic travel photograph, 16:9 landscape, natural golden-hour light, rich but true-to-life colours, shallow atmospheric haze, wide-angle composition with clear foreground, middle ground and background, no people in focus, no text, no logos, no watermarks.
+Hobbit-hole doorways set into green grassy hillsides in the Waikato countryside of New Zealand at early dusk, round painted doors and small gardens, a winding path with a picket fence, warm lantern light in a round window, and beside the path a shaded mossy fern bank sparkling with tiny blue-green glowworm lights like stars. Photorealistic cinematic travel photograph, 16:9 landscape, natural golden-hour light, rich but true-to-life colours, shallow atmospheric haze, wide-angle composition with clear foreground, middle ground and background, no people in focus, no text, no logos, no watermarks.
 ```
 
 ### D16 · 2/16 奥克兰城市日，夜航回家 `d16.jpg`

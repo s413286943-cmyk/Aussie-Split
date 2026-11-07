@@ -5262,6 +5262,244 @@
       "resources": []
     }
   ],
+  "dining": [
+    {
+      "dayId": "d3",
+      "meal": "dinner",
+      "place": "Margaret（Double Bay）",
+      "time": "18:00",
+      "status": "待订",
+      "bookingRef": "",
+      "note": "悉尼最后一晚；11 月中旬订，官网 Book Now 或电话 +61 2 9068 8888。",
+      "resources": [
+        {
+          "id": "margaret-official",
+          "title": "Margaret（Neil Perry）",
+          "type": "restaurant",
+          "url": "https://themargaretfamily.com/venue/margaret/",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "待预约"
+        },
+        {
+          "id": "margaret-map",
+          "title": "Margaret, 30–36 Bay Street, Double Bay",
+          "type": "map",
+          "url": "https://www.google.com/maps/search/?api=1&query=Margaret%2C+30+Bay+Street%2C+Double+Bay+NSW+2028%2C+Australia",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "Google Maps"
+        }
+      ]
+    },
+    {
+      "dayId": "d4",
+      "meal": "dinner",
+      "place": "Riverside Market",
+      "time": "18:00–19:30",
+      "status": "不用订",
+      "bookingRef": "",
+      "note": "周四开到 21:00，各家店关门时间不一样。",
+      "resources": [
+        {
+          "id": "riverside-market-map",
+          "title": "Riverside Market",
+          "type": "map",
+          "url": "https://www.google.com/maps/search/?api=1&query=Riverside+Market%2C+96+Oxford+Terrace%2C+Christchurch%2C+New+Zealand",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "Google Maps"
+        }
+      ]
+    },
+    {
+      "dayId": "d5",
+      "meal": "lunch",
+      "place": "Fairlie Bakehouse",
+      "time": "13:30 前后",
+      "status": "不用订",
+      "bookingRef": "",
+      "note": "买派当午饭。",
+      "resources": [
+        {
+          "id": "fairlie-bakehouse-official",
+          "title": "Fairlie Bakehouse",
+          "type": "restaurant",
+          "url": "https://www.fairliebakehouse.co.nz/",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "官网"
+        }
+      ]
+    },
+    {
+      "dayId": "d7",
+      "meal": "lunch",
+      "place": "High Country Salmon",
+      "time": "12:00–13:30",
+      "status": "不用订",
+      "bookingRef": "",
+      "note": "刺身和热食各点一份对比；喜欢就买一块晚上自己煎。",
+      "resources": [
+        {
+          "id": "logans-official",
+          "title": "High Country Salmon / Logans",
+          "type": "restaurant",
+          "url": "https://www.highcountrysalmon.co.nz/pages/about-us-1",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "官网"
+        }
+      ]
+    },
+    {
+      "dayId": "d9",
+      "meal": "dinner",
+      "place": "Kika",
+      "time": "18:00–20:00",
+      "status": "已订",
+      "bookingRef": "51115222",
+      "note": "订位时付了 NZ$50 保证金，之后会退回；桌子保留 15 分钟。",
+      "resources": [
+        {
+          "id": "kika-official",
+          "title": "Kika",
+          "type": "restaurant",
+          "url": "https://kika.nz/",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "已订"
+        },
+        {
+          "id": "kika-route",
+          "title": "去Kika晚餐",
+          "type": "map",
+          "url": "https://www.google.com/maps/dir/?api=1&origin=1+Outlet+Road%2C+Wanaka%2C+New+Zealand&destination=Kika%2C+2+Dunmore+Street%2C+Wanaka%2C+New+Zealand&travelmode=driving",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "导航06"
+        }
+      ]
+    },
+    {
+      "dayId": "d11",
+      "meal": "dinner",
+      "place": "The Redcliff",
+      "time": "18:45–20:45",
+      "status": "已订",
+      "bookingRef": "51350801",
+      "note": "桌子保留 15 分钟，晚到先打电话 03 249 7431。",
+      "resources": [
+        {
+          "id": "redcliff-official",
+          "title": "The Redcliff",
+          "type": "restaurant",
+          "url": "https://theredcliff.co.nz/",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "已订"
+        }
+      ]
+    },
+    {
+      "dayId": "d12",
+      "meal": "dinner",
+      "place": "Blue Kanu",
+      "time": "19:15",
+      "status": "已订",
+      "bookingRef": "51689789",
+      "note": "两人用餐时长 1.5 小时；桌子保留 15 分钟。",
+      "resources": [
+        {
+          "id": "blue-kanu-official",
+          "title": "Blue Kanu",
+          "type": "restaurant",
+          "url": "https://www.queenstownnz.co.nz/listing/blue-kanu-restaurant/1436/",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "已订"
+        }
+      ]
+    },
+    {
+      "dayId": "d13",
+      "meal": "dinner",
+      "place": "Fergburger",
+      "time": "约 21:00",
+      "status": "不用订",
+      "bookingRef": "",
+      "note": "可以先打电话点单，到店付款取餐。",
+      "resources": [
+        {
+          "id": "fergburger-map",
+          "title": "Fergburger",
+          "type": "restaurant",
+          "url": "https://www.google.com/maps/search/?api=1&query=Fergburger%2C+Shotover+Street%2C+Queenstown%2C+New+Zealand",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "Google Maps"
+        },
+        {
+          "id": "fergburger-official",
+          "title": "Fergburger官网",
+          "type": "restaurant",
+          "url": "https://www.fergburger.com/",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "官网"
+        }
+      ]
+    },
+    {
+      "dayId": "d14",
+      "meal": "dinner",
+      "place": "情人节晚餐（Viaduct Harbour）",
+      "time": "18:00",
+      "status": "待订",
+      "bookingRef": "",
+      "note": "情人节最难订，越早越好。",
+      "resources": [
+        {
+          "id": "viaduct-map",
+          "title": "Viaduct Harbour",
+          "type": "map",
+          "url": "https://www.google.com/maps/search/?api=1&query=Viaduct+Harbour%2C+Auckland%2C+New+Zealand",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "Google Maps"
+        }
+      ]
+    },
+    {
+      "dayId": "d16",
+      "meal": "lunch",
+      "place": "Amano",
+      "time": "12:00–14:00",
+      "status": "已订",
+      "bookingRef": "6S3X8H48MF4W",
+      "note": "改期或取消用确认邮件里的链接。",
+      "resources": [
+        {
+          "id": "amano-map",
+          "title": "Amano",
+          "type": "restaurant",
+          "url": "https://www.google.com/maps/search/?api=1&query=Amano%2C+68+Tyler+Street%2C+Auckland%2C+New+Zealand",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "Google Maps"
+        },
+        {
+          "id": "amano-official",
+          "title": "Amano预约",
+          "type": "restaurant",
+          "url": "https://savor.co.nz/amano",
+          "imageUrl": "",
+          "imageAlt": "",
+          "sourceNote": "官网"
+        }
+      ]
+    }
+  ],
   "resources": [
     {
       "id": "great-southern-map",

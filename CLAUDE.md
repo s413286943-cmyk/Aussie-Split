@@ -4,7 +4,7 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 
 ## 页面
 
-- **澳新 2027（首页）**：`/` 日程、`/nz2027/checklist` 出发前清单、`/nz2027/ledger` 两人记账、`/nz2027/updates` 最近的改动（`/nz2027` 跳到首页）。说明见 `docs/operations/nz2027-tab.md`。
+- **澳新 2027（首页）**：`/` 日程（左上小切换到 `/nz2027/dining` 吃什么）、`/nz2027/checklist` 出发前清单、`/nz2027/ledger` 两人记账、`/nz2027/updates` 最近的改动（`/nz2027` 跳到首页）。说明见 `docs/operations/nz2027-tab.md`。
 - **澳洲 2026（已结束，存档）**：`/itinerary`、`/ledger`、`/expenses`、`/add`、`/settlement`、`/activity`，收在首页底部“已结束的旅行”。页面、数据和行为保持不变。
 
 ## 运行版本与检查
@@ -31,6 +31,7 @@ Next.js 应用：同源 API、服务端密钥、私有票据短期签名 URL、�
 - **2027 选项写法（用户的规划方式）**：计划尽量写满细节，当天按天气和体力挑。只有真正二选一的地方才写成选项，可做可不做的写成“可加”，雨天方案写“雨天备选”；“累了回去休息”不单独列。时间线步骤用 `block(…, { choice, miss })`：`choice` 是标签（如“上午 A · 全程”“可加 · Mount John”“雨天备选”），`miss` 是“选这个会错过什么”，有 `choice` 就必须有 `miss`（有单测）。页面显示琥珀色标签和红字“选这个会错过：…”，md 导出也带上。
 - **2027 更新页**：每次行程调整上线，在 `content/nz2027-updates.json` 最上面加一条（旅行者口吻，`at` 用实际上线时间，不要写未来时间）。记账和清单改动由数据库触发器自动记录，不用手写。
 - **2027 行程文字版（每次都要）**：每次行程或账本有改动并上线后，跑 `npm run nz2027:md` 生成 `outputs/澳新2027-行程-YYYYMMDD.md`（含“最近更新”），并把文件发给用户。`outputs/` 不进仓库。
+- **2027 吃什么**：重点餐（已订 / 待订 / 不用订，含时间和订位号）写在 `itinerarySeedData.mjs` 的 `dining`（workbook 的 Dining 表）；其余早午晚取每天的“饮食”行。订到餐厅后同时改 `dining` 和当天时间线。吃后笔记存在 `nz2027_meal_notes`。
 - **2027 每日主题图**：`public/nz2027/d01.jpg` … `d17.jpg`、`cover.jpg`，换图后跑 `npm run nz2027:import`。prompt 在 `docs/nz2027-day-image-prompts.md`。
 - **2026 行程**：`content/aussie-itinerary.xlsx` 用 `npm run itinerary:import` 导入。
 
