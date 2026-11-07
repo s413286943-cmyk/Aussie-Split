@@ -3,6 +3,8 @@ import { expect, test } from "playwright/test";
 test.skip(process.env.E2E_PRODUCTION_SMOKE !== "1", "opt-in read-only production smoke");
 
 test("production routes answer without issuing mutation requests", async ({ page, context }) => {
+  // Eleven live pages over a real network take longer than the default 30 s.
+  test.setTimeout(120_000);
   const mutationRequests = [];
   await context.route("**/*", async (route) => {
     const method = route.request().method();
